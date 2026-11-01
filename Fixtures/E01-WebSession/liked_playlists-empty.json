@@ -1,0 +1,47 @@
+{
+ "_fixture": "synthetic E01 web-session fixture: hand-written to the published InnerTube shape; not a live capture; no real account",
+ "responseContext": {
+  "mainAppWebResponseContext": {
+   "loggedOut": false
+  }
+ },
+ "contents": {
+  "singleColumnBrowseResultsRenderer": {
+   "tabs": [
+    {
+     "tabRenderer": {
+      "content": {
+       "sectionListRenderer": {
+        "contents": [
+         {
+          "gridRenderer": {
+           "items": [
+            {
+             "musicTwoRowItemRenderer": {
+              "title": {
+               "runs": [
+                {
+                 "text": "New playlist"
+                }
+               ]
+              },
+              "subtitle": {
+               "runs": []
+              },
+              "navigationEndpoint": {
+               "createPlaylistEndpoint": {}
+              }
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   ]
+  }
+ }
+}

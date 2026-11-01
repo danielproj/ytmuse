@@ -1,0 +1,33 @@
+# Dependency, licence, SBOM, documentation and secret-scan checks (T30.4, T30.5). No secrets; read-only token.
+name: license
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  license:
+    name: license
+    runs-on: ${{ vars.YTMUSE_RUNNER || 'macos-latest' }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0          # the history scan needs every commit
+      - name: Pins, licences and SBOM
+        run: |
+          python3 scripts/check-distribution.py --self-test
+          python3 scripts/check-distribution.py --source-only
+          python3 scripts/make-sbom.py --check Docs/sbom.cdx.json
+      - name: Secrets, sessions and personal data
+        run: |
+          python3 scripts/scan-repository.py --self-test
+          python3 scripts/scan-repository.py --tree --history --fail-on high
+      - name: Workflows and documentation
+        run: |
+          python3 scripts/check-workflows.py --self-test
+          python3 scripts/check-workflows.py
+          python3 scripts/check-docs.py --self-test
+          python3 scripts/check-docs.py --static-only

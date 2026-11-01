@@ -1,0 +1,66 @@
+1|Hafan
+2|Archwilio
+3|Llyfrgell
+4|Chwilio
+5|Gosodiadau
+6|Chwarae
+7|Oedi
+8|Nesaf
+9|Blaenorol
+10|Ciw
+11|Lawrlwythiadau
+12|Yn chwarae nawr
+13|Canslo
+14|Wedi gorffen
+15|Ceisio eto
+16|Rhowch gynnig arni eto
+17|Cau
+18|Mewngofnodi
+19|Allgofnodi
+20|Ychwanegu cyfrif
+21|Tynnu
+22|Dadwneud
+23|Symud i fyny
+24|Symud i lawr
+25|Wedi oedi
+26|Yn chwarae
+27|Yn llwytho…
+28|Mewngofnodi gyda Google
+29|Croeso i YTMuse
+30|Dewiswch gerddoriaeth i ddechrau
+31|Mae eich ciw yn wag
+32|Mae'r sesiwn wedi dod i ben
+33|Canslo mewngofnodi
+34|Rydych yn rhoi eich cyfrinair ar dudalen Google, byth yn YTMuse.
+35|Mewngofnodwch eto i chwarae eich llyfrgell.
+36|Mae eich sesiwn wedi dod i ben. Mewngofnodwch eto i chwarae.
+37|Ailgysylltwch y cyfrif hwn i barhau.
+38|Mae'r cysylltiad all-lein. Rhowch gynnig arni eto pan fyddwch wedi cysylltu.
+39|Nid oedd modd cyrraedd YouTube Music. Gwiriwch eich cysylltiad a rhowch gynnig arni eto.
+40|Nid yw'r weithred hon ar gael ar hyn o bryd.
+41|Nid oedd modd llwytho'r dudalen hon
+42|Rydych all-lein, felly ni newidiwyd dim. Ni roddwyd y weithred yn y ciw.
+43|Mewngofnodwch i YouTube Music i wneud hyn.
+44|Nid oedd YouTube Music yn gallu gwneud y newid hwn ar hyn o bryd. Ni newidiwyd dim.
+45|Newidiodd eich cyfrif cyn i hyn ddechrau. Rhowch gynnig arni eto.
+46|Mae chwiliadau ac eitemau diweddar yn aros ar y Mac hwn, ni chânt eu hanfon i unman a chânt eu tynnu gyda'r cyfrif.
+47|Mae hyn yn tynnu'r cofnod sy'n cael ei gadw ar y Mac hwn yn unig. Nid yw hanes YouTube Music ei hun yn newid.
+48|Clirio hanes y Mac hwn
+49|Daeth y mewngofnodi i ben. Ni chadwyd dim. Rhowch gynnig arni eto pan fyddwch yn barod.
+50|Wedi allgofnodi.
+51|Wedi mewngofnodi fel %@.
+52|Wedi newid i %@.
+53|Chwarae %@
+54|Yr allbwn presennol: %@
+55|Tynnu “%@” o'ch uwchlwythiadau?
+56|Mae hysbyseb yn chwarae
+57|Mae'r hysbyseb wedi gorffen
+58|Yn chwarae nawr: “%@” gan %@.
+59|Iaith y rhyngwyneb
+60|Iaith cerddoriaeth a geiriau
+61|Rhanbarth ar gyfer argymhellion
+62|Yr un fath â macOS
+63|Dim ond yr hyn a awgrymir y mae'r rhanbarth yn ei newid. Nid yw byth yn datgloi cerddoriaeth na nodweddion nad yw eich cyfrif neu eich lleoliad yn eu caniatáu.
+P1|zero:%lld munud	one:%lld funud	two:%lld funud	few:%lld munud	many:%lld munud	other:%lld munud
+P2|zero:Dadwneud: ychwanegwyd %lld cân	one:Dadwneud: ychwanegwyd %lld gân	two:Dadwneud: ychwanegwyd %lld gân	few:Dadwneud: ychwanegwyd %lld cân	many:Dadwneud: ychwanegwyd %lld chân	other:Dadwneud: ychwanegwyd %lld cân
+P3|zero:Nid oedd modd dangos %lld eitem	one:Nid oedd modd dangos %lld eitem	two:Nid oedd modd dangos %lld eitem	few:Nid oedd modd dangos %lld eitem	many:Nid oedd modd dangos %lld eitem	other:Nid oedd modd dangos %lld eitem

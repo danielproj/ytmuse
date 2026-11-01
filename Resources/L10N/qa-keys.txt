@@ -1,0 +1,36 @@
+# QA-only strings: Debug readouts, test controls, development-data labels. One exact key per line; NEVER a pattern (a substring match once dropped user-facing privacy wording).
+Apply Next Test Window Size
+Browser sign-in is not connected in this development build.
+Canvas accent: %@
+Content height (pt): %@
+Development build · No service account connected
+Development data
+Development data · Not YouTube Music
+Development data · Not a real download
+Development item %lld
+Development navigation example
+Development queue item %lld
+Live scroll (pt): %@
+Maximum scroll (pt): %@
+Original artwork studies · Development data
+Original study · Development data
+Owned test audio could not start. Use the test audio button to try again.
+Owned test tone A
+Owned test tone B
+Owned test video
+Owned test video could not start. Use the test video button to try again.
+Play owned test audio
+Play owned test video
+Raster bytes: %lld
+Restart owned test queue
+Restore scripted output
+Saved window state: %@
+Scroll: %lld
+Selected: %lld
+Simulate output loss
+Simulate receiver loss
+Stored scroll (pt): %@
+Test mode only accepts the app’s own synthetic audio files.
+The development queue action failed. Try the action again.
+This development collection contains no retained media.
+This is owned test audio, not a YouTube Music song, so it has no like.

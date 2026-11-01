@@ -1,0 +1,66 @@
+1|Ana Sayfa
+2|Keşfet
+3|Kütüphane
+4|Ara
+5|Ayarlar
+6|Oynat
+7|Duraklat
+8|Sonraki
+9|Önceki
+10|Sıra
+11|İndirilenler
+12|Şimdi Çalıyor
+13|Vazgeç
+14|Bitti
+15|Yeniden Dene
+16|Tekrar deneyin
+17|Kapat
+18|Giriş yap
+19|Çıkış yap
+20|Hesap ekle
+21|Kaldır
+22|Geri al
+23|Yukarı taşı
+24|Aşağı taşı
+25|Duraklatıldı
+26|Çalıyor
+27|Yükleniyor…
+28|Google ile giriş yap
+29|YTMuse’a hoş geldiniz
+30|Başlamak için müzik seçin
+31|Sıranız boş
+32|Oturum süresi doldu
+33|Girişi iptal et
+34|Parolanızı Google’ın sayfasında girersiniz, YTMuse’ta asla.
+35|Kütüphanenizi oynatmak için yeniden giriş yapın.
+36|Oturumunuz sona erdi. Oynatmak için yeniden giriş yapın.
+37|Devam etmek için bu hesabı yeniden bağlayın.
+38|Bağlantı çevrimdışı. Bağlandığınızda tekrar deneyin.
+39|YouTube Music’e ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.
+40|Bu işlem şu anda kullanılamıyor.
+41|Bu sayfa yüklenemedi
+42|Çevrimdışısınız, bu yüzden hiçbir şey değiştirilmedi. İşlem sıraya alınmadı.
+43|Bunu yapmak için YouTube Music’te giriş yapın.
+44|YouTube Music bu değişikliği şu anda yapamadı. Hiçbir şey değiştirilmedi.
+45|Bu işlem başlamadan önce hesabınız değişti. Tekrar deneyin.
+46|Son aramalar ve öğeler bu Mac’te kalır, hiçbir yere gönderilmez ve hesapla birlikte kaldırılır.
+47|Bu yalnızca bu Mac’te tutulan kaydı kaldırır. YouTube Music’in kendi geçmişi değişmez.
+48|Bu Mac’in Geçmişini Temizle
+49|Giriş zaman aşımına uğradı. Hiçbir şey kaydedilmedi. Hazır olduğunuzda tekrar deneyin.
+50|Çıkış yapıldı.
+51|%@ olarak giriş yapıldı.
+52|%@ hesabına geçildi.
+53|%@ öğesini oynat
+54|Geçerli çıkış: %@
+55|“%@” yüklemelerinizden kaldırılsın mı?
+56|Bir reklam oynatılıyor
+57|Reklam sona erdi
+58|Şimdi çalıyor: “%@”, sanatçı: %@.
+59|Arayüz dili
+60|Müzik ve söz dili
+61|Öneriler için bölge
+62|macOS ile aynı
+63|Bölge yalnızca önerileri değiştirir. Hesabınızın veya konumunuzun izin vermediği müzik ya da özelliklerin kilidini asla açmaz.
+P1|one:%lld dakika	other:%lld dakika
+P2|one:Geri al: %lld şarkı eklendi	other:Geri al: %lld şarkı eklendi
+P3|one:%lld öğe gösterilemedi	other:%lld öğe gösterilemedi

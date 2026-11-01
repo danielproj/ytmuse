@@ -1,0 +1,10 @@
+1360|Una comprobación descarga un pequeño archivo firmado de GitHub. No envía información de la cuenta, de lo que escuchas ni del dispositivo.
+1361|Buscar actualizaciones una vez al día
+1362|Comprobando…
+1363|Descargando la versión %@…
+1364|Aún no se ha comprobado.
+1365|Aún no se ha preguntado. No se comprueba nada hasta que lo elijas.
+1366|No se pudo verificar ni instalar la actualización. No se ha cambiado nada.
+1367|La versión %@ está disponible.
+1368|La versión %@ está lista. Reinicia para terminar.
+1369|YTMuse está actualizado.

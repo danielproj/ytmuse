@@ -1,0 +1,1434 @@
+1|Home
+2|Explore
+3|Library
+4|Search
+5|Settings
+6|Play
+7|Pause
+8|Next
+9|Previous
+10|Queue
+11|Downloads
+12|Now Playing
+13|Cancel
+14|Done
+15|Retry
+16|Try Again
+17|Dismiss
+18|Sign in
+19|Sign Out
+20|Add Account
+21|Remove
+22|Undo
+23|Move Up
+24|Move Down
+25|Paused
+26|Playing
+27|Loading…
+28|Sign in with Google
+29|Welcome to YTMuse
+30|Choose music to begin
+31|Your queue is empty
+32|Session expired
+33|Cancel Sign-In
+34|Your password is entered on Google’s page, never in YTMuse.
+35|Sign in again to play your library.
+36|Your session ended. Sign in again to play.
+37|Reconnect this account to continue.
+38|The connection is offline. Try again when connected.
+39|YouTube Music couldn’t be reached. Check your connection and try again.
+40|This action isn’t available right now.
+41|This page couldn’t be loaded
+42|You’re offline, so nothing was changed. It isn’t queued.
+43|Sign in to YouTube Music to do this.
+44|YouTube Music couldn’t make this change right now. Nothing was changed.
+45|Your account changed before this started. Try again.
+46|Recent searches and items stay on this Mac, are never sent anywhere and are removed with the account.
+47|This removes only the record kept on this Mac. YouTube Music’s own history is not changed.
+48|Clear This Mac’s History
+49|Sign-in timed out. Nothing was saved. Try again when you’re ready.
+50|Signed out.
+51|Signed in as %@.
+52|Switched to %@.
+53|Play %@
+54|Current output: %@
+55|Remove “%@” from your uploads?
+56|Advertisement playing
+57|Advertisement ended
+58|Now playing “%@” by %@.
+59|Interface language
+60|Language of music and lyrics
+61|Region for recommendations
+62|Same as macOS
+63|The region only changes what is suggested. It never unlocks music or features your account or location doesn’t allow.
+64|Account eligibility has not been verified. Try again after reconnecting.
+65|An interrupted upload can’t be resumed; it starts over.
+66|Asked YouTube Music to remove the dislike.
+67|Asked YouTube Music to remove the like.
+68|Audio quality is chosen by YouTube Music’s own player. YTMuse doesn’t measure or select it.
+69|Authorization cancelled.
+70|Cancel authorization
+71|Cancelled. YouTube Music already had this file and may still add it.
+72|Cancelled. Your file wasn’t changed.
+73|Clear Local History…
+74|Clear Selection
+75|Clear all plays from this Mac?
+76|Collaborators can’t use a private playlist. Make it unlisted or public first.
+77|Couldn’t finish after several tries
+78|Couldn’t reach YouTube Music
+79|Delete Playlist
+80|Delete Playlist…
+81|Deletes local credentials, files and pending writes. Your Google account and remote playlists are unchanged.
+82|Disconnect Google authorization
+83|Downloads are paused for storage. Nothing you kept was deleted. Choose how to make room:
+84|Following and saving to your library need a signed-in YouTube Music account.
+85|Following needs a signed-in YouTube Music account.
+86|Google authorization could not finish. No Music connection was verified. Try again.
+87|Google authorization could not reach the server. Check the connection and retry.
+88|Google authorization expired, was revoked, or its code was rejected. Try authorizing again.
+89|Google authorization is temporarily unavailable. Retry later.
+90|Google authorization timed out. Try again.
+91|Google authorization was cancelled or replaced. Try again when ready.
+92|Google authorization was denied. No Music connection was verified.
+93|Google client configuration is unavailable or was rejected. The developer must check this app’s registration.
+94|Google didn’t complete a YouTube Music sign-in. Nothing was saved. Try again.
+95|Google ended this YouTube Music session. Your local data is kept.
+96|Google is limiting authorization requests. Wait before retrying.
+97|Google rejected the authorization request. The developer must check this app’s OAuth configuration.
+98|Google requires this app’s client secret. The developer must provision its secure configuration before retrying. No Music connection was verified.
+99|Google sign-in page
+100|Google’s sign-in page could not load. Check your connection and try again.
+101|Launch at login could not be turned off. Try again, or turn it off in System Settings > General > Login Items.
+102|Launch at login could not be turned on. Try again, or turn it on in System Settings > General > Login Items.
+103|Loading Google sign-in
+104|Local Google credential cleanup needs retry.
+105|Local history isn’t available in this session.
+106|Lowering the limit never removes downloads you chose to keep.
+107|Lyrics unavailable
+108|Manage Accounts
+109|Manage Accounts…
+110|Manage accounts
+111|Music reconnection awaits source-session access.
+112|New playlists are private unless you choose otherwise.
+113|No accounts connected
+114|Not available for this account
+115|Not signed in: these are the results anyone sees.
+116|Nothing was changed. Try reading your library again.
+117|Nothing was sent.
+118|Notifications are turned off for YTMuse. Turn them on in System Settings > Notifications, then try again.
+119|Off by default. Turning it on asks macOS for permission to show notifications. They show the title and artist only.
+120|Off until you turn it on. Playlists, uploads and history are private: they are shown only if you choose to, and are removed from Spotlight when you sign out, remove the account or turn this off.
+121|Only part of this change was applied. Try Again sends only the rest.
+122|Only upload music you have the right to. YouTube Music checks each file after it’s uploaded and decides what it accepts. Your files on this Mac are only read, never changed or deleted.
+123|Opening Google sign-in…
+124|Opening this kind of result isn’t available yet.
+125|People who joined can no longer add songs. This app can’t reopen it; do that in YouTube Music.
+126|Playing uploads isn’t available in this version.
+127|Playlists kept offline
+128|Reading your YouTube Music account…
+129|Reading your account name. Nothing in your library is changed.
+130|Refresh Google authorization
+131|Remove Dislike
+132|Remove Download
+133|Remove Local Data
+134|Remove Selected…
+135|Remove automatic downloads
+136|Remove downloads you no longer need
+137|Remove from Library
+138|Remove from Uploads
+139|Remove from Uploads…
+140|Samples couldn’t be loaded
+141|Saved session unavailable on this Mac
+142|Saving to your library needs a signed-in YouTube Music account.
+143|Seeking and skipping are unavailable while an ad plays.
+144|Select a signed-in account first, then try again.
+145|Select a signed-in account to keep audio files on this Mac.
+146|Select a signed-in account to keep files
+147|Session expired — sign in again
+148|Showing YouTube Music’s public front page. Sign in for shelves made for you.
+149|Sign in again to continue
+150|Sign in again to see what YouTube Music has for your account.
+151|Sign in to YouTube Music in YTMuse first.
+152|Sign in to YouTube Music in YTMuse.
+153|Sign in to YouTube Music to change a playlist.
+154|Sign in to YouTube Music to change your library.
+155|Sign in to YouTube Music to play episodes.
+156|Sign in to YouTube Music to play.
+157|Sign in to YouTube Music to read comments.
+158|Sign in to YouTube Music to read this.
+159|Sign in to YouTube Music to see Samples.
+160|Sign in to YouTube Music to see what it has for your account.
+161|Sign in to YouTube Music to start a radio.
+162|Sign in to YouTube Music to upload.
+163|Sign in to YouTube Music to upload. Nothing was added.
+164|Sign in to save this episode for later.
+165|Sign in to see this
+166|Sign-in cancelled.
+167|Sign-in couldn’t finish. Nothing was saved. Try again.
+168|Sign-in didn’t finish
+169|Sign-in was cancelled or replaced. Try again when you’re ready.
+170|Signed in to YouTube Music
+171|Signing in to YouTube Music…
+172|Single episodes can’t be played from search yet.
+173|Smart Downloads isn’t available yet: nothing on this Mac can suggest items to keep. Nothing is downloaded automatically.
+174|Storage wasn’t available
+175|Switching is unavailable while an ad plays.
+176|That YouTube Music account is already on this Mac. Use Sign In Again on its row.
+177|That change isn’t possible right now.
+178|That didn’t work. Nothing was changed. Try again.
+179|That isn’t a YouTube Music invite link.
+180|That isn’t available right now.
+181|That item can’t be kept. Choose an audio file.
+182|That’s a different YouTube Music account. Sign in again with the account shown on this row.
+183|The Google callback was not accepted. No Music connection was verified.
+184|The Google response could not be verified. No Music connection was verified.
+185|The account action could not finish. Retry the action.
+186|The account action failed. Try again.
+187|The account changed, so this upload was stopped.
+188|The app’s own record of what it played here. It isn’t YouTube Music’s history, and it is never sent to YouTube Music.
+189|The connected account provider cannot perform this action.
+190|The lyrics couldn’t load right now.
+191|The permission to keep this item ended. Renew it or download it again.
+192|The player can’t move to that point right now.
+193|The player didn’t change the speed. It keeps its current speed.
+194|The playlist couldn’t be read back after the last change, so what you see is an estimate.
+195|The playlist couldn’t be read first, so nothing was sent.
+196|The playlist couldn’t be read, so nothing was sent again.
+197|The playlist wasn’t read completely, so it can’t be reordered yet. Refresh and try again.
+198|The playlist wasn’t read completely, so reordering is off until it is.
+199|The queue could not be reordered. Check the editable items and try again.
+200|The saved copy was damaged and was removed
+201|The upload list couldn’t be read. Jobs from before aren’t shown.
+202|The upload list couldn’t be saved. It won’t survive a restart.
+203|The video could not be switched. Try again.
+204|These words were not searched: no YTMuse window could take them, or a newer search replaced them. Open YTMuse and try again.
+205|This Mac’s record couldn’t be read or saved.
+206|This account signed out, so its downloads were removed
+207|This action is unavailable in this identity’s region.
+208|This action isn’t available for this item.
+209|This action isn’t available for this page.
+210|This app can’t read the file any more. Choose it again.
+211|This app can’t read this from YouTube Music yet. No response it can read carries it, so nothing is shown and nothing is made up.
+212|This app couldn’t read this file, so it wasn’t added.
+213|This app doesn’t read a radio’s queue from YouTube Music yet, so it can’t tell whether the radio has tuning controls. None are shown, and none are made up.
+214|This change isn’t valid. Nothing was changed.
+215|This change needs your confirmation first. Nothing was changed.
+216|This collection couldn’t be loaded
+217|This couldn’t be loaded
+218|This deletes this app’s saved window navigation, searches, filters and selections for all accounts. It does not delete listening history, accounts, music or remote data.
+219|This doesn’t look like an audio file, so it wasn’t added.
+220|This episode didn’t say which show to play it from, so Play isn’t offered here. Open the show to play it.
+221|This file is copy-protected, so it can’t be uploaded.
+222|This file is empty, so it wasn’t added.
+223|This identity does not have permission for that action.
+224|This identity or content is unavailable. Choose another account or item.
+225|This isn’t a regular file, so it wasn’t added.
+226|This item belongs to a different account or an earlier session. Pick it again.
+227|This item didn’t include anything to play.
+228|This page didn’t include what is needed to follow or save from here.
+229|This page isn’t readable yet
+230|This page was reopened without its details, so availability isn’t known. Play and Copy Link still work.
+231|This playlist is private, so only you can open its link. Change its visibility first to share it.
+232|This removes only these entries. Undo is offered afterwards.
+233|This result didn’t include anything to play.
+234|This song has no rating to remove.
+235|This track isn’t available to you.
+236|This upload failed.
+237|Updating Google authorization…
+238|Updating account…
+239|Uploaded. YouTube Music is processing this file; it isn’t in your library yet.
+240|Uploading arrives in a later update, so nothing was added.
+241|Verifying your YouTube Music account…
+242|YTMuse can’t start something on repeat from outside the app yet.
+243|YTMuse can’t start something shuffled from outside the app yet.
+244|YTMuse couldn’t find that in the current account.
+245|YTMuse couldn’t prepare sign-in on this Mac. Try again.
+246|YTMuse couldn’t read or update this account’s saved session in the Keychain on this Mac. Your account was not signed out. Try again, or sign in again.
+247|YTMuse is already starting something. Try again in a moment.
+248|YTMuse is still starting. Try again in a moment.
+249|You can browse the music you’ve already uploaded and remove it here. Adding music from this Mac isn’t available yet.
+250|You cancelled this upload.
+251|YouTube Music answered in a way YTMuse doesn’t recognise yet, so no account was added.
+252|YouTube Music answered in a way YTMuse doesn’t recognise yet. This is not an empty library.
+253|YouTube Music answered, but sent nothing for your account here. Nothing is estimated in its place.
+254|YouTube Music can’t continue this upload.
+255|YouTube Music can’t resume an interrupted upload, so it has to start over.
+256|YouTube Music couldn’t answer this request. Try again.
+257|YouTube Music couldn’t be asked just now. Trying again.
+258|YouTube Music couldn’t be reached, and there is no saved copy of this collection yet.
+259|YouTube Music couldn’t be reached. Check again later.
+260|YouTube Music couldn’t process this file.
+261|YouTube Music couldn’t say either. Trying again sets the same state again and can’t duplicate anything.
+262|YouTube Music couldn’t start this episode. Try again.
+263|YouTube Music couldn’t start this. Try Play again.
+264|YouTube Music couldn’t start this. Try again.
+265|YouTube Music couldn’t take this upload right now.
+266|YouTube Music didn’t accept this change. Nothing was changed.
+267|YouTube Music didn’t accept this file.
+268|YouTube Music didn’t accept this. Nothing was changed.
+269|YouTube Music didn’t apply this change. It was rolled back.
+270|YouTube Music didn’t confirm the deletion.
+271|YouTube Music didn’t confirm the new playlist. It may or may not exist.
+272|YouTube Music didn’t confirm this change. It may or may not have been applied.
+273|YouTube Music didn’t confirm this. It may or may not have happened.
+274|YouTube Music didn’t confirm this. It may or may not have happened. Check before doing it again.
+275|YouTube Music didn’t confirm this. You may or may not have joined.
+276|YouTube Music didn’t offer commenting here.
+277|YouTube Music didn’t offer this action on this comment.
+278|YouTube Music didn’t offer this change for this item.
+279|YouTube Music didn’t supply that control for this radio.
+280|YouTube Music doesn’t let you change this playlist, so nothing here can edit it.
+281|YouTube Music doesn’t let you change this playlist.
+282|YouTube Music doesn’t let you change this playlist. Nothing was changed.
+283|YouTube Music doesn’t offer downloads on Mac.
+284|YouTube Music doesn’t offer this collection to this account or version.
+285|YouTube Music finished processing this file, but your uploads list couldn’t be updated. Refresh it to see the file.
+286|YouTube Music is asking for a pause, so the lyrics couldn’t load.
+287|YouTube Music is asking for a pause. Nothing was changed.
+288|YouTube Music is asking for a pause. Try again in a moment.
+289|YouTube Music is limiting requests. Wait a moment, then try again.
+290|YouTube Music is temporarily unavailable. Try again later.
+291|YouTube Music items play through YouTube's own player, which the app cannot save for offline use.
+292|YouTube Music manages the upcoming items, so YTMuse can’t add to the queue or play something next.
+293|YouTube Music manages the upcoming songs of this queue. The app only sees the one playing, so it can’t save this queue as a playlist.
+294|YouTube Music sent a page in a form this version can’t read yet.
+295|YouTube Music sent lyrics this version can’t read.
+296|YouTube Music sent this collection in a form this version can’t read. That isn’t the same as an empty library.
+297|YouTube Music’s answer couldn’t be read, so nothing is shown.
+298|YouTube Music’s answer for Samples couldn’t be read, so nothing is shown.
+299|YouTube Music’s own history can’t be cleared from this app: the service gives it no request to do that. Use your Google Account’s activity controls.
+300|YouTube Music’s own history can’t be paused from this app: the service gives it no request to do that. Use your Google Account’s activity controls.
+301|YouTube Music’s suggestions couldn’t be read. Your songs are unaffected.
+302|Your Music Account
+303|Your YouTube Music session ended. Sign in again for your own results.
+304|Your YouTube Music session ended. Sign in again to play episodes.
+305|Your YouTube Music session ended. Sign in again to see Samples.
+306|Your YouTube Music session ended. Sign in again to start a radio.
+307|Your YouTube Music session ended. Sign in again.
+308|Your account changed before this started. Try Play again.
+309|Your account changed while this loaded. Try again.
+310|Your podcast settings couldn’t be saved on this Mac. They apply until you quit.
+311|Your session ended, so nothing was changed. Sign in again.
+312|Your session ended. Sign in again to upload.
+313|Your session ended. Sign in again.
+314|Your uploads list couldn’t say either. Removing again can’t remove anything else.
+315|You’re offline, so Samples couldn’t be loaded.
+316|You’re offline, so nothing was sent or loaded.
+317|You’re offline, so the lyrics couldn’t load.
+318|You’re offline. The upload stopped and nothing was queued.
+319|You’re on Google’s own sign-in page. YTMuse never sees or stores your password.
+320|Text size
+321|Scales the text of lists, details and lyrics.
+322|Menus and spoken messages change after you relaunch YTMuse.
+323|%@ by its name
+324|%@ is always kept free on this Mac.
+325|%@ of %@
+326|%@ of earlier downloads are no longer listed but still count toward the limit.
+327|%@ so far · size not known yet
+328|%@ the comment by %@?
+329|%@ this comment by %@?
+330|%@ used of %@ across all accounts
+331|%@, %@, local only
+332|%@: comment by %@
+333|A global shortcut needs Command, Control or Option.
+334|A live stream cannot be sought.
+335|A live stream has no audio-only version here, so the video keeps playing.
+336|A live stream has no end, so the timer can only count minutes.
+337|A live stream has no fixed length or end, so there is nothing complete to download.
+338|A live stream has no position to carry over, so it starts from the beginning.
+339|A music source is not connected to this destination yet.
+340|A newer preview replaced this one.
+341|A sleep timer pauses here but can't fade.
+342|Account
+343|Accounts
+344|Active · Paused
+345|Ad
+346|Ad playing
+347|Add
+348|Add Audio File…
+349|Add a comment
+350|Add an account when browser sign-in is available.
+351|Add an audio file from this Mac to keep it here and play it from this screen.
+352|Add to Playlist
+353|Add to Playlist…
+354|Add to “%@”
+355|Add “%@” to “%@”?
+356|Added to queue
+357|Additional outputs require a connected route provider.
+358|Advertisement
+359|AirPlay
+360|AirPlay can't be chosen from this player.
+361|AirPlay isn't available for this kind of playback.
+362|AirPlay receiver
+363|AirPlay receivers are chosen in the system picker.
+364|AirPlay receivers are chosen in the system picker. Grouping is left to it, as far as the system offers it.
+365|Album
+366|Albums
+367|All
+368|Already at the live edge.
+369|Already here: %@. Keep Duplicates adds them again; Skip Existing leaves them out.
+370|Already the case: %@
+371|Also show my playlists, uploads and listening history
+372|An advertisement is playing. It cannot be skipped or sought.
+373|An advertisement is playing. Like returns with the next song.
+374|An independent native YouTube Music client for Mac
+375|An interrupted upload can be resumed.
+376|An invite link lets people you send it to join and add songs. Nothing is sent to anyone by this app.
+377|Another request for this is still in progress.
+378|Anyone with the link can open this playlist.
+379|App volume
+380|App volume applies. The output's own volume is the Mac's.
+381|App volume could not change. Try adjusting volume again.
+382|Appearance
+383|Appearance is stored on this Mac and applies to all app windows.
+384|Appears more than once
+385|Approve YTMuse in System Settings > General > Login Items to finish.
+386|Approximate match
+387|Artist
+388|Artists
+389|Asked YouTube Music to dislike this song.
+390|Asked YouTube Music to like this song.
+391|Asked YouTube Music to save this song to your library.
+392|At login YTMuse opens in the menu bar only, with no window and no audio.
+393|At the end, after “%@”
+394|At the start, before “%@”
+395|Audio Only
+396|Audio only. The video is not being decoded.
+397|Automatic
+398|Automatic downloads are off. Turn on Smart Downloads first.
+399|Automatic downloads reached their limit
+400|Autoplay
+401|Available to play
+402|Back
+403|Back to collection
+404|Badges
+405|Between “%@” and “%@”
+406|Bluetooth
+407|Browse
+408|Buffering…
+409|Built-in
+410|Button
+411|Cancel timer
+412|Captions
+413|Category
+414|Change Visibility
+415|Changes only what this Mac shows
+416|Chapters
+417|Chapters come from the timestamps in the episode’s description.
+418|Check
+419|Check Now
+420|Checking
+421|Choose
+422|Choose Files…
+423|Choose Output…
+424|Choose a length between a second and 24 hours.
+425|Choose a position within the item.
+426|Choose an item to start listening.
+427|Choose between 1 minute and 24 hours.
+428|Choose music to upload
+429|Choose the skip lengths
+430|Clear
+431|Clear history
+432|Close
+433|Collaboration
+434|Collaboration is on, but YouTube Music returned no link this app can show.
+435|Collaboration is on. The invite link is ready.
+436|Collaborator
+437|Collapse Now Playing
+438|Command Palette
+439|Command Palette…
+440|Commands
+441|Comment on %@
+442|Comments
+443|Comments aren’t available yet. None of the YouTube Music responses this app can read carries them, so there is nothing to read, post or moderate.
+444|Compact
+445|Compact size
+446|Connect a source that can open this item, or return to your collection.
+447|Continues the album or playlist from this track.
+448|Copy Invite Link
+449|Copy Link
+450|Copy Link to Current Song
+451|Copy Links
+452|Couldn’t refresh. Showing a saved copy from %@. %@
+453|Counted by YTMuse from what it played on this Mac. This is not YouTube Music’s Recap, and it never leaves this Mac.
+454|Create
+455|Create Invite Link
+456|Create an invite link
+457|Created “%@” as %@.
+458|Creating the playlist…
+459|Crossfade overlaps the end of one item with the start of the next, and a live stream has no end to overlap.
+460|Custom minutes
+461|Dark
+462|Default
+463|Default speed
+464|Delete “%@”?
+465|Description
+466|Description (optional)
+467|Description: “%@”
+468|Details
+469|Did you mean “%@”?
+470|Discovery
+471|Dislike
+472|Done.
+473|Done. YouTube Music confirmed it.
+474|Download Again
+475|Download on This Connection
+476|Download progress
+477|Download storage is full
+478|Download storage used
+479|Downloaded
+480|Downloaded only
+481|Downloading
+482|Edit Playlist
+483|End of episode
+484|End of item
+485|End of track
+486|Ended
+487|Episode
+488|Episode progress
+489|Episodes
+490|Exit Full Screen
+491|Expanded
+492|Expanded size
+493|Expired
+494|Explicit
+495|Failed
+496|File chosen on this Mac
+497|File on this Mac
+498|Filter
+499|Find
+500|Find…
+501|Finish or dismiss the removal in progress first.
+502|Follow
+503|Following
+504|Following and saving to your library aren’t available yet. YTMuse reads the catalog but doesn’t change your library.
+505|Following isn’t available yet. YTMuse reads the catalog but doesn’t change your library.
+506|For suggestions and discovery, open Home and Explore.
+507|Forward
+508|Free disk space on this Mac
+509|From YouTube Music
+510|From your selection
+511|Full Screen
+512|Global shortcuts
+513|Go
+514|Go Live
+515|Go to %@
+516|Going back.
+517|Grid
+518|Grouping receivers is left to the system picker, as far as it offers it.
+519|HDMI or DisplayPort
+520|Headphones were unplugged, so playback paused.
+521|Hidden
+522|History
+523|In your library
+524|Independent. Native. Yours.
+525|Invite link for the playlist “%@”
+526|Inviting collaborators from YTMuse isn’t available in this version.
+527|It can be resumed.
+528|It is added only if you press Add.
+529|Item
+530|Items finish here once they are saved on this Mac.
+531|Its songs play through YouTube Music and aren’t kept on this Mac. Audio files you add here are kept encrypted on this Mac, and you can play them from this screen.
+532|Join Playlist
+533|Join Playlist…
+534|Join a Collaborative Playlist
+535|Join “%@”?
+536|Join…
+537|Jump to the live edge
+538|Jumps and speed are for podcast episodes.
+539|Keep Duplicates
+540|Keep My Change
+541|Keep an audio file from this Mac and play it from here
+542|Keep on This Mac
+543|Keep on Top
+544|Keep the mini-player on top
+545|Kept for a playlist
+546|Kept on this Mac
+547|LIVE
+548|Language and region
+549|Large
+550|Larger
+551|Largest
+552|Launch
+553|Launch YTMuse at login
+554|Launch at login is not available for this build.
+555|Layout
+556|Library changes are made one item at a time.
+557|Library changes are made one item at a time. Adding songs to a playlist asks first.
+558|Library changes are not available here.
+559|Library not read
+560|Library playlists
+561|Light
+562|Like
+563|Liked Songs
+564|Liking needs the song's page: open it once and the control appears here.
+565|Liking needs the song's page: open the song once and the control appears here.
+566|Link copied
+567|List
+568|Listening speed
+569|Listening speed for this show
+570|Live
+571|Load All
+572|Load more
+573|Loading
+574|Loading Samples
+575|Loading comments
+576|Loading episode
+577|Loading library
+578|Loading lyrics
+579|Loading more
+580|Loading, Pause
+581|Local labels and defaults apply to this Mac. Service subscriptions remain with YouTube.
+582|Local only
+583|Local storage could not open. Existing data was preserved.
+584|Locked. Unlock to see what is playing.
+585|Longest first
+586|Look Up
+587|Low Data Mode is on for this connection. Automatic downloads wait; you can start one anyway.
+588|Low Power Mode: one download at a time.
+589|Lyrics
+590|Lyrics appear here for the song that is playing.
+591|Lyrics appear when supplied by the source.
+592|Make Default
+593|Mark as Played
+594|Mark as Unplayed
+595|Matches from your library appear as you type. YouTube Music results follow a moment later.
+596|Menu bar and sleep
+597|Mini-player
+598|Minimize
+599|Minutes
+600|Moderate
+601|Moderate a comment
+602|More
+603|More playback actions
+604|More than one item matches. Choose one.
+605|More than one item matches. Choose one:
+606|More than one new playlist has this title. Which one is yours?
+607|Most played artists on this Mac
+608|Most played songs on this Mac
+609|Move down
+610|Move to end of page
+611|Move up
+612|Moves playback to this line
+613|Music tuner
+614|Mute
+615|Mute could not change. Try the mute action again.
+616|Native design test data · Not YouTube Music
+617|Navigation test data · No service media
+618|New Playlist
+619|New Window
+620|Next Song
+621|Next Song in YTMuse
+622|Next page
+623|No Samples right now
+624|No artists in your library yet
+625|No comments yet.
+626|No description
+627|No downloaded items
+628|No downloaded playlists
+629|No liked songs yet
+630|No lyrics available
+631|No matches
+632|No matching playlists
+633|No native start
+634|No network connection. Downloads wait and then continue by themselves.
+635|No output
+636|No playlist title in your library matches this search.
+637|No playlists in your library yet
+638|No playlists in your library yet.
+639|No playlists yet
+640|No radio started. The diversity and discovery controls appear here only if YouTube Music supplies them for a radio.
+641|No radio started. Tuning controls can be shown here only once this app can read a radio’s queue.
+642|No results
+643|No saved albums yet
+644|No saved episodes yet
+645|No saved podcasts yet
+646|No song in this queue is a YouTube Music song this app knows, so there is nothing to save as a playlist.
+647|No song is playing
+648|No songs in your library yet
+649|No uploads yet
+650|None
+651|Not available to you right now
+652|Not available yet
+653|Not chosen
+654|Not enough free space on this Mac
+655|Not in the playlist
+656|Not playing
+657|Not set
+658|Nothing downloaded yet
+659|Nothing has been played in YTMuse on this Mac yet.
+660|Nothing here yet
+661|Nothing is added until you press Add.
+662|Nothing is downloaded yet
+663|Nothing is playing to switch.
+664|Nothing is playing, so there is no timer to set.
+665|Nothing is playing, so there is nothing to like.
+666|Nothing is playing.
+667|Nothing matched. Check the spelling or try fewer words.
+668|Nothing playing
+669|Nothing to show here
+670|Nothing to show yet
+671|Nothing to start from yet. Open songs, artists and playlists in Home and Explore; the radios YouTube Music offers for them are listed here.
+672|Notifications
+673|Notify when the song changes
+674|Now Playing Full Screen
+675|Now Playing artwork
+676|Now playing “%@”.
+677|OK
+678|Off
+679|Off unless you turn it on. When on, it keeps suggestions for you using at most %@, a quarter of the limit, and never removes anything you chose to keep.
+680|On
+681|On this Mac
+682|Only the playlist’s owner can do this.
+683|Open
+684|Open %@
+685|Open Link from Clipboard
+686|Open Settings
+687|Open YTMuse to start playing.
+688|Open YTMuse to use this button.
+689|Open Your Library
+690|Options
+691|Original order
+692|Out of date. Last updated %@.
+693|Output
+694|Output selection is not available yet.
+695|Owner
+696|Panel
+697|Part of this change needs your answer below.
+698|Paste an invite link
+699|Pause history
+700|Paused by you
+701|Paused.
+702|Pending
+703|Pick something to start its radio. Only radios YouTube Music offers are listed, and the tuner shows only controls it supplies.
+704|Pick something to start its radio. Radios and any controls come from YouTube Music; the tuner shows only what it supplies.
+705|Picture in Picture
+706|Picture in Picture could not start.
+707|Picture in Picture is not available for this video: WebKit reports that it does not support it here.
+708|Picture in Picture is not possible for this video right now.
+709|Picture in Picture is not supported on this Mac.
+710|Play Here
+711|Play Here…
+712|Play next
+713|Play on this Mac?
+714|Play or Pause in YTMuse
+715|Play/Pause
+716|Playback
+717|Playback could not change. Try the transport action again.
+718|Playback could not finish. Retry the selected item.
+719|Playback is shared across every window.
+720|Playback position
+721|Played
+722|Playing at %@; you chose %@
+723|Playing from YouTube Music
+724|Playing in Picture in Picture.
+725|Playing in the player. The preview ended first.
+726|Playing in the video window.
+727|Playing now uses this Mac's sound output.
+728|Playing.
+729|Playlist
+730|Playlists
+731|Playlists you save in YouTube Music appear here.
+732|Plays this song and then similar music.
+733|Podcast
+734|Podcasts
+735|Post
+736|Post a comment
+737|Prepared queue
+738|Preparing
+739|Press a shortcut…
+740|Preview
+741|Previewing
+742|Previews don’t start by themselves on a constrained connection. Press Preview to hear one.
+743|Previews don’t start by themselves while Low Power Mode is on. Press Preview to hear one.
+744|Previews that start by themselves
+745|Previews that start by themselves are turned off. Press Preview to hear one.
+746|Previous Song
+747|Previous Song in YTMuse
+748|Previous item
+749|Previous page
+750|Private
+751|Processing %@
+752|Progress marked “On this Mac” is kept on this Mac only. YouTube’s own player reports its progress to YouTube Music by itself.
+753|Public
+754|Quality
+755|Queued
+756|Quit YTMuse
+757|Radio
+758|Radio filter
+759|Radio from “%@”
+760|Raise the storage limit
+761|Rate
+762|Rating
+763|Rating: %@
+764|Read comments
+765|Read from YouTube Music. YouTube’s own player records it when it plays; this app never writes it.
+766|Reading the playlist…
+767|Reads the playlist first and sends only what is missing
+768|Ready to join “%@”.
+769|Recap
+770|Recent
+771|Recent items
+772|Recent searches
+773|Recently played
+774|Reconnect
+775|Refresh
+776|Refreshing…
+777|Remove %@ from this Mac?
+778|Remove %@ from your uploads
+779|Remove Like
+780|Remove from Episodes for Later
+781|Removed “%@” from your uploads.
+782|Removed “%@” from your uploads. The file on your Mac wasn’t touched.
+783|Remove…
+784|Removing “%@”…
+785|Rename
+786|Rename local label
+787|Renew
+788|Renewing
+789|Repeat %@
+790|Repeat all
+791|Repeat could not change. Try the repeat action again.
+792|Repeat off
+793|Repeat one
+794|Reset saved window state
+795|Reset saved window state?
+796|Reset saved window state…
+797|Restore Appearance Default
+798|Restore Language Defaults
+799|Resume
+800|Resume %@
+801|Resume playback after the Mac wakes
+802|Retry action
+803|Retry local storage
+804|Retry selected item
+805|Return to Current Line
+806|Reveal Current Item
+807|Samples
+808|Samples aren’t available yet
+809|Samples aren’t available yet. None of the YouTube Music responses this app can read carries them, so there is nothing to show here.
+810|Save
+811|Save Description
+812|Save Queue as Playlist…
+813|Save current window again
+814|Save for Later
+815|Save to Library
+816|Saved
+817|Saved Episodes
+818|Saved copy from %@.
+819|Saved copy from %@. Refreshing…
+820|Saved window state could not be reset safely. Your account remains usable. Try again after fixing this app’s window-state storage.
+821|Saved window state is unavailable. Your account is still usable. You can reset this app’s saved windows, searches, filters and selections.
+822|Saving this change…
+823|Saving to your library isn’t available yet. YTMuse reads the catalog but doesn’t change your library.
+824|Say what to search for.
+825|Search YTMuse
+826|Search YouTube Music
+827|Search for
+828|Search for “%@”
+829|Search for “%@” instead
+830|Search songs, albums, artists and playlists
+831|Search this collection
+832|Search your uploads
+833|Searches again
+834|Searching YouTube Music…
+835|Searching the playlists in your library on this Mac. The service is not asked.
+836|Searching.
+837|Seconds
+838|Secure page: %@
+839|Seek Back
+840|Seek Forward
+841|Seeking.
+842|Select %@
+843|Select All
+844|Sending…
+845|Service order
+846|Service subscriptions remain with YouTube.
+847|Session
+848|Settings…
+849|Share
+850|Share Current Song…
+851|Share…
+852|Shortest first
+853|Show
+854|Show Library
+855|Show Lyrics
+856|Show Now Playing
+857|Show Queue
+858|Show Queue in Window
+859|Show Queue in YTMuse
+860|Show Video
+861|Show Video Version
+862|Show Window
+863|Show YTMuse
+864|Show less
+865|Show more
+866|Show or hide YTMuse
+867|Show queue
+868|Show saved songs, albums and artists in Spotlight
+869|Show the playing track in the menu bar tooltip
+870|Show the video in its own window
+871|Showing results for “%@”.
+872|Showing the first page of your library.
+873|Showing the player.
+874|Showing the queue.
+875|Show’s order
+876|Shuffle
+877|Shuffle could not change. Try the shuffle action again.
+878|Sign In Again
+879|Sign in to YouTube Music
+880|Signed in again as %@.
+881|Single episodes can’t be played from here yet.
+882|Skip Existing
+883|Skip back
+884|Skip forward
+885|Skip lengths
+886|Skipping to the next item.
+887|Sleep timer
+888|Sleep timer off.
+889|Sleep timer set for the end of this item.
+890|Sleep timer: %@ left
+891|Sleep timer: end of episode
+892|Sleep timer: end of track
+893|Sleep timer: fading out
+894|Smart Downloads
+895|Software device
+896|Some files weren’t added.
+897|Some of these songs are already in the playlist
+898|Something is already playing, so previews don’t start by themselves. Press Preview to hear one.
+899|Something is already playing, so previews don’t start by themselves. Press Preview to hear one; it replaces what’s playing.
+900|Song
+901|Song title
+902|Songs
+903|Sort
+904|Sort episodes
+905|Source: %@ · %@ · %@ · %@
+906|Speed
+907|Spotlight
+908|Start Over
+909|Start Radio
+910|Start a radio from
+911|Start radio from %@
+912|Started
+913|Starting
+914|Starting YouTube Music…
+915|Starting…
+916|Stop Contributions
+917|Stop Contributions…
+918|Stop Keeping
+919|Stop Preview
+920|Stop contributions
+921|Stop contributions to the playlist “%@”
+922|Stop contributions to “%@”?
+923|Stop keeping the mini-player on top
+924|Stopped
+925|Storage
+926|Storage limit
+927|Suggested songs
+928|Suggestions
+929|Suggestions and discovery arrive with the Home and Explore screens. Until then, search is the way in.
+930|Switch
+931|System
+932|System output
+933|Tell YTMuse what to play by name.
+934|That command is not available right now.
+935|That download could not play. Try Play again, or download it again.
+936|That position is not valid.
+937|That quality is not one this video offers.
+938|That search is too long.
+939|That value is not valid for this command.
+940|The AirPlay receiver disconnected, so playback paused.
+941|The app closed before this upload finished.
+942|The description was also changed.
+943|The disk is full
+944|The file changed after it was chosen. Choose it again.
+945|The first page of YouTube Music’s answer, not the whole catalog.
+946|The key for this download is no longer available
+947|The last or current item, with play, previous and next.
+948|The link is only read to name the playlist. You join only if you press Join and confirm.
+949|The next item could not open. Try Next again.
+950|The only song
+951|The other player could not be stopped. Try Play again.
+952|The output was disconnected, so playback paused.
+953|The output you chose before isn't connected, so the Mac's sound output is in use.
+954|The output you were using is back; choose Reconnect in the Output menu to continue there.
+955|The playback position could not change. Try seeking again.
+956|The playlist had changed elsewhere; your change was merged with it.
+957|The playlist is closed to contributions.
+958|The previous item could not open. Try Previous again.
+959|The queue could not take that song.
+960|The queue is shown in the main window.
+961|The radio could not start. What was playing is unchanged.
+962|The receiver sets the volume.
+963|The selected queue item could not open. Try selecting it again.
+964|The session for %@ ended. Sign in again.
+965|The sleep timer could not change. Try setting the timer again.
+966|The sleep timer will pause playback on the receiver when it ends, but it can't fade the sound first. Turn it on anyway?
+967|The source is no longer available
+968|The source no longer allows keeping this item
+969|The title was also changed to “%@”.
+970|The two versions differ in length, so it starts from the beginning.
+971|The visibility was also changed.
+972|There is no picture to show.
+973|There is nothing to go back to.
+974|There is nothing to go forward to.
+975|These are different versions of the recording, so it starts from the beginning.
+976|These choices are kept on this Mac only. A show you give its own speed keeps it.
+977|These lyrics came without timing, so they don’t follow the song. Scroll to read.
+978|This Sample names nothing to play.
+979|This answer changes only this one thing. The rest of the playlist stays as it is.
+980|This app never changes the Mac's volume.
+981|This comment is longer than this app sends in one post.
+982|This connection is metered. Automatic downloads wait; you can start one anyway.
+983|This deletes “%@” from your YouTube Music uploads. The file on your Mac isn’t touched.
+984|This episode’s show is not known, so its speed cannot be changed.
+985|This file changed while it was being read. Choose it again once it has finished changing.
+986|This file is larger than the %@ YouTube Music accepts.
+987|This is a folder. Choose the audio files inside it instead.
+988|This is a video file. Uploads to your music library take audio files.
+989|This is already the audio version.
+990|This is not a live stream.
+991|This is the standard %@ shortcut, which every app uses.
+992|This is your own audio or a local file, not a YouTube Music song, so it has no like or save.
+993|This is your own audio or a local file, not a YouTube Music song, so it has no like.
+994|This item cannot be loaded
+995|This item cannot be sought right now.
+996|This item has no link.
+997|This item is waiting where you left it. Press Play first.
+998|This item’s length is not known.
+999|This key cannot be used for a global shortcut.
+1000|This key cannot be used: choose a letter, a digit, an arrow, Space or F1 to F12.
+1001|This link cannot be opened
+1002|This link cannot be opened. Use a YouTube Music link to a song, album, artist or playlist.
+1003|This live stream offers no earlier part to seek to.
+1004|This live stream offers no earlier part to seek to. Go live is the only way to move.
+1005|This needs your confirmation first.
+1006|This player can't be pointed at an output; it follows the Mac.
+1007|This playlist has no songs yet.
+1008|This playlist is public.
+1009|This preview could not start.
+1010|This radio’s queue was read and carried no tuning controls.
+1011|This receiver can't fade the sleep timer
+1012|This result has no link.
+1013|This sends the request to YouTube Music for the comment “%@” by %@.
+1014|This sends the request to YouTube Music for “%@”.
+1015|This shortcut already runs “%@”.
+1016|This shortcut could not be registered. Another app may be using it; choose another.
+1017|This song is already in the playlist
+1018|This song is already in the playlist.
+1019|This video has no captions to show.
+1020|This widget is out of date. Open YTMuse and it will refresh.
+1021|Thunderbolt or FireWire
+1022|Timer
+1023|Title
+1024|Title (A–Z)
+1025|Title (Z–A)
+1026|Title A–Z
+1027|Title Z–A
+1028|Title: “%@”
+1029|Top result
+1030|Try another command, or search for music.
+1031|Trying again %@
+1032|Turn On Timer
+1033|Type a command or search YouTube Music
+1034|USB
+1035|Unavailable
+1036|Undo: changed the description
+1037|Undo: changed the visibility
+1038|Undo: moved “%@”
+1039|Undo: renamed the playlist
+1040|Unfollow
+1041|Unknown
+1042|Unknown bitrate
+1043|Unknown output
+1044|Unknown sample rate
+1045|Unknown song
+1046|Unlisted
+1047|Unmute
+1048|Unpin
+1049|Unplayed first
+1050|Untitled item
+1051|Up next
+1052|Updated %@.
+1053|Upload
+1054|Uploaded albums
+1055|Uploaded artists
+1056|Uploaded songs
+1057|Uploading %@
+1058|Uploading arrives in a later update
+1059|Uploads
+1060|Uploads aren’t connected yet, so there is nothing to search here.
+1061|Uploads in progress and finished
+1062|Use Default Speed for This Show
+1063|Use a supported music item link, or find the item in your collection.
+1064|Video
+1065|Video Window
+1066|Video preview
+1067|Videos
+1068|Viewer
+1069|Visibility
+1070|Visibility: %@
+1071|Volume
+1072|Waiting for a network connection
+1073|Waiting to upload
+1074|Waiting: Low Data Mode is on for this connection
+1075|Waiting: this connection is metered
+1076|WebKit did not enter Picture in Picture for this video.
+1077|WebKit did not start Picture in Picture for this video.
+1078|What you asked for
+1079|Where in the queue
+1080|Where to search
+1081|Which one?
+1082|Window Size
+1083|Window history could not be opened. Your current window was preserved.
+1084|Window history could not be saved. Try saving again.
+1085|With only Option (and Shift) this shortcut would type a character in every text field. Add Command or Control.
+1086|Work from any app. None is set until you record one. A shortcut needs Command, Control or Option and cannot replace a standard editing or system shortcut.
+1087|Working…
+1088|Write something to post.
+1089|YTMuse
+1090|YTMuse already uses this shortcut for %@.
+1091|YTMuse can like or save only the song that is playing.
+1092|You aren’t following anyone yet
+1093|You can already edit “%@”. Nothing was sent.
+1094|You can choose the app’s appearance in Settings.
+1095|You have no playlists yet.
+1096|You joined the playlist.
+1097|You will be able to add and change songs in this playlist, and it is added to your library.
+1098|YouTube Music
+1099|YouTube Music accepts files up to %@.
+1100|YouTube Music answered in a form this version can’t read. Nothing was changed.
+1101|YouTube Music asked to slow down. Showing matches from this Mac; try again shortly.
+1102|YouTube Music could not start this. Try Play again.
+1103|YouTube Music could not start. Try Play again.
+1104|YouTube Music couldn’t be reached. Showing matches from this Mac.
+1105|YouTube Music couldn’t do this right now. Nothing was changed.
+1106|YouTube Music did not change the captions.
+1107|YouTube Music did not change the quality.
+1108|YouTube Music did not offer Save to Library for this song. Open the song once to read its page.
+1109|YouTube Music did not say whether this is a song or a video, so it cannot be switched here.
+1110|YouTube Music didn’t confirm the removal. “%@” may or may not have been removed.
+1111|YouTube Music didn’t supply diversity or discovery controls for this radio, so none are shown.
+1112|YouTube Music does not offer Dislike for this song.
+1113|YouTube Music does not say these are the same recording, so it starts from the beginning.
+1114|YouTube Music finished processing this file.
+1115|YouTube Music finished processing this file. Your uploads list was updated.
+1116|YouTube Music gave this item nothing to play.
+1117|YouTube Music has no Samples for you at the moment.
+1118|YouTube Music has no lyrics for this song.
+1119|YouTube Music has no next or previous item here.
+1120|YouTube Music has nothing in this collection. It was read completely.
+1121|YouTube Music has published no audio version of this video, so the video keeps playing. The picture is not hidden to fake audio only.
+1122|YouTube Music has published no video version of this song.
+1123|YouTube Music history
+1124|YouTube Music history controls
+1125|YouTube Music is asking for a pause. Try Samples again in a moment.
+1126|YouTube Music is still processing this file. Check again later.
+1127|YouTube Music manages the upcoming items for this playlist, so they are not listed or editable here.
+1128|YouTube Music manages the upcoming items while it plays, so this app cannot add to them.
+1129|YouTube Music playlist
+1130|YouTube Music playlists are streamed, not kept on this Mac. Audio files you add in Downloads appear here.
+1131|YouTube Music playlists in your library are streamed, not retained on this Mac.
+1132|YouTube Music plays in its own player, so the app cannot overlap two items or process their audio.
+1133|YouTube Music plays through this Mac's sound output. Change it in Control Center.
+1134|YouTube Music returned this page without any items.
+1135|YouTube Music said: %@
+1136|YouTube Music search isn’t available right now. Showing matches from this Mac.
+1137|YouTube Music stopped sending more of this collection before the end.
+1138|YouTube Music turned collaboration on but returned no usable invite link.
+1139|YouTube Music volume
+1140|YouTube Music, native on Mac.
+1141|YouTube Music’s version
+1142|YouTube's audio version still carries a picture, so the video decoder may not have stopped. This could not be stopped or verified here.
+1143|Your audio output changed. Confirm “Play here” in YTMuse to start playback.
+1144|Your library could not be read
+1145|Your music
+1146|Your music will appear here
+1147|Your playlists
+1148|Your session ended
+1149|Your version
+1150|You’re offline
+1151|buffering
+1152|detailSeparator
+1153|ended
+1154|failed
+1155|idle
+1156|macOS lists this shortcut among its own enabled shortcuts.
+1157|macOS reports this shortcut as taken.
+1158|macOS uses this shortcut for %@.
+1159|or drop audio files here
+1160|paused
+1161|playing
+1162|preparing
+1163|ready
+1164|resolving
+1165|seeking
+1166|the playlist “%@”
+1167|this playlist
+1168|unknown
+1169|“%@” is already here. Keep Duplicates adds it again as a separate entry; Skip Existing leaves it out.
+1170|“%@” is already in the upload list.
+1171|“%@” is no longer the song you were changing.
+1172|“%@” was also moved somewhere else.
+1173|“%@” was removed from the playlist elsewhere.
+1174|A credential could not be read or cleaned up.
+1175|A download could not finish
+1176|A recent fault came from the network: this Mac could not reach the service.
+1177|A recent fault came from the service: a source outage or a change on its side. The app itself did not fail.
+1178|A recent fault came from this Mac or the app.
+1179|A redacted summary you can read before saving. It holds no media, credentials, names, searches or links, and nothing is sent anywhere.
+1180|A request was refused by policy.
+1181|A source outage means YouTube Music or the network did not answer. A local crash means this app's own process ended unexpectedly.
+1182|A subdued tint taken from the playing artwork. Text contrast does not change.
+1183|Account status
+1184|Actual quality
+1185|After a manual launch the last song is shown paused. Nothing plays until you press Play.
+1186|Also show download and error messages as notifications
+1187|Analytics and remote crash reports
+1188|App
+1189|Applies to all app windows on this Mac.
+1190|Applies to music from files on this Mac. YouTube Music plays in its own player, which this app cannot process.
+1191|Artwork cache
+1192|Ask
+1193|Ask once
+1194|Ask once; a daily background check only after you opt in.
+1195|Audio quality
+1196|Audio when permitted
+1197|Audio when the account and the content permit.
+1198|Autoplay radio
+1199|Bass boost
+1200|Best available
+1201|Best available.
+1202|Cache cleared.
+1203|Cellular hotspots and other expensive connections. Low Data Mode always blocks automatic downloads.
+1204|Check for updates
+1205|Choose an output from the output button in the player.
+1206|Chosen output
+1207|Clear Cache
+1208|Collect local performance timings
+1209|Crossfade
+1210|Deletes this account's sign-in, downloads, cache and settings from this Mac. Your YouTube Music library, playlists and Google account are not changed.
+1211|Dock icon
+1212|Download and error messages always appear in the app. Turn this on to also get a system notification when a download finishes or fails, or when you need to sign in again.
+1213|Download automatically on expensive networks
+1214|Download finished
+1215|Download storage
+1216|Each account keeps its own settings, downloads and cache on this Mac. Removing an account here deletes its local data only. Nothing is deleted from YouTube Music or your Google account.
+1217|Equalizer
+1218|Every account is removed from this Mac and every setting is restored. Your YouTube Music library and Google account are not changed.
+1219|Faults
+1220|Flat
+1221|Follows open windows
+1222|Forget Remembered Output
+1223|Full while a window is visible. Reduced automatically when macOS Reduce Motion or Low Power Mode is on.
+1224|Full while visible
+1225|General
+1226|In the app
+1227|Install updates automatically
+1228|Integration
+1229|Internal error
+1230|Keep Queued Songs
+1231|Keep my queued songs
+1232|Keep your queued songs?
+1233|Language
+1234|Local crash
+1235|Local data
+1236|Local data was reset.
+1237|Local storage could not open.
+1238|Menu bar
+1239|Menu bar control
+1240|Motion
+1241|Network offline
+1242|New playlist visibility
+1243|No account is signed in.
+1244|No faults recorded.
+1245|No network path to the service.
+1246|None is set until you record one.
+1247|Normalize volume
+1248|Not built yet. A radio that continues playback needs a recommendation source, which belongs to the queue and discovery work (W05 and W38). Nothing in this app starts a radio by itself.
+1249|Not built yet. Update checking and installation arrive with the signed distribution (planned as W30 and W46), with their own opt-in. This build checks and installs nothing.
+1250|Off while playing
+1251|Off while playing; a restart is always explicit.
+1252|Off. When on, YTMuse keeps a few timings (launch, search, playback start) in one small file on this Mac, never sent anywhere. Turning it off deletes the file.
+1253|On where supported
+1254|On where supported.
+1255|Pause, no automatic resume
+1256|Performance timings
+1257|Playback engine
+1258|Playback failure
+1259|Playback pauses. It does not resume by itself when they reconnect.
+1260|Preview Support Bundle…
+1261|Privacy
+1262|Refused by policy
+1263|Removal pending
+1264|Remove from This Mac
+1265|Remove from This Mac…
+1266|Remove this account from this Mac?
+1267|Replace Them
+1268|Replace them
+1269|Reset All Local Data
+1270|Reset All Local Data…
+1271|Reset all local data on this Mac?
+1272|Resets YTMuse on this Mac: it removes every account's sign-in and local data, clears caches and the Spotlight and widget copies, and restores every setting. It does not delete anything from YouTube Music or your Google account, and it does not send any request.
+1273|Restore Defaults
+1274|Restore the last session at launch
+1275|Restores only the settings on this page. Your playlists, library and account are not changed.
+1276|Save…
+1277|Search Settings
+1278|Seconds of overlap between songs.
+1279|Service adapter
+1280|Service changed its response
+1281|Service outage
+1282|Shuffle did not apply.
+1283|Sign in to YouTube Music again
+1284|Sign-in expired
+1285|Signed in
+1286|Signed out
+1287|Smart Downloads needs a source that permits keeping its music. None does today, so it has nothing to suggest.
+1288|Songs or videos
+1289|Stale or conflicting account state.
+1290|Storage by account
+1291|Support Bundle Preview
+1292|Support bundle
+1293|System default
+1294|The account could not be fully removed. Open Accounts to retry.
+1295|The account was removed from this Mac.
+1296|The bundle could not be saved.
+1297|The cache could not be cleared.
+1298|The last run of this app ended unexpectedly: a local crash, not a service outage.
+1299|The mini-player floats above other windows.
+1300|The most the downloads of all accounts may keep on this Mac.
+1301|The player did not answer in time.
+1302|The player needs a fresh sign-in.
+1303|The player page did not load.
+1304|The player page was replaced.
+1305|The player tried to leave YouTube Music; refused.
+1306|The player's session was unavailable.
+1307|The player's web content process ended.
+1308|The previous run ended without a clean quit.
+1309|The remembered output was forgotten.
+1310|The service answered in a shape the adapter does not recognise.
+1311|The service did not answer in time or reported a server fault.
+1312|The service is rate limiting this client.
+1313|The service reported this item cannot play.
+1314|The service's page was not the expected player.
+1315|The session is not signed in.
+1316|The system default until you choose another.
+1317|This Mac
+1318|This account
+1319|This app
+1320|This window
+1321|Tint the window from the artwork
+1322|Total on this Mac
+1323|Treble boost
+1324|Unassigned
+1325|Unclassified failure.
+1326|Updates
+1327|Visible while a regular window is open; hidden when YTMuse runs only in the menu bar.
+1328|Vocal
+1329|What YTMuse keeps on this Mac. Pinned and automatic are downloads; cache is artwork that can be fetched again.
+1330|What happens to songs you queued yourself (Play next, Add to queue) when you start another song or album.
+1331|What leaves this Mac
+1332|When headphones disconnect
+1333|When starting something new with songs queued
+1334|Where the New Playlist form starts. Nothing is created until you press Create.
+1335|YTMuse stays in the menu bar. Closing the last window keeps playback that can continue active.
+1336|YTMuse talks only to Google for sign-in, YouTube Music for the library and playback, the artwork hosts those pages name, and the devices you pick for AirPlay and Cast. It sends no account data to any other service, and it has no analytics.
+1337|YouTube Music has no downloads on the Mac. This limit applies to files you add from this Mac.
+1338|YouTube Music keeps its own queue, so this choice applies to music from files on this Mac.
+1339|Your session has ended. Your local data is kept.
+1340|macOS
+1341|report failed
+1342|An update is downloaded and verified in the background, never while music is playing. It is installed only when you press Restart to Update.
+1343|Ask me once
+1344|Check Daily
+1345|Check for updates once a day?
+1346|Download Update
+1347|Download updates automatically
+1348|Never while music is playing. An update is only downloaded and verified; it is installed when you press Restart to Update.
+1349|Not Now
+1350|Once a day
+1351|Only when I choose Check Now
+1352|Playback is active. Pause or stop it to restart into the update.
+1353|Restart to Update
+1354|The update could not be installed. Nothing was changed; you can try again.
+1355|This build has no update feed. Source builds are updated from the source repository.
+1356|This build is not signed with a release identity, so it cannot verify or install updates.
+1357|This is an isolated test session. It never contacts an update feed.
+1358|Works in a signed release build that has an update feed. A source build has none: it checks nothing and installs nothing, and says so on this page.
+1359|YTMuse can look for a new version once a day. The check downloads one small signed file and sends no account, listening or device information. You can change this in Settings.
+1360|A check downloads one small signed file from GitHub. It sends no account, listening or device information.
+1361|Check for updates once a day
+1362|Checking…
+1363|Downloading version %@…
+1364|No check yet.
+1365|Not asked yet. Nothing is checked until you choose.
+1366|The update could not be verified or installed. Nothing was changed.
+1367|Version %@ is available.
+1368|Version %@ is ready. Restart to finish.
+1369|YTMuse is up to date.
+1370|Cast
+1371|Cast needs this Mac to be on a private home network.
+1372|Cast receiver
+1373|Cast · Used last time
+1374|Casting YouTube Music isn't available from this app.
+1375|Couldn't connect to the receiver.
+1376|Diagnostics
+1377|Diagnostics could not be read.
+1378|Display label
+1379|Downloads kept for offline listening can't be cast: they stay encrypted on this Mac.
+1380|Looking for Cast receivers on your network. The first time, macOS asks to allow Local Network access.
+1381|Not offered yet. Choosing the audio quality arrives with the native stream integration (planned as W34). Until then YouTube Music's own player decides, and Diagnostics shows what it reported.
+1382|Off. YTMuse contains no analytics SDK and sends no diagnostics anywhere. You can export a redacted support bundle yourself.
+1383|Only owned and local audio can be cast. YouTube Music can't be cast from this app.
+1384|Playback on the receiver stops when you quit, because this Mac is serving the audio.
+1385|Remembered Cast receiver
+1386|The Cast receiver disconnected, so playback paused.
+1387|The receiver couldn't play this item, so playback paused here.
+1388|The receiver plays the original file, so the equalizer and normalization don't apply.
+1389|This Mac couldn't prepare the audio for the receiver.
+1390|This item has no audio file that can be cast.
+1391|YouTube Music can't be cast from this app.
+P1|one:%lld minute	other:%lld minutes
+P2|one:Undo: added %lld song	other:Undo: added %lld songs
+P3|one:%lld item couldn’t be shown	other:%lld items couldn’t be shown
+Q1|%@ · %lld
+Q2|%lld downloading, %lld waiting
+Q3|%lld downloading, %lld waiting · %@ so far
+Q4|%lld items loaded so far. There is more.
+Q5|%lld items that aren’t YouTube Music songs are left out.
+Q6|%lld more files
+Q7|%lld of %lld downloaded
+Q8|%lld percent
+Q9|%lld plays · %@ listened
+Q10|%lld results couldn’t be read and are not shown.
+Q11|%lld results of a type this app doesn’t show were left out.
+Q12|%lld seconds
+Q13|%lld seconds remaining
+Q14|%lld selected
+Q15|%lld songs
+Q16|%lld songs from the queue
+Q17|%lld%% played
+Q18|Add %lld Songs
+Q19|Add %lld Songs to “%@”
+Q20|Add %lld songs to “%@”?
+Q21|And %lld more.
+Q22|Back %lld seconds
+Q23|Clear %lld plays from this Mac?
+Q24|Custom: %lld minutes
+Q25|Fading · %lld seconds remaining
+Q26|Forward %lld seconds
+Q27|Only the %lld items loaded so far are covered. Load all to cover the whole collection.
+Q28|Page %lld
+Q29|Queue item position: %lld
+Q30|Remove %lld Songs
+Q31|Remove %lld songs from “%@”?
+Q32|Resonance %lld
+Q33|Sleep in %llds%@
+Q34|Sleep timer set for %lld minutes.
+Q35|Sleep timer: %lld:%@ left
+Q36|This app adds up to %lld files at a time. The rest weren’t added.
+Q37|This permanently deletes the playlist and its %lld entries from YouTube Music. It can’t be undone.
+Q38|Undo for %lld Songs
+Q39|Undo: removed %lld songs
+Q40|Uploading… %lld%%

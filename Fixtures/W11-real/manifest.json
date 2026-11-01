@@ -1,0 +1,63 @@
+{
+ "mode": "real-public-anonymous-capture",
+ "live_eligible": false,
+ "captured_utc": "2026-10-29T02:02:34.315097+00:00",
+ "captured_by": "operator thr_x7puknrk2p",
+ "description": "Nine REAL anonymous public YouTube Music browse responses (no cookies, no account, WEB_REMIX context, curl with a Safari UA, hl=en gl=US); visitorData/serializedContextData redacted. They fix the real response SHAPE for the W11 parser tests. They are public catalog data, not account data, and not live evidence for the signed path (a personalised Home looks different). Copied byte-for-byte from artifacts/harness/nodes/W11/public-captures/ (hashes below, verified on copy).",
+ "files": [
+  {
+   "path": "browse-home.json",
+   "browseId": "FEmusic_home",
+   "sha256": "5e88a94df2b9241dcd6a4e59ee6db7919127feac35b9913669b0b78e6bdc8107",
+   "bytes": 421358
+  },
+  {
+   "path": "browse-explore.json",
+   "browseId": "FEmusic_explore",
+   "sha256": "516ad1e8b04c9278fc91ecc9076822490780f29ca15f09468b83028fc184b012",
+   "bytes": 405743
+  },
+  {
+   "path": "browse-moods.json",
+   "browseId": "FEmusic_moods_and_genres",
+   "sha256": "7172eed768762f764ceb6e1b4ac35a1e06578b763f6932f7f354bbe281ab22c8",
+   "bytes": 14891
+  },
+  {
+   "path": "browse-new_releases.json",
+   "browseId": "FEmusic_new_releases",
+   "sha256": "6b46fdc1b8ddedcf2aaf4132f698bcd62f028282836e889aebe36ae4a87df9d1",
+   "bytes": 403655
+  },
+  {
+   "path": "browse-charts.json",
+   "browseId": "FEmusic_charts",
+   "sha256": "ceb26911b8dabb301b717816a5c01a0117cf923302df3dada46feb1030a5103f",
+   "bytes": 285324
+  },
+  {
+   "path": "browse-artist.json",
+   "browseId": "UCRr1xG_2WIDs18a6cIiCxeA (from W10 search capture)",
+   "sha256": "7ad3238a0528570e428c86e0ba0fda04dc624a79daf517754ca4843e1339d09c",
+   "bytes": 567959
+  },
+  {
+   "path": "browse-album.json",
+   "browseId": "MPREb_K8qWMWVqXGi",
+   "sha256": "b2b3e65a24b6daafb0ae92a53b9a00d65cc43904ddb6a7c815cf1b77ebbc4a2f",
+   "bytes": 252351
+  },
+  {
+   "path": "browse-playlist.json",
+   "browseId": "VLPLvcD45uIlPVoAkPQ5LTumatKEWZlxbHYN",
+   "sha256": "1b3f27e8d4ddad8c407817c80acb8150a886a74359aa1d45355c845d7f995092",
+   "bytes": 206422
+  },
+  {
+   "path": "browse-podcast.json",
+   "browseId": "MPSPPLZr1D7YmlHJw",
+   "sha256": "615268ff1b283b756f0085b11c9e5d956ca94d05a2f8cad279670ddeedc333c4",
+   "bytes": 163425
+  }
+ ]
+}

@@ -1,0 +1,66 @@
+1|Inicio
+2|Explorar
+3|Biblioteca
+4|Buscar
+5|Ajustes
+6|Reproducir
+7|Pausar
+8|Siguiente
+9|Anterior
+10|Cola
+11|Descargas
+12|En reproducción
+13|Cancelar
+14|Hecho
+15|Reintentar
+16|Inténtalo de nuevo
+17|Descartar
+18|Iniciar sesión
+19|Cerrar sesión
+20|Añadir cuenta
+21|Eliminar
+22|Deshacer
+23|Mover hacia arriba
+24|Mover hacia abajo
+25|En pausa
+26|Reproduciendo
+27|Cargando…
+28|Iniciar sesión con Google
+29|Te damos la bienvenida a YTMuse
+30|Elige música para empezar
+31|Tu cola está vacía
+32|La sesión ha caducado
+33|Cancelar inicio de sesión
+34|Introduces tu contraseña en la página de Google, nunca en YTMuse.
+35|Vuelve a iniciar sesión para reproducir tu biblioteca.
+36|Tu sesión ha terminado. Vuelve a iniciar sesión para reproducir.
+37|Vuelve a conectar esta cuenta para continuar.
+38|Estás sin conexión. Inténtalo de nuevo cuando estés conectado.
+39|No se pudo acceder a YouTube Music. Comprueba tu conexión e inténtalo de nuevo.
+40|Esta acción no está disponible en este momento.
+41|No se pudo cargar esta página
+42|Estás sin conexión, así que no se ha cambiado nada. La acción no se ha puesto en cola.
+43|Inicia sesión en YouTube Music para hacerlo.
+44|YouTube Music no pudo hacer este cambio en este momento. No se ha cambiado nada.
+45|Tu cuenta cambió antes de que esto empezara. Inténtalo de nuevo.
+46|Las búsquedas y los elementos recientes permanecen en este Mac, nunca se envían a ningún sitio y se eliminan junto con la cuenta.
+47|Esto elimina solo el registro guardado en este Mac. El historial del propio YouTube Music no cambia.
+48|Borrar el historial de este Mac
+49|El inicio de sesión ha caducado. No se ha guardado nada. Inténtalo de nuevo cuando estés listo.
+50|Sesión cerrada.
+51|Sesión iniciada como %@.
+52|Cambiaste a %@.
+53|Reproducir %@
+54|Salida actual: %@
+55|¿Eliminar “%@” de tus subidas?
+56|Se está reproduciendo un anuncio
+57|El anuncio ha terminado
+58|Reproduciendo “%@” de %@.
+59|Idioma de la interfaz
+60|Idioma de la música y las letras
+61|Región para recomendaciones
+62|Igual que macOS
+63|La región solo cambia lo que se sugiere. Nunca desbloquea música ni funciones que tu cuenta o ubicación no permitan.
+P1|one:%lld minuto	many:%lld de minutos	other:%lld minutos
+P2|one:Deshacer: se añadió %lld canción	many:Deshacer: se añadieron %lld de canciones	other:Deshacer: se añadieron %lld canciones
+P3|one:No se pudo mostrar %lld elemento	many:No se pudieron mostrar %lld de elementos	other:No se pudieron mostrar %lld elementos

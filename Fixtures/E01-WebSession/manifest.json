@@ -1,0 +1,20 @@
+{
+ "mode": "synthetic-test-only",
+ "live_eligible": false,
+ "node": "E01 lane M2",
+ "description": "synthetic E01 web-session fixture: hand-written to the published InnerTube shape; not a live capture; no real account",
+ "files": [
+  "account_menu-accepted.json",
+  "account_menu-handle-only.json",
+  "account_menu-missing-header.json",
+  "account_menu-signed-out.json",
+  "account_menu-two-channels.json",
+  "account_menu-unknown-header.json",
+  "liked_playlists-accepted.json",
+  "liked_playlists-continued.json",
+  "liked_playlists-empty.json",
+  "liked_playlists-signed-out.json",
+  "unparseable.txt",
+  "unrecognised-shape.json"
+ ]
+}

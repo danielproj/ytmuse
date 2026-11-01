@@ -1,0 +1,22 @@
+1370|Cast
+1371|Para usar Cast, este Mac debe estar conectado a una red doméstica privada.
+1372|Receptor Cast
+1373|Cast · usado la última vez
+1374|YouTube Music no se puede enviar con Cast desde esta app.
+1375|No se pudo conectar con el receptor.
+1376|Diagnóstico
+1377|No se pudo leer el diagnóstico.
+1378|Nombre visible
+1379|Las descargas guardadas para escuchar sin conexión no se pueden enviar con Cast: permanecen cifradas en este Mac.
+1380|Buscando receptores Cast en tu red. La primera vez, macOS te pide permiso para acceder a la red local.
+1381|Aún no disponible. La elección de la calidad de audio llegará con la integración nativa de transmisión (prevista como W34). Hasta entonces decide el reproductor propio de YouTube Music, y Diagnóstico muestra lo que ha informado.
+1382|No. YTMuse no contiene ningún SDK de analíticas y no envía diagnósticos a ninguna parte. Puedes exportar tú mismo un paquete de soporte con los datos redactados.
+1383|Solo se puede enviar con Cast audio propio y local. YouTube Music no se puede enviar con Cast desde esta app.
+1384|La reproducción en el receptor se detiene al salir, porque este Mac es quien sirve el audio.
+1385|Receptor Cast recordado
+1386|El receptor Cast se desconectó, así que la reproducción se ha pausado.
+1387|El receptor no pudo reproducir este elemento, así que la reproducción se ha pausado aquí.
+1388|El receptor reproduce el archivo original, por lo que el ecualizador y la normalización no se aplican.
+1389|Este Mac no pudo preparar el audio para el receptor.
+1390|Este elemento no tiene ningún archivo de audio que se pueda enviar con Cast.
+1391|YouTube Music no se puede enviar con Cast desde esta app.

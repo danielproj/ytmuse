@@ -1,0 +1,66 @@
+1|Id-dar
+2|Esplora
+3|Librerija
+4|Fittex
+5|Settings
+6|Ixgħel
+7|Ipponja
+8|Li jmiss
+9|Ta’ qabel
+10|Kju
+11|Downloads
+12|Qed jindaqq issa
+13|Ikkanċella
+14|Lest
+15|Erġa’ pprova
+16|Erġa’ pprova
+17|Ċaħħad
+18|Idħol
+19|Oħroġ
+20|Żid kont
+21|Neħħi
+22|Ineħħi
+23|Mexxi ’l fuq
+24|Mexxi ’l isfel
+25|Ippawżat
+26|Qed jindaqq
+27|Qed jitgħabba…
+28|Idħol b’Google
+29|Merħba fi YTMuse
+30|Agħżel mużika biex tibda
+31|Il-kju tiegħek huwa vojt
+32|Is-sessjoni skadiet
+33|Ikkanċella l-idħol
+34|Il-password tdaħħalha fuq il-paġna ta’ Google, qatt f’YTMuse.
+35|Idħol mill-ġdid biex iddoqq il-librerija tiegħek.
+36|Is-sessjoni tiegħek spiċċat. Idħol mill-ġdid biex iddoqq.
+37|Erġa’ qabbad dan il-kont biex tkompli.
+38|Il-konnessjoni mhijiex onlajn. Erġa’ pprova meta tkun konness.
+39|YouTube Music ma setax jintlaħaq. Iċċekkja l-konnessjoni tiegħek u erġa’ pprova.
+40|Din l-azzjoni mhijiex disponibbli bħalissa.
+41|Din il-paġna ma setgħetx titgħabba
+42|Int offlajn, għalhekk ma nbidel xejn. L-azzjoni ma tqiegħdetx fil-kju.
+43|Idħol f’YouTube Music biex tagħmel dan.
+44|YouTube Music ma setax jagħmel dan il-bidla bħalissa. Ma nbidel xejn.
+45|Il-kont tiegħek inbidel qabel ma beda dan. Erġa’ pprova.
+46|Tfittxijiet u oġġetti riċenti jibqgħu fuq dan il-Mac, qatt ma jintbagħtu x’imkien u jitneħħew mal-kont.
+47|Dan ineħħi biss ir-rekord miżmum fuq dan il-Mac. L-istorja ta’ YouTube Music innifsu ma tinbidilx.
+48|Neħħi l-istorja ta’ dan il-Mac
+49|L-idħol skada. Ma nżamm xejn. Erġa’ pprova meta tkun lest.
+50|Ħriġt.
+51|Dħalt bħala %@.
+52|Bdilt għal %@.
+53|Ixgħel %@
+54|L-output attwali: %@
+55|Tneħħi “%@” mill-upload tiegħek?
+56|Qed tindaqq reklam
+57|Ir-reklam spiċċa
+58|Qed jindaqq issa “%@” minn %@.
+59|Lingwa tal-interfaċċja
+60|Lingwa tal-mużika u tal-lirika
+61|Reġjun għal suġġerimenti
+62|Bħal macOS
+63|Ir-reġjun jibdel biss dak li jiġi suġġerit. Qatt ma jiftaħ mużika jew funzjonijiet li l-kont jew il-pożizzjoni tiegħek ma jippermettux.
+P1|one:%lld minuta	two:%lld minuti	few:%lld minuti	many:%lld minuta	other:%lld minuta
+P2|one:Ineħħi: żdiedet %lld kanzunetta	two:Ineħħi: żdiedu %lld kanzunetti	few:Ineħħi: żdiedu %lld kanzunetti	many:Ineħħi: żdiedu %lld kanzunetta	other:Ineħħi: żdiedu %lld kanzunetta
+P3|one:%lld oġġett ma setax jintwera	two:%lld oġġetti ma setgħux jintwerew	few:%lld oġġetti ma setgħux jintwerew	many:%lld oġġett ma setgħux jintwerew	other:%lld oġġett ma setgħux jintwerew

@@ -1,0 +1,34 @@
+# Pull-request and branch CI (T30.1). It has NO secrets: no Google credential, no signing identity, no notarization or feed key. It runs only fixtures and
+# synthetic data. `pull_request` (never `pull_request_target`) means a fork's change runs with a read-only token and nothing of the repository's.
+#
+# Runner and toolchain strategy: the Xcode, Swift and SDK versions are PINNED in toolchain.json and checked exactly by scripts/check-toolchain.sh, which fails
+# the job on any other version. The runner label comes from the repository variable YTMUSE_RUNNER (an Apple Silicon macOS 27 image that carries Xcode 27.2,
+# build 27B52); macos-latest is only the fallback and will fail the toolchain check until it is that image. This workflow has not been run yet (see
+# Docs/Publishing-Checklist.md); until then scripts/clean-checkout.sh runs the same steps locally in a clean clone.
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-test:
+    name: ci
+    runs-on: ${{ vars.YTMUSE_RUNNER || 'macos-latest' }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Select the pinned Xcode
+        run: |
+          xcode_app="/Applications/Xcode_$(python3 -c 'import json; print(json.load(open("toolchain.json"))["xcode"])').app"
+          if [ -d "$xcode_app" ]; then sudo xcode-select -s "$xcode_app"; fi
+          xcodebuild -version
+      - name: Build, test and check (no secrets)
+        run: ./scripts/ci.sh

@@ -1,0 +1,66 @@
+1|Accueil
+2|Explorer
+3|Bibliothèque
+4|Rechercher
+5|Réglages
+6|Lire
+7|Mettre en pause
+8|Suivant
+9|Précédent
+10|File d’attente
+11|Téléchargements
+12|Lecture en cours
+13|Annuler
+14|OK
+15|Réessayer
+16|Réessayer
+17|Ignorer
+18|Se connecter
+19|Se déconnecter
+20|Ajouter un compte
+21|Supprimer
+22|Annuler l’action
+23|Monter
+24|Descendre
+25|En pause
+26|Lecture en cours
+27|Chargement…
+28|Se connecter avec Google
+29|Bienvenue dans YTMuse
+30|Choisissez de la musique pour commencer
+31|Votre file d’attente est vide
+32|Session expirée
+33|Annuler la connexion
+34|Vous saisissez votre mot de passe sur la page de Google, jamais dans YTMuse.
+35|Reconnectez-vous pour lire votre bibliothèque.
+36|Votre session est terminée. Reconnectez-vous pour lire de la musique.
+37|Reconnectez ce compte pour continuer.
+38|La connexion est hors ligne. Réessayez une fois connecté.
+39|Impossible de joindre YouTube Music. Vérifiez votre connexion et réessayez.
+40|Cette action n’est pas disponible pour le moment.
+41|Impossible de charger cette page
+42|Vous êtes hors ligne, rien n’a donc été modifié. L’action n’est pas mise en attente.
+43|Connectez-vous à YouTube Music pour effectuer cette action.
+44|YouTube Music n’a pas pu effectuer cette modification pour le moment. Rien n’a été modifié.
+45|Votre compte a changé avant le début de cette action. Réessayez.
+46|Les recherches et éléments récents restent sur ce Mac, ne sont jamais envoyés ailleurs et sont supprimés avec le compte.
+47|Cela supprime uniquement l’historique conservé sur ce Mac. L’historique de YouTube Music n’est pas modifié.
+48|Effacer l’historique de ce Mac
+49|La connexion a expiré. Rien n’a été enregistré. Réessayez quand vous êtes prêt.
+50|Vous êtes déconnecté.
+51|Connecté en tant que %@.
+52|Passage au compte %@.
+53|Lire %@
+54|Sortie actuelle : %@
+55|Supprimer « %@ » de vos imports ?
+56|Une publicité est en cours de lecture
+57|La publicité est terminée
+58|Lecture en cours : « %@ » par %@.
+59|Langue de l’interface
+60|Langue de la musique et des paroles
+61|Région des recommandations
+62|Identique à macOS
+63|La région ne modifie que les suggestions. Elle ne débloque jamais de musique ni de fonctionnalités que votre compte ou votre position n’autorisent pas.
+P1|one:%lld minute	many:%lld de minutes	other:%lld minutes
+P2|one:Annuler : %lld titre ajouté	many:Annuler : %lld de titres ajoutés	other:Annuler : %lld titres ajoutés
+P3|one:%lld élément n’a pas pu être affiché	many:%lld d’éléments n’ont pas pu être affichés	other:%lld éléments n’ont pas pu être affichés

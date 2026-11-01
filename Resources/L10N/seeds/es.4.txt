@@ -1,0 +1,213 @@
+1001|No se puede abrir este enlace
+1002|No se puede abrir este enlace. Usa un enlace de YouTube Music a una canción, un álbum, un artista o una lista de reproducción.
+1003|Esta transmisión en directo no ofrece ninguna parte anterior a la que desplazarse.
+1004|Esta transmisión en directo no ofrece ninguna parte anterior a la que desplazarse. Ir al directo es la única forma de moverse.
+1005|Esto necesita primero tu confirmación.
+1006|Este reproductor no se puede dirigir a una salida; sigue al Mac.
+1007|Esta lista de reproducción aún no tiene canciones.
+1008|Esta lista de reproducción es pública.
+1009|No se pudo iniciar esta vista previa.
+1010|Se leyó la cola de esta radio y no incluía controles de ajuste.
+1011|Este receptor no puede atenuar el temporizador de reposo
+1012|Este resultado no tiene enlace.
+1013|Esto envía la solicitud a YouTube Music para el comentario “%@” de %@.
+1014|Esto envía la solicitud a YouTube Music para “%@”.
+1015|Este atajo ya ejecuta “%@”.
+1016|No se pudo registrar este atajo. Puede que lo esté usando otra app; elige otro.
+1017|Esta canción ya está en la lista de reproducción
+1018|Esta canción ya está en la lista de reproducción.
+1019|Este video no tiene subtítulos que mostrar.
+1020|Este widget está desactualizado. Abre YTMuse y se actualizará.
+1021|Thunderbolt o FireWire
+1022|Temporizador
+1023|Título
+1024|Título (A–Z)
+1025|Título (Z–A)
+1026|Título A–Z
+1027|Título Z–A
+1028|Título: “%@”
+1029|Mejor resultado
+1030|Prueba otro comando o busca música.
+1031|Reintentando %@
+1032|Activar temporizador
+1033|Escribe un comando o busca en YouTube Music
+1034|USB
+1035|No disponible
+1036|Deshacer: se cambió la descripción
+1037|Deshacer: se cambió la visibilidad
+1038|Deshacer: se movió “%@”
+1039|Deshacer: se renombró la lista de reproducción
+1040|Dejar de seguir
+1041|Desconocido
+1042|Tasa de bits desconocida
+1043|Salida desconocida
+1044|Frecuencia de muestreo desconocida
+1045|Canción desconocida
+1046|No listada
+1047|Dejar de silenciar
+1048|Desfijar
+1049|Sin reproducir primero
+1050|Elemento sin título
+1051|A continuación
+1052|Actualizado %@.
+1053|Subir
+1054|Álbumes subidos
+1055|Artistas subidos
+1056|Canciones subidas
+1057|Subiendo %@
+1058|La subida llegará en una próxima actualización
+1059|Subidas
+1060|Las subidas aún no están conectadas, así que no hay nada que buscar aquí.
+1061|Subidas en curso y terminadas
+1062|Usar la velocidad predeterminada para este programa
+1063|Usa un enlace de elemento de música compatible o busca el elemento en tu colección.
+1064|Video
+1065|Ventana de video
+1066|Vista previa del video
+1067|Videos
+1068|Espectador
+1069|Visibilidad
+1070|Visibilidad: %@
+1071|Volumen
+1072|Esperando una conexión de red
+1073|Esperando para subir
+1074|En espera: el modo de datos bajos está activado para esta conexión
+1075|En espera: esta conexión es de datos limitados
+1076|WebKit no activó Imagen en imagen para este video.
+1077|WebKit no inició Imagen en imagen para este video.
+1078|Lo que pediste
+1079|Posición en la cola
+1080|Dónde buscar
+1081|¿Cuál?
+1082|Tamaño de la ventana
+1083|No se pudo abrir el historial de ventanas. Se conservó tu ventana actual.
+1084|No se pudo guardar el historial de ventanas. Intenta guardarlo de nuevo.
+1085|Con solo Opción (y Mayúsculas), este atajo escribiría un carácter en todos los campos de texto. Añade Comando o Control.
+1086|Funciona desde cualquier app. No hay ninguno establecido hasta que grabes uno. Un atajo necesita Comando, Control u Opción y no puede sustituir un atajo estándar de edición o del sistema.
+1087|Trabajando…
+1088|Escribe algo para publicar.
+1089|YTMuse
+1090|YTMuse ya usa este atajo para %@.
+1091|YTMuse solo puede dar “Me gusta” o guardar la canción que se está reproduciendo.
+1092|Aún no sigues a nadie
+1093|Ya puedes editar “%@”. No se envió nada.
+1094|Puedes elegir la apariencia de la app en Ajustes.
+1095|Aún no tienes listas de reproducción.
+1096|Te uniste a la lista de reproducción.
+1097|Podrás añadir y cambiar canciones en esta lista de reproducción, y se añade a tu biblioteca.
+1098|YouTube Music
+1099|YouTube Music acepta archivos de hasta %@.
+1100|YouTube Music respondió en un formato que esta versión no puede leer. No se ha cambiado nada.
+1101|YouTube Music pidió reducir el ritmo. Se muestran coincidencias de este Mac; inténtalo de nuevo en breve.
+1102|YouTube Music no pudo iniciar esto. Prueba Reproducir de nuevo.
+1103|YouTube Music no pudo iniciarse. Prueba Reproducir de nuevo.
+1104|No se pudo acceder a YouTube Music. Se muestran coincidencias de este Mac.
+1105|YouTube Music no pudo hacer esto en este momento. No se ha cambiado nada.
+1106|YouTube Music no cambió los subtítulos.
+1107|YouTube Music no cambió la calidad.
+1108|YouTube Music no ofreció Guardar en la biblioteca para esta canción. Abre la canción una vez para leer su página.
+1109|YouTube Music no indicó si esto es una canción o un video, así que no se puede cambiar aquí.
+1110|YouTube Music no confirmó la eliminación. Puede que “%@” se haya eliminado o no.
+1111|YouTube Music no proporcionó controles de diversidad o descubrimiento para esta radio, así que no se muestra ninguno.
+1112|YouTube Music no ofrece “No me gusta” para esta canción.
+1113|YouTube Music no indica que sean la misma grabación, así que empieza desde el principio.
+1114|YouTube Music terminó de procesar este archivo.
+1115|YouTube Music terminó de procesar este archivo. Se actualizó tu lista de subidas.
+1116|YouTube Music no dio nada que reproducir para este elemento.
+1117|YouTube Music no tiene Samples para ti por el momento.
+1118|YouTube Music no tiene letras para esta canción.
+1119|YouTube Music no tiene aquí elemento siguiente ni anterior.
+1120|YouTube Music no tiene nada en esta colección. Se leyó por completo.
+1121|YouTube Music no ha publicado una versión de solo audio de este video, así que el video sigue reproduciéndose. La imagen no se oculta para simular solo audio.
+1122|YouTube Music no ha publicado una versión en video de esta canción.
+1123|Historial de YouTube Music
+1124|Controles del historial de YouTube Music
+1125|YouTube Music está pidiendo una pausa. Prueba Samples de nuevo en un momento.
+1126|YouTube Music sigue procesando este archivo. Vuelve a comprobarlo más tarde.
+1127|YouTube Music gestiona los elementos siguientes de esta lista de reproducción, así que no se muestran ni se pueden editar aquí.
+1128|YouTube Music gestiona los elementos siguientes mientras reproduce, así que esta app no puede añadirles nada.
+1129|Lista de reproducción de YouTube Music
+1130|Las listas de reproducción de YouTube Music se transmiten, no se conservan en este Mac. Los archivos de audio que añadas en Descargas aparecen aquí.
+1131|Las listas de reproducción de YouTube Music de tu biblioteca se transmiten, no se conservan en este Mac.
+1132|YouTube Music se reproduce en su propio reproductor, así que la app no puede solapar dos elementos ni procesar su audio.
+1133|YouTube Music se reproduce por la salida de sonido de este Mac. Cámbiala en el Centro de control.
+1134|YouTube Music devolvió esta página sin ningún elemento.
+1135|YouTube Music dijo: %@
+1136|La búsqueda de YouTube Music no está disponible en este momento. Se muestran coincidencias de este Mac.
+1137|YouTube Music dejó de enviar más de esta colección antes del final.
+1138|YouTube Music activó la colaboración, pero no devolvió ningún enlace de invitación utilizable.
+1139|Volumen de YouTube Music
+1140|YouTube Music, nativo en Mac.
+1141|La versión de YouTube Music
+1142|La versión de audio de YouTube todavía incluye una imagen, así que puede que el decodificador de video no se haya detenido. No se pudo detener ni verificar aquí.
+1143|Tu salida de audio cambió. Confirma “Reproducir aquí” en YTMuse para iniciar la reproducción.
+1144|No se pudo leer tu biblioteca
+1145|Tu música
+1146|Tu música aparecerá aquí
+1147|Tus listas de reproducción
+1148|Tu sesión terminó
+1149|Tu versión
+1150|Estás sin conexión
+1151|almacenando en búfer
+1152| • 
+1153|finalizado
+1154|fallido
+1155|inactivo
+1156|macOS incluye este atajo entre sus propios atajos activados.
+1157|macOS indica que este atajo está ocupado.
+1158|macOS usa este atajo para %@.
+1159|o suelta aquí archivos de audio
+1160|en pausa
+1161|reproduciendo
+1162|preparando
+1163|listo
+1164|resolviendo
+1165|desplazando
+1166|la lista de reproducción “%@”
+1167|esta lista de reproducción
+1168|desconocido
+1169|“%@” ya está aquí. Conservar duplicados lo añade de nuevo como una entrada aparte; Omitir existentes lo deja fuera.
+1170|“%@” ya está en la lista de subidas.
+1171|“%@” ya no es la canción que estabas cambiando.
+1172|“%@” también se movió a otro lugar.
+1173|“%@” se eliminó de la lista de reproducción en otro lugar.
+Q1|one:%@ · %lld	many:%@ · %lld	other:%@ · %lld
+Q2|one:%lld descargando, %lld en espera	many:%lld descargando, %lld en espera	other:%lld descargando, %lld en espera
+Q3|one:%lld descargando, %lld en espera · %@ hasta ahora	many:%lld descargando, %lld en espera · %@ hasta ahora	other:%lld descargando, %lld en espera · %@ hasta ahora
+Q4|one:Se ha cargado %lld elemento hasta ahora. Hay más.	many:Se han cargado %lld de elementos hasta ahora. Hay más.	other:Se han cargado %lld elementos hasta ahora. Hay más.
+Q5|one:Se omitió %lld elemento que no es una canción de YouTube Music.	many:Se omitieron %lld de elementos que no son canciones de YouTube Music.	other:Se omitieron %lld elementos que no son canciones de YouTube Music.
+Q6|one:%lld archivo más	many:%lld de archivos más	other:%lld archivos más
+Q7|one:%lld de %lld descargados	many:%lld de %lld descargados	other:%lld de %lld descargados
+Q8|one:%lld por ciento	many:%lld por ciento	other:%lld por ciento
+Q9|one:%lld reproducción · %@ de escucha	many:%lld de reproducciones · %@ de escucha	other:%lld reproducciones · %@ de escucha
+Q10|one:No se pudo leer %lld resultado y no se muestra.	many:No se pudieron leer %lld de resultados y no se muestran.	other:No se pudieron leer %lld resultados y no se muestran.
+Q11|one:Se omitió %lld resultado de un tipo que esta app no muestra.	many:Se omitieron %lld de resultados de un tipo que esta app no muestra.	other:Se omitieron %lld resultados de un tipo que esta app no muestra.
+Q12|one:%lld segundo	many:%lld de segundos	other:%lld segundos
+Q13|one:%lld segundo restante	many:%lld de segundos restantes	other:%lld segundos restantes
+Q14|one:%lld seleccionado	many:%lld de seleccionados	other:%lld seleccionados
+Q15|one:%lld canción	many:%lld de canciones	other:%lld canciones
+Q16|one:%lld canción de la cola	many:%lld de canciones de la cola	other:%lld canciones de la cola
+Q17|one:%lld%% reproducido	many:%lld%% reproducido	other:%lld%% reproducido
+Q18|one:Añadir %lld canción	many:Añadir %lld de canciones	other:Añadir %lld canciones
+Q19|one:Añadir %lld canción a “%@”	many:Añadir %lld de canciones a “%@”	other:Añadir %lld canciones a “%@”
+Q20|one:¿Añadir %lld canción a “%@”?	many:¿Añadir %lld de canciones a “%@”?	other:¿Añadir %lld canciones a “%@”?
+Q21|one:Y %lld más.	many:Y %lld más.	other:Y %lld más.
+Q22|one:Retroceder %lld segundo	many:Retroceder %lld de segundos	other:Retroceder %lld segundos
+Q23|one:¿Borrar %lld reproducción de este Mac?	many:¿Borrar %lld de reproducciones de este Mac?	other:¿Borrar %lld reproducciones de este Mac?
+Q24|one:Personalizado: %lld minuto	many:Personalizado: %lld de minutos	other:Personalizado: %lld minutos
+Q25|one:Atenuando · %lld segundo restante	many:Atenuando · %lld de segundos restantes	other:Atenuando · %lld segundos restantes
+Q26|one:Avanzar %lld segundo	many:Avanzar %lld de segundos	other:Avanzar %lld segundos
+Q27|one:Solo se cubre %lld elemento cargado hasta ahora. Carga todo para cubrir toda la colección.	many:Solo se cubren los %lld de elementos cargados hasta ahora. Carga todo para cubrir toda la colección.	other:Solo se cubren los %lld elementos cargados hasta ahora. Carga todo para cubrir toda la colección.
+Q28|one:Página %lld	many:Página %lld	other:Página %lld
+Q29|one:Posición del elemento en la cola: %lld	many:Posición del elemento en la cola: %lld	other:Posición del elemento en la cola: %lld
+Q30|one:Eliminar %lld canción	many:Eliminar %lld de canciones	other:Eliminar %lld canciones
+Q31|one:¿Eliminar %lld canción de “%@”?	many:¿Eliminar %lld de canciones de “%@”?	other:¿Eliminar %lld canciones de “%@”?
+Q32|one:Resonancia %lld	many:Resonancia %lld	other:Resonancia %lld
+Q33|one:Reposo en %llds%@	many:Reposo en %llds%@	other:Reposo en %llds%@
+Q34|one:Temporizador de reposo configurado para %lld minuto.	many:Temporizador de reposo configurado para %lld de minutos.	other:Temporizador de reposo configurado para %lld minutos.
+Q35|one:Temporizador de reposo: quedan %lld:%@	many:Temporizador de reposo: quedan %lld:%@	other:Temporizador de reposo: quedan %lld:%@
+Q36|one:Esta app añade hasta %lld archivo a la vez. El resto no se añadió.	many:Esta app añade hasta %lld de archivos a la vez. El resto no se añadió.	other:Esta app añade hasta %lld archivos a la vez. El resto no se añadió.
+Q37|one:Esto elimina de forma permanente la lista de reproducción y su %lld entrada de YouTube Music. No se puede deshacer.	many:Esto elimina de forma permanente la lista de reproducción y sus %lld de entradas de YouTube Music. No se puede deshacer.	other:Esto elimina de forma permanente la lista de reproducción y sus %lld entradas de YouTube Music. No se puede deshacer.
+Q38|one:Deshacer para %lld canción	many:Deshacer para %lld de canciones	other:Deshacer para %lld canciones
+Q39|one:Deshacer: se eliminó %lld canción	many:Deshacer: se eliminaron %lld de canciones	other:Deshacer: se eliminaron %lld canciones
+Q40|one:Subiendo… %lld%%	many:Subiendo… %lld%%	other:Subiendo… %lld%%

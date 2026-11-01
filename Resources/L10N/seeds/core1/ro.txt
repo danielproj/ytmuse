@@ -1,0 +1,66 @@
+1|Acasă
+2|Explorează
+3|Bibliotecă
+4|Caută
+5|Setări
+6|Redă
+7|Pauză
+8|Următorul
+9|Anteriorul
+10|Coadă
+11|Descărcări
+12|Se redă acum
+13|Anulează
+14|Gata
+15|Reîncearcă
+16|Încercați din nou
+17|Închide
+18|Conectează-te
+19|Deconectează-te
+20|Adaugă un cont
+21|Elimină
+22|Anulează acțiunea
+23|Mută în sus
+24|Mută în jos
+25|În pauză
+26|Se redă
+27|Se încarcă…
+28|Conectează-te cu Google
+29|Bun venit în YTMuse
+30|Alege muzică pentru a începe
+31|Coada ta este goală
+32|Sesiunea a expirat
+33|Anulează conectarea
+34|Introduci parola pe pagina Google, niciodată în YTMuse.
+35|Conectează-te din nou pentru a reda biblioteca ta.
+36|Sesiunea ta s-a încheiat. Conectează-te din nou pentru a reda.
+37|Reconectează acest cont pentru a continua.
+38|Conexiunea este offline. Încearcă din nou când ești conectat.
+39|YouTube Music nu a putut fi accesat. Verifică conexiunea și încearcă din nou.
+40|Această acțiune nu este disponibilă momentan.
+41|Această pagină nu a putut fi încărcată
+42|Ești offline, deci nu s-a modificat nimic. Acțiunea nu a fost pusă în coadă.
+43|Conectează-te la YouTube Music pentru a face acest lucru.
+44|YouTube Music nu a putut face această modificare momentan. Nu s-a modificat nimic.
+45|Contul tău s-a schimbat înainte de începerea acestei acțiuni. Încearcă din nou.
+46|Căutările și elementele recente rămân pe acest Mac, nu sunt trimise nicăieri și sunt eliminate odată cu contul.
+47|Aceasta elimină doar înregistrarea păstrată pe acest Mac. Istoricul YouTube Music în sine nu se modifică.
+48|Șterge istoricul acestui Mac
+49|Conectarea a expirat. Nu s-a salvat nimic. Încearcă din nou când ești gata.
+50|Te-ai deconectat.
+51|Conectat ca %@.
+52|Ai trecut la %@.
+53|Redă %@
+54|Ieșirea curentă: %@
+55|Elimini „%@” din încărcările tale?
+56|Se redă o reclamă
+57|Reclama s-a încheiat
+58|Se redă acum „%@” de %@.
+59|Limba interfeței
+60|Limba muzicii și a versurilor
+61|Regiunea pentru recomandări
+62|La fel ca în macOS
+63|Regiunea modifică doar sugestiile. Nu deblochează niciodată muzică sau funcții pe care contul sau locația ta nu le permit.
+P1|one:%lld minut	few:%lld minute	other:%lld de minute
+P2|one:Anulează: a fost adăugată %lld melodie	few:Anulează: au fost adăugate %lld melodii	other:Anulează: au fost adăugate %lld de melodii
+P3|one:%lld element nu a putut fi afișat	few:%lld elemente nu au putut fi afișate	other:%lld de elemente nu au putut fi afișate

@@ -1,0 +1,66 @@
+1|Heim
+2|Skoða
+3|Safn
+4|Leita
+5|Stillingar
+6|Spila
+7|Gera hlé
+8|Næsta
+9|Fyrra
+10|Biðröð
+11|Niðurhal
+12|Í spilun núna
+13|Hætta við
+14|Lokið
+15|Reyna aftur
+16|Reyndu aftur
+17|Loka
+18|Skrá inn
+19|Skrá út
+20|Bæta við reikningi
+21|Fjarlægja
+22|Afturkalla
+23|Færa upp
+24|Færa niður
+25|Í bið
+26|Í spilun
+27|Hleð …
+28|Skrá inn með Google
+29|Velkomin í YTMuse
+30|Veldu tónlist til að byrja
+31|Biðröðin þín er tóm
+32|Lotan er runnin út
+33|Hætta við innskráningu
+34|Þú slærð lykilorðið inn á síðu Google, aldrei í YTMuse.
+35|Skráðu þig inn aftur til að spila safnið þitt.
+36|Lotunni þinni er lokið. Skráðu þig inn aftur til að spila.
+37|Tengdu þennan reikning aftur til að halda áfram.
+38|Engin nettenging. Reyndu aftur þegar þú ert tengd(ur).
+39|Ekki náðist samband við YouTube Music. Athugaðu tenginguna og reyndu aftur.
+40|Þessi aðgerð er ekki í boði núna.
+41|Ekki tókst að hlaða þessari síðu
+42|Þú ert án nettengingar, svo engu var breytt. Aðgerðin er ekki í biðröð.
+43|Skráðu þig inn á YouTube Music til að gera þetta.
+44|YouTube Music gat ekki gert þessa breytingu núna. Engu var breytt.
+45|Reikningnum þínum var breytt áður en þetta hófst. Reyndu aftur.
+46|Nýlegar leitir og atriði haldast á þessari Mac-tölvu, eru aldrei send neitt og eru fjarlægð ásamt reikningnum.
+47|Þetta fjarlægir aðeins færsluna sem er geymd á þessari Mac-tölvu. Ferill YouTube Music sjálfs breytist ekki.
+48|Hreinsa feril þessarar Mac-tölvu
+49|Innskráningin rann út á tíma. Engu var vistað. Reyndu aftur þegar þú ert tilbúin(n).
+50|Skráð(ur) út.
+51|Skráð(ur) inn sem %@.
+52|Skipt yfir í %@.
+53|Spila %@
+54|Núverandi úttak: %@
+55|Fjarlægja „%@“ úr innsendu efni þínu?
+56|Auglýsing er í spilun
+57|Auglýsingunni er lokið
+58|Í spilun núna: „%@“ með %@.
+59|Tungumál viðmóts
+60|Tungumál tónlistar og texta
+61|Svæði fyrir tillögur
+62|Eins og macOS
+63|Svæðið breytir aðeins því sem er lagt til. Það opnar aldrei tónlist eða eiginleika sem reikningurinn þinn eða staðsetning leyfir ekki.
+P1|one:%lld mínúta	other:%lld mínútur
+P2|one:Afturkalla: %lld lagi bætt við	other:Afturkalla: %lld lögum bætt við
+P3|one:Ekki tókst að sýna %lld atriði	other:Ekki tókst að sýna %lld atriði

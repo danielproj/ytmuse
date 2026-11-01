@@ -1,0 +1,10 @@
+1360|Bei einer Prüfung wird eine kleine signierte Datei von GitHub geladen. Es werden keine Informationen zu Account, Wiedergabe oder Gerät gesendet.
+1361|Einmal am Tag nach Updates suchen
+1362|Wird geprüft …
+1363|Version %@ wird geladen …
+1364|Noch nicht geprüft.
+1365|Noch nicht gefragt. Es wird nichts geprüft, bis du es auswählst.
+1366|Das Update konnte nicht verifiziert oder installiert werden. Es wurde nichts geändert.
+1367|Version %@ ist verfügbar.
+1368|Version %@ ist bereit. Starte neu, um den Vorgang abzuschließen.
+1369|YTMuse ist auf dem neuesten Stand.

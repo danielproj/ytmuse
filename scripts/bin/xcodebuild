@@ -1,0 +1,3 @@
+#!/bin/bash
+# Caps build parallelism for xcodebuild (see scripts/bin/swift). YTMUSE_BUILD_JOBS (default 6) sets the cap.
+exec /usr/bin/xcodebuild -jobs "${YTMUSE_BUILD_JOBS:-6}" "$@"

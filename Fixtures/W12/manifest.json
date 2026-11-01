@@ -1,0 +1,149 @@
+{
+ "mode": "synthetic-from-real-renderers",
+ "live_eligible": false,
+ "description": "Library and history pages for W12. No anonymous capture of a library page exists (they need the signed session), so containers are hand-assembled in the shapes the web client uses for library tabs and every entry is copied from a real anonymous capture in ../W11-real, with only the edits generate.py lists (occurrence ids stripped, signed-in toggle endpoints, retyped page/video types). ASSUMED, shown by no capture: the 'Shuffle all' row, the 'New playlist' tile, the signed-in forms of the library toggles (song feedback tokens in four icon schemes, album/playlist like endpoints in two), the itemSectionRenderer-wrapped variants, and the write responses (write-*.json). The library browseIds are on the end-of-project live check list (Docs/Library.md). Not captures of any response and not live evidence.",
+ "browse_ids_relied_on": {
+  "songs": "FEmusic_liked_videos",
+  "likedSongs": "VLLM",
+  "albums": "FEmusic_liked_albums",
+  "artists": "FEmusic_library_corpus_track_artists",
+  "following": "FEmusic_library_corpus_artists",
+  "playlists": "FEmusic_liked_playlists",
+  "podcasts": "FEmusic_library_non_music_audio_list",
+  "savedEpisodes": "VLSE",
+  "uploads": "FEmusic_library_privately_owned_tracks",
+  "history": "FEmusic_history"
+ },
+ "files": [
+  {
+   "path": "history-page2.json",
+   "sha256": "d49a9e6121492f90342c3989617226ed86ae819927f067bf495d13872ae78bcb",
+   "bytes": 38702
+  },
+  {
+   "path": "history.json",
+   "sha256": "1fe718d6653f7df61ebf9092b658a0bac8291bc9ba12515bc69e503f92103c7b",
+   "bytes": 124986
+  },
+  {
+   "path": "library-albums-page2.json",
+   "sha256": "97fe3b8e1acfd14242bc0ae809b9fa30149d04b210182ff6a9b8a5377fb41aa6",
+   "bytes": 79409
+  },
+  {
+   "path": "library-albums-wrapped.json",
+   "sha256": "bf0ddc47739376c6ddca3b09c9502fd9b787e0876fbe1f53d85aa9accb25c100",
+   "bytes": 159675
+  },
+  {
+   "path": "library-albums-wrong-kinds.json",
+   "sha256": "1df13e4145bb2c2538376e7bacd6a38ad1c6ac746a6b4ceadd784311d15f32c5",
+   "bytes": 49636
+  },
+  {
+   "path": "library-albums.json",
+   "sha256": "b1a9ef0184a3f8d40a7620d72d3eda3ab4637ec82f177bce61cdbfdc99263982",
+   "bytes": 148846
+  },
+  {
+   "path": "library-artists.json",
+   "sha256": "94d19bc7bf053d361f2a425958581ebef48576d4b355643904c308c02d1a251d",
+   "bytes": 51901
+  },
+  {
+   "path": "library-following.json",
+   "sha256": "680cbb64a26664c0a7897d101aa02c70d73b40fefeb41a10589992d3b5507e26",
+   "bytes": 51925
+  },
+  {
+   "path": "library-playlists.json",
+   "sha256": "e5a11894b3a21f705ddeee4a135e64d11fe1a4206bb86aa1fa1620c827aab07c",
+   "bytes": 64996
+  },
+  {
+   "path": "library-podcasts.json",
+   "sha256": "ac27728565911edd1a0d09f6b2ef13000aed46f233777e1c538e8bc522fcf0c7",
+   "bytes": 32430
+  },
+  {
+   "path": "library-saved-episodes.json",
+   "sha256": "c690c53fc1a01a3a88b9e8ab0d75472f6c57219eb7efe41c4ab39b358ec6e69d",
+   "bytes": 122399
+  },
+  {
+   "path": "library-songs-page2.json",
+   "sha256": "2cd68491d2780b048b62bdd9611cc344c929186f02d6064ba52fcdacc658124a",
+   "bytes": 97485
+  },
+  {
+   "path": "library-songs-page3.json",
+   "sha256": "e4cc70a7eae858a3ae762f8fab28ff76e5462d829e9593e40d01defe06142458",
+   "bytes": 38540
+  },
+  {
+   "path": "library-songs-wrapped.json",
+   "sha256": "b01e31491a8d8278847fc0ec6b4e802c0f960d6aee5213c941a3826e5ca2cc63",
+   "bytes": 187428
+  },
+  {
+   "path": "library-songs.json",
+   "sha256": "916a8e4cd40caaac7de2efa642cff5207c42e289c8f6beee774d8e52b932d33b",
+   "bytes": 173800
+  },
+  {
+   "path": "library-unreadable-only.json",
+   "sha256": "22197d128e74bbdcc6d995e030af2a8fe199c82c0fdf9da4d651fc8ce26c016f",
+   "bytes": 1045
+  },
+  {
+   "path": "library-unrecognised.json",
+   "sha256": "b1bab79e320fa0733c188b1a4fb6fd5c610c536bca74116a2d374330bda1d418",
+   "bytes": 350
+  },
+  {
+   "path": "library-uploads.json",
+   "sha256": "c06a839d2a6910479efb940c05eea85d2498a791a44ff1852d1566a7be9e28dc",
+   "bytes": 96412
+  },
+  {
+   "path": "write-actions-empty.json",
+   "sha256": "e4e29da1db9c04ecf8c3aa4ad0f69a803e4f7a7a7e8be5fefff0a3f859ddc6bb",
+   "bytes": 43
+  },
+  {
+   "path": "write-actions.json",
+   "sha256": "790091a42ddcae6b00122b865b9407c5d0d0300a9d183409e65a0d173b5c024f",
+   "bytes": 249
+  },
+  {
+   "path": "write-empty.json",
+   "sha256": "e957bff6d61f584d73f52d19c8634a93fa4b3d5f7ff4f7615e020ae58b8f37da",
+   "bytes": 27
+  },
+  {
+   "path": "write-error.json",
+   "sha256": "32e6f0b85ef35d23a113f2f2739ada51eea9c9b90f382b7e4ee9518b9d07d989",
+   "bytes": 99
+  },
+  {
+   "path": "write-errors-list.json",
+   "sha256": "04201756a8a4ed7f81fb105283b7c6ac85ab6abe0777bc31b262f8373b4bf446",
+   "bytes": 74
+  },
+  {
+   "path": "write-feedback-missing.json",
+   "sha256": "2c2a0df13f8c52866ca79aa1213f65a397bb738f4a8a29f8f5b1adfdcf742991",
+   "bytes": 53
+  },
+  {
+   "path": "write-feedback-not-processed.json",
+   "sha256": "ba04df50122683ba91d80a45be069496c8b723ac352e59385ccb83c79f337970",
+   "bytes": 87
+  },
+  {
+   "path": "write-feedback-processed.json",
+   "sha256": "8620a573083e150a506a3c956b3bf219da50cbd91605c2ae837953ffff0b4b68",
+   "bytes": 86
+  }
+ ]
+}

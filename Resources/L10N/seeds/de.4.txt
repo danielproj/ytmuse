@@ -1,0 +1,213 @@
+1001|Dieser Link kann nicht geöffnet werden
+1002|Dieser Link kann nicht geöffnet werden. Verwende einen YouTube-Music-Link zu einem Song, Album, Interpreten oder einer Playlist.
+1003|Dieser Livestream bietet keinen früheren Teil, zu dem gesprungen werden könnte.
+1004|Dieser Livestream bietet keinen früheren Teil, zu dem gesprungen werden könnte. „Zu Live wechseln“ ist die einzige Möglichkeit, sich zu bewegen.
+1005|Dafür braucht es zuerst deine Bestätigung.
+1006|Dieser Player kann nicht auf eine Ausgabe gerichtet werden; er folgt dem Mac.
+1007|Diese Playlist enthält noch keine Songs.
+1008|Diese Playlist ist öffentlich.
+1009|Diese Vorschau konnte nicht gestartet werden.
+1010|Die Warteschlange dieses Radiosenders wurde gelesen und enthielt keine Abstimmungsregler.
+1011|Dieser Empfänger kann den Einschlaftimer nicht ausblenden
+1012|Dieses Ergebnis hat keinen Link.
+1013|Dadurch wird die Anfrage für den Kommentar „%@“ von %@ an YouTube Music gesendet.
+1014|Dadurch wird die Anfrage für „%@“ an YouTube Music gesendet.
+1015|Dieses Tastaturkürzel führt bereits „%@“ aus.
+1016|Dieses Tastaturkürzel konnte nicht registriert werden. Möglicherweise verwendet es eine andere App; wähle ein anderes.
+1017|Dieser Song ist bereits in der Playlist
+1018|Dieser Song ist bereits in der Playlist.
+1019|Dieses Video hat keine Untertitel, die angezeigt werden könnten.
+1020|Dieses Widget ist veraltet. Öffne YTMuse, dann wird es aktualisiert.
+1021|Thunderbolt oder FireWire
+1022|Timer
+1023|Titel
+1024|Titel (A–Z)
+1025|Titel (Z–A)
+1026|Titel A–Z
+1027|Titel Z–A
+1028|Titel: „%@“
+1029|Bestes Ergebnis
+1030|Versuche einen anderen Befehl oder suche nach Musik.
+1031|Neuer Versuch %@
+1032|Timer einschalten
+1033|Gib einen Befehl ein oder durchsuche YouTube Music
+1034|USB
+1035|Nicht verfügbar
+1036|Widerrufen: Beschreibung geändert
+1037|Widerrufen: Sichtbarkeit geändert
+1038|Widerrufen: „%@“ verschoben
+1039|Widerrufen: Playlist umbenannt
+1040|Nicht mehr folgen
+1041|Unbekannt
+1042|Unbekannte Bitrate
+1043|Unbekannte Ausgabe
+1044|Unbekannte Abtastrate
+1045|Unbekannter Song
+1046|Nicht gelistet
+1047|Stummschaltung aufheben
+1048|Lösen
+1049|Ungespielte zuerst
+1050|Objekt ohne Titel
+1051|Als Nächstes
+1052|%@ aktualisiert.
+1053|Hochladen
+1054|Hochgeladene Alben
+1055|Hochgeladene Interpreten
+1056|Hochgeladene Songs
+1057|%@ wird hochgeladen
+1058|Das Hochladen kommt in einem späteren Update
+1059|Uploads
+1060|Uploads sind noch nicht verbunden, daher gibt es hier nichts zu durchsuchen.
+1061|Laufende und abgeschlossene Uploads
+1062|Standardgeschwindigkeit für diese Sendung verwenden
+1063|Verwende den Link zu einem unterstützten Musikobjekt oder finde das Objekt in deiner Sammlung.
+1064|Video
+1065|Videofenster
+1066|Videovorschau
+1067|Videos
+1068|Betrachter
+1069|Sichtbarkeit
+1070|Sichtbarkeit: %@
+1071|Lautstärke
+1072|Warten auf eine Netzwerkverbindung
+1073|Wartet auf den Upload
+1074|Wartet: Der Datenmodus „Weniger Daten“ ist für diese Verbindung eingeschaltet
+1075|Wartet: Diese Verbindung ist getaktet
+1076|WebKit ist für dieses Video nicht in Bild-in-Bild gewechselt.
+1077|WebKit hat Bild-in-Bild für dieses Video nicht gestartet.
+1078|Was du angefragt hast
+1079|Wo in der Warteschlange
+1080|Wo gesucht werden soll
+1081|Welches?
+1082|Fenstergröße
+1083|Der Fensterverlauf konnte nicht geöffnet werden. Dein aktuelles Fenster blieb erhalten.
+1084|Der Fensterverlauf konnte nicht gesichert werden. Versuche, erneut zu sichern.
+1085|Nur mit Option (und Umschalttaste) würde dieses Tastaturkürzel in jedem Textfeld ein Zeichen eingeben. Füge Befehl oder Control hinzu.
+1086|Funktioniert in jeder App. Es ist keines festgelegt, bis du eines aufzeichnest. Ein Tastaturkürzel braucht Befehl, Control oder Option und kann kein Standardkürzel zum Bearbeiten oder des Systems ersetzen.
+1087|Wird bearbeitet …
+1088|Schreibe etwas, um es zu posten.
+1089|YTMuse
+1090|YTMuse verwendet dieses Tastaturkürzel bereits für %@.
+1091|YTMuse kann nur den Song, der gerade läuft, mit „Gefällt mir“ markieren oder sichern.
+1092|Du folgst noch niemandem
+1093|Du kannst „%@“ bereits bearbeiten. Es wurde nichts gesendet.
+1094|Das Erscheinungsbild der App kannst du in den Einstellungen wählen.
+1095|Du hast noch keine Playlists.
+1096|Du bist der Playlist beigetreten.
+1097|Du kannst in dieser Playlist Songs hinzufügen und ändern, und sie wird deiner Mediathek hinzugefügt.
+1098|YouTube Music
+1099|YouTube Music akzeptiert Dateien bis zu %@.
+1100|YouTube Music hat in einer Form geantwortet, die diese Version nicht lesen kann. Es wurde nichts geändert.
+1101|YouTube Music hat darum gebeten, langsamer vorzugehen. Treffer von diesem Mac werden angezeigt; versuche es in Kürze erneut.
+1102|YouTube Music konnte das nicht starten. Versuche es noch einmal mit „Wiedergeben“.
+1103|YouTube Music konnte nicht starten. Versuche es noch einmal mit „Wiedergeben“.
+1104|YouTube Music konnte nicht erreicht werden. Treffer von diesem Mac werden angezeigt.
+1105|YouTube Music konnte das gerade nicht tun. Es wurde nichts geändert.
+1106|YouTube Music hat die Untertitel nicht geändert.
+1107|YouTube Music hat die Qualität nicht geändert.
+1108|YouTube Music hat „In der Mediathek sichern“ für diesen Song nicht angeboten. Öffne den Song einmal, um seine Seite zu lesen.
+1109|YouTube Music hat nicht angegeben, ob dies ein Song oder ein Video ist, daher kann hier nicht gewechselt werden.
+1110|YouTube Music hat das Entfernen nicht bestätigt. „%@“ wurde möglicherweise entfernt oder auch nicht.
+1111|YouTube Music hat für diesen Radiosender keine Regler für Vielfalt oder Entdeckung geliefert, daher werden keine angezeigt.
+1112|YouTube Music bietet für diesen Song „Nicht gefällt mir“ nicht an.
+1113|YouTube Music gibt nicht an, dass dies dieselbe Aufnahme ist, daher beginnt es von vorn.
+1114|YouTube Music hat die Verarbeitung dieser Datei abgeschlossen.
+1115|YouTube Music hat die Verarbeitung dieser Datei abgeschlossen. Deine Upload-Liste wurde aktualisiert.
+1116|YouTube Music hat zu diesem Objekt nichts zum Abspielen geliefert.
+1117|YouTube Music hat momentan keine Samples für dich.
+1118|YouTube Music hat keinen Songtext für diesen Song.
+1119|YouTube Music hat hier kein nächstes oder vorheriges Objekt.
+1120|YouTube Music hat nichts in dieser Sammlung. Sie wurde vollständig gelesen.
+1121|YouTube Music hat keine Audioversion dieses Videos veröffentlicht, daher läuft das Video weiter. Das Bild wird nicht ausgeblendet, um reines Audio vorzutäuschen.
+1122|YouTube Music hat keine Videoversion dieses Songs veröffentlicht.
+1123|YouTube-Music-Verlauf
+1124|Steuerung des YouTube-Music-Verlaufs
+1125|YouTube Music bittet um eine Pause. Versuche es mit Samples gleich noch einmal.
+1126|YouTube Music verarbeitet diese Datei noch. Prüfe es später noch einmal.
+1127|YouTube Music verwaltet die nächsten Objekte dieser Playlist, daher werden sie hier weder aufgelistet noch sind sie bearbeitbar.
+1128|YouTube Music verwaltet die nächsten Objekte während der Wiedergabe, daher kann diese App ihnen nichts hinzufügen.
+1129|YouTube-Music-Playlist
+1130|Playlists von YouTube Music werden gestreamt und nicht auf diesem Mac behalten. Audiodateien, die du unter „Downloads“ hinzufügst, erscheinen hier.
+1131|Playlists von YouTube Music in deiner Mediathek werden gestreamt und nicht auf diesem Mac behalten.
+1132|YouTube Music spielt in seinem eigenen Player ab, daher kann die App zwei Objekte weder überblenden noch ihr Audio verarbeiten.
+1133|YouTube Music spielt über die Tonausgabe dieses Mac ab. Ändere sie im Kontrollzentrum.
+1134|YouTube Music hat diese Seite ohne Objekte zurückgegeben.
+1135|YouTube Music meldet: %@
+1136|Die Suche in YouTube Music ist gerade nicht verfügbar. Treffer von diesem Mac werden angezeigt.
+1137|YouTube Music hat aufgehört, mehr von dieser Sammlung zu senden, bevor sie zu Ende war.
+1138|YouTube Music hat die Zusammenarbeit eingeschaltet, aber keinen brauchbaren Einladungslink zurückgegeben.
+1139|Lautstärke von YouTube Music
+1140|YouTube Music, nativ auf dem Mac.
+1141|Version von YouTube Music
+1142|Die Audioversion von YouTube enthält weiterhin ein Bild, daher wurde der Videodecoder möglicherweise nicht angehalten. Das konnte hier nicht gestoppt oder überprüft werden.
+1143|Deine Audioausgabe hat sich geändert. Bestätige „Hier abspielen“ in YTMuse, um die Wiedergabe zu starten.
+1144|Deine Mediathek konnte nicht gelesen werden
+1145|Deine Musik
+1146|Deine Musik erscheint hier
+1147|Deine Playlists
+1148|Deine Sitzung wurde beendet
+1149|Deine Version
+1150|Du bist offline
+1151|puffert
+1152| • 
+1153|beendet
+1154|fehlgeschlagen
+1155|inaktiv
+1156|macOS führt dieses Tastaturkürzel unter seinen eigenen aktivierten Tastaturkürzeln auf.
+1157|macOS meldet dieses Tastaturkürzel als belegt.
+1158|macOS verwendet dieses Tastaturkürzel für %@.
+1159|oder ziehe Audiodateien hierher
+1160|pausiert
+1161|wird abgespielt
+1162|wird vorbereitet
+1163|bereit
+1164|wird aufgelöst
+1165|spult
+1166|die Playlist „%@“
+1167|diese Playlist
+1168|unbekannt
+1169|„%@“ ist bereits hier. „Duplikate behalten“ fügt es erneut als separaten Eintrag hinzu; „Vorhandene überspringen“ lässt es weg.
+1170|„%@“ ist bereits in der Upload-Liste.
+1171|„%@“ ist nicht mehr der Song, den du geändert hast.
+1172|„%@“ wurde auch anderswohin verschoben.
+1173|„%@“ wurde anderswo aus der Playlist entfernt.
+Q1|one:%@ · %lld	other:%@ · %lld
+Q2|one:Wird heruntergeladen: %lld, wartend: %lld	other:Wird heruntergeladen: %lld, wartend: %lld
+Q3|one:Wird heruntergeladen: %lld, wartend: %lld · %@ bisher	other:Wird heruntergeladen: %lld, wartend: %lld · %@ bisher
+Q4|one:%lld Objekt bisher geladen. Es gibt mehr.	other:%lld Objekte bisher geladen. Es gibt mehr.
+Q5|one:%lld Objekt, das kein YouTube-Music-Song ist, wird ausgelassen.	other:%lld Objekte, die keine YouTube-Music-Songs sind, werden ausgelassen.
+Q6|one:%lld weitere Datei	other:%lld weitere Dateien
+Q7|one:%lld von %lld heruntergeladen	other:%lld von %lld heruntergeladen
+Q8|one:%lld Prozent	other:%lld Prozent
+Q9|one:%lld Wiedergabe · %@ gehört	other:%lld Wiedergaben · %@ gehört
+Q10|one:%lld Ergebnis konnte nicht gelesen werden und wird nicht angezeigt.	other:%lld Ergebnisse konnten nicht gelesen werden und werden nicht angezeigt.
+Q11|one:%lld Ergebnis eines Typs, den diese App nicht anzeigt, wurde ausgelassen.	other:%lld Ergebnisse eines Typs, den diese App nicht anzeigt, wurden ausgelassen.
+Q12|one:%lld Sekunde	other:%lld Sekunden
+Q13|one:Noch %lld Sekunde	other:Noch %lld Sekunden
+Q14|one:%lld ausgewählt	other:%lld ausgewählt
+Q15|one:%lld Song	other:%lld Songs
+Q16|one:%lld Song aus der Warteschlange	other:%lld Songs aus der Warteschlange
+Q17|one:%lld%% gespielt	other:%lld%% gespielt
+Q18|one:%lld Song hinzufügen	other:%lld Songs hinzufügen
+Q19|one:%lld Song zu „%@“ hinzufügen	other:%lld Songs zu „%@“ hinzufügen
+Q20|one:%lld Song zu „%@“ hinzufügen?	other:%lld Songs zu „%@“ hinzufügen?
+Q21|one:Und %lld mehr.	other:Und %lld mehr.
+Q22|one:%lld Sekunde zurück	other:%lld Sekunden zurück
+Q23|one:%lld Wiedergabe von diesem Mac löschen?	other:%lld Wiedergaben von diesem Mac löschen?
+Q24|one:Eigene: %lld Minute	other:Eigene: %lld Minuten
+Q25|one:Wird ausgeblendet · noch %lld Sekunde	other:Wird ausgeblendet · noch %lld Sekunden
+Q26|one:%lld Sekunde vor	other:%lld Sekunden vor
+Q27|one:Nur das bisher geladene %lld Objekt ist erfasst. Lade alle, um die ganze Sammlung zu erfassen.	other:Nur die bisher geladenen %lld Objekte sind erfasst. Lade alle, um die ganze Sammlung zu erfassen.
+Q28|one:Seite %lld	other:Seite %lld
+Q29|one:Position des Warteschlangenobjekts: %lld	other:Position des Warteschlangenobjekts: %lld
+Q30|one:%lld Song entfernen	other:%lld Songs entfernen
+Q31|one:%lld Song aus „%@“ entfernen?	other:%lld Songs aus „%@“ entfernen?
+Q32|one:Resonanz %lld	other:Resonanz %lld
+Q33|one:Einschlafen in %llds%@	other:Einschlafen in %llds%@
+Q34|one:Einschlaftimer auf %lld Minute eingestellt.	other:Einschlaftimer auf %lld Minuten eingestellt.
+Q35|one:Einschlaftimer: noch %lld:%@	other:Einschlaftimer: noch %lld:%@
+Q36|one:Diese App fügt bis zu %lld Datei auf einmal hinzu. Der Rest wurde nicht hinzugefügt.	other:Diese App fügt bis zu %lld Dateien auf einmal hinzu. Der Rest wurde nicht hinzugefügt.
+Q37|one:Dadurch werden die Playlist und ihr %lld Eintrag dauerhaft aus YouTube Music gelöscht. Das kann nicht widerrufen werden.	other:Dadurch werden die Playlist und ihre %lld Einträge dauerhaft aus YouTube Music gelöscht. Das kann nicht widerrufen werden.
+Q38|one:Widerrufen für %lld Song	other:Widerrufen für %lld Songs
+Q39|one:Widerrufen: %lld Song entfernt	other:Widerrufen: %lld Songs entfernt
+Q40|one:Wird hochgeladen … %lld%%	other:Wird hochgeladen … %lld%%

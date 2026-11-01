@@ -1,0 +1,66 @@
+1|Kezdőlap
+2|Felfedezés
+3|Könyvtár
+4|Keresés
+5|Beállítások
+6|Lejátszás
+7|Szünet
+8|Következő
+9|Előző
+10|Sor
+11|Letöltések
+12|Most szól
+13|Mégse
+14|Kész
+15|Újra
+16|Próbálja újra
+17|Elvetés
+18|Bejelentkezés
+19|Kijelentkezés
+20|Fiók hozzáadása
+21|Eltávolítás
+22|Visszavonás
+23|Mozgatás felfelé
+24|Mozgatás lefelé
+25|Szüneteltetve
+26|Lejátszás folyamatban
+27|Betöltés…
+28|Bejelentkezés Google-fiókkal
+29|Üdvözli a YTMuse
+30|Válasszon zenét a kezdéshez
+31|A sor üres
+32|A munkamenet lejárt
+33|Bejelentkezés megszakítása
+34|A jelszavát a Google oldalán adja meg, soha nem a YTMuse-ban.
+35|Jelentkezzen be újra a könyvtár lejátszásához.
+36|A munkamenet véget ért. Jelentkezzen be újra a lejátszáshoz.
+37|A folytatáshoz csatlakoztassa újra ezt a fiókot.
+38|A kapcsolat offline. Próbálja újra, ha csatlakozott.
+39|A YouTube Music nem érhető el. Ellenőrizze a kapcsolatot, majd próbálja újra.
+40|Ez a művelet jelenleg nem érhető el.
+41|Az oldal nem tölthető be
+42|Offline van, ezért semmi sem változott. A művelet nem került sorba.
+43|Ehhez jelentkezzen be a YouTube Music szolgáltatásba.
+44|A YouTube Music most nem tudta végrehajtani ezt a módosítást. Semmi sem változott.
+45|A fiókja megváltozott, mielőtt ez elindult volna. Próbálja újra.
+46|A legutóbbi keresések és elemek ezen a Macen maradnak, sehová sem kerülnek elküldésre, és a fiókkal együtt törlődnek.
+47|Ez csak az ezen a Macen tárolt bejegyzést törli. A YouTube Music saját előzményei nem változnak.
+48|A Mac előzményeinek törlése
+49|A bejelentkezés időtúllépés miatt megszakadt. Semmi sem lett mentve. Próbálja újra, ha készen áll.
+50|Kijelentkezett.
+51|Bejelentkezve mint %@.
+52|Átváltás erre: %@.
+53|%@ lejátszása
+54|Jelenlegi kimenet: %@
+55|Eltávolítja a(z) „%@” elemet a feltöltései közül?
+56|Hirdetés szól
+57|A hirdetés véget ért
+58|Most szól: „%@” – %@.
+59|A felület nyelve
+60|A zene és a dalszövegek nyelve
+61|Ajánlások régiója
+62|Ugyanaz, mint a macOS
+63|A régió csak a javaslatokat módosítja. Soha nem old fel olyan zenét vagy funkciót, amelyet a fiókja vagy a tartózkodási helye nem engedélyez.
+P1|one:%lld perc	other:%lld perc
+P2|one:Visszavonás: %lld dal hozzáadva	other:Visszavonás: %lld dal hozzáadva
+P3|one:%lld elem nem jeleníthető meg	other:%lld elem nem jeleníthető meg

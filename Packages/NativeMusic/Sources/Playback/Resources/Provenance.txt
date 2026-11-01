@@ -1,0 +1,10 @@
+W06 owned test media. Generated from sine equations by this repository's
+artifacts/harness/nodes/W06/generate-media.py. No samples or third-party recordings.
+CC0-1.0 dedication. Stereo signed 16-bit PCM WAVE, 48,000 Hz, 1,536,000 bit/s.
+owned-a: 440 Hz, 12 seconds. owned-b: 660 Hz, 8 seconds.
+10 ms boundary ramps, peak amplitude 0.25. Playback defaults to 0.08 app gain.
+This is development test audio, never YouTube Music or live-service evidence.
+
+W17 owned test video: NOT a bundled file. Generated from equations at first use by Playback/OwnedTestVideo.swift in DEBUG builds only
+(480x270, 24 fps, 60 s, H.264, VIDEO ONLY, no audio track; a hue-cycling background and a sweeping white bar). No footage, no third-party material.
+CC0-1.0 dedication. Written under the system temporary directory. Development test media, never YouTube Music or live-service evidence.

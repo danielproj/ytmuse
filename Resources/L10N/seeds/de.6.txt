@@ -1,0 +1,18 @@
+1342|Ein Update wird im Hintergrund geladen und geprüft, niemals während Musik wiedergegeben wird. Es wird erst installiert, wenn du auf „Zum Aktualisieren neu starten“ klickst.
+1343|Einmal fragen
+1344|Täglich prüfen
+1345|Einmal am Tag nach Updates suchen?
+1346|Update laden
+1347|Updates automatisch laden
+1348|Niemals während Musik wiedergegeben wird. Ein Update wird nur geladen und geprüft; es wird installiert, wenn du auf „Zum Aktualisieren neu starten“ klickst.
+1349|Nicht jetzt
+1350|Einmal am Tag
+1351|Nur wenn ich „Jetzt prüfen“ wähle
+1352|Die Wiedergabe läuft. Pausiere oder stoppe sie, um für das Update neu zu starten.
+1353|Zum Aktualisieren neu starten
+1354|Das Update konnte nicht installiert werden. Es wurde nichts geändert; du kannst es erneut versuchen.
+1355|Dieser Build hat keinen Update-Feed. Source-Builds werden aus dem Quell-Repository aktualisiert.
+1356|Dieser Build ist nicht mit einer Release-Identität signiert und kann daher keine Updates prüfen oder installieren.
+1357|Dies ist eine isolierte Testsitzung. Sie kontaktiert nie einen Update-Feed.
+1358|Funktioniert in einem signierten Release-Build mit Update-Feed. Ein Source-Build hat keinen: Er prüft nichts und installiert nichts und sagt das auf dieser Seite.
+1359|YTMuse kann einmal am Tag nach einer neuen Version suchen. Die Prüfung lädt eine kleine signierte Datei und sendet keine Informationen zu Account, Wiedergabe oder Gerät. Du kannst das in den Einstellungen ändern.

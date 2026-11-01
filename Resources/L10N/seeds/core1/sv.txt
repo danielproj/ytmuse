@@ -1,0 +1,66 @@
+1|Hem
+2|Utforska
+3|Bibliotek
+4|Sök
+5|Inställningar
+6|Spela upp
+7|Pausa
+8|Nästa
+9|Föregående
+10|Kö
+11|Hämtningar
+12|Spelas nu
+13|Avbryt
+14|Klar
+15|Försök igen
+16|Försök igen
+17|Stäng
+18|Logga in
+19|Logga ut
+20|Lägg till konto
+21|Ta bort
+22|Ångra
+23|Flytta upp
+24|Flytta ned
+25|Pausad
+26|Spelas upp
+27|Läser in …
+28|Logga in med Google
+29|Välkommen till YTMuse
+30|Välj musik för att komma igång
+31|Din kö är tom
+32|Sessionen har gått ut
+33|Avbryt inloggning
+34|Du anger ditt lösenord på Googles sida, aldrig i YTMuse.
+35|Logga in igen för att spela upp ditt bibliotek.
+36|Din session har avslutats. Logga in igen för att spela upp.
+37|Anslut det här kontot igen för att fortsätta.
+38|Anslutningen är offline. Försök igen när du är ansluten.
+39|YouTube Music kunde inte nås. Kontrollera anslutningen och försök igen.
+40|Den här åtgärden är inte tillgänglig just nu.
+41|Sidan kunde inte läsas in
+42|Du är offline, så ingenting har ändrats. Åtgärden har inte lagts i kö.
+43|Logga in på YouTube Music för att göra det här.
+44|YouTube Music kunde inte göra den här ändringen just nu. Ingenting har ändrats.
+45|Ditt konto ändrades innan det här startade. Försök igen.
+46|Senaste sökningar och objekt finns kvar på den här Mac-datorn, skickas aldrig någonstans och tas bort tillsammans med kontot.
+47|Det här tar bara bort posten som sparats på den här Mac-datorn. YouTube Musics egen historik ändras inte.
+48|Rensa den här Mac-datorns historik
+49|Inloggningen gick ut. Ingenting sparades. Försök igen när du är redo.
+50|Utloggad.
+51|Inloggad som %@.
+52|Bytte till %@.
+53|Spela upp %@
+54|Aktuell utgång: %@
+55|Ta bort ”%@” från dina uppladdningar?
+56|En annons spelas upp
+57|Annonsen är slut
+58|Spelas nu: ”%@” av %@.
+59|Gränssnittsspråk
+60|Språk för musik och låttexter
+61|Region för rekommendationer
+62|Samma som macOS
+63|Regionen ändrar bara vad som föreslås. Den låser aldrig upp musik eller funktioner som ditt konto eller din plats inte tillåter.
+P1|one:%lld minut	other:%lld minuter
+P2|one:Ångra: %lld låt lades till	other:Ångra: %lld låtar lades till
+P3|one:%lld objekt kunde inte visas	other:%lld objekt kunde inte visas

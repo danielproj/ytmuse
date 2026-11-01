@@ -1,0 +1,13 @@
+{
+ "mode": "real-public-anonymous-capture",
+ "live_eligible": false,
+ "captured_utc": "2026-10-30T12:32:41.171195+00:00",
+ "captured_by": "operator thr_x7puknrk2p",
+ "description": "REAL anonymous public YouTube Music responses (no cookies, no account, WEB_REMIX context, Safari UA, hl=en gl=US); visitorData redacted. They fix the real response SHAPE for the W18 parser tests: a song's `next` (whose Lyrics tab carries the lyrics browse id), the lyrics browse (plain text with a source footer, NO timing), an episode page and a podcast show page. They are public catalog data, not account data and not evidence for the signed path. Copied byte-for-byte from artifacts/harness/nodes/W18/public-captures/ and artifacts/harness/nodes/W11/public-captures/ (hashes verified on copy).",
+ "files": [
+  {"path": "next-song.json", "request": "next for song khnokW3Mw24 (isAudioOnly)", "sha256": "ac3cbbf36fbb6c238bdeef2fb6ea4f39292f10577334755860eba2f65499ff6c", "bytes": 21509},
+  {"path": "browse-lyrics.json", "request": "browse MPLYt_K8qWMWVqXGi-5 (lyrics tab from next)", "sha256": "c3c610a8563817eaa1ec223f4a53c1e4519a4f240d46bccf0c666643768e7d83", "bytes": 4255},
+  {"path": "browse-episode.json", "request": "browse MPEDAzENYaFVxGg (episode page)", "sha256": "9e241b50d7e0269b34e534ebdcc02acb8f37c11da187bf4242213b301e67d2ca", "bytes": 10190},
+  {"path": "browse-podcast.json", "request": "browse MPSPPLZr1D7YmlHJw (podcast show; the W11 capture, same bytes as Fixtures/W11-real/browse-podcast.json)", "sha256": "615268ff1b283b756f0085b11c9e5d956ca94d05a2f8cad279670ddeedc333c4", "bytes": 163425}
+ ]
+}

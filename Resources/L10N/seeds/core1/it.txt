@@ -1,0 +1,66 @@
+1|Home
+2|Esplora
+3|Libreria
+4|Cerca
+5|Impostazioni
+6|Riproduci
+7|Pausa
+8|Successivo
+9|Precedente
+10|Coda
+11|Download
+12|In riproduzione
+13|Annulla
+14|Fine
+15|Riprova
+16|Riprova
+17|Ignora
+18|Accedi
+19|Esci
+20|Aggiungi account
+21|Rimuovi
+22|Annulla azione
+23|Sposta su
+24|Sposta giù
+25|In pausa
+26|In riproduzione
+27|Caricamento…
+28|Accedi con Google
+29|Benvenuto in YTMuse
+30|Scegli della musica per iniziare
+31|La tua coda è vuota
+32|Sessione scaduta
+33|Annulla accesso
+34|Inserisci la password nella pagina di Google, mai in YTMuse.
+35|Accedi di nuovo per riprodurre la tua libreria.
+36|La sessione è terminata. Accedi di nuovo per riprodurre.
+37|Ricollega questo account per continuare.
+38|La connessione è offline. Riprova quando sei connesso.
+39|Impossibile raggiungere YouTube Music. Controlla la connessione e riprova.
+40|Questa azione non è disponibile al momento.
+41|Impossibile caricare questa pagina
+42|Sei offline, quindi non è stato modificato nulla. L’azione non è stata messa in coda.
+43|Accedi a YouTube Music per eseguire questa azione.
+44|YouTube Music non ha potuto apportare questa modifica al momento. Non è stato modificato nulla.
+45|Il tuo account è cambiato prima che iniziasse questa azione. Riprova.
+46|Le ricerche e gli elementi recenti restano su questo Mac, non vengono mai inviati altrove e vengono rimossi insieme all’account.
+47|Questa operazione rimuove solo la cronologia conservata su questo Mac. La cronologia di YouTube Music non viene modificata.
+48|Cancella la cronologia di questo Mac
+49|L’accesso è scaduto. Non è stato salvato nulla. Riprova quando sei pronto.
+50|Disconnesso.
+51|Accesso eseguito come %@.
+52|Passato a %@.
+53|Riproduci %@
+54|Uscita attuale: %@
+55|Rimuovere “%@” dai tuoi caricamenti?
+56|È in riproduzione una pubblicità
+57|La pubblicità è terminata
+58|In riproduzione: “%@” di %@.
+59|Lingua dell’interfaccia
+60|Lingua di musica e testi
+61|Regione per i consigli
+62|Come macOS
+63|La regione modifica solo i suggerimenti. Non sblocca mai musica o funzionalità che il tuo account o la tua posizione non consentono.
+P1|one:%lld minuto	many:%lld di minuti	other:%lld minuti
+P2|one:Annulla: aggiunto %lld brano	many:Annulla: aggiunti %lld di brani	other:Annulla: aggiunti %lld brani
+P3|one:Impossibile mostrare %lld elemento	many:Impossibile mostrare %lld di elementi	other:Impossibile mostrare %lld elementi

@@ -1,0 +1,66 @@
+1|Pagrindinis
+2|Naršyti
+3|Biblioteka
+4|Ieškoti
+5|Nustatymai
+6|Leisti
+7|Pristabdyti
+8|Kitas
+9|Ankstesnis
+10|Eilė
+11|Atsisiuntimai
+12|Dabar groja
+13|Atšaukti
+14|Atlikta
+15|Bandyti dar kartą
+16|Bandykite dar kartą
+17|Atmesti
+18|Prisijungti
+19|Atsijungti
+20|Pridėti paskyrą
+21|Pašalinti
+22|Anuliuoti
+23|Perkelti aukštyn
+24|Perkelti žemyn
+25|Pristabdyta
+26|Grojama
+27|Įkeliama…
+28|Prisijungti per Google
+29|Sveiki atvykę į YTMuse
+30|Pasirinkite muziką, kad pradėtumėte
+31|Jūsų eilė tuščia
+32|Seansas baigėsi
+33|Atšaukti prisijungimą
+34|Slaptažodį įvedate Google puslapyje, niekada ne YTMuse.
+35|Prisijunkite dar kartą, kad galėtumėte groti savo biblioteką.
+36|Jūsų seansas baigėsi. Prisijunkite dar kartą, kad galėtumėte groti.
+37|Norėdami tęsti, iš naujo prijunkite šią paskyrą.
+38|Nėra ryšio. Bandykite dar kartą, kai prisijungsite.
+39|Nepavyko pasiekti YouTube Music. Patikrinkite ryšį ir bandykite dar kartą.
+40|Šis veiksmas šiuo metu nepasiekiamas.
+41|Nepavyko įkelti šio puslapio
+42|Nėra ryšio, todėl nieko nepakeista. Veiksmas neįtrauktas į eilę.
+43|Norėdami tai padaryti, prisijunkite prie YouTube Music.
+44|YouTube Music šiuo metu negalėjo atlikti šio pakeitimo. Nieko nepakeista.
+45|Jūsų paskyra pasikeitė prieš prasidedant šiam veiksmui. Bandykite dar kartą.
+46|Naujausios paieškos ir elementai lieka šiame Mac, niekur nesiunčiami ir pašalinami kartu su paskyra.
+47|Tai pašalina tik šiame Mac saugomą įrašą. Pati YouTube Music istorija nekeičiama.
+48|Išvalyti šio Mac istoriją
+49|Prisijungimo laikas baigėsi. Nieko neišsaugota. Bandykite dar kartą, kai būsite pasirengę.
+50|Atsijungta.
+51|Prisijungta kaip %@.
+52|Perjungta į %@.
+53|Leisti: %@
+54|Dabartinė išvestis: %@
+55|Pašalinti „%@“ iš jūsų įkėlimų?
+56|Grojama reklama
+57|Reklama baigėsi
+58|Dabar groja „%@“, atlikėjas %@.
+59|Sąsajos kalba
+60|Muzikos ir žodžių kalba
+61|Rekomendacijų regionas
+62|Kaip macOS
+63|Regionas keičia tik siūlymus. Jis niekada neatrakina muzikos ar funkcijų, kurių jūsų paskyra ar vieta neleidžia.
+P1|one:%lld minutė	few:%lld minutės	many:%lld minutės	other:%lld minučių
+P2|one:Anuliuoti: pridėta %lld daina	few:Anuliuoti: pridėtos %lld dainos	many:Anuliuoti: pridėtos %lld dainos	other:Anuliuoti: pridėta %lld dainų
+P3|one:Nepavyko parodyti %lld elemento	few:Nepavyko parodyti %lld elementų	many:Nepavyko parodyti %lld elemento	other:Nepavyko parodyti %lld elementų

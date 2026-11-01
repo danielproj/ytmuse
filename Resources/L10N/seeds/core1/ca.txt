@@ -1,0 +1,66 @@
+1|Inici
+2|Explora
+3|Biblioteca
+4|Cerca
+5|Configuració
+6|Reprodueix
+7|Atura
+8|Següent
+9|Anterior
+10|Cua
+11|Baixades
+12|Es reprodueix ara
+13|Cancel·la
+14|Fet
+15|Torna-ho a provar
+16|Torneu-ho a provar
+17|Descarta
+18|Inicia la sessió
+19|Tanca la sessió
+20|Afegeix un compte
+21|Elimina
+22|Desfés
+23|Mou amunt
+24|Mou avall
+25|En pausa
+26|S’està reproduint
+27|S’està carregant…
+28|Inicia la sessió amb Google
+29|Et donem la benvinguda a YTMuse
+30|Tria música per començar
+31|La cua és buida
+32|La sessió ha caducat
+33|Cancel·la l’inici de sessió
+34|La contrasenya la introdueixes a la pàgina de Google, mai a YTMuse.
+35|Torna a iniciar la sessió per reproduir la biblioteca.
+36|La sessió ha acabat. Torna a iniciar la sessió per reproduir.
+37|Torna a connectar aquest compte per continuar.
+38|No hi ha connexió. Torna-ho a provar quan estiguis connectat.
+39|No s’ha pogut accedir a YouTube Music. Comprova la connexió i torna-ho a provar.
+40|Aquesta acció no està disponible ara mateix.
+41|No s’ha pogut carregar aquesta pàgina
+42|No tens connexió, de manera que no s’ha canviat res. L’acció no s’ha posat en cua.
+43|Inicia la sessió a YouTube Music per fer-ho.
+44|YouTube Music no ha pogut fer aquest canvi ara mateix. No s’ha canviat res.
+45|El compte ha canviat abans que això comencés. Torna-ho a provar.
+46|Les cerques i els elements recents es queden en aquest Mac, no s’envien mai enlloc i se suprimeixen juntament amb el compte.
+47|Això només elimina el registre desat en aquest Mac. L’historial del mateix YouTube Music no canvia.
+48|Esborra l’historial d’aquest Mac
+49|L’inici de sessió ha caducat. No s’ha desat res. Torna-ho a provar quan estiguis a punt.
+50|Sessió tancada.
+51|Sessió iniciada com a %@.
+52|S’ha canviat a %@.
+53|Reprodueix %@
+54|Sortida actual: %@
+55|Vols eliminar «%@» de les teves pujades?
+56|S’està reproduint un anunci
+57|L’anunci ha acabat
+58|Es reprodueix ara «%@» de %@.
+59|Idioma de la interfície
+60|Idioma de la música i les lletres
+61|Regió per a les recomanacions
+62|Igual que macOS
+63|La regió només canvia el que se suggereix. Mai no desbloqueja música ni funcions que el teu compte o ubicació no permetin.
+P1|one:%lld minut	many:%lld de minuts	other:%lld minuts
+P2|one:Desfés: s’ha afegit %lld cançó	many:Desfés: s’han afegit %lld de cançons	other:Desfés: s’han afegit %lld cançons
+P3|one:No s’ha pogut mostrar %lld element	many:No s’han pogut mostrar %lld d’elements	other:No s’han pogut mostrar %lld elements

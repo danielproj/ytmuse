@@ -1,0 +1,1 @@
+<!doctype html><title>synthetic non-JSON page</title>

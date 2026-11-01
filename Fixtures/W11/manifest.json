@@ -1,0 +1,62 @@
+{
+ "mode": "synthetic-test-only",
+ "live_eligible": false,
+ "description": "Edge-case fixtures for W11 that the nine real captures (../W11-real) do not show: continuation envelopes, an unknown-variants page and adverse responses. Containers are hand-assembled by generate.py; the entries inside them are copied unchanged from the real captures. Not captures of any response and not live evidence.",
+ "files": [
+  {
+   "path": "adverse-continuation-unknown.json",
+   "sha256": "1ff814c934b59cc3bd6e13cbe6a8fa29eb78adb9adc85148fcd3964fbac6d7eb",
+   "bytes": 48
+  },
+  {
+   "path": "adverse-error.json",
+   "sha256": "ff08a60edf20781a2d1eaffaca55202174b184c72bed85a04407275c85938c5c",
+   "bytes": 59
+  },
+  {
+   "path": "adverse-no-container.json",
+   "sha256": "1b603a8f377648375796a8ab983bad92b1bbd622a1940208d650609c068af8b4",
+   "bytes": 76
+  },
+  {
+   "path": "adverse-unknown-sections-only.json",
+   "sha256": "7ec98455b1ea9d556fd3fae6884f613258e37aa9af6782c08467a03426b0c500",
+   "bytes": 313
+  },
+  {
+   "path": "adverse-unreadable-only.json",
+   "sha256": "2b2ec4a9e9b798e0dbd7b0388a8e1c058ef6d1a39debb2922142593f9985043d",
+   "bytes": 829
+  },
+  {
+   "path": "continuation-append-action.json",
+   "sha256": "1935640f4f5ec18988de6594d8a2f35091a375c0308ec6c6ee02a6d1a8ac0d7d",
+   "bytes": 65949
+  },
+  {
+   "path": "continuation-end.json",
+   "sha256": "230e95035f09ccbea12f2314b5cad5b84bfa78cbbc5ba16395f570ad43566f1c",
+   "bytes": 118
+  },
+  {
+   "path": "continuation-playlist-last.json",
+   "sha256": "e69dd0b74c8c9adf59a53ee83cf8085246629d2448716a0ef7a378b4f8042adc",
+   "bytes": 41516
+  },
+  {
+   "path": "continuation-playlist-shelf.json",
+   "sha256": "278f7fc08b1db7c49ccbf4e235f189c9c6bb850a952db025096fb922f82dde1a",
+   "bytes": 105834
+  },
+  {
+   "path": "continuation-section-list.json",
+   "sha256": "8e13638eea921629e181b32639c204e1378f6c78ac881830f40667734925cb98",
+   "bytes": 230607
+  },
+  {
+   "path": "unknown-variants-page.json",
+   "sha256": "af6b3eac435f7187d48bcbed8a9de730267bb4b03bae4b6aa4111be6f76e4f24",
+   "bytes": 201115
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "responseContext": {
+  "visitorData": "<redacted>"
+ },
+ "contents": {
+  "sectionListRenderer": {
+   "contents": [
+    {
+     "messageRenderer": {
+      "text": {
+       "runs": [
+        {
+         "text": "Lyrics not available"
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ }
+}

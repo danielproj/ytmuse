@@ -1,0 +1,66 @@
+1|Baile
+2|Taiscéal
+3|Leabharlann
+4|Cuardaigh
+5|Socruithe
+6|Seinn
+7|Cuir ar sos
+8|Ar aghaidh
+9|Ar ais
+10|Scuaine
+11|Íoslódálacha
+12|Ag seinm anois
+13|Cealaigh
+14|Déanta
+15|Bain triail eile as
+16|Bain triail eile as
+17|Dúnadh
+18|Sínigh isteach
+19|Sínigh amach
+20|Cuir cuntas leis
+21|Bain
+22|Cealaigh an gníomh
+23|Bog suas
+24|Bog síos
+25|Ar sos
+26|Ag seinm
+27|Ag lódáil…
+28|Sínigh isteach le Google
+29|Fáilte go YTMuse
+30|Roghnaigh ceol le tosú
+31|Tá do scuaine folamh
+32|Tá an seisiún imithe in éag
+33|Cealaigh an síniú isteach
+34|Cuireann tú do phasfhocal isteach ar leathanach Google, riamh i YTMuse.
+35|Sínigh isteach arís chun do leabharlann a sheinm.
+36|Tháinig deireadh le do sheisiún. Sínigh isteach arís chun seinm.
+37|Athcheangail an cuntas seo chun leanúint ar aghaidh.
+38|Tá an nasc as líne. Bain triail eile as nuair a bheidh tú ceangailte.
+39|Níorbh fhéidir teacht ar YouTube Music. Seiceáil do cheangal agus bain triail eile as.
+40|Níl an gníomh seo ar fáil faoi láthair.
+41|Níorbh fhéidir an leathanach seo a lódáil
+42|Tá tú as líne, mar sin níor athraíodh aon rud. Níor cuireadh an gníomh sa scuaine.
+43|Sínigh isteach i YouTube Music chun é seo a dhéanamh.
+44|Níorbh fhéidir le YouTube Music an t-athrú seo a dhéanamh faoi láthair. Níor athraíodh aon rud.
+45|D’athraigh do chuntas sular thosaigh sé seo. Bain triail eile as.
+46|Fanann cuardaigh agus míreanna le déanaí ar an Mac seo, ní sheoltar chuig áit ar bith iad agus bainfear iad leis an gcuntas.
+47|Ní bhaineann sé seo ach an taifead atá ar an Mac seo. Ní athraítear stair YouTube Music féin.
+48|Glan stair an Mac seo
+49|Cuireadh an síniú isteach in éag. Níor sábháladh aon rud. Bain triail eile as nuair a bheidh tú réidh.
+50|Sínithe amach.
+51|Sínithe isteach mar %@.
+52|Aistrithe go %@.
+53|Seinn %@
+54|An t-aschur reatha: %@
+55|Bain “%@” de do uaslódálacha?
+56|Fógra ag seinm
+57|Tháinig deireadh leis an bhfógra
+58|Ag seinm anois: “%@” le %@.
+59|Teanga an chomhéadain
+60|Teanga an cheoil agus na liricí
+61|Réigiún le haghaidh moltaí
+62|Mar a bhíonn macOS
+63|Ní athraíonn an réigiún ach na moltaí. Ní dhíghlasálann sé ceol ná gnéithe nach gceadaíonn do chuntas nó do shuíomh riamh.
+P1|one:%lld nóiméad	two:%lld nóiméad	few:%lld nóiméad	many:%lld nóiméad	other:%lld nóiméad
+P2|one:Cealaigh: cuireadh %lld amhrán leis	two:Cealaigh: cuireadh %lld amhrán leis	few:Cealaigh: cuireadh %lld amhrán leis	many:Cealaigh: cuireadh %lld n-amhrán leis	other:Cealaigh: cuireadh %lld amhrán leis
+P3|one:Níorbh fhéidir %lld mhír a thaispeáint	two:Níorbh fhéidir %lld mhír a thaispeáint	few:Níorbh fhéidir %lld mhír a thaispeáint	many:Níorbh fhéidir %lld mír a thaispeáint	other:Níorbh fhéidir %lld mír a thaispeáint

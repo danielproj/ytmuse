@@ -1,0 +1,66 @@
+1|Pagina da partenza
+2|Scuvrir
+3|Biblioteca
+4|Tschertgar
+5|Parameters
+6|Reproducir
+7|Pausa
+8|Proxim
+9|Precedent
+10|Colonna
+11|Telechargiadas
+12|Uss en reproducziun
+13|Interrumper
+14|Finì
+15|Empruvar anc ina giada
+16|Empruvai anc ina giada
+17|Serrar
+18|S’annunziar
+19|Sortir
+20|Agiuntar in conto
+21|Allontanar
+22|Revocar
+23|Spustar si
+24|Spustar giu
+25|En pausa
+26|Reproducziun
+27|Chargiar…
+28|S’annunziar cun Google
+29|Bainvegni tar YTMuse
+30|Tscherna musica per cumenzar
+31|Tia colonna è vida
+32|La sessiun è scrudada
+33|Interrumper l’annunzia
+34|Il pled-clav endatais ti sin la pagina da Google, mai en YTMuse.
+35|S’annunzia danovamain per reproducir tia biblioteca.
+36|Tia sessiun è finida. S’annunzia danovamain per reproducir.
+37|Colliescha danovamain quest conto per cuntinuar.
+38|La colliaziun è offline. Empruva danovamain cur che ti es collià.
+39|YouTube Music n’è betg accessibel. Controllescha ta colliaziun ed empruva danovamain.
+40|Questa acziun n’è per il mument betg disponibla.
+41|Questa pagina n’ha betg pudì vegnir chargiada
+42|Ti es offline, perquai n’è nagut vegnì midà. L’acziun n’è betg vegnida messa en la colonna.
+43|S’annunzia tar YouTube Music per far quai.
+44|YouTube Music n’ha per il mument betg pudì far questa midada. Nagut n’è vegnì midà.
+45|Tes conto è sa midà avant ch’al process ha cumenzà. Empruva danovamain.
+46|Tschertgas e elements recents restan sin quest Mac, na vegnan mai trametts en nagin lieu e vegnan allontanads cun il conto.
+47|Quai allontanescha mo l’endataziun memorisada sin quest Mac. L’istorgia da YouTube Music svessa na vegn betg midada.
+48|Stizzar l’istorgia da quest Mac
+49|L’annunzia è scrudada. Nagut n’è vegnì memorisà. Empruva danovamain cur che ti es pront.
+50|Ti es sortì.
+51|Annunzià sco %@.
+52|Midà a %@.
+53|Reproducir %@
+54|Sortida actuala: %@
+55|Allontanar «%@» da tes upload?
+56|Ina reclama vegn reproducida
+57|La reclama è finida
+58|Uss en reproducziun: «%@» da %@.
+59|Lingua da l’interfatscha
+60|Lingua da la musica e dals texts
+61|Regiun per recomandaziuns
+62|Medemamain sco macOS
+63|La regiun mida mo tge che vegn proponì. Ella na debloccha mai musica u funcziuns che tes conto u tia posizun na permettan betg.
+P1|one:%lld minuta	other:%lld minutas
+P2|one:Revocar: %lld tune agiuntà	other:Revocar: %lld tunes agiuntads
+P3|one:%lld element n’ha betg pudì vegnir mussà	other:%lld elements n’han betg pudì vegnir mussads

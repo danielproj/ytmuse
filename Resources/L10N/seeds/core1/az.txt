@@ -1,0 +1,66 @@
+1|Ana səhifə
+2|Kəşf et
+3|Kitabxana
+4|Axtar
+5|Parametrlər
+6|Oxut
+7|Fasilə ver
+8|Növbəti
+9|Əvvəlki
+10|Növbə
+11|Yükləmələr
+12|İndi oxunur
+13|Ləğv et
+14|Hazırdır
+15|Yenidən cəhd et
+16|Yenidən cəhd edin
+17|Bağla
+18|Daxil ol
+19|Çıxış et
+20|Hesab əlavə et
+21|Sil
+22|Geri qaytar
+23|Yuxarı apar
+24|Aşağı apar
+25|Fasilədədir
+26|Oxunur
+27|Yüklənir…
+28|Google ilə daxil ol
+29|YTMuse-a xoş gəlmisiniz
+30|Başlamaq üçün musiqi seçin
+31|Növbəniz boşdur
+32|Sessiyanın vaxtı bitdi
+33|Girişi ləğv et
+34|Parolu Google-ın səhifəsində daxil edirsiniz, heç vaxt YTMuse-da yox.
+35|Kitabxananızı oxutmaq üçün yenidən daxil olun.
+36|Sessiyanız başa çatdı. Oxutmaq üçün yenidən daxil olun.
+37|Davam etmək üçün bu hesabı yenidən qoşun.
+38|Bağlantı oflayndır. Qoşulduqdan sonra yenidən cəhd edin.
+39|YouTube Music-ə çatmaq mümkün olmadı. Bağlantınızı yoxlayıb yenidən cəhd edin.
+40|Bu əməliyyat hazırda əlçatan deyil.
+41|Bu səhifə yüklənə bilmədi
+42|Oflaynsınız, ona görə heç nə dəyişdirilmədi. Əməliyyat növbəyə qoyulmadı.
+43|Bunu etmək üçün YouTube Music-də daxil olun.
+44|YouTube Music bu dəyişikliyi hazırda edə bilmədi. Heç nə dəyişdirilmədi.
+45|Hesabınız bu başlamazdan əvvəl dəyişdi. Yenidən cəhd edin.
+46|Son axtarışlar və elementlər bu Mac-də qalır, heç yerə göndərilmir və hesabla birlikdə silinir.
+47|Bu yalnız bu Mac-də saxlanan qeydi silir. YouTube Music-in öz tarixçəsi dəyişmir.
+48|Bu Mac-in tarixçəsini təmizlə
+49|Girişin vaxtı bitdi. Heç nə saxlanmadı. Hazır olduqda yenidən cəhd edin.
+50|Çıxış edildi.
+51|%@ kimi daxil olundu.
+52|%@ hesabına keçildi.
+53|%@ oxut
+54|Cari çıxış: %@
+55|“%@” yükləmələrinizdən silinsin?
+56|Reklam oxunur
+57|Reklam bitdi
+58|İndi oxunur: “%@”, ifaçı: %@.
+59|İnterfeys dili
+60|Musiqi və mahnı sözləri dili
+61|Tövsiyələr üçün region
+62|macOS ilə eyni
+63|Region yalnız təklifləri dəyişir. O, heç vaxt hesabınızın və ya məkanınızın icazə vermədiyi musiqini və ya funksiyaları açmır.
+P1|one:%lld dəqiqə	other:%lld dəqiqə
+P2|one:Geri qaytar: %lld mahnı əlavə edildi	other:Geri qaytar: %lld mahnı əlavə edildi
+P3|one:%lld element göstərilə bilmədi	other:%lld element göstərilə bilmədi

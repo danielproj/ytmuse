@@ -1,0 +1,66 @@
+1|Hjem
+2|Utforsk
+3|Bibliotek
+4|Søk
+5|Innstillinger
+6|Spill av
+7|Sett på pause
+8|Neste
+9|Forrige
+10|Kø
+11|Nedlastinger
+12|Spilles nå
+13|Avbryt
+14|Ferdig
+15|Prøv igjen
+16|Prøv igjen
+17|Lukk
+18|Logg inn
+19|Logg ut
+20|Legg til konto
+21|Fjern
+22|Angre
+23|Flytt opp
+24|Flytt ned
+25|På pause
+26|Spiller av
+27|Laster inn …
+28|Logg inn med Google
+29|Velkommen til YTMuse
+30|Velg musikk for å komme i gang
+31|Køen din er tom
+32|Økten har utløpt
+33|Avbryt pålogging
+34|Du skriver inn passordet på Googles side, aldri i YTMuse.
+35|Logg inn på nytt for å spille av biblioteket ditt.
+36|Økten din er avsluttet. Logg inn på nytt for å spille av.
+37|Koble til denne kontoen på nytt for å fortsette.
+38|Tilkoblingen er frakoblet. Prøv igjen når du er tilkoblet.
+39|Fikk ikke kontakt med YouTube Music. Kontroller tilkoblingen og prøv igjen.
+40|Denne handlingen er ikke tilgjengelig akkurat nå.
+41|Siden kunne ikke lastes inn
+42|Du er frakoblet, så ingenting ble endret. Handlingen er ikke satt i kø.
+43|Logg inn på YouTube Music for å gjøre dette.
+44|YouTube Music kunne ikke gjøre denne endringen akkurat nå. Ingenting ble endret.
+45|Kontoen din ble endret før dette startet. Prøv igjen.
+46|Nylige søk og elementer blir værende på denne Macen, sendes aldri noe sted og fjernes sammen med kontoen.
+47|Dette fjerner bare oppføringen som er lagret på denne Macen. YouTube Musics egen historikk endres ikke.
+48|Fjern denne Macens historikk
+49|Påloggingen ble tidsavbrutt. Ingenting ble lagret. Prøv igjen når du er klar.
+50|Logget ut.
+51|Logget inn som %@.
+52|Byttet til %@.
+53|Spill av %@
+54|Gjeldende utgang: %@
+55|Vil du fjerne «%@» fra opplastingene dine?
+56|En annonse spilles av
+57|Annonsen er slutt
+58|Spilles nå: «%@» av %@.
+59|Grensesnittspråk
+60|Språk for musikk og sangtekster
+61|Område for anbefalinger
+62|Samme som macOS
+63|Området endrer bare hva som foreslås. Det låser aldri opp musikk eller funksjoner som kontoen eller posisjonen din ikke tillater.
+P1|one:%lld minutt	other:%lld minutter
+P2|one:Angre: %lld sang ble lagt til	other:Angre: %lld sanger ble lagt til
+P3|one:%lld element kunne ikke vises	other:%lld elementer kunne ikke vises

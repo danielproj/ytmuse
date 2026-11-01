@@ -1,0 +1,35 @@
+{
+ "responseContext": {
+  "visitorData": "<redacted>"
+ },
+ "contents": {
+  "sectionListRenderer": {
+   "contents": [
+    {
+     "musicDescriptionShelfRenderer": {
+      "description": {
+       "runs": [
+        {
+         "text": "\n\n  Indented first line\n\tTabbed line\n   \nDouble  space and trailing spaces   "
+        },
+        {
+         "text": "\n\nSecond run, then\n\n\n"
+        }
+       ]
+      },
+      "footer": {
+       "runs": [
+        {
+         "text": "Source: "
+        },
+        {
+         "text": "Placeholder Provider "
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,18 @@
+1342|Una actualización se descarga y verifica en segundo plano, nunca mientras suena música. Solo se instala cuando pulsas «Reiniciar para actualizar».
+1343|Preguntar una vez
+1344|Comprobar a diario
+1345|¿Buscar actualizaciones una vez al día?
+1346|Descargar actualización
+1347|Descargar actualizaciones automáticamente
+1348|Nunca mientras suena música. Una actualización solo se descarga y verifica; se instala cuando pulsas «Reiniciar para actualizar».
+1349|Ahora no
+1350|Una vez al día
+1351|Solo cuando elija «Comprobar ahora»
+1352|La reproducción está activa. Páusala o detenla para reiniciar con la actualización.
+1353|Reiniciar para actualizar
+1354|No se pudo instalar la actualización. No se ha cambiado nada; puedes volver a intentarlo.
+1355|Esta compilación no tiene fuente de actualizaciones. Las compilaciones desde el código fuente se actualizan desde el repositorio del código fuente.
+1356|Esta compilación no está firmada con una identidad de versión, así que no puede verificar ni instalar actualizaciones.
+1357|Esta es una sesión de prueba aislada. Nunca contacta con una fuente de actualizaciones.
+1358|Funciona en una compilación de versión firmada que tenga fuente de actualizaciones. Una compilación desde el código fuente no la tiene: no comprueba ni instala nada, y lo indica en esta página.
+1359|YTMuse puede buscar una versión nueva una vez al día. La comprobación descarga un pequeño archivo firmado y no envía información de la cuenta, de lo que escuchas ni del dispositivo. Puedes cambiarlo en Ajustes.

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "classification": "synthetic-storage-stress-only",
+  "source": "Packages/NativeMusic/Tests/PersistenceTests/Support.swift::StressDataset",
+  "seed": 314159,
+  "generator": "item ID is item-%06d; title number is (index * 6364136223846793005 + seed) modulo 97 using UInt64 wrapping arithmetic",
+  "counts": {
+    "catalog_items": 50000,
+    "collections": 1000,
+    "large_collection_occurrences": 10000,
+    "queue_occurrences": 5000
+  },
+  "duplicates": "All occurrences in the large collection and queue deliberately reference one media ID, retaining distinct deterministic occurrence UUIDs.",
+  "artwork": "Synthetic artwork references only, no image bytes. Artwork decoding/cache stress is assigned to later artwork/performance nodes.",
+  "credentials": "None; a random-format local Keychain reference and clearly synthetic rejection canaries are used.",
+  "live_service_evidence": false,
+  "formal_performance_acceptance": false,
+  "cleanup": "Every test creates a unique native-music-T03-* temporary directory and removes only that disposable directory after closing stores. Crash workers receive only this directory.",
+  "queue_property_seeds": [
+    1,
+    7,
+    42,
+    271828,
+    314159,
+    18446744073709551615
+  ],
+  "queue_property_cases": "Six seeds, eight 128-occurrence shuffled snapshots per seed, with distinct occurrence IDs over three repeated media IDs; every snapshot also gets an injected entry-write rollback."
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "W02-synthetic-domain-v1",
+  "mode": "synthetic-test-only",
+  "label": "Synthetic domain fixtures — no YouTube service observations",
+  "provenance": "Original deterministic Swift test values created for W02; no captures, credentials or user data",
+  "license": "MIT",
+  "allowed_evidence_layers": ["domain", "fixture"],
+  "live_eligible": false,
+  "seeds": [1, 7, 42, 271828, 314159, 18446744073709551615]
+}

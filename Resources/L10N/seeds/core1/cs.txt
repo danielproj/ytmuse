@@ -1,0 +1,66 @@
+1|Domů
+2|Objevovat
+3|Knihovna
+4|Hledat
+5|Nastavení
+6|Přehrát
+7|Pozastavit
+8|Další
+9|Předchozí
+10|Fronta
+11|Stažené položky
+12|Právě hraje
+13|Zrušit
+14|Hotovo
+15|Zkusit znovu
+16|Zkuste to znovu
+17|Zavřít
+18|Přihlásit se
+19|Odhlásit se
+20|Přidat účet
+21|Odebrat
+22|Zpět
+23|Posunout nahoru
+24|Posunout dolů
+25|Pozastaveno
+26|Přehrává se
+27|Načítání…
+28|Přihlásit se přes Google
+29|Vítejte v YTMuse
+30|Začněte výběrem hudby
+31|Vaše fronta je prázdná
+32|Platnost relace vypršela
+33|Zrušit přihlášení
+34|Heslo zadáváte na stránce společnosti Google, nikdy v YTMuse.
+35|Přihlaste se znovu, abyste mohli přehrát svou knihovnu.
+36|Vaše relace skončila. Přihlaste se znovu, abyste mohli přehrávat.
+37|Pokračujte opětovným připojením tohoto účtu.
+38|Jste offline. Zkuste to znovu, až budete připojeni.
+39|Služba YouTube Music není dostupná. Zkontrolujte připojení a zkuste to znovu.
+40|Tato akce teď není dostupná.
+41|Stránku se nepodařilo načíst
+42|Jste offline, takže se nic nezměnilo. Akce nebyla zařazena do fronty.
+43|Pro tuto akci se přihlaste do YouTube Music.
+44|YouTube Music teď tuto změnu nemohl provést. Nic se nezměnilo.
+45|Váš účet se změnil, než akce začala. Zkuste to znovu.
+46|Poslední hledání a položky zůstávají v tomto Macu, nikam se neodesílají a odstraní se spolu s účtem.
+47|Tím se odstraní pouze záznam uložený v tomto Macu. Historie samotné služby YouTube Music se nemění.
+48|Vymazat historii tohoto Macu
+49|Přihlášení vypršelo. Nic nebylo uloženo. Zkuste to znovu, až budete připraveni.
+50|Odhlášení proběhlo.
+51|Přihlášen jako %@.
+52|Přepnuto na účet %@.
+53|Přehrát %@
+54|Aktuální výstup: %@
+55|Odebrat „%@“ z vašich nahrávek?
+56|Přehrává se reklama
+57|Reklama skončila
+58|Právě hraje „%@“ od interpreta %@.
+59|Jazyk rozhraní
+60|Jazyk hudby a textů
+61|Oblast pro doporučení
+62|Stejný jako macOS
+63|Oblast mění pouze doporučení. Nikdy neodemkne hudbu ani funkce, které váš účet nebo poloha nepovolují.
+P1|one:%lld minuta	few:%lld minuty	many:%lld minuty	other:%lld minut
+P2|one:Zpět: přidána %lld skladba	few:Zpět: přidány %lld skladby	many:Zpět: přidáno %lld skladby	other:Zpět: přidáno %lld skladeb
+P3|one:%lld položku se nepodařilo zobrazit	few:%lld položky se nepodařilo zobrazit	many:%lld položky se nepodařilo zobrazit	other:%lld položek se nepodařilo zobrazit

@@ -1,0 +1,75 @@
+{
+ "_fixture": "synthetic E01 web-session fixture: hand-written to the published InnerTube shape; not a live capture; no real account",
+ "responseContext": {
+  "mainAppWebResponseContext": {
+   "loggedOut": false
+  }
+ },
+ "actions": [
+  {
+   "openPopupAction": {
+    "popup": {
+     "multiPageMenuRenderer": {
+      "sections": [
+       {
+        "multiPageMenuSectionRenderer": {
+         "items": [
+          {
+           "compactLinkRenderer": {
+            "title": {
+             "runs": [
+              {
+               "text": "Your channel"
+              }
+             ]
+            },
+            "navigationEndpoint": {
+             "browseEndpoint": {
+              "browseId": "UCsyntheticChannel000000"
+             }
+            }
+           }
+          }
+         ]
+        }
+       }
+      ],
+      "header": {
+       "futureAccountHeaderRenderer": {
+        "accountName": {
+         "runs": [
+          {
+           "text": "Synthetic Listener"
+          }
+         ]
+        },
+        "channelHandle": {
+         "runs": [
+          {
+           "text": "@synthetic-listener"
+          }
+         ]
+        },
+        "accountPhoto": {
+         "thumbnails": [
+          {
+           "url": "https://yt3.ggpht.com/synthetic-avatar=s48",
+           "width": 48,
+           "height": 48
+          },
+          {
+           "url": "https://yt3.ggpht.com/synthetic-avatar=s88",
+           "width": 88,
+           "height": 88
+          }
+         ]
+        }
+       }
+      }
+     }
+    },
+    "popupType": "DROPDOWN"
+   }
+  }
+ ]
+}

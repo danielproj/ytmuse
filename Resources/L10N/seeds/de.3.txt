@@ -1,0 +1,300 @@
+701|Pausiert.
+702|Ausstehend
+703|Wähle etwas aus, um seinen Radiosender zu starten. Es werden nur Sender aufgelistet, die YouTube Music anbietet, und der Tuner zeigt nur Regler, die es liefert.
+704|Wähle etwas aus, um seinen Radiosender zu starten. Sender und Regler kommen von YouTube Music; der Tuner zeigt nur, was es liefert.
+705|Bild-in-Bild
+706|Bild-in-Bild konnte nicht gestartet werden.
+707|Bild-in-Bild ist für dieses Video nicht verfügbar: WebKit meldet, dass es das hier nicht unterstützt.
+708|Bild-in-Bild ist für dieses Video gerade nicht möglich.
+709|Bild-in-Bild wird auf diesem Mac nicht unterstützt.
+710|Hier abspielen
+711|Hier abspielen …
+712|Als Nächstes abspielen
+713|Auf diesem Mac abspielen?
+714|In YTMuse wiedergeben oder pausieren
+715|Wiedergabe/Pause
+716|Wiedergabe
+717|Die Wiedergabe konnte nicht geändert werden. Versuche die Transportaktion erneut.
+718|Die Wiedergabe konnte nicht abgeschlossen werden. Versuche es mit dem gewählten Objekt erneut.
+719|Die Wiedergabe wird in allen Fenstern geteilt.
+720|Wiedergabeposition
+721|Gespielt
+722|Wiedergabe mit %@; du hast %@ gewählt
+723|Wiedergabe von YouTube Music
+724|Wiedergabe in Bild-in-Bild.
+725|Wiedergabe im Player. Die Vorschau endete zuerst.
+726|Wiedergabe im Videofenster.
+727|Die Wiedergabe verwendet jetzt die Tonausgabe dieses Mac.
+728|Wiedergabe läuft.
+729|Playlist
+730|Playlists
+731|Playlists, die du in YouTube Music sicherst, erscheinen hier.
+732|Spielt diesen Song und danach ähnliche Musik.
+733|Podcast
+734|Podcasts
+735|Posten
+736|Einen Kommentar posten
+737|Vorbereitete Warteschlange
+738|Wird vorbereitet
+739|Tastaturkürzel drücken …
+740|Vorschau
+741|Vorschau läuft
+742|Vorschauen starten bei einer eingeschränkten Verbindung nicht von selbst. Klicke auf „Vorschau“, um eine zu hören.
+743|Vorschauen starten bei eingeschaltetem Energiesparmodus nicht von selbst. Klicke auf „Vorschau“, um eine zu hören.
+744|Vorschauen, die von selbst starten
+745|Vorschauen, die von selbst starten, sind ausgeschaltet. Klicke auf „Vorschau“, um eine zu hören.
+746|Vorheriger Song
+747|Vorheriger Song in YTMuse
+748|Vorheriges Objekt
+749|Vorherige Seite
+750|Privat
+751|%@ wird verarbeitet
+752|Fortschritt mit der Markierung „Auf diesem Mac“ wird nur auf diesem Mac behalten. Der eigene Player von YouTube meldet seinen Fortschritt von selbst an YouTube Music.
+753|Öffentlich
+754|Qualität
+755|In der Warteschlange
+756|YTMuse beenden
+757|Radio
+758|Radiofilter
+759|Radio von „%@“
+760|Speicherlimit erhöhen
+761|Bewerten
+762|Bewertung
+763|Bewertung: %@
+764|Kommentare lesen
+765|Aus YouTube Music gelesen. Der eigene Player von YouTube erfasst es bei der Wiedergabe; diese App schreibt es nie.
+766|Playlist wird gelesen …
+767|Liest zuerst die Playlist und sendet nur, was fehlt
+768|Bereit, „%@“ beizutreten.
+769|Rückblick
+770|Zuletzt
+771|Zuletzt verwendete Objekte
+772|Letzte Suchanfragen
+773|Zuletzt gespielt
+774|Erneut verbinden
+775|Aktualisieren
+776|Wird aktualisiert …
+777|%@ von diesem Mac entfernen?
+778|%@ aus deinen Uploads entfernen
+779|Gefällt mir entfernen
+780|Aus „Folgen für später“ entfernen
+781|„%@“ wurde aus deinen Uploads entfernt.
+782|„%@“ wurde aus deinen Uploads entfernt. Die Datei auf deinem Mac wurde nicht angetastet.
+783|Entfernen …
+784|„%@“ wird entfernt …
+785|Umbenennen
+786|Lokale Bezeichnung umbenennen
+787|Erneuern
+788|Wird erneuert
+789|%@ wiederholen
+790|Alle wiederholen
+791|Die Wiederholung konnte nicht geändert werden. Versuche die Wiederholungsaktion erneut.
+792|Wiederholen aus
+793|Eines wiederholen
+794|Gesicherten Fensterstatus zurücksetzen
+795|Gesicherten Fensterstatus zurücksetzen?
+796|Gesicherten Fensterstatus zurücksetzen …
+797|Standard-Erscheinungsbild wiederherstellen
+798|Standardsprachen wiederherstellen
+799|Fortsetzen
+800|%@ fortsetzen
+801|Wiedergabe fortsetzen, wenn der Mac aufwacht
+802|Aktion wiederholen
+803|Lokalen Speicher erneut versuchen
+804|Gewähltes Objekt erneut versuchen
+805|Zur aktuellen Zeile zurückkehren
+806|Aktuelles Objekt anzeigen
+807|Samples
+808|Samples sind noch nicht verfügbar
+809|Samples sind noch nicht verfügbar. Keine der YouTube-Music-Antworten, die diese App lesen kann, enthält sie, daher gibt es hier nichts anzuzeigen.
+810|Sichern
+811|Beschreibung sichern
+812|Warteschlange als Playlist sichern …
+813|Aktuelles Fenster erneut sichern
+814|Für später sichern
+815|In der Mediathek sichern
+816|Gesichert
+817|Gesicherte Folgen
+818|Gesicherte Kopie von %@.
+819|Gesicherte Kopie von %@. Wird aktualisiert …
+820|Der gesicherte Fensterstatus konnte nicht sicher zurückgesetzt werden. Dein Account bleibt nutzbar. Versuche es erneut, nachdem du den Speicher für den Fensterstatus dieser App repariert hast.
+821|Der gesicherte Fensterstatus ist nicht verfügbar. Dein Account ist weiterhin nutzbar. Du kannst die gesicherten Fenster, Suchen, Filter und Auswahlen dieser App zurücksetzen.
+822|Diese Änderung wird gesichert …
+823|Das Speichern in deiner Mediathek ist noch nicht verfügbar. YTMuse liest den Katalog, ändert aber nicht deine Mediathek.
+824|Sage, wonach gesucht werden soll.
+825|YTMuse durchsuchen
+826|YouTube Music durchsuchen
+827|Suchen nach
+828|Nach „%@“ suchen
+829|Stattdessen nach „%@“ suchen
+830|Songs, Alben, Interpreten und Playlists suchen
+831|Diese Sammlung durchsuchen
+832|Deine Uploads durchsuchen
+833|Sucht erneut
+834|YouTube Music wird durchsucht …
+835|Die Playlists in deiner Mediathek werden auf diesem Mac durchsucht. Der Dienst wird nicht gefragt.
+836|Suche läuft.
+837|Sekunden
+838|Sichere Seite: %@
+839|Zurückspulen
+840|Vorspulen
+841|Es wird gespult.
+842|%@ auswählen
+843|Alles auswählen
+844|Wird gesendet …
+845|Reihenfolge des Dienstes
+846|Abonnements des Dienstes bleiben bei YouTube.
+847|Sitzung
+848|Einstellungen …
+849|Teilen
+850|Aktuellen Song teilen …
+851|Teilen …
+852|Kürzeste zuerst
+853|Anzeigen
+854|Mediathek anzeigen
+855|Songtext anzeigen
+856|Aktuelle Wiedergabe anzeigen
+857|Warteschlange anzeigen
+858|Warteschlange im Fenster anzeigen
+859|Warteschlange in YTMuse anzeigen
+860|Video anzeigen
+861|Videoversion anzeigen
+862|Fenster anzeigen
+863|YTMuse anzeigen
+864|Weniger anzeigen
+865|Mehr anzeigen
+866|YTMuse ein- oder ausblenden
+867|Warteschlange anzeigen
+868|Gesicherte Songs, Alben und Interpreten in Spotlight anzeigen
+869|Den laufenden Titel im Hilfetext der Menüleiste anzeigen
+870|Das Video in einem eigenen Fenster anzeigen
+871|Ergebnisse für „%@“.
+872|Die erste Seite deiner Mediathek wird angezeigt.
+873|Der Player wird angezeigt.
+874|Die Warteschlange wird angezeigt.
+875|Reihenfolge der Sendung
+876|Zufallswiedergabe
+877|Die Zufallswiedergabe konnte nicht geändert werden. Versuche die Zufallsaktion erneut.
+878|Erneut anmelden
+879|Bei YouTube Music anmelden
+880|Erneut angemeldet als %@.
+881|Einzelne Folgen können von hier aus noch nicht abgespielt werden.
+882|Vorhandene überspringen
+883|Zurückspringen
+884|Vorspringen
+885|Sprunglängen
+886|Es wird zum nächsten Objekt gesprungen.
+887|Einschlaftimer
+888|Einschlaftimer aus.
+889|Einschlaftimer für das Ende dieses Objekts eingestellt.
+890|Einschlaftimer: noch %@
+891|Einschlaftimer: Ende der Folge
+892|Einschlaftimer: Ende des Titels
+893|Einschlaftimer: wird ausgeblendet
+894|Intelligente Downloads
+895|Software-Gerät
+896|Einige Dateien wurden nicht hinzugefügt.
+897|Einige dieser Songs sind bereits in der Playlist
+898|Es läuft bereits etwas, daher starten Vorschauen nicht von selbst. Klicke auf „Vorschau“, um eine zu hören.
+899|Es läuft bereits etwas, daher starten Vorschauen nicht von selbst. Klicke auf „Vorschau“, um eine zu hören; sie ersetzt, was gerade läuft.
+900|Song
+901|Songtitel
+902|Songs
+903|Sortieren
+904|Folgen sortieren
+905|Quelle: %@ · %@ · %@ · %@
+906|Geschwindigkeit
+907|Spotlight
+908|Von vorn beginnen
+909|Radio starten
+910|Ein Radio starten von
+911|Radio von %@ starten
+912|Gestartet
+913|Wird gestartet
+914|YouTube Music wird gestartet …
+915|Wird gestartet …
+916|Beiträge beenden
+917|Beiträge beenden …
+918|Nicht mehr behalten
+919|Vorschau beenden
+920|Beiträge beenden
+921|Beiträge zur Playlist „%@“ beenden
+922|Beiträge zu „%@“ beenden?
+923|Den Mini-Player nicht mehr im Vordergrund halten
+924|Gestoppt
+925|Speicher
+926|Speicherlimit
+927|Vorgeschlagene Songs
+928|Vorschläge
+929|Vorschläge und Entdeckungen kommen mit den Bildschirmen „Start“ und „Entdecken“. Bis dahin ist die Suche der Weg hinein.
+930|Wechseln
+931|System
+932|Systemausgabe
+933|Sage YTMuse, was abgespielt werden soll, mit Namen.
+934|Dieser Befehl ist gerade nicht verfügbar.
+935|Dieser Download konnte nicht abgespielt werden. Versuche es noch einmal mit „Wiedergeben“ oder lade ihn erneut herunter.
+936|Diese Position ist ungültig.
+937|Diese Qualität bietet dieses Video nicht an.
+938|Diese Suche ist zu lang.
+939|Dieser Wert ist für diesen Befehl ungültig.
+940|Der AirPlay-Empfänger wurde getrennt, daher wurde die Wiedergabe pausiert.
+941|Die App wurde beendet, bevor dieser Upload abgeschlossen war.
+942|Die Beschreibung wurde ebenfalls geändert.
+943|Der Speicher ist voll
+944|Die Datei hat sich nach der Auswahl geändert. Wähle sie erneut aus.
+945|Die erste Seite der Antwort von YouTube Music, nicht der ganze Katalog.
+946|Der Schlüssel für diesen Download ist nicht mehr verfügbar
+947|Das letzte oder aktuelle Objekt, mit Wiedergabe, Zurück und Weiter.
+948|Der Link wird nur gelesen, um die Playlist zu benennen. Du trittst nur bei, wenn du auf „Beitreten“ klickst und bestätigst.
+949|Das nächste Objekt konnte nicht geöffnet werden. Versuche es noch einmal mit „Nächster“.
+950|Der einzige Song
+951|Der andere Player konnte nicht gestoppt werden. Versuche es noch einmal mit „Wiedergeben“.
+952|Die Ausgabe wurde getrennt, daher wurde die Wiedergabe pausiert.
+953|Die zuvor gewählte Ausgabe ist nicht verbunden, daher wird die Tonausgabe des Mac verwendet.
+954|Die Ausgabe, die du verwendet hast, ist wieder da; wähle „Erneut verbinden“ im Menü „Ausgabe“, um dort fortzufahren.
+955|Die Wiedergabeposition konnte nicht geändert werden. Versuche es noch einmal mit dem Spulen.
+956|Die Playlist wurde anderswo geändert; deine Änderung wurde damit zusammengeführt.
+957|Die Playlist ist für Beiträge geschlossen.
+958|Das vorherige Objekt konnte nicht geöffnet werden. Versuche es noch einmal mit „Vorheriger“.
+959|Die Warteschlange konnte diesen Song nicht aufnehmen.
+960|Die Warteschlange wird im Hauptfenster angezeigt.
+961|Das Radio konnte nicht gestartet werden. Was lief, bleibt unverändert.
+962|Der Empfänger bestimmt die Lautstärke.
+963|Das gewählte Objekt der Warteschlange konnte nicht geöffnet werden. Versuche, es erneut auszuwählen.
+964|Die Sitzung für %@ wurde beendet. Melde dich erneut an.
+965|Der Einschlaftimer konnte nicht geändert werden. Versuche, den Timer erneut einzustellen.
+966|Der Einschlaftimer pausiert die Wiedergabe auf dem Empfänger, wenn er endet, kann den Ton aber vorher nicht ausblenden. Trotzdem einschalten?
+967|Die Quelle ist nicht mehr verfügbar
+968|Die Quelle erlaubt nicht mehr, dieses Objekt zu behalten
+969|Der Titel wurde ebenfalls in „%@“ geändert.
+970|Die beiden Versionen unterscheiden sich in der Länge, daher beginnt es von vorn.
+971|Die Sichtbarkeit wurde ebenfalls geändert.
+972|Es gibt kein Bild zum Anzeigen.
+973|Es gibt nichts, wohin man zurückgehen könnte.
+974|Es gibt nichts, wohin man vorwärtsgehen könnte.
+975|Das sind verschiedene Versionen der Aufnahme, daher beginnt es von vorn.
+976|Diese Auswahl wird nur auf diesem Mac behalten. Eine Sendung, der du eine eigene Geschwindigkeit gibst, behält sie.
+977|Dieser Songtext kam ohne Zeitangaben, daher folgt er dem Song nicht. Scrolle zum Lesen.
+978|Dieses Sample nennt nichts zum Abspielen.
+979|Diese Antwort ändert nur diese eine Sache. Der Rest der Playlist bleibt, wie er ist.
+980|Diese App ändert nie die Lautstärke des Mac.
+981|Dieser Kommentar ist länger, als diese App in einem Beitrag sendet.
+982|Diese Verbindung ist getaktet. Automatische Downloads warten; du kannst trotzdem einen starten.
+983|Dadurch wird „%@“ aus deinen YouTube-Music-Uploads gelöscht. Die Datei auf deinem Mac wird nicht angetastet.
+984|Die Sendung dieser Folge ist nicht bekannt, daher kann ihre Geschwindigkeit nicht geändert werden.
+985|Diese Datei hat sich beim Lesen geändert. Wähle sie erneut aus, sobald sie sich nicht mehr ändert.
+986|Diese Datei ist größer als das Maximum von %@, das YouTube Music akzeptiert.
+987|Das ist ein Ordner. Wähle stattdessen die Audiodateien darin aus.
+988|Das ist eine Videodatei. Uploads in deine Musikmediathek nehmen Audiodateien an.
+989|Das ist bereits die Audioversion.
+990|Das ist kein Livestream.
+991|Das ist das Standardkürzel %@, das jede App verwendet.
+992|Das ist dein eigenes Audio oder eine lokale Datei, kein Song von YouTube Music, daher gibt es kein „Gefällt mir“ und kein Sichern.
+993|Das ist dein eigenes Audio oder eine lokale Datei, kein Song von YouTube Music, daher gibt es kein „Gefällt mir“.
+994|Dieses Objekt kann nicht geladen werden
+995|In diesem Objekt kann gerade nicht gesprungen werden.
+996|Dieses Objekt hat keinen Link.
+997|Dieses Objekt wartet dort, wo du aufgehört hast. Klicke zuerst auf „Wiedergeben“.
+998|Die Länge dieses Objekts ist nicht bekannt.
+999|Diese Taste kann nicht für ein globales Tastaturkürzel verwendet werden.
+1000|Diese Taste kann nicht verwendet werden: Wähle einen Buchstaben, eine Ziffer, einen Pfeil, die Leertaste oder F1 bis F12.

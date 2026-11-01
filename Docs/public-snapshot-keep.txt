@@ -1,0 +1,18 @@
+# Harness evidence that the repository's own tests and scripts READ, kept in the public snapshot although artifacts/ as a whole is excluded
+# (Docs/public-snapshot-excludes.txt). One path per line (a file or a directory), relative to the repository root. Derived from `grep artifacts/` over the
+# tests and scripts; scripts/clean-checkout.sh --snapshot proves the snapshot builds and passes every headless test with exactly these.
+#
+# W19 wire comparison: a pinned copy of two files of ytmusicapi (MIT) and the isolation proofs the T19/T20 suites run.
+artifacts/harness/nodes/W19/reference
+artifacts/harness/nodes/W19/isolation-proof.py
+artifacts/harness/nodes/W20/isolation-proof.py
+# The launch guard sweeps scripts under artifacts/harness, pins the hashes of two reviewed plants and requires these files to be swept.
+artifacts/harness/nodes/W09/rework-11/candidate-f1.py
+artifacts/harness/nodes/W09/rework-11/cua/CUA-window-art-20261027T221125Z-7e7e2e66/session.py
+artifacts/harness/nodes/W26/mutation/run-mutations.py
+artifacts/harness/nodes/W26/ui/run-ui.sh
+# Real anonymous public captures the connection tests parse.
+artifacts/harness/nodes/E01/capture-0.json
+artifacts/harness/nodes/E01/capture-1.json
+# The input-source wrapper test reads its template.
+artifacts/harness/nodes/V01/rework-2/critic/repro/input-source-wrapper/FakeTestInputSource.swift

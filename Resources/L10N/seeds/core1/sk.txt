@@ -1,0 +1,66 @@
+1|Domov
+2|Objavovať
+3|Knižnica
+4|Hľadať
+5|Nastavenia
+6|Prehrať
+7|Pozastaviť
+8|Ďalšia
+9|Predchádzajúca
+10|Rad
+11|Stiahnuté
+12|Teraz hrá
+13|Zrušiť
+14|Hotovo
+15|Skúsiť znova
+16|Skúste to znova
+17|Zavrieť
+18|Prihlásiť sa
+19|Odhlásiť sa
+20|Pridať účet
+21|Odstrániť
+22|Späť
+23|Presunúť vyššie
+24|Presunúť nižšie
+25|Pozastavené
+26|Prehráva sa
+27|Načítava sa…
+28|Prihlásiť sa cez Google
+29|Víta vás YTMuse
+30|Začnite výberom hudby
+31|Váš rad je prázdny
+32|Platnosť relácie vypršala
+33|Zrušiť prihlásenie
+34|Heslo zadávate na stránke spoločnosti Google, nikdy v YTMuse.
+35|Prihláste sa znova, aby ste mohli prehrať svoju knižnicu.
+36|Vaša relácia sa skončila. Prihláste sa znova, aby ste mohli prehrávať.
+37|Ak chcete pokračovať, znova pripojte tento účet.
+38|Ste offline. Skúste to znova, keď budete pripojení.
+39|Služba YouTube Music nie je dostupná. Skontrolujte pripojenie a skúste to znova.
+40|Táto akcia momentálne nie je dostupná.
+41|Túto stránku sa nepodarilo načítať
+42|Ste offline, takže sa nič nezmenilo. Akcia nebola zaradená do radu.
+43|Ak to chcete urobiť, prihláste sa do YouTube Music.
+44|YouTube Music teraz túto zmenu nemohol vykonať. Nič sa nezmenilo.
+45|Váš účet sa zmenil skôr, než sa táto akcia začala. Skúste to znova.
+46|Posledné hľadania a položky zostávajú v tomto Macu, nikam sa neodosielajú a odstránia sa spolu s účtom.
+47|Týmto sa odstráni iba záznam uložený v tomto Macu. História samotnej služby YouTube Music sa nezmení.
+48|Vymazať históriu tohto Macu
+49|Prihlásenie vypršalo. Nič sa neuložilo. Skúste to znova, keď budete pripravení.
+50|Odhlásenie prebehlo.
+51|Prihlásený ako %@.
+52|Prepnuté na %@.
+53|Prehrať %@
+54|Aktuálny výstup: %@
+55|Odstrániť „%@“ z vašich nahraných súborov?
+56|Prehráva sa reklama
+57|Reklama sa skončila
+58|Teraz hrá „%@“ od %@.
+59|Jazyk rozhrania
+60|Jazyk hudby a textov
+61|Oblasť odporúčaní
+62|Rovnaký ako macOS
+63|Oblasť mení iba návrhy. Nikdy neodomkne hudbu ani funkcie, ktoré váš účet alebo poloha nepovoľujú.
+P1|one:%lld minúta	few:%lld minúty	many:%lld minúty	other:%lld minút
+P2|one:Späť: pridaná %lld skladba	few:Späť: pridané %lld skladby	many:Späť: pridanej %lld skladby	other:Späť: pridaných %lld skladieb
+P3|one:%lld položku sa nepodarilo zobraziť	few:%lld položky sa nepodarilo zobraziť	many:%lld položky sa nepodarilo zobraziť	other:%lld položiek sa nepodarilo zobraziť

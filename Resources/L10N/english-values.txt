@@ -1,0 +1,3 @@
+# English values that differ from their key. The key of a punctuation-only or identifier-style string is not its text; the text is written here, explicitly.
+# Format: key<TAB>English value. A catalog value equal to an identifier-style key fails the audit unless listed here.
+detailSeparator	 • 

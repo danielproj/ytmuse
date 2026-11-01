@@ -1,0 +1,66 @@
+1|Domov
+2|Razišči
+3|Knjižnica
+4|Išči
+5|Nastavitve
+6|Predvajaj
+7|Začasno ustavi
+8|Naprej
+9|Nazaj
+10|Čakalna vrsta
+11|Prenosi
+12|Zdaj se predvaja
+13|Prekliči
+14|Končano
+15|Poskusi znova
+16|Poskusite znova
+17|Opusti
+18|Prijava
+19|Odjava
+20|Dodaj račun
+21|Odstrani
+22|Razveljavi
+23|Premakni gor
+24|Premakni dol
+25|Začasno ustavljeno
+26|Predvaja se
+27|Nalaganje …
+28|Prijava prek storitve Google
+29|Dobrodošli v YTMuse
+30|Za začetek izberite glasbo
+31|Vaša čakalna vrsta je prazna
+32|Seja je potekla
+33|Prekliči prijavo
+34|Geslo vnesete na strani storitve Google, nikoli v YTMuse.
+35|Znova se prijavite, da predvajate svojo knjižnico.
+36|Vaša seja se je končala. Znova se prijavite za predvajanje.
+37|Za nadaljevanje znova povežite ta račun.
+38|Povezave ni. Poskusite znova, ko boste povezani.
+39|Do YouTube Music ni bilo mogoče dostopati. Preverite povezavo in poskusite znova.
+40|To dejanje trenutno ni na voljo.
+41|Te strani ni bilo mogoče naložiti
+42|Niste povezani, zato ni bilo nič spremenjeno. Dejanje ni v čakalni vrsti.
+43|Za to se prijavite v YouTube Music.
+44|YouTube Music te spremembe trenutno ni mogel narediti. Nič ni bilo spremenjeno.
+45|Vaš račun se je spremenil, preden se je to začelo. Poskusite znova.
+46|Nedavna iskanja in elementi ostanejo v tem računalniku Mac, nikoli se nikamor ne pošljejo in se odstranijo skupaj z računom.
+47|S tem se odstrani samo zapis, shranjen v tem računalniku Mac. Zgodovina samega YouTube Music se ne spremeni.
+48|Počisti zgodovino tega računalnika Mac
+49|Prijava je potekla. Nič ni bilo shranjeno. Poskusite znova, ko boste pripravljeni.
+50|Odjavljeni ste.
+51|Prijavljeni ste kot %@.
+52|Preklopljeno na %@.
+53|Predvajaj %@
+54|Trenutni izhod: %@
+55|Želite odstraniti »%@« iz svojih nalaganj?
+56|Predvaja se oglas
+57|Oglas se je končal
+58|Zdaj se predvaja »%@« izvajalca %@.
+59|Jezik vmesnika
+60|Jezik glasbe in besedil
+61|Regija za priporočila
+62|Enako kot macOS
+63|Regija spremeni samo predloge. Nikoli ne odklene glasbe ali funkcij, ki jih vaš račun ali lokacija ne dovoljuje.
+P1|one:%lld minuta	two:%lld minuti	few:%lld minute	other:%lld minut
+P2|one:Razveljavi: dodana je %lld skladba	two:Razveljavi: dodani sta %lld skladbi	few:Razveljavi: dodane so %lld skladbe	other:Razveljavi: dodanih je %lld skladb
+P3|one:%lld elementa ni bilo mogoče prikazati	two:%lld elementov ni bilo mogoče prikazati	few:%lld elementov ni bilo mogoče prikazati	other:%lld elementov ni bilo mogoče prikazati

@@ -1,0 +1,48 @@
+{
+  "brand": "YTMuse",
+  "generated_utc": "2026-10-26T11:21:15.620169+00:00",
+  "generation_mode": "built-in image_gen",
+  "master_dimensions": [
+    1254,
+    1254
+  ],
+  "app_icon_representations": 10,
+  "template_sizes": {
+    "1x": [
+      18,
+      18
+    ],
+    "2x": [
+      36,
+      36
+    ]
+  },
+  "validation": {
+    "all_png_dimensions_verified": true,
+    "icns_roundtrip_representations": 10,
+    "both_masters_have_alpha": true,
+    "template_nonempty_transparent_and_monochrome": true,
+    "visual_inspection": "App master visually inspected; 18px template alpha silhouette inspected."
+  },
+  "sha256": {
+    "README.md": "a8af01ee89de53de1631774f95ff36feac1603970c0aa8b338fedf352457c855",
+    "YTMuse-AppIcon-master-v1.png": "b9677b34d5ee99d03a4a3b8dd529f1312afb8a382217e4f543a27ab0f9bc00d3",
+    "YTMuse-MenuTemplate-master-v1.png": "ea508f5988d113a1a6bc3a261a7650f6573187a822f3138e09e5e64487633162",
+    "YTMuse.icns": "7f0fd11db45474de2e73c72332b4a9366b9653afe87ef06bf8a7253a85134267",
+    "YTMuse.iconset/icon_128x128.png": "bff9e577a3c333d4de42f454d5858c382823ad862cc9311103b1b7e5d8a11fc2",
+    "YTMuse.iconset/icon_128x128@2x.png": "af9aee747a1ab07d62c34d8940058c660dd1300b0a24b002ea3fe53a0b62f97e",
+    "YTMuse.iconset/icon_16x16.png": "d8c64245b180170cd514319a5dddd82ae2b81787e991e3d0ad5e191096ec3001",
+    "YTMuse.iconset/icon_16x16@2x.png": "ef5921a751f65cb0e82c0bb4ed1a6d1f169a7812d77ef4c78f5ec55807e77049",
+    "YTMuse.iconset/icon_256x256.png": "af9aee747a1ab07d62c34d8940058c660dd1300b0a24b002ea3fe53a0b62f97e",
+    "YTMuse.iconset/icon_256x256@2x.png": "6e80a2f6de922121c48864c94beeb7cae1ada50b95701e4effb1e535aee0f040",
+    "YTMuse.iconset/icon_32x32.png": "ef5921a751f65cb0e82c0bb4ed1a6d1f169a7812d77ef4c78f5ec55807e77049",
+    "YTMuse.iconset/icon_32x32@2x.png": "412b0b4a5afda2e4010c6b0d27590e5bf422a6b0919418c4b5596bf56313f6a3",
+    "YTMuse.iconset/icon_512x512.png": "6e80a2f6de922121c48864c94beeb7cae1ada50b95701e4effb1e535aee0f040",
+    "YTMuse.iconset/icon_512x512@2x.png": "c3129f6652a80be1b8132d9fccce66b6bc107aead1beb4d6316b3b32cc5db281",
+    "YTMuseMenuTemplate.png": "dcc01670a6dae1f1820181e4843ca733f70b74cd452f1bcd72c0ba1267eac9d8",
+    "YTMuseMenuTemplate@2x.png": "18cb9cb0cacf3c183077c0e925ab2e67eeae0396bfb2e7d4c7f5f812edfe14e4",
+    "build-icons.sh": "59c2adbcb25a6daf92a4227544fcf01d2537bf31f7163175717c32f33db85152",
+    "generation-prompts.json": "82d89d27f69a163e29875f664588977bc7ed2b8086d058f5a0837b769c882ae5",
+    "icon-validation.txt": "a43c957eeb5ad9897e4b760d89ffe7e161336dbf688ceef4671258f34d5d084d"
+  }
+}

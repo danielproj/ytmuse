@@ -1,0 +1,21 @@
+{
+ "mode": "real-public-anonymous-capture",
+ "live_eligible": false,
+ "captured_utc": "2026-10-29T00:58:15Z",
+ "captured_by": "operator thr_x7puknrk2p",
+ "description": "Two REAL anonymous public YouTube Music search responses (no cookies, no account, WEB_REMIX context, curl with a Safari UA); visitorData redacted. They fix the real response SHAPE for parser tests. They are public catalog data, not account data, and not live evidence for the signed path. Copied byte-for-byte from artifacts/harness/nodes/W10/public-captures/ (hashes below).",
+ "files": [
+  {
+   "path": "search-latin.json",
+   "query_kind": "latin artist name",
+   "sha256": "176209cf8a08aa617fbd6fc422a2237e1327d23766ef1f843b7bc562fdc17d7b",
+   "bytes": 239995
+  },
+  {
+   "path": "search-cyrillic.json",
+   "query_kind": "cyrillic word",
+   "sha256": "7e80f9d32ada6dda96e1d5b227f948f046cce4c880db679da838c4c0f3980721",
+   "bytes": 230793
+  }
+ ]
+}

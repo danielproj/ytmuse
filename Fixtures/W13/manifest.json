@@ -1,0 +1,113 @@
+{
+ "mode": "synthetic-from-real-renderers",
+ "live_eligible": false,
+ "description": "Playlist-editing pages and write answers for W13. The page renderers are the real anonymous playlist capture in ../W13-real/browse-playlist.json with only the edits generate.py lists (editable header + edit header, a per-row ACTION_REMOVE_VIDEO command, one duplicated occurrence, a continuation page). ASSUMED, shown by no capture: the editable-header and per-row remove shapes, the edit/create/delete answers. Not captures of any response and not live evidence; the end-of-project live check is in Docs/Playlists.md.",
+ "source": "../W13-real/browse-playlist.json",
+ "files": [
+  {
+   "path": "collaborator-playlist-long.json",
+   "sha256": "4d2ee5fd52ee634593a3bb02d882f2e276a8db01a33ae7ef847868c059824cc6",
+   "bytes": 438267
+  },
+  {
+   "path": "collaborator-playlist.json",
+   "sha256": "d2f19322d97f539cc53ecf2f4ef5da8b9775299c2393add09be22d2f56ac6985",
+   "bytes": 437968
+  },
+  {
+   "path": "create-missing-id.json",
+   "sha256": "e957bff6d61f584d73f52d19c8634a93fa4b3d5f7ff4f7615e020ae58b8f37da",
+   "bytes": 27
+  },
+  {
+   "path": "create-ok.json",
+   "sha256": "5cf6249d4a446797b135ac9226d14021707e506ee32bcafb9cecbc84b33c7dcc",
+   "bytes": 83
+  },
+  {
+   "path": "create-wrong-kind-id.json",
+   "sha256": "eaf1feb1a936c423826fbb8549e7433266aa64d284f193b9b9f5be21327ea7e8",
+   "bytes": 81
+  },
+  {
+   "path": "delete-bare.json",
+   "sha256": "e957bff6d61f584d73f52d19c8634a93fa4b3d5f7ff4f7615e020ae58b8f37da",
+   "bytes": 27
+  },
+  {
+   "path": "delete-ok.json",
+   "sha256": "fba4debb7bc287ad7965e3b8ef1faf633fa2e2bec22847f64a2a2324e77b46df",
+   "bytes": 58
+  },
+  {
+   "path": "edit-error.json",
+   "sha256": "a807f8915a028cfe00b21296c052647720c3c03c2d10eb20fa42bb1e62ffb383",
+   "bytes": 119
+  },
+  {
+   "path": "edit-failed.json",
+   "sha256": "1bd1a130a3c6cafbc20db727403b249c04b46ab9c83893f2c4931ef35f051cb6",
+   "bytes": 55
+  },
+  {
+   "path": "edit-invite-link-foreign.json",
+   "sha256": "3ff1d41169294b123223e680cfeeba22fbef53de433e0995e641498b183d516b",
+   "bytes": 186
+  },
+  {
+   "path": "edit-invite-link.json",
+   "sha256": "2d47f7e79429fbcbad4991ffc05b8206df4bb9f6330252619467e71002e56db2",
+   "bytes": 191
+  },
+  {
+   "path": "edit-no-status.json",
+   "sha256": "e957bff6d61f584d73f52d19c8634a93fa4b3d5f7ff4f7615e020ae58b8f37da",
+   "bytes": 27
+  },
+  {
+   "path": "edit-succeeded-flat.json",
+   "sha256": "869749347015459a4eaf4b36e08b0d9fcd5a0aa9621b1d638b5c43461025c2c3",
+   "bytes": 161
+  },
+  {
+   "path": "edit-succeeded-no-results.json",
+   "sha256": "fba4debb7bc287ad7965e3b8ef1faf633fa2e2bec22847f64a2a2324e77b46df",
+   "bytes": 58
+  },
+  {
+   "path": "edit-succeeded.json",
+   "sha256": "38194d2f71a6dfd2cdb3ad5a6250e9d0b54d3c837ae5247111f256342d0ece5b",
+   "bytes": 209
+  },
+  {
+   "path": "owned-playlist-foreign-command.json",
+   "sha256": "c5d10a2fcc24d1f9f99d88d0f46252c1195dac8b9be0f49ad6c1b105692a0fdc",
+   "bytes": 466280
+  },
+  {
+   "path": "owned-playlist-long.json",
+   "sha256": "40ed4abec5616c7d4acf2968803fcead50632be757cdf3edf9b908649a94bb38",
+   "bytes": 466577
+  },
+  {
+   "path": "owned-playlist-page2.json",
+   "sha256": "ced9ce66ee79cfaf9ac8e501199e05565e939dbe592883c6e421e4c6eb2b1436",
+   "bytes": 68640
+  },
+  {
+   "path": "owned-playlist-partial-removals.json",
+   "sha256": "94c482b8786feadd4a7452cb935b12a5a18b79c15065f09be48fc73dd4fb730e",
+   "bytes": 465431
+  },
+  {
+   "path": "owned-playlist.json",
+   "sha256": "efaec8a38692164f4961198e17d80959f6f6f9392d2a4a7d4b769724a43060a5",
+   "bytes": 466278
+  },
+  {
+   "path": "suggestions-answer.json",
+   "sha256": "2bdbe5fb723ae79d1d0748b401bfb6c5cfda2a6d560b1acfea996ffefdb30c91",
+   "bytes": 48778
+  }
+ ]
+}

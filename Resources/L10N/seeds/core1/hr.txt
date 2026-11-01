@@ -1,0 +1,66 @@
+1|Početna
+2|Istraži
+3|Biblioteka
+4|Traži
+5|Postavke
+6|Reproduciraj
+7|Pauziraj
+8|Sljedeće
+9|Prethodno
+10|Red čekanja
+11|Preuzimanja
+12|Trenutačno svira
+13|Odustani
+14|Gotovo
+15|Pokušaj ponovo
+16|Pokušajte ponovo
+17|Odbaci
+18|Prijava
+19|Odjava
+20|Dodaj račun
+21|Ukloni
+22|Poništi
+23|Pomakni gore
+24|Pomakni dolje
+25|Pauzirano
+26|Reprodukcija
+27|Učitavanje…
+28|Prijava putem Googlea
+29|Dobro došli u YTMuse
+30|Odaberite glazbu za početak
+31|Vaš red čekanja je prazan
+32|Sesija je istekla
+33|Odustani od prijave
+34|Zaporku unosite na Googleovoj stranici, nikada u YTMuse.
+35|Prijavite se ponovo za reprodukciju svoje biblioteke.
+36|Vaša je sesija završila. Prijavite se ponovo za reprodukciju.
+37|Ponovo povežite ovaj račun za nastavak.
+38|Veza nije dostupna. Pokušajte ponovo kad se povežete.
+39|YouTube Music nije dostupan. Provjerite vezu i pokušajte ponovo.
+40|Ova radnja trenutačno nije dostupna.
+41|Stranica se nije mogla učitati
+42|Niste povezani, pa ništa nije promijenjeno. Radnja nije stavljena u red čekanja.
+43|Prijavite se u YouTube Music da biste to učinili.
+44|YouTube Music trenutačno nije mogao provesti ovu promjenu. Ništa nije promijenjeno.
+45|Vaš se račun promijenio prije nego što je ovo počelo. Pokušajte ponovo.
+46|Nedavna pretraživanja i stavke ostaju na ovom Macu, nikada se nigdje ne šalju i brišu se zajedno s računom.
+47|Ovo uklanja samo zapis pohranjen na ovom Macu. Povijest samog YouTube Musica ne mijenja se.
+48|Izbriši povijest ovog Maca
+49|Prijava je istekla. Ništa nije spremljeno. Pokušajte ponovo kad budete spremni.
+50|Odjavljeni ste.
+51|Prijavljeni ste kao %@.
+52|Prebačeno na %@.
+53|Reproduciraj %@
+54|Trenutačni izlaz: %@
+55|Ukloniti „%@” iz vaših prijenosa?
+56|Svira reklama
+57|Reklama je završila
+58|Trenutačno svira „%@” – %@.
+59|Jezik sučelja
+60|Jezik glazbe i tekstova
+61|Regija za preporuke
+62|Isto kao macOS
+63|Regija mijenja samo prijedloge. Nikada ne otključava glazbu ni značajke koje vaš račun ili lokacija ne dopuštaju.
+P1|one:%lld minuta	few:%lld minute	other:%lld minuta
+P2|one:Poništi: dodana je %lld pjesma	few:Poništi: dodane su %lld pjesme	other:Poništi: dodano je %lld pjesama
+P3|one:%lld stavka nije se mogla prikazati	few:%lld stavke nisu se mogle prikazati	other:%lld stavki nije se moglo prikazati

@@ -1,0 +1,66 @@
+1|Hasiera
+2|Arakatu
+3|Liburutegia
+4|Bilatu
+5|Ezarpenak
+6|Erreproduzitu
+7|Eten
+8|Hurrengoa
+9|Aurrekoa
+10|Ilara
+11|Deskargak
+12|Orain erreproduzitzen
+13|Utzi
+14|Eginda
+15|Saiatu berriro
+16|Saiatu berriro
+17|Baztertu
+18|Hasi saioa
+19|Amaitu saioa
+20|Gehitu kontua
+21|Kendu
+22|Desegin
+23|Mugitu gora
+24|Mugitu behera
+25|Etenda
+26|Erreproduzitzen
+27|Kargatzen…
+28|Hasi saioa Google bidez
+29|Ongi etorri YTMuse-ra
+30|Aukeratu musika hasteko
+31|Zure ilara hutsik dago
+32|Saioa iraungi da
+33|Utzi saioa hastea
+34|Pasahitza Google-ren orrian sartzen duzu, inoiz ez YTMuse-n.
+35|Hasi saioa berriro zure liburutegia erreproduzitzeko.
+36|Zure saioa amaitu da. Hasi saioa berriro erreproduzitzeko.
+37|Konektatu kontu hau berriro jarraitzeko.
+38|Konexioa lineaz kanpo dago. Saiatu berriro konektatuta zaudenean.
+39|Ezin izan da YouTube Music-ekin konektatu. Egiaztatu konexioa eta saiatu berriro.
+40|Ekintza hau ez dago erabilgarri orain.
+41|Ezin izan da orri hau kargatu
+42|Lineaz kanpo zaude, beraz ez da ezer aldatu. Ekintza ez da ilaran jarri.
+43|Hasi saioa YouTube Music-en hau egiteko.
+44|YouTube Music-ek ezin izan du aldaketa hau egin orain. Ez da ezer aldatu.
+45|Zure kontua aldatu egin zen hau hasi aurretik. Saiatu berriro.
+46|Azken bilaketak eta elementuak Mac honetan geratzen dira, ez dira inora bidaltzen eta kontuarekin batera kentzen dira.
+47|Honek Mac honetan gordetako erregistroa baino ez du kentzen. YouTube Music-en berezko historia ez da aldatzen.
+48|Garbitu Mac honen historia
+49|Saio-hasierak denbora-muga gainditu du. Ez da ezer gorde. Saiatu berriro prest zaudenean.
+50|Saioa amaituta.
+51|%@ gisa hasi da saioa.
+52|%@ kontura aldatu da.
+53|Erreproduzitu %@
+54|Uneko irteera: %@
+55|«%@» kendu nahi duzu zure igoeretatik?
+56|Iragarki bat erreproduzitzen ari da
+57|Iragarkia amaitu da
+58|Orain erreproduzitzen: «%@», %@(r)en eskutik.
+59|Interfazearen hizkuntza
+60|Musikaren eta letren hizkuntza
+61|Gomendioen eskualdea
+62|macOS-en berdina
+63|Eskualdeak iradokizunak baino ez ditu aldatzen. Ez du inoiz zure kontuak edo kokapenak onartzen ez dituen musika edo eginbideak desblokeatzen.
+P1|one:%lld minutu	other:%lld minutu
+P2|one:Desegin: %lld abesti gehitu da	other:Desegin: %lld abesti gehitu dira
+P3|one:%lld elementu ezin izan da erakutsi	other:%lld elementu ezin izan dira erakutsi

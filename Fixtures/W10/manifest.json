@@ -1,0 +1,18 @@
+{
+ "description": "Synthetic Music search responses, hand-written to the published InnerTube result shape (unfiltered search: top card, typed shelves, did-you-mean, message). Not live captures; no real account, query or catalog item. Identifiers are placeholders. A live capture is on the end-of-project manual list.",
+ "files": [
+  "search-all-groups.json",
+  "search-all-rows-broken.json",
+  "search-broken-and-profile.json",
+  "search-empty-section-list.json",
+  "search-error.json",
+  "search-no-results.json",
+  "search-only-profile.json",
+  "search-showing-results-for.json",
+  "search-signed-out.json",
+  "search-unrecognised-shape.json"
+ ],
+ "live_eligible": false,
+ "mode": "synthetic-test-only",
+ "node": "W10"
+}

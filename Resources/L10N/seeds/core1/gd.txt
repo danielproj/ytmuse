@@ -1,0 +1,66 @@
+1|Dhachaigh
+2|Rùraich
+3|Leabharlann
+4|Lorg
+5|Roghainnean
+6|Cluich
+7|Cuir na stad
+8|Air adhart
+9|Air ais
+10|Ciudha
+11|Luchdaidhean-sìos
+12|A’ cluich an-dràsta
+13|Sguir dheth
+14|Deiseil
+15|Feuch ris a-rithist
+16|Feuch ris a-rithist
+17|Cuir dheth
+18|Clàraich a-steach
+19|Clàraich a-mach
+20|Cuir cunntas ris
+21|Thoir air falbh
+22|Neo-dhèan
+23|Gluais suas
+24|Gluais sìos
+25|Air stad
+26|A’ cluich
+27|’Ga luchdadh…
+28|Clàraich a-steach le Google
+29|Fàilte gu YTMuse
+30|Tagh ceòl airson tòiseachadh
+31|Tha do chiudha falamh
+32|Tha an seisean air crìochnachadh
+33|Sguir dhen chlàradh a-steach
+34|Cuiridh tu a-steach am facal-faire air duilleag Google, chan ann an YTMuse a-chaoidh.
+35|Clàraich a-steach a-rithist airson do leabharlann a chluich.
+36|Thàinig an seisean agad gu crìoch. Clàraich a-steach a-rithist airson cluich.
+37|Ceangail an cunntas seo a-rithist airson leantainn air adhart.
+38|Chan eil ceangal ann. Feuch ris a-rithist nuair a bhios tu ceangailte.
+39|Cha b’ urrainn dhuinn ruighinn air YouTube Music. Thoir sùil air a’ cheangal agad is feuch ris a-rithist.
+40|Chan eil an gnìomh seo ri fhaighinn an-dràsta.
+41|Cha b’ urrainn dhuinn an duilleag seo a luchdadh
+42|Chan eil ceangal agad, mar sin cha deach dad atharrachadh. Cha deach an gnìomh a chur sa chiudha.
+43|Clàraich a-steach gu YouTube Music airson seo a dhèanamh.
+44|Cha b’ urrainn dha YouTube Music an t-atharrachadh seo a dhèanamh an-dràsta. Cha deach dad atharrachadh.
+45|Dh’atharraich an cunntas agad mus do thòisich seo. Feuch ris a-rithist.
+46|Fanaidh rannsachaidhean is nithean o chionn ghoirid air an Mac seo, cha tèid an cur gu àite sam bith agus thèid an toirt air falbh leis a’ chunntas.
+47|Chan eil seo a’ toirt air falbh ach an clàr a tha air an Mac seo. Chan atharraich eachdraidh YouTube Music fhèin.
+48|Falamhaich eachdraidh an Mac seo
+49|Dh’fhalbh an ùine air a’ chlàradh a-steach. Cha deach dad a shàbhaladh. Feuch ris a-rithist nuair a bhios tu deiseil.
+50|Chlàraich thu a-mach.
+51|Air clàradh a-steach mar %@.
+52|Air gluasad gu %@.
+53|Cluich %@
+54|An toradh làithreach: %@
+55|A bheil thu airson “%@” a thoirt air falbh o na h-uaslódan agad?
+56|Tha sanas ga chluich
+57|Tha an sanas seachad
+58|A’ cluich an-dràsta: “%@” le %@.
+59|Cànan an eadar-aghaidh
+60|Cànan a’ cheòil is nam faclan
+61|Roinn airson molaidhean
+62|Mar a tha macOS
+63|Chan atharraich an roinn ach na thathar a’ moladh. Chan fhosgail i ceòl no feartan nach eil an cunntas no an t-àite agad a’ ceadachadh.
+P1|one:%lld mhionaid	two:%lld mhionaid	few:%lld mionaidean	other:%lld mionaid
+P2|one:Neo-dhèan: chaidh %lld òran a chur ris	two:Neo-dhèan: chaidh %lld òran a chur ris	few:Neo-dhèan: chaidh %lld òrain a chur ris	other:Neo-dhèan: chaidh %lld òran a chur ris
+P3|one:Cha b’ urrainn dhuinn %lld nì a shealltainn	two:Cha b’ urrainn dhuinn %lld nì a shealltainn	few:Cha b’ urrainn dhuinn %lld nithean a shealltainn	other:Cha b’ urrainn dhuinn %lld nì a shealltainn

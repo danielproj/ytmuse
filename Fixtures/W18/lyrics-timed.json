@@ -1,0 +1,64 @@
+{
+ "responseContext": {
+  "visitorData": "<redacted>"
+ },
+ "contents": {
+  "elementRenderer": {
+   "newElement": {
+    "type": {
+     "componentType": {
+      "model": {
+       "timedLyricsModel": {
+        "lyricsData": {
+         "timedLyricsData": [
+          {
+           "lyricLine": "Placeholder line one",
+           "cueRange": {
+            "startTimeMilliseconds": 1500,
+            "metadata": {
+             "id": "x"
+            },
+            "endTimeMilliseconds": 4000
+           }
+          },
+          {
+           "lyricLine": "Placeholder line two",
+           "cueRange": {
+            "startTimeMilliseconds": 4000,
+            "metadata": {
+             "id": "x"
+            },
+            "endTimeMilliseconds": 7250
+           }
+          },
+          {
+           "lyricLine": "",
+           "cueRange": {
+            "startTimeMilliseconds": 7250,
+            "metadata": {
+             "id": "x"
+            },
+            "endTimeMilliseconds": 9000
+           }
+          },
+          {
+           "lyricLine": "Placeholder line four",
+           "cueRange": {
+            "startTimeMilliseconds": 9000,
+            "metadata": {
+             "id": "x"
+            },
+            "endTimeMilliseconds": 12000
+           }
+          }
+         ],
+         "sourceMessage": "Source: Example Lyrics Provider"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

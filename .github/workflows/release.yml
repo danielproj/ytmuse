@@ -1,0 +1,51 @@
+# Release packaging. Runs ONLY for a pushed version tag. It first repeats the secret-free CI steps, then (in the protected `release` environment, which needs a
+# reviewer's approval and holds the only secrets) signs, notarizes, packages and signs the update feed, and creates a DRAFT release: a person publishes it.
+# Nothing here is run by a pull request. This workflow has never run (Docs/Publishing-Checklist.md).
+name: release
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+*']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ${{ vars.YTMUSE_RUNNER || 'macos-latest' }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: The tag must be on the default branch
+        run: git merge-base --is-ancestor "$GITHUB_SHA" "origin/${{ github.event.repository.default_branch }}"
+      - run: ./scripts/ci.sh
+  package:
+    needs: verify
+    runs-on: ${{ vars.YTMUSE_RUNNER || 'macos-latest' }}
+    timeout-minutes: 120
+    environment: release
+    permissions:
+      contents: write
+    env:
+      YTMUSE_DEVELOPER_ID: ${{ secrets.YTMUSE_DEVELOPER_ID }}
+      YTMUSE_NOTARY_PROFILE: ${{ secrets.YTMUSE_NOTARY_PROFILE }}
+      YTMUSE_FEED_KEY_CONTENTS: ${{ secrets.YTMUSE_FEED_KEY }}
+      YTMUSE_FEED_PUBLIC_KEY: ${{ secrets.YTMUSE_FEED_PUBLIC_KEY }}
+      YTMUSE_UPDATE_REPOSITORY: ${{ github.repository }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Package, sign, notarize and sign the feed
+        run: |
+          umask 077
+          key_file="$RUNNER_TEMP/feed.key"
+          printf '%s\n' "$YTMUSE_FEED_KEY_CONTENTS" > "$key_file"
+          trap 'rm -f "$key_file"' EXIT
+          YTMUSE_FEED_KEY="$key_file" ./scripts/package-release.sh --version "${GITHUB_REF_NAME#v}" --build "$GITHUB_RUN_NUMBER" --out "$RUNNER_TEMP/release"
+      - name: Create a draft release (a person publishes it)
+        run: |
+          gh release create "$GITHUB_REF_NAME" --draft --verify-tag --title "$GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/release/release-notes.md" "$RUNNER_TEMP/release"/YTMuse-*.dmg \
+            "$RUNNER_TEMP/release"/YTMuse-*.dmg.sha256 "$RUNNER_TEMP/release/feed.json" "$RUNNER_TEMP/release/sbom.cdx.json"

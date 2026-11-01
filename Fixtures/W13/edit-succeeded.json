@@ -1,0 +1,12 @@
+{
+ "playlistEditResults": [
+  {
+   "playlistEditVideoAddedResultData": {
+    "setVideoId": "ADDED00000000001",
+    "videoId": "dQw4w9WgXcQ"
+   }
+  }
+ ],
+ "responseContext": {},
+ "status": "STATUS_SUCCEEDED"
+}

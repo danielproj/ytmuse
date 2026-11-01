@@ -1,0 +1,206 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Play ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play ${applicationName}"
+          }
+        }
+      }
+    },
+    "Resume ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume ${applicationName}"
+          }
+        }
+      }
+    },
+    "Resume music in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume music in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Pause ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause ${applicationName}"
+          }
+        }
+      }
+    },
+    "Pause music in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause music in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Next song in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next song in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Skip this song in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip this song in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Previous song in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous song in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Go back in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go back in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Like this song in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Like this song in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Like this in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Like this in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Save this song in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save this song in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Save this to my library in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save this to my library in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Show the player in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show the player in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Show what is playing in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show what is playing in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Show the queue in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show the queue in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Set a sleep timer in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a sleep timer in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Sleep timer in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Search in ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Search ${applicationName}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search ${applicationName}"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

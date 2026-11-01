@@ -1,0 +1,300 @@
+701|En pausa.
+702|Pendiente
+703|Elige algo para iniciar su radio. Solo se muestran las radios que ofrece YouTube Music, y el sintonizador solo muestra los controles que esta proporciona.
+704|Elige algo para iniciar su radio. Las radios y cualquier control provienen de YouTube Music; el sintonizador solo muestra lo que esta proporciona.
+705|Imagen en imagen
+706|No se pudo iniciar Imagen en imagen.
+707|Imagen en imagen no está disponible para este video: WebKit indica que no es compatible aquí.
+708|Imagen en imagen no es posible para este video en este momento.
+709|Imagen en imagen no es compatible con este Mac.
+710|Reproducir aquí
+711|Reproducir aquí…
+712|Reproducir a continuación
+713|¿Reproducir en este Mac?
+714|Reproducir o pausar en YTMuse
+715|Reproducir/Pausar
+716|Reproducción
+717|No se pudo cambiar la reproducción. Prueba la acción de control de reproducción de nuevo.
+718|No se pudo completar la reproducción. Reintenta con el elemento seleccionado.
+719|La reproducción se comparte entre todas las ventanas.
+720|Posición de reproducción
+721|Reproducido
+722|Reproduciendo a %@; elegiste %@
+723|Reproduciendo desde YouTube Music
+724|Reproduciendo en Imagen en imagen.
+725|Reproduciendo en el reproductor. La vista previa terminó antes.
+726|Reproduciendo en la ventana de video.
+727|La reproducción actual usa la salida de sonido de este Mac.
+728|Reproduciendo.
+729|Lista de reproducción
+730|Listas de reproducción
+731|Las listas de reproducción que guardes en YouTube Music aparecen aquí.
+732|Reproduce esta canción y después música similar.
+733|Pódcast
+734|Pódcast
+735|Publicar
+736|Publicar un comentario
+737|Cola preparada
+738|Preparando
+739|Pulsa un atajo…
+740|Vista previa
+741|Previsualizando
+742|Las vistas previas no se inician solas en una conexión limitada. Pulsa Vista previa para escuchar una.
+743|Las vistas previas no se inician solas mientras el modo de bajo consumo está activado. Pulsa Vista previa para escuchar una.
+744|Vistas previas que se inician solas
+745|Las vistas previas que se inician solas están desactivadas. Pulsa Vista previa para escuchar una.
+746|Canción anterior
+747|Canción anterior en YTMuse
+748|Elemento anterior
+749|Página anterior
+750|Privada
+751|Procesando %@
+752|El progreso marcado como “En este Mac” se conserva solo en este Mac. El propio reproductor de YouTube informa por sí mismo de su progreso a YouTube Music.
+753|Pública
+754|Calidad
+755|En cola
+756|Salir de YTMuse
+757|Radio
+758|Filtro de radio
+759|Radio de “%@”
+760|Aumentar el límite de almacenamiento
+761|Valorar
+762|Valoración
+763|Valoración: %@
+764|Leer comentarios
+765|Leído desde YouTube Music. El propio reproductor de YouTube lo registra cuando reproduce; esta app nunca lo escribe.
+766|Leyendo la lista de reproducción…
+767|Lee primero la lista de reproducción y envía solo lo que falta
+768|Listo para unirte a “%@”.
+769|Recap
+770|Reciente
+771|Elementos recientes
+772|Búsquedas recientes
+773|Reproducido recientemente
+774|Volver a conectar
+775|Actualizar
+776|Actualizando…
+777|¿Eliminar %@ de este Mac?
+778|Eliminar %@ de tus subidas
+779|Quitar “Me gusta”
+780|Quitar de Episodios para más tarde
+781|Se eliminó “%@” de tus subidas.
+782|Se eliminó “%@” de tus subidas. El archivo de tu Mac no se tocó.
+783|Eliminar…
+784|Eliminando “%@”…
+785|Renombrar
+786|Renombrar etiqueta local
+787|Renovar
+788|Renovando
+789|Repetir %@
+790|Repetir todo
+791|No se pudo cambiar la repetición. Prueba la acción de repetir de nuevo.
+792|Repetición desactivada
+793|Repetir una
+794|Restablecer el estado guardado de las ventanas
+795|¿Restablecer el estado guardado de las ventanas?
+796|Restablecer el estado guardado de las ventanas…
+797|Restaurar apariencia predeterminada
+798|Restaurar idiomas predeterminados
+799|Reanudar
+800|Reanudar %@
+801|Reanudar la reproducción cuando el Mac se reactive
+802|Reintentar acción
+803|Reintentar almacenamiento local
+804|Reintentar elemento seleccionado
+805|Volver a la línea actual
+806|Mostrar elemento actual
+807|Samples
+808|Samples aún no está disponible
+809|Samples aún no está disponible. Ninguna de las respuestas de YouTube Music que esta app puede leer lo incluye, así que no hay nada que mostrar aquí.
+810|Guardar
+811|Guardar descripción
+812|Guardar cola como lista de reproducción…
+813|Guardar de nuevo la ventana actual
+814|Guardar para más tarde
+815|Guardar en la biblioteca
+816|Guardado
+817|Episodios guardados
+818|Copia guardada de %@.
+819|Copia guardada de %@. Actualizando…
+820|No se pudo restablecer de forma segura el estado guardado de las ventanas. Tu cuenta sigue siendo utilizable. Inténtalo de nuevo después de arreglar el almacenamiento del estado de ventanas de esta app.
+821|El estado guardado de las ventanas no está disponible. Tu cuenta sigue siendo utilizable. Puedes restablecer las ventanas, las búsquedas, los filtros y las selecciones guardados de esta app.
+822|Guardando este cambio…
+823|Guardar en tu biblioteca aún no está disponible. YTMuse lee el catálogo, pero no modifica tu biblioteca.
+824|Di qué quieres buscar.
+825|Buscar en YTMuse
+826|Buscar en YouTube Music
+827|Buscar
+828|Buscar “%@”
+829|Buscar “%@” en su lugar
+830|Busca canciones, álbumes, artistas y listas de reproducción
+831|Buscar en esta colección
+832|Buscar en tus subidas
+833|Vuelve a buscar
+834|Buscando en YouTube Music…
+835|Buscando en las listas de reproducción de tu biblioteca en este Mac. No se consulta al servicio.
+836|Buscando.
+837|Segundos
+838|Página segura: %@
+839|Retroceder
+840|Avanzar
+841|Desplazando.
+842|Seleccionar %@
+843|Seleccionar todo
+844|Enviando…
+845|Orden del servicio
+846|Las suscripciones a servicios siguen con YouTube.
+847|Sesión
+848|Ajustes…
+849|Compartir
+850|Compartir canción actual…
+851|Compartir…
+852|Más cortos primero
+853|Mostrar
+854|Mostrar biblioteca
+855|Mostrar letras
+856|Mostrar En reproducción
+857|Mostrar cola
+858|Mostrar cola en una ventana
+859|Mostrar cola en YTMuse
+860|Mostrar video
+861|Mostrar versión en video
+862|Mostrar ventana
+863|Mostrar YTMuse
+864|Mostrar menos
+865|Mostrar más
+866|Mostrar u ocultar YTMuse
+867|Mostrar cola
+868|Mostrar en Spotlight las canciones, los álbumes y los artistas guardados
+869|Mostrar la canción en reproducción en la descripción emergente de la barra de menús
+870|Mostrar el video en su propia ventana
+871|Mostrando resultados de “%@”.
+872|Mostrando la primera página de tu biblioteca.
+873|Mostrando el reproductor.
+874|Mostrando la cola.
+875|Orden del programa
+876|Aleatorio
+877|No se pudo cambiar el modo aleatorio. Prueba la acción de aleatorio de nuevo.
+878|Volver a iniciar sesión
+879|Iniciar sesión en YouTube Music
+880|Sesión iniciada de nuevo como %@.
+881|Los episodios sueltos aún no se pueden reproducir desde aquí.
+882|Omitir existentes
+883|Saltar atrás
+884|Saltar adelante
+885|Duración de los saltos
+886|Saltando al siguiente elemento.
+887|Temporizador de reposo
+888|Temporizador de reposo desactivado.
+889|Temporizador de reposo configurado para el final de este elemento.
+890|Temporizador de reposo: quedan %@
+891|Temporizador de reposo: final del episodio
+892|Temporizador de reposo: final de la canción
+893|Temporizador de reposo: atenuando
+894|Descargas inteligentes
+895|Dispositivo de software
+896|Algunos archivos no se añadieron.
+897|Algunas de estas canciones ya están en la lista de reproducción
+898|Ya hay algo reproduciéndose, así que las vistas previas no se inician solas. Pulsa Vista previa para escuchar una.
+899|Ya hay algo reproduciéndose, así que las vistas previas no se inician solas. Pulsa Vista previa para escuchar una; sustituye lo que está sonando.
+900|Canción
+901|Título de la canción
+902|Canciones
+903|Ordenar
+904|Ordenar episodios
+905|Fuente: %@ · %@ · %@ · %@
+906|Velocidad
+907|Spotlight
+908|Empezar de nuevo
+909|Iniciar radio
+910|Iniciar una radio desde
+911|Iniciar radio desde %@
+912|Iniciado
+913|Iniciando
+914|Iniciando YouTube Music…
+915|Iniciando…
+916|Detener contribuciones
+917|Detener contribuciones…
+918|Dejar de conservar
+919|Detener vista previa
+920|Detener contribuciones
+921|Detener las contribuciones a la lista de reproducción “%@”
+922|¿Detener las contribuciones a “%@”?
+923|Dejar de mantener el minirreproductor encima
+924|Detenido
+925|Almacenamiento
+926|Límite de almacenamiento
+927|Canciones sugeridas
+928|Sugerencias
+929|Las sugerencias y el descubrimiento llegan con las pantallas Inicio y Explorar. Hasta entonces, la búsqueda es la vía de entrada.
+930|Cambiar
+931|Sistema
+932|Salida del sistema
+933|Dile a YTMuse qué reproducir por su nombre.
+934|Ese comando no está disponible en este momento.
+935|Esa descarga no se pudo reproducir. Prueba Reproducir de nuevo o vuelve a descargarla.
+936|Esa posición no es válida.
+937|Esa calidad no es una de las que ofrece este video.
+938|Esa búsqueda es demasiado larga.
+939|Ese valor no es válido para este comando.
+940|El receptor AirPlay se desconectó, así que la reproducción se pausó.
+941|La app se cerró antes de que terminara esta subida.
+942|La descripción también se cambió.
+943|El disco está lleno
+944|El archivo cambió después de elegirlo. Elígelo de nuevo.
+945|La primera página de la respuesta de YouTube Music, no todo el catálogo.
+946|La clave de esta descarga ya no está disponible
+947|El último elemento o el actual, con reproducir, anterior y siguiente.
+948|El enlace solo se lee para nombrar la lista de reproducción. Solo te unes si pulsas Unirse y confirmas.
+949|No se pudo abrir el siguiente elemento. Prueba Siguiente de nuevo.
+950|La única canción
+951|No se pudo detener el otro reproductor. Prueba Reproducir de nuevo.
+952|Se desconectó la salida, así que la reproducción se pausó.
+953|La salida que elegiste antes no está conectada, así que se usa la salida de sonido del Mac.
+954|La salida que usabas ha vuelto; elige Volver a conectar en el menú Salida para continuar allí.
+955|No se pudo cambiar la posición de reproducción. Prueba a desplazarte de nuevo.
+956|La lista de reproducción había cambiado en otro lugar; tu cambio se combinó con ella.
+957|La lista de reproducción está cerrada a contribuciones.
+958|No se pudo abrir el elemento anterior. Prueba Anterior de nuevo.
+959|La cola no pudo aceptar esa canción.
+960|La cola se muestra en la ventana principal.
+961|No se pudo iniciar la radio. Lo que sonaba no ha cambiado.
+962|El receptor controla el volumen.
+963|No se pudo abrir el elemento seleccionado de la cola. Prueba a seleccionarlo de nuevo.
+964|La sesión de %@ terminó. Inicia sesión de nuevo.
+965|No se pudo cambiar el temporizador de reposo. Prueba a configurarlo de nuevo.
+966|El temporizador de reposo pausará la reproducción en el receptor cuando termine, pero no puede atenuar el sonido antes. ¿Activarlo de todos modos?
+967|La fuente ya no está disponible
+968|La fuente ya no permite conservar este elemento
+969|El título también se cambió a “%@”.
+970|Las dos versiones difieren en duración, así que empieza desde el principio.
+971|La visibilidad también se cambió.
+972|No hay ninguna imagen que mostrar.
+973|No hay nada a lo que volver.
+974|No hay nada a lo que avanzar.
+975|Son versiones distintas de la grabación, así que empieza desde el principio.
+976|Estas opciones se conservan solo en este Mac. Un programa al que le des su propia velocidad la conserva.
+977|Estas letras llegaron sin tiempos, así que no siguen la canción. Desplázate para leer.
+978|Este Sample no indica nada que reproducir.
+979|Esta respuesta cambia solo esta cosa. El resto de la lista de reproducción se queda como está.
+980|Esta app nunca cambia el volumen del Mac.
+981|Este comentario es más largo de lo que esta app envía en una publicación.
+982|Esta conexión es de datos limitados. Las descargas automáticas esperan; puedes iniciar una de todos modos.
+983|Esto elimina “%@” de tus subidas de YouTube Music. El archivo de tu Mac no se toca.
+984|Se desconoce el programa de este episodio, así que no se puede cambiar su velocidad.
+985|Este archivo cambió mientras se leía. Elígelo de nuevo cuando termine de cambiar.
+986|Este archivo supera los %@ que acepta YouTube Music.
+987|Esto es una carpeta. Elige en su lugar los archivos de audio que contiene.
+988|Esto es un archivo de video. Las subidas a tu biblioteca de música admiten archivos de audio.
+989|Esta ya es la versión de audio.
+990|Esto no es una transmisión en directo.
+991|Este es el atajo estándar de %@, que usan todas las apps.
+992|Es tu propio audio o un archivo local, no una canción de YouTube Music, así que no tiene “Me gusta” ni guardado.
+993|Es tu propio audio o un archivo local, no una canción de YouTube Music, así que no tiene “Me gusta”.
+994|No se puede cargar este elemento
+995|No se puede desplazar este elemento en este momento.
+996|Este elemento no tiene enlace.
+997|Este elemento está esperando donde lo dejaste. Pulsa primero Reproducir.
+998|Se desconoce la duración de este elemento.
+999|Esta tecla no se puede usar para un atajo global.
+1000|Esta tecla no se puede usar: elige una letra, un dígito, una flecha, Espacio o de F1 a F12.

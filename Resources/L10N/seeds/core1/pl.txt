@@ -1,0 +1,66 @@
+1|Początek
+2|Przeglądaj
+3|Biblioteka
+4|Szukaj
+5|Ustawienia
+6|Odtwórz
+7|Wstrzymaj
+8|Następny
+9|Poprzedni
+10|Kolejka
+11|Pobrane
+12|Teraz odtwarzane
+13|Anuluj
+14|Gotowe
+15|Spróbuj ponownie
+16|Spróbuj ponownie
+17|Odrzuć
+18|Zaloguj się
+19|Wyloguj się
+20|Dodaj konto
+21|Usuń
+22|Cofnij
+23|Przesuń w górę
+24|Przesuń w dół
+25|Wstrzymano
+26|Odtwarzanie
+27|Wczytywanie…
+28|Zaloguj się przez Google
+29|Witaj w YTMuse
+30|Wybierz muzykę, aby zacząć
+31|Twoja kolejka jest pusta
+32|Sesja wygasła
+33|Anuluj logowanie
+34|Hasło wpisujesz na stronie Google, nigdy w YTMuse.
+35|Zaloguj się ponownie, aby odtworzyć swoją bibliotekę.
+36|Twoja sesja się zakończyła. Zaloguj się ponownie, aby odtwarzać.
+37|Połącz to konto ponownie, aby kontynuować.
+38|Brak połączenia. Spróbuj ponownie po nawiązaniu połączenia.
+39|Nie można połączyć się z YouTube Music. Sprawdź połączenie i spróbuj ponownie.
+40|Ta czynność jest teraz niedostępna.
+41|Nie udało się wczytać tej strony
+42|Brak połączenia, więc nic nie zostało zmienione. Czynność nie została dodana do kolejki.
+43|Zaloguj się w YouTube Music, aby to zrobić.
+44|YouTube Music nie mógł teraz wprowadzić tej zmiany. Nic nie zostało zmienione.
+45|Twoje konto zmieniło się, zanim to się rozpoczęło. Spróbuj ponownie.
+46|Ostatnie wyszukiwania i elementy pozostają na tym Macu, nigdy nie są nigdzie wysyłane i są usuwane razem z kontem.
+47|To usuwa tylko zapis przechowywany na tym Macu. Historia samego YouTube Music nie zmienia się.
+48|Wyczyść historię tego Maca
+49|Logowanie wygasło. Nic nie zostało zapisane. Spróbuj ponownie, gdy będziesz gotowy.
+50|Wylogowano.
+51|Zalogowano jako %@.
+52|Przełączono na konto %@.
+53|Odtwórz %@
+54|Bieżące wyjście: %@
+55|Usunąć „%@” z Twoich przesłanych plików?
+56|Odtwarzana jest reklama
+57|Reklama się zakończyła
+58|Teraz odtwarzane: „%@” – %@.
+59|Język interfejsu
+60|Język muzyki i tekstów
+61|Region rekomendacji
+62|Taki jak w macOS
+63|Region zmienia tylko sugestie. Nigdy nie odblokowuje muzyki ani funkcji, których nie dopuszcza Twoje konto lub lokalizacja.
+P1|one:%lld minuta	few:%lld minuty	many:%lld minut	other:%lld minuty
+P2|one:Cofnij: dodano %lld utwór	few:Cofnij: dodano %lld utwory	many:Cofnij: dodano %lld utworów	other:Cofnij: dodano %lld utworu
+P3|one:Nie udało się wyświetlić %lld elementu	few:Nie udało się wyświetlić %lld elementów	many:Nie udało się wyświetlić %lld elementów	other:Nie udało się wyświetlić %lld elementu

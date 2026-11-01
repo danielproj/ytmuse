@@ -1,0 +1,22 @@
+YTMuse-AppIcon-master-v1.png 1254x1254 opaque-ink=1014638 transparent=539355 max-visible-RGB=254
+YTMuse-MenuTemplate-master-v1.png 1254x1254 opaque-ink=462725 transparent=1093144 max-visible-RGB=1
+YTMuseMenuTemplate.png 18x18 opaque-ink=77 transparent=176 max-visible-RGB=0
+                                    
+                                    
+                                    
+          ++++              ++++    
+        ++######++      ++######++  
+      ++++  ######++    ##########  
+      ++    ++######  ##########++  
+      ++    ++##################++  
+      ++    ######  ++########  ++  
+      ++  ++######    ######++  ++  
+      ++++####++##++####++  ++  ++  
+    ++########  ++####++    ++++++  
+  ++########++            ######++  
+  ##########            ########++  
+  ++######++            ++######++  
+    ++++++                ++++++    
+                                    
+                                    
+YTMuseMenuTemplate@2x.png 36x36 opaque-ink=349 transparent=794 max-visible-RGB=0

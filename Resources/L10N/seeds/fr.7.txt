@@ -1,0 +1,10 @@
+1360|Une vérification télécharge un petit fichier signé depuis GitHub. Elle n’envoie aucune information sur le compte, l’écoute ou l’appareil.
+1361|Rechercher les mises à jour une fois par jour
+1362|Vérification…
+1363|Téléchargement de la version %@…
+1364|Aucune vérification pour l’instant.
+1365|Pas encore demandé. Rien n’est vérifié tant que vous n’avez pas choisi.
+1366|La mise à jour n’a pas pu être vérifiée ou installée. Rien n’a été modifié.
+1367|La version %@ est disponible.
+1368|La version %@ est prête. Redémarrez pour terminer.
+1369|YTMuse est à jour.

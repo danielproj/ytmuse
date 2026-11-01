@@ -1,0 +1,37 @@
+{
+ "responseContext": {
+  "visitorData": "<redacted>"
+ },
+ "contents": {
+  "elementRenderer": {
+   "newElement": {
+    "type": {
+     "componentType": {
+      "model": {
+       "timedLyricsModel": {
+        "lyricsData": {
+         "timedLyricsData": [
+          {
+           "lyricLine": "Placeholder A",
+           "cueRange": {
+            "startTimeMilliseconds": 0,
+            "metadata": {
+             "id": "x"
+            },
+            "endTimeMilliseconds": 1000
+           }
+          },
+          {
+           "lyricLine": "Placeholder B"
+          }
+         ],
+         "sourceMessage": "Source: Example Lyrics Provider"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

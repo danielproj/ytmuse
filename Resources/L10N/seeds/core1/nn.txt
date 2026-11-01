@@ -1,0 +1,66 @@
+1|Heim
+2|Utforsk
+3|Bibliotek
+4|Søk
+5|Innstillingar
+6|Spel av
+7|Set på pause
+8|Neste
+9|Førre
+10|Kø
+11|Nedlastingar
+12|Speler no
+13|Avbryt
+14|Ferdig
+15|Prøv igjen
+16|Prøv igjen
+17|Lukk
+18|Logg inn
+19|Logg ut
+20|Legg til konto
+21|Fjern
+22|Angre
+23|Flytt opp
+24|Flytt ned
+25|På pause
+26|Speler av
+27|Lastar inn …
+28|Logg inn med Google
+29|Velkomen til YTMuse
+30|Vel musikk for å kome i gang
+31|Køen din er tom
+32|Økta har gått ut
+33|Avbryt pålogging
+34|Du skriv inn passordet på sida til Google, aldri i YTMuse.
+35|Logg inn på nytt for å spele av biblioteket ditt.
+36|Økta di er avslutta. Logg inn på nytt for å spele av.
+37|Koble til denne kontoen på nytt for å halde fram.
+38|Tilkoplinga er fråkopla. Prøv igjen når du er tilkopla.
+39|Fekk ikkje kontakt med YouTube Music. Kontroller tilkoplinga og prøv igjen.
+40|Denne handlinga er ikkje tilgjengeleg akkurat no.
+41|Sida kunne ikkje lastast inn
+42|Du er fråkopla, så ingenting vart endra. Handlinga er ikkje sett i kø.
+43|Logg inn på YouTube Music for å gjere dette.
+44|YouTube Music kunne ikkje gjere denne endringa akkurat no. Ingenting vart endra.
+45|Kontoen din vart endra før dette starta. Prøv igjen.
+46|Nylege søk og element blir verande på denne Macen, vert aldri sende nokon stad og blir fjerna saman med kontoen.
+47|Dette fjernar berre oppføringa som er lagra på denne Macen. Historikken til YouTube Music sjølv vert ikkje endra.
+48|Fjern historikken til denne Macen
+49|Påloggingen vart tidsavbroten. Ingenting vart lagra. Prøv igjen når du er klar.
+50|Logga ut.
+51|Logga inn som %@.
+52|Bytte til %@.
+53|Spel av %@
+54|Gjeldande utgang: %@
+55|Vil du fjerne «%@» frå opplastingane dine?
+56|Ei reklame blir spela av
+57|Reklamen er slutt
+58|Speler no: «%@» av %@.
+59|Grensesnittspråk
+60|Språk for musikk og songtekstar
+61|Område for tilrådingar
+62|Same som macOS
+63|Området endrar berre kva som blir føreslått. Det låser aldri opp musikk eller funksjonar som kontoen eller posisjonen din ikkje tillèt.
+P1|one:%lld minutt	other:%lld minutt
+P2|one:Angre: %lld song vart lagd til	other:Angre: %lld songar vart lagde til
+P3|one:%lld element kunne ikkje visast	other:%lld element kunne ikkje visast

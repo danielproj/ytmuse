@@ -1,0 +1,807 @@
+{
+  "sourceLanguage": "en",
+  "scope": "every translatable catalog key",
+  "scopeNote": "'complete' means every translatable key (all of Resources/L10N/core-en.txt: every catalog key except the QA-only and non-linguistic ones listed in excluded-keys.txt) has a value, with its plural categories. The other locales are registered with their exact identifier, plural categories and formatting, carry only the first seeded keys, and fall back to English for the rest; 'coverage' states how much.",
+  "releaseQualityClaim": false,
+  "reviewStatus": "Non-English values are machine seeds. Human translation review is W42; until then no locale is advertised as reviewed.",
+  "baseLocales": [
+    "bg",
+    "hr",
+    "cs",
+    "da",
+    "nl",
+    "en",
+    "et",
+    "fi",
+    "fr",
+    "de",
+    "el",
+    "hu",
+    "ga",
+    "it",
+    "lv",
+    "lt",
+    "mt",
+    "pl",
+    "pt",
+    "ro",
+    "sk",
+    "sl",
+    "es",
+    "sv",
+    "ru",
+    "uk",
+    "be",
+    "nb",
+    "nn",
+    "is",
+    "sq",
+    "bs",
+    "mk",
+    "sr",
+    "sr-Latn",
+    "tr",
+    "ca",
+    "eu",
+    "gl",
+    "cy",
+    "gd",
+    "rm",
+    "lb",
+    "ka",
+    "hy",
+    "az",
+    "fo"
+  ],
+  "formattingVariants": [
+    "en-GB",
+    "en-US",
+    "fr-CH",
+    "de-CH",
+    "it-CH",
+    "pt-PT"
+  ],
+  "catalogKeyCount": 1471,
+  "translatableKeyCount": 1434,
+  "completeLocales": [
+    "en",
+    "fr",
+    "de",
+    "es",
+    "ru",
+    "en-GB",
+    "en-US",
+    "fr-CH",
+    "de-CH"
+  ],
+  "partialLocales": [
+    "bg",
+    "hr",
+    "cs",
+    "da",
+    "nl",
+    "et",
+    "fi",
+    "el",
+    "hu",
+    "ga",
+    "it",
+    "lv",
+    "lt",
+    "mt",
+    "pl",
+    "pt",
+    "ro",
+    "sk",
+    "sl",
+    "sv",
+    "uk",
+    "be",
+    "nb",
+    "nn",
+    "is",
+    "sq",
+    "bs",
+    "mk",
+    "sr",
+    "sr-Latn",
+    "tr",
+    "ca",
+    "eu",
+    "gl",
+    "cy",
+    "gd",
+    "rm",
+    "lb",
+    "ka",
+    "hy",
+    "az",
+    "fo",
+    "it-CH",
+    "pt-PT"
+  ],
+  "locales": {
+    "bg": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "hr": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "cs": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "da": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "nl": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "en": {
+      "kind": "source",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 1434,
+      "coverage": 1.0,
+      "complete": true,
+      "origin": "source",
+      "review": "not-applicable"
+    },
+    "et": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "fi": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "fr": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 1434,
+      "coverage": 1.0,
+      "complete": true,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "de": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 1434,
+      "coverage": 1.0,
+      "complete": true,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "el": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "hu": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "ga": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "two",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "it": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "lv": {
+      "kind": "base",
+      "plural_categories": [
+        "zero",
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "lt": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "mt": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "two",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "pl": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "pt": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "ro": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "sk": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "sl": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "two",
+        "few",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "es": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 1434,
+      "coverage": 1.0,
+      "complete": true,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "sv": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "ru": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 1434,
+      "coverage": 1.0,
+      "complete": true,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "uk": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "be": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "nb": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "nn": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "is": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "sq": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "bs": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "mk": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "sr": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "sr-Latn": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "few",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "tr": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "ca": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "eu": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "gl": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "cy": {
+      "kind": "base",
+      "plural_categories": [
+        "zero",
+        "one",
+        "two",
+        "few",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "gd": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "two",
+        "few",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "rm": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "lb": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "ka": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "hy": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "az": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "fo": {
+      "kind": "base",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42"
+    },
+    "en-GB": {
+      "kind": "formatting-variant",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "inheritsStringsFrom": "en",
+      "translatedKeys": 0,
+      "origin": "inherits en",
+      "review": "inherits-base",
+      "complete": true,
+      "coverage": 1.0
+    },
+    "en-US": {
+      "kind": "formatting-variant",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "inheritsStringsFrom": "en",
+      "translatedKeys": 0,
+      "origin": "inherits en",
+      "review": "inherits-base",
+      "complete": true,
+      "coverage": 1.0
+    },
+    "fr-CH": {
+      "kind": "formatting-variant",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "inheritsStringsFrom": "fr",
+      "translatedKeys": 0,
+      "origin": "inherits fr",
+      "review": "inherits-base",
+      "complete": true,
+      "coverage": 1.0
+    },
+    "de-CH": {
+      "kind": "formatting-variant",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "translatedKeys": 1434,
+      "coverage": 1.0,
+      "complete": true,
+      "origin": "machine-seed",
+      "review": "pending-W42",
+      "derivedFrom": "de"
+    },
+    "it-CH": {
+      "kind": "formatting-variant",
+      "plural_categories": [
+        "one",
+        "other"
+      ],
+      "inheritsStringsFrom": "it",
+      "translatedKeys": 0,
+      "origin": "inherits it",
+      "review": "inherits-base",
+      "complete": false,
+      "coverage": 0.046
+    },
+    "pt-PT": {
+      "kind": "formatting-variant",
+      "plural_categories": [
+        "one",
+        "many",
+        "other"
+      ],
+      "translatedKeys": 66,
+      "coverage": 0.046,
+      "complete": false,
+      "origin": "machine-seed",
+      "review": "pending-W42",
+      "derivedFrom": "pt"
+    }
+  }
+}

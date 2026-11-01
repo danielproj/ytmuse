@@ -1,0 +1,22 @@
+{
+ "responseContext": {
+  "visitorData": "<redacted>"
+ },
+ "contents": {
+  "sectionListRenderer": {
+   "contents": [
+    {
+     "musicDescriptionShelfRenderer": {
+      "description": {
+       "runs": [
+        {
+         "text": " \n "
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ }
+}

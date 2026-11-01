@@ -1,0 +1,66 @@
+1|Sākums
+2|Izpēte
+3|Bibliotēka
+4|Meklēt
+5|Iestatījumi
+6|Atskaņot
+7|Pauze
+8|Nākamais
+9|Iepriekšējais
+10|Rinda
+11|Lejupielādes
+12|Tagad skan
+13|Atcelt
+14|Gatavs
+15|Mēģināt vēlreiz
+16|Mēģiniet vēlreiz
+17|Aizvērt
+18|Pierakstīties
+19|Izrakstīties
+20|Pievienot kontu
+21|Noņemt
+22|Atsaukt
+23|Pārvietot uz augšu
+24|Pārvietot uz leju
+25|Pauzēts
+26|Atskaņo
+27|Notiek ielāde…
+28|Pierakstīties ar Google
+29|Laipni lūdzam YTMuse
+30|Izvēlieties mūziku, lai sāktu
+31|Jūsu rinda ir tukša
+32|Sesija ir beigusies
+33|Atcelt pierakstīšanos
+34|Paroli ievadāt Google lapā, nekad ne YTMuse.
+35|Pierakstieties vēlreiz, lai atskaņotu savu bibliotēku.
+36|Jūsu sesija ir beigusies. Pierakstieties vēlreiz, lai atskaņotu.
+37|Lai turpinātu, vēlreiz savienojiet šo kontu.
+38|Savienojuma nav. Mēģiniet vēlreiz, kad esat savienots.
+39|YouTube Music nevarēja sasniegt. Pārbaudiet savienojumu un mēģiniet vēlreiz.
+40|Šī darbība pašlaik nav pieejama.
+41|Šo lapu neizdevās ielādēt
+42|Jums nav savienojuma, tāpēc nekas netika mainīts. Darbība netika ievietota rindā.
+43|Lai to izdarītu, pierakstieties pakalpojumā YouTube Music.
+44|YouTube Music šobrīd nevarēja veikt šo izmaiņu. Nekas netika mainīts.
+45|Jūsu konts mainījās pirms šīs darbības sākuma. Mēģiniet vēlreiz.
+46|Nesenie meklējumi un vienumi paliek šajā Mac datorā, netiek nekur sūtīti un tiek noņemti kopā ar kontu.
+47|Tas noņem tikai šajā Mac datorā glabāto ierakstu. Paša YouTube Music vēsture netiek mainīta.
+48|Dzēst šī Mac datora vēsturi
+49|Pierakstīšanās laiks ir beidzies. Nekas netika saglabāts. Mēģiniet vēlreiz, kad esat gatavs.
+50|Izrakstīšanās veikta.
+51|Pierakstījies kā %@.
+52|Pārslēgts uz kontu %@.
+53|Atskaņot: %@
+54|Pašreizējā izvade: %@
+55|Vai noņemt “%@” no jūsu augšupielādēm?
+56|Tiek atskaņota reklāma
+57|Reklāma beidzās
+58|Tagad skan “%@” — %@.
+59|Saskarnes valoda
+60|Mūzikas un dziesmu vārdu valoda
+61|Ieteikumu reģions
+62|Tāpat kā macOS
+63|Reģions maina tikai ieteikumus. Tas nekad neatbloķē mūziku vai funkcijas, ko jūsu konts vai atrašanās vieta neatļauj.
+P1|zero:%lld minūšu	one:%lld minūte	other:%lld minūtes
+P2|zero:Atsaukt: pievienotas %lld dziesmas	one:Atsaukt: pievienota %lld dziesma	other:Atsaukt: pievienotas %lld dziesmas
+P3|zero:%lld vienumus neizdevās parādīt	one:%lld vienumu neizdevās parādīt	other:%lld vienumus neizdevās parādīt

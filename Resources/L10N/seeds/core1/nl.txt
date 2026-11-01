@@ -1,0 +1,66 @@
+1|Start
+2|Ontdek
+3|Bibliotheek
+4|Zoek
+5|Instellingen
+6|Afspelen
+7|Pauzeer
+8|Volgende
+9|Vorige
+10|Wachtrij
+11|Downloads
+12|Wordt nu afgespeeld
+13|Annuleer
+14|Gereed
+15|Opnieuw proberen
+16|Probeer het opnieuw
+17|Sluit
+18|Inloggen
+19|Uitloggen
+20|Account toevoegen
+21|Verwijder
+22|Zet terug
+23|Omhoog
+24|Omlaag
+25|Gepauzeerd
+26|Speelt af
+27|Laden…
+28|Inloggen met Google
+29|Welkom bij YTMuse
+30|Kies muziek om te beginnen
+31|Je wachtrij is leeg
+32|Sessie verlopen
+33|Annuleer inloggen
+34|Je voert je wachtwoord in op de pagina van Google, nooit in YTMuse.
+35|Log opnieuw in om je bibliotheek af te spelen.
+36|Je sessie is beëindigd. Log opnieuw in om af te spelen.
+37|Verbind dit account opnieuw om door te gaan.
+38|Je bent offline. Probeer het opnieuw als je verbonden bent.
+39|YouTube Music is niet bereikbaar. Controleer je verbinding en probeer het opnieuw.
+40|Deze actie is nu niet beschikbaar.
+41|Deze pagina kon niet worden geladen
+42|Je bent offline, dus er is niets gewijzigd. De actie staat niet in de wachtrij.
+43|Log in bij YouTube Music om dit te doen.
+44|YouTube Music kon deze wijziging nu niet doorvoeren. Er is niets gewijzigd.
+45|Je account is gewijzigd voordat dit begon. Probeer het opnieuw.
+46|Recente zoekopdrachten en onderdelen blijven op deze Mac, worden nergens naartoe verzonden en worden samen met het account verwijderd.
+47|Hiermee wordt alleen het overzicht op deze Mac verwijderd. De eigen geschiedenis van YouTube Music verandert niet.
+48|Wis de geschiedenis van deze Mac
+49|Inloggen is verlopen. Er is niets bewaard. Probeer het opnieuw wanneer je klaar bent.
+50|Uitgelogd.
+51|Ingelogd als %@.
+52|Overgeschakeld naar %@.
+53|Speel %@ af
+54|Huidige uitvoer: %@
+55|“%@” verwijderen uit je uploads?
+56|Er wordt een advertentie afgespeeld
+57|De advertentie is afgelopen
+58|Nu speelt “%@” van %@.
+59|Interfacetaal
+60|Taal van muziek en songteksten
+61|Regio voor aanbevelingen
+62|Zelfde als macOS
+63|De regio verandert alleen wat wordt voorgesteld. Ze ontgrendelt nooit muziek of functies die je account of locatie niet toestaat.
+P1|one:%lld minuut	other:%lld minuten
+P2|one:Zet terug: %lld nummer toegevoegd	other:Zet terug: %lld nummers toegevoegd
+P3|one:%lld onderdeel kon niet worden getoond	other:%lld onderdelen konden niet worden getoond

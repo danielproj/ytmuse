@@ -1,0 +1,66 @@
+1|Avaleht
+2|Avasta
+3|Meediakogu
+4|Otsi
+5|Seaded
+6|Esita
+7|Peata
+8|Järgmine
+9|Eelmine
+10|Järjekord
+11|Allalaadimised
+12|Praegu mängib
+13|Tühista
+14|Valmis
+15|Proovi uuesti
+16|Proovige uuesti
+17|Sulge
+18|Logi sisse
+19|Logi välja
+20|Lisa konto
+21|Eemalda
+22|Võta tagasi
+23|Liiguta üles
+24|Liiguta alla
+25|Peatatud
+26|Mängib
+27|Laadimine…
+28|Logi sisse Google’iga
+29|Tere tulemast YTMuse’i
+30|Alustamiseks vali muusika
+31|Sinu järjekord on tühi
+32|Seanss on aegunud
+33|Tühista sisselogimine
+34|Sisestad parooli Google’i lehel, mitte kunagi YTMuse’is.
+35|Meediakogu esitamiseks logi uuesti sisse.
+36|Sinu seanss lõppes. Esitamiseks logi uuesti sisse.
+37|Jätkamiseks ühenda see konto uuesti.
+38|Ühendus puudub. Proovi uuesti, kui oled ühendatud.
+39|YouTube Musicuga ei õnnestunud ühendust luua. Kontrolli ühendust ja proovi uuesti.
+40|See toiming ei ole praegu saadaval.
+41|Seda lehte ei õnnestunud laadida
+42|Ühendus puudub, seega midagi ei muudetud. Toimingut ei pandud järjekorda.
+43|Selle tegemiseks logi sisse YouTube Musicusse.
+44|YouTube Music ei saanud seda muudatust praegu teha. Midagi ei muudetud.
+45|Sinu konto muutus enne selle algust. Proovi uuesti.
+46|Hiljutised otsingud ja üksused jäävad sellesse Maci, neid ei saadeta kuhugi ning need eemaldatakse koos kontoga.
+47|See eemaldab ainult sellesse Maci salvestatud kirje. YouTube Musici enda ajalugu ei muutu.
+48|Tühjenda selle Maci ajalugu
+49|Sisselogimine aegus. Midagi ei salvestatud. Proovi uuesti, kui oled valmis.
+50|Välja logitud.
+51|Sisse logitud kasutajana %@.
+52|Lülitus kontole %@.
+53|Esita %@
+54|Praegune väljund: %@
+55|Kas eemaldada „%@” oma üleslaadimistest?
+56|Mängib reklaam
+57|Reklaam lõppes
+58|Praegu mängib „%@” – %@.
+59|Liidese keel
+60|Muusika ja laulusõnade keel
+61|Soovituste piirkond
+62|Sama mis macOS
+63|Piirkond muudab ainult soovitusi. See ei ava kunagi muusikat ega funktsioone, mida su konto või asukoht ei luba.
+P1|one:%lld minut	other:%lld minutit
+P2|one:Võta tagasi: lisati %lld lugu	other:Võta tagasi: lisati %lld lugu
+P3|one:%lld üksust ei õnnestunud kuvada	other:%lld üksust ei õnnestunud kuvada

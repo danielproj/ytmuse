@@ -1,0 +1,15 @@
+{
+ "mode": "real-signed-capture-third-party",
+ "live_eligible": false,
+ "source": "https://github.com/sozercan/kaset (MIT, Copyright (c) 2025 sozercan)",
+ "source_commit": "4c59ff259d853f1cc328597f5adccf2a291c2fa7 (4c59ff2)",
+ "description": "A REAL signed (logged_in=1, WEB_REMIX) YouTube Music browse response from Kaset's test fixtures, copied byte-for-byte. It is third-party data, not a capture made by this project and not evidence for this app's signed path. Its menus carry the real signed toggle shapes: 'Mark as played'/'Mark as unplayed' (CHECK -> ARROW_UNDO, feedbackEndpoint both sides, isToggled true/false), 'Pin to Listen again' (KEEP -> KEEP_OFF, feedbackEndpoint, no isToggled) and an 'add to playlist' toggle (ADD_CIRCLE -> PLAYLIST_ADD_CHECK, playlistEditEndpoint). None is a library toggle.",
+ "files": [
+  {
+   "path": "artist_lofi_girl_episodes_more.json",
+   "source_path": "Tests/KasetTests/Fixtures/artist_lofi_girl_episodes_more.json",
+   "sha256": "bf9f427cf73d312a4428d8cc3989389008fa658ace482ea3bb5a55d1b765f0f2",
+   "bytes": 1117219
+  }
+ ]
+}

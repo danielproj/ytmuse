@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<!--
+  YTMuse's AppleScript dictionary (MAC11). Documented, with examples that run, in Docs/Automation.md.
+
+  What it offers: transport, the current track's public metadata, queue insertion and opening a link.
+  What it does not offer, by design: any account token, cookie, header, request or credential, any way to send an authenticated request, any
+  library or playlist write. Every command is carried out through the same shared commands as a menu item or a media key
+  (ScriptDispatcher -> the shell), so the same admission applies: an advertisement refuses seeking and skipping, a restored item is started
+  by Play, and opening a link only shows a page.
+-->
+<dictionary title="YTMuse Terminology">
+  <xi:include href="file:///System/Library/ScriptingDefinitions/CocoaStandard.sdef" xpointer="xpointer(/dictionary/suite)" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+
+  <suite name="YTMuse Suite" code="YTMu" description="Control YTMuse's playback and read the current track.">
+
+    <command name="play" code="YTMuPlay" description="Start or resume playback of the current item.">
+      <cocoa class="YTMusePlayCommand"/>
+    </command>
+    <command name="pause" code="YTMuPaus" description="Pause playback. Allowed during an advertisement.">
+      <cocoa class="YTMusePauseCommand"/>
+    </command>
+    <command name="playpause" code="YTMuTogl" description="Toggle between playing and paused.">
+      <cocoa class="YTMusePlayPauseCommand"/>
+    </command>
+    <command name="next track" code="YTMuNext" description="Skip to the next item. Refused during an advertisement.">
+      <cocoa class="YTMuseNextTrackCommand"/>
+    </command>
+    <command name="previous track" code="YTMuPrev" description="Go to the previous item. Refused during an advertisement.">
+      <cocoa class="YTMusePreviousTrackCommand"/>
+    </command>
+    <command name="seek" code="YTMuSeek" description="Move the playing position, either to a time or by an amount. Give exactly one of them. Refused during an advertisement.">
+      <cocoa class="YTMuseSeekCommand"/>
+      <parameter name="to" code="toPo" type="real" optional="yes" description="The position in seconds from the start.">
+        <cocoa key="toPosition"/>
+      </parameter>
+      <parameter name="by" code="byDe" type="real" optional="yes" description="Seconds to move; negative goes back.">
+        <cocoa key="byDelta"/>
+      </parameter>
+    </command>
+    <command name="add to queue" code="YTMuQAdd" description="Add a song, given as a YouTube Music link, to the end of the queue. YouTube Music manages its own upcoming items, so this is refused while it plays.">
+      <cocoa class="YTMuseQueueAddCommand"/>
+      <direct-parameter type="text" description="A public link to a song."/>
+    </command>
+    <command name="play next" code="YTMuQNxt" description="Add a song, given as a YouTube Music link, right after the playing item. Refused while YouTube Music manages the queue.">
+      <cocoa class="YTMuseQueueNextCommand"/>
+      <direct-parameter type="text" description="A public link to a song."/>
+    </command>
+    <command name="open link" code="YTMuOLnk" description="Show the page a YouTube Music link points to. It only navigates: nothing plays and nothing changes.">
+      <cocoa class="YTMuseOpenLinkCommand"/>
+      <direct-parameter type="text" description="A music.youtube.com link, an accepted youtube.com or youtu.be link, or a ytmuse:// link."/>
+    </command>
+
+    <class name="track" code="cTrk" description="The item that is playing: its public metadata and its public link.">
+      <cocoa class="YTMuseScriptTrack"/>
+      <property name="name" code="pnam" type="text" access="r" description="The title, or Advertisement during an advertisement.">
+        <cocoa key="name"/>
+      </property>
+      <property name="artist" code="pArt" type="text" access="r" description="The artist, when the page gives one.">
+        <cocoa key="artist"/>
+      </property>
+      <property name="duration" code="pDur" type="real" access="r" description="Length in seconds; missing for a live stream.">
+        <cocoa key="duration"/>
+      </property>
+      <property name="position" code="pPos" type="real" access="r" description="Position in seconds; missing for a live stream.">
+        <cocoa key="position"/>
+      </property>
+      <property name="public link" code="pURL" type="text" access="r" description="The public music.youtube.com link to this song; missing for your own audio and for advertisements.">
+        <cocoa key="publicLink"/>
+      </property>
+    </class>
+
+    <class-extension extends="application" description="Playback state of the application.">
+      <cocoa class="NSApplication"/>
+      <property name="player state" code="pPlS" type="text" access="r" description="stopped, playing, paused or advertisement.">
+        <cocoa key="scriptPlayerState"/>
+      </property>
+      <property name="current track" code="pCuT" type="track" access="r" description="The item that is playing; missing when nothing is loaded.">
+        <cocoa key="scriptCurrentTrack"/>
+      </property>
+      <property name="player volume" code="pVol" type="integer" description="Volume, 0 to 100.">
+        <cocoa key="scriptVolume"/>
+      </property>
+    </class-extension>
+  </suite>
+</dictionary>

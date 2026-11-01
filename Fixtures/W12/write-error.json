@@ -1,0 +1,7 @@
+{
+ "error": {
+  "code": 400,
+  "message": "synthetic refusal",
+  "status": "INVALID_ARGUMENT"
+ }
+}

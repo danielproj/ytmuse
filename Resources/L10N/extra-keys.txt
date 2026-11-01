@@ -1,0 +1,23 @@
+And %lld more.
+Now playing “%@”.
+The session for %@ ended. Sign in again.
+Signed in again as %@.
+Secure page: %@
+Remove %@ from this Mac?
+Stop contributions to “%@”?
+Delete “%@”?
+Already here: %@. Keep Duplicates adds them again; Skip Existing leaves them out.
+Choose Output…
+Large
+Larger
+Largest
+A check downloads one small signed file from GitHub. It sends no account, listening or device information.
+Check for updates once a day
+Checking…
+Downloading version %@…
+No check yet.
+Not asked yet. Nothing is checked until you choose.
+The update could not be verified or installed. Nothing was changed.
+Version %@ is available.
+Version %@ is ready. Restart to finish.
+YTMuse is up to date.

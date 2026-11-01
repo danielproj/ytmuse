@@ -1,0 +1,22 @@
+1370|Cast
+1371|Für Cast muss dieser Mac mit einem privaten Heimnetzwerk verbunden sein.
+1372|Cast-Empfänger
+1373|Cast · zuletzt verwendet
+1374|YouTube Music kann aus dieser App nicht per Cast wiedergegeben werden.
+1375|Die Verbindung zum Empfänger konnte nicht hergestellt werden.
+1376|Diagnose
+1377|Die Diagnose konnte nicht gelesen werden.
+1378|Anzeigename
+1379|Für die Offline-Wiedergabe geladene Titel können nicht gecastet werden: Sie bleiben auf diesem Mac verschlüsselt.
+1380|Es wird nach Cast-Empfängern in deinem Netzwerk gesucht. Beim ersten Mal fragt macOS, ob der Zugriff auf das lokale Netzwerk erlaubt werden soll.
+1381|Noch nicht verfügbar. Die Auswahl der Audioqualität kommt mit der nativen Stream-Integration (als W34 geplant). Bis dahin entscheidet der eigene Player von YouTube Music, und unter „Diagnose“ siehst du, was er gemeldet hat.
+1382|Aus. YTMuse enthält kein Analyse-SDK und sendet nirgendwohin Diagnosedaten. Du kannst selbst ein bereinigtes Support-Paket exportieren.
+1383|Nur eigene und lokale Audiodateien können gecastet werden. YouTube Music kann aus dieser App nicht gecastet werden.
+1384|Die Wiedergabe auf dem Empfänger endet, wenn du das Programm beendest, weil dieser Mac das Audio bereitstellt.
+1385|Gemerkter Cast-Empfänger
+1386|Der Cast-Empfänger wurde getrennt, daher wurde die Wiedergabe pausiert.
+1387|Der Empfänger konnte dieses Objekt nicht wiedergeben, daher wurde die Wiedergabe hier pausiert.
+1388|Der Empfänger gibt die Originaldatei wieder, daher gelten Equalizer und Normalisierung nicht.
+1389|Dieser Mac konnte das Audio für den Empfänger nicht vorbereiten.
+1390|Dieses Objekt hat keine Audiodatei, die gecastet werden kann.
+1391|YouTube Music kann aus dieser App nicht gecastet werden.

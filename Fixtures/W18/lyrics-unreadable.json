@@ -1,0 +1,14 @@
+{
+ "responseContext": {
+  "visitorData": "<redacted>"
+ },
+ "contents": {
+  "sectionListRenderer": {
+   "contents": [
+    {
+     "somethingElseRenderer": {}
+    }
+   ]
+  }
+ }
+}

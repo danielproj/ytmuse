@@ -1,0 +1,21 @@
+{
+  "brand": "YTMuse",
+  "direction": "User requested fully glass-friendly icon and interface",
+  "status": "Generated glass sources and fallback ICNS; production integration pending the glass design node",
+  "generation_mode": "built-in image_gen edit",
+  "sha256": {
+    "YTMuse-Glass-AppIcon-master-v2.png": "c047d61e6ac19dd7d1d89f31dac116599117017cb3b3aadfb7164b8d937af8ac",
+    "YTMuse-Glass-Foreground-v2.png": "e12a90e6fb73db901c0723ea771cbb1ae85d1206e3df13998e1829470716d3f1",
+    "YTMuseGlass.icns": "21197a5def69c26857ddf49d2cd403eb8ed46259e572d94cdaa72a8611ef67ff",
+    "YTMuseGlass.iconset/icon_128x128.png": "24ddc7cf3d58ec98f5992f7f364f64505153f82539564cccf36acd8f122877a6",
+    "YTMuseGlass.iconset/icon_128x128@2x.png": "b479a473495eb30eade6bef939385b7d594ab4007e216b18bd490921cac7d910",
+    "YTMuseGlass.iconset/icon_16x16.png": "b96dae639f0bd5bc0b524e12fe18de1f601404c404cc4397e842f20f819b18fc",
+    "YTMuseGlass.iconset/icon_16x16@2x.png": "bfabe6d72018d1b2b009f458b29581792c27ed0c85c050e9c4235d14a32ef2b4",
+    "YTMuseGlass.iconset/icon_256x256.png": "b479a473495eb30eade6bef939385b7d594ab4007e216b18bd490921cac7d910",
+    "YTMuseGlass.iconset/icon_256x256@2x.png": "fdd4586067e6e70354198d6bdae80343a0848c4dbcf9823b06ca10aa0fca3bc5",
+    "YTMuseGlass.iconset/icon_32x32.png": "bfabe6d72018d1b2b009f458b29581792c27ed0c85c050e9c4235d14a32ef2b4",
+    "YTMuseGlass.iconset/icon_32x32@2x.png": "b50e463dd82dab7f0af94c9d67f17d8a813e7a3179a5fb79b56441e782315fd5",
+    "YTMuseGlass.iconset/icon_512x512.png": "fdd4586067e6e70354198d6bdae80343a0848c4dbcf9823b06ca10aa0fca3bc5",
+    "YTMuseGlass.iconset/icon_512x512@2x.png": "0cb3d6cd3646a05a32001dde1c55dcb8337bbe3cfbae8aaaa8a8dcbc584c0d16"
+  }
+}

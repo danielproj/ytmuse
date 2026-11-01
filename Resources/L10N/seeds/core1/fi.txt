@@ -1,0 +1,66 @@
+1|Koti
+2|Selaa
+3|Kirjasto
+4|Haku
+5|Asetukset
+6|Toista
+7|Keskeytä
+8|Seuraava
+9|Edellinen
+10|Jono
+11|Lataukset
+12|Nyt soi
+13|Peruuta
+14|Valmis
+15|Yritä uudelleen
+16|Yritä uudelleen
+17|Hylkää
+18|Kirjaudu sisään
+19|Kirjaudu ulos
+20|Lisää tili
+21|Poista
+22|Kumoa
+23|Siirrä ylös
+24|Siirrä alas
+25|Keskeytetty
+26|Toistetaan
+27|Ladataan…
+28|Kirjaudu sisään Googlella
+29|Tervetuloa YTMuseen
+30|Aloita valitsemalla musiikkia
+31|Jonosi on tyhjä
+32|Istunto vanheni
+33|Peruuta kirjautuminen
+34|Syötät salasanasi Googlen sivulla, et koskaan YTMusessa.
+35|Kirjaudu uudelleen sisään toistaaksesi kirjastosi.
+36|Istuntosi päättyi. Kirjaudu uudelleen sisään toistaaksesi.
+37|Jatka yhdistämällä tämä tili uudelleen.
+38|Yhteys on offline-tilassa. Yritä uudelleen, kun olet yhteydessä.
+39|YouTube Musicia ei tavoitettu. Tarkista yhteys ja yritä uudelleen.
+40|Tämä toiminto ei ole nyt käytettävissä.
+41|Sivua ei voitu ladata
+42|Olet offline-tilassa, joten mitään ei muutettu. Toimintoa ei ole asetettu jonoon.
+43|Kirjaudu sisään YouTube Musicin, jotta voit tehdä tämän.
+44|YouTube Music ei voinut tehdä tätä muutosta nyt. Mitään ei muutettu.
+45|Tilisi muuttui ennen kuin tämä alkoi. Yritä uudelleen.
+46|Viimeaikaiset haut ja kohteet pysyvät tällä Macilla, niitä ei lähetetä minnekään ja ne poistetaan tilin mukana.
+47|Tämä poistaa vain tälle Macille tallennetun tietueen. YouTube Musicin oma historia ei muutu.
+48|Tyhjennä tämän Macin historia
+49|Kirjautuminen aikakatkaistiin. Mitään ei tallennettu. Yritä uudelleen, kun olet valmis.
+50|Kirjauduttu ulos.
+51|Kirjauduttu sisään tunnuksella %@.
+52|Vaihdettu tiliin %@.
+53|Toista %@
+54|Nykyinen ulostulo: %@
+55|Poistetaanko “%@” lähetyksistäsi?
+56|Mainos soi
+57|Mainos päättyi
+58|Nyt soi “%@”, esittäjä %@.
+59|Käyttöliittymän kieli
+60|Musiikin ja sanoitusten kieli
+61|Suositusten alue
+62|Sama kuin macOS
+63|Alue muuttaa vain ehdotuksia. Se ei koskaan avaa musiikkia tai ominaisuuksia, joita tilisi tai sijaintisi ei salli.
+P1|one:%lld minuutti	other:%lld minuuttia
+P2|one:Kumoa: %lld kappale lisätty	other:Kumoa: %lld kappaletta lisätty
+P3|one:%lld kohdetta ei voitu näyttää	other:%lld kohdetta ei voitu näyttää

@@ -1,0 +1,19 @@
+{
+ "_fixture": "synthetic E01 web-session fixture: hand-written to the published InnerTube shape; not a live capture; no real account",
+ "responseContext": {
+  "mainAppWebResponseContext": {
+   "loggedOut": true
+  }
+ },
+ "actions": [
+  {
+   "openPopupAction": {
+    "popup": {
+     "multiPageMenuRenderer": {
+      "sections": []
+     }
+    }
+   }
+  }
+ ]
+}

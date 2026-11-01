@@ -1,0 +1,333 @@
+{
+  "schema": 1,
+  "purpose": "SEC02: every network destination the application and its extensions may name, by purpose. scripts/check-destinations.py and SecurityTests.DestinationTests read this file; a host in source or in a built binary that is not here fails both. Docs/Network-Destinations.md explains each entry.",
+  "service": [
+    {
+      "host": "music.youtube.com",
+      "purpose": "YouTube Music: catalog and library requests (/youtubei/v1) and the hidden player's document",
+      "components": [
+        "YouTubeMusicAdapter.PublicMusic",
+        "YouTubeMusicAdapter.SignedMusic",
+        "Playback.WebMusic"
+      ],
+      "credentials": "the account session, only on the signed client's four read paths and the explicit write paths, never on a public request"
+    },
+    {
+      "host": "accounts.google.com",
+      "purpose": "Google sign-in (in-app web view, system-browser OAuth) and the OpenID discovery document",
+      "components": [
+        "AccountSession.WebMusicSignIn",
+        "AccountSession.DesktopOAuth",
+        "AccountSession.GoogleIDToken"
+      ],
+      "credentials": "none from the app; the password is typed into Google's page"
+    },
+    {
+      "host": "accounts.youtube.com",
+      "purpose": "sign-in continuation page",
+      "components": [
+        "AccountSession.WebMusicSignIn"
+      ],
+      "credentials": "none"
+    },
+    {
+      "host": "consent.youtube.com",
+      "purpose": "consent interstitial inside the sign-in view",
+      "components": [
+        "AccountSession.WebMusicSignIn"
+      ],
+      "credentials": "none"
+    },
+    {
+      "host": "consent.google.com",
+      "purpose": "consent interstitial inside the sign-in view",
+      "components": [
+        "AccountSession.WebMusicSignIn"
+      ],
+      "credentials": "none"
+    },
+    {
+      "host": "www.youtube.com",
+      "purpose": "YouTube's sign-in handler, and a host accepted in pasted links (never requested for a link)",
+      "components": [
+        "AccountSession.WebMusicSignIn",
+        "SystemIntegration.Links"
+      ],
+      "credentials": "none"
+    },
+    {
+      "host": "youtube.com",
+      "purpose": "accepted in pasted links only; never requested",
+      "components": [
+        "SystemIntegration.Links"
+      ],
+      "credentials": "none"
+    },
+    {
+      "host": "m.youtube.com",
+      "purpose": "accepted in pasted links only; never requested",
+      "components": [
+        "SystemIntegration.Links"
+      ],
+      "credentials": "none"
+    },
+    {
+      "host": "youtu.be",
+      "purpose": "accepted in pasted links only; never requested",
+      "components": [
+        "SystemIntegration.Links"
+      ],
+      "credentials": "none"
+    },
+    {
+      "host": "oauth2.googleapis.com",
+      "purpose": "OAuth token exchange",
+      "components": [
+        "AccountSession.OAuthTokenExchange"
+      ],
+      "credentials": "authorization code and PKCE verifier; no client secret"
+    },
+    {
+      "host": "www.googleapis.com",
+      "purpose": "Google's public signing keys for ID-token verification",
+      "components": [
+        "AccountSession.GoogleIDToken"
+      ],
+      "credentials": "none"
+    }
+  ],
+  "artwork": [
+    {
+      "host": "i.ytimg.com",
+      "purpose": "thumbnails",
+      "components": [
+        "YouTubeMusicAdapter.SignedMusic",
+        "Playback.WebMusicArtworkLoader"
+      ]
+    },
+    {
+      "host": "*.ytimg.com",
+      "purpose": "thumbnail hosts (suffix match, hidden-player artwork only)",
+      "components": [
+        "Playback.WebMusicArtworkLoader"
+      ]
+    },
+    {
+      "host": "*.ggpht.com",
+      "purpose": "channel and avatar images (yt3/yt4)",
+      "components": [
+        "YouTubeMusicAdapter.SignedMusic",
+        "Playback.WebMusicArtworkLoader"
+      ]
+    },
+    {
+      "host": "*.googleusercontent.com",
+      "purpose": "album art and avatars (lh3..lh6)",
+      "components": [
+        "YouTubeMusicAdapter.SignedMusic",
+        "Playback.WebMusicArtworkLoader"
+      ]
+    }
+  ],
+  "pageDriven": [
+    {
+      "host": "*.youtube.com",
+      "purpose": "what YouTube Music's own web player loads inside the hidden player and the sign-in view"
+    },
+    {
+      "host": "*.google.com",
+      "purpose": "sign-in page resources"
+    },
+    {
+      "host": "*.gstatic.com",
+      "purpose": "page scripts, fonts and images"
+    },
+    {
+      "host": "*.googleapis.com",
+      "purpose": "page APIs"
+    },
+    {
+      "host": "*.googlevideo.com",
+      "purpose": "the player's media streams, requested by YouTube's page, never by native code"
+    },
+    {
+      "host": "*.ytimg.com",
+      "purpose": "page images"
+    },
+    {
+      "host": "*.googleusercontent.com",
+      "purpose": "page images"
+    }
+  ],
+  "pageDrivenNote": "These are enumerated by class, not host: YouTube's own page decides which Google, YouTube and advertising hosts it contacts (Docs/Playback-Addendum.md: advertising is YouTube's and is never blocked). Native code initiates none of them. The main frame is limited to music.youtube.com (hidden player) or the sign-in hosts above; subframes and resources are limited to https, blob and data.",
+  "externalLinks": [
+    {
+      "host": "*.wikipedia.org",
+      "purpose": "a link in an artist or album description, opened in the person's own browser by an explicit click; the application requests nothing from it",
+      "components": [
+        "Features.CatalogRichText"
+      ]
+    },
+    {
+      "host": "*.wikimedia.org",
+      "purpose": "as above",
+      "components": [
+        "Features.CatalogRichText"
+      ]
+    },
+    {
+      "host": "*.creativecommons.org",
+      "purpose": "as above (licence attribution)",
+      "components": [
+        "Features.CatalogRichText"
+      ]
+    }
+  ],
+  "local": [
+    {
+      "host": "127.0.0.1",
+      "purpose": "the sign-in callback listener: bound to loopback only, open only during a sign-in attempt, one request, 5 second connection limit",
+      "components": [
+        "AccountSession.NativeOAuthLoopback"
+      ],
+      "direction": "inbound"
+    }
+  ],
+  "localDevices": [
+    {
+      "host": "_googlecast._tcp (DNS-SD on the local network)",
+      "purpose": "Cast receiver discovery: browsed ONLY while the person has the output picker open in a normal launch (never at launch, never in tests or isolated launches); the first browse raises macOS's Local Network question",
+      "components": [
+        "OutputRoutes.NWCastDirectory"
+      ],
+      "direction": "outbound"
+    },
+    {
+      "host": "a Cast receiver chosen by the person (TCP 8009, TLS)",
+      "purpose": "the Cast V2 control connection (IPv4 only): connect, launch the Default Media Receiver, load, play, pause, seek, stop. Sends no account data. The receiver's certificate cannot be validated by the system (it chains to Google's device authority), so its leaf certificate is pinned for ONE connected session only (a change on that connection is refused; a later connection is a new session); the pin proves no identity and device authentication is not performed (Docs/Cast.md)",
+      "components": [
+        "OutputRoutes.NWCastChannel"
+      ],
+      "direction": "outbound"
+    },
+    {
+      "host": "one private-network IPv4 address of this Mac, to that receiver's address only",
+      "purpose": "the scoped local relay: one owned/local audio file at a random-token path, GET or Range only, bounded lifetime, closed at session end and Quit; refuses wildcard, public, IPv6 and non-receiver peers",
+      "components": [
+        "OutputRoutes.CastRelayServer"
+      ],
+      "direction": "inbound"
+    }
+  ],
+  "localDevicesNote": "Cast (W39, Docs/Cast.md) is the only code that talks to devices on the local network, and only for a receiver the person chose, only after they opened the output picker. AirPlay and system routes remain the operating system's. A public https address a receiver fetches by itself (never a Google or YouTube host) is not produced by any code today.",
+  "updates": [
+    {
+      "host": "github.com",
+      "purpose": "opt-in update feed (releases/latest/download/feed.json) and release notes (W30)",
+      "components": [
+        "Updates.UpdateRequests",
+        "Updates.FeedVerifier"
+      ],
+      "note": "off until the person turns update checking on; the feed signature, version order and release provenance are verified before anything is installed (SEC09, UpdatesTests); no account data is sent"
+    },
+    {
+      "host": "*.githubusercontent.com",
+      "purpose": "the release asset a github.com download redirects to; the only redirect the updater follows, https only",
+      "components": [
+        "Updates.URLSessionUpdateNetwork"
+      ],
+      "note": "the bytes are checked by the verifier; the host allowlist is defence in depth"
+    }
+  ],
+  "reviewedProcessLaunches": [
+    {
+      "file": "UpdateStaging.swift",
+      "executable": "/usr/bin/hdiutil",
+      "reason": "attaches and detaches the downloaded disk image while the updater verifies it; a fixed system tool at a fixed path with fixed verbs, output discarded, no argument taken from the network"
+    }
+  ],
+  "documentation": [
+    {
+      "host": "www.apple.com",
+      "purpose": "the property-list DTD named in the XML header of Info.plist and entitlement files; a name, never contacted"
+    }
+  ],
+  "telemetryDenyList": [
+    "google-analytics",
+    "googletagmanager",
+    "app-measurement",
+    "firebase",
+    "crashlytics",
+    "sentry.io",
+    "bugsnag",
+    "mixpanel",
+    "amplitude.com",
+    "segment.io",
+    "segment.com",
+    "appsflyer",
+    "adjust.com",
+    "branch.io",
+    "flurry.com",
+    "newrelic",
+    "datadoghq",
+    "posthog",
+    "hotjar",
+    "onesignal",
+    "applovin",
+    "unityads",
+    "admob",
+    "googleads",
+    "googlesyndication",
+    "doubleclick",
+    "facebook.com/tr",
+    "graph.facebook",
+    "instabug",
+    "raygun.io",
+    "rollbar.com",
+    "launchdarkly",
+    "optimizely"
+  ],
+  "deniedLinkedFrameworks": [
+    "Firebase",
+    "Crashlytics",
+    "Sentry",
+    "Bugsnag",
+    "Mixpanel",
+    "Amplitude",
+    "Segment",
+    "AppsFlyer",
+    "Adjust",
+    "Flurry",
+    "GoogleAnalytics",
+    "GoogleMobileAds",
+    "FBSDK",
+    "Sparkle",
+    "Electron",
+    "Squirrel",
+    "Python",
+    "libnode",
+    "JavaScriptCore.framework/JavaScriptCore.*remote"
+  ],
+  "deniedEntitlements": [
+    "com.apple.security.cs.allow-jit",
+    "com.apple.security.cs.allow-unsigned-executable-memory",
+    "com.apple.security.cs.disable-library-validation",
+    "com.apple.security.cs.allow-dyld-environment-variables",
+    "com.apple.security.cs.disable-executable-page-protection",
+    "com.apple.security.get-task-allow",
+    "com.apple.security.automation.apple-events",
+    "com.apple.security.device.audio-input",
+    "com.apple.security.device.camera",
+    "com.apple.security.personal-information.addressbook",
+    "com.apple.security.personal-information.contacts",
+    "com.apple.security.personal-information.calendars",
+    "com.apple.security.personal-information.location",
+    "com.apple.security.files.all",
+    "com.apple.security.temporary-exception.files.absolute-path.read-write",
+    "com.apple.security.network.server",
+    "com.apple.security.device.bluetooth"
+  ],
+  "allowedUsageDescriptions": [
+    "NSLocalNetworkUsageDescription"
+  ]
+}

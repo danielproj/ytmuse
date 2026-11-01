@@ -1,0 +1,10 @@
+#!/bin/bash
+# Caps compiler parallelism for `swift build` and `swift test` (operator rule, 2026-10-31). With 18 cores SwiftPM starts up to
+# 18 compiler processes of 1-2 GB each. Several lanes building at once exhausted the 48 GB Mac: macOS showed its
+# "out of application memory" dialog over a UI run, and the account holder's apps share that memory. YTMUSE_BUILD_JOBS (default 6) sets the cap.
+jobs=${YTMUSE_BUILD_JOBS:-6}
+if [[ "${1:-}" == build || "${1:-}" == test ]]; then
+  sub=$1; shift
+  exec /usr/bin/swift "$sub" --jobs "$jobs" "$@"
+fi
+exec /usr/bin/swift "$@"

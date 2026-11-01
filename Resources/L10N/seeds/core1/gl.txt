@@ -1,0 +1,66 @@
+1|Inicio
+2|Explorar
+3|Biblioteca
+4|Buscar
+5|Axustes
+6|Reproducir
+7|Pausar
+8|Seguinte
+9|Anterior
+10|Cola
+11|Descargas
+12|Reproducindo agora
+13|Cancelar
+14|Feito
+15|Tentar de novo
+16|Téntao de novo
+17|Descartar
+18|Iniciar sesión
+19|Pechar sesión
+20|Engadir conta
+21|Eliminar
+22|Desfacer
+23|Mover cara arriba
+24|Mover cara abaixo
+25|En pausa
+26|Reproducindo
+27|Cargando…
+28|Iniciar sesión con Google
+29|Dámoste a benvida a YTMuse
+30|Escolle música para comezar
+31|A túa cola está baleira
+32|A sesión caducou
+33|Cancelar o inicio de sesión
+34|O contrasinal introdúceo na páxina de Google, nunca en YTMuse.
+35|Volve iniciar sesión para reproducir a túa biblioteca.
+36|A túa sesión rematou. Volve iniciar sesión para reproducir.
+37|Volve conectar esta conta para continuar.
+38|A conexión está sen liña. Téntao de novo cando esteas conectado.
+39|Non se puido acceder a YouTube Music. Comproba a conexión e téntao de novo.
+40|Esta acción non está dispoñible neste momento.
+41|Non se puido cargar esta páxina
+42|Estás sen conexión, así que non se cambiou nada. A acción non se puxo na cola.
+43|Inicia sesión en YouTube Music para facelo.
+44|YouTube Music non puido facer este cambio neste momento. Non se cambiou nada.
+45|A túa conta cambiou antes de que isto comezase. Téntao de novo.
+46|As buscas e os elementos recentes quedan neste Mac, nunca se envían a ningún sitio e elimínanse xunto coa conta.
+47|Isto só elimina o rexistro gardado neste Mac. O historial do propio YouTube Music non cambia.
+48|Borrar o historial deste Mac
+49|O inicio de sesión caducou. Non se gardou nada. Téntao de novo cando estea listo.
+50|Sesión pechada.
+51|Sesión iniciada como %@.
+52|Cambiouse a %@.
+53|Reproducir %@
+54|Saída actual: %@
+55|Eliminar «%@» das túas subidas?
+56|Estase reproducindo un anuncio
+57|O anuncio rematou
+58|Reproducindo agora «%@» de %@.
+59|Idioma da interface
+60|Idioma da música e das letras
+61|Rexión para recomendacións
+62|Igual que macOS
+63|A rexión só cambia o que se suxire. Nunca desbloquea música nin funcións que a túa conta ou localización non permitan.
+P1|one:%lld minuto	other:%lld minutos
+P2|one:Desfacer: engadiuse %lld canción	other:Desfacer: engadíronse %lld cancións
+P3|one:Non se puido amosar %lld elemento	other:Non se puideron amosar %lld elementos

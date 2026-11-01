@@ -1,0 +1,337 @@
+64|Die Berechtigung des Accounts wurde nicht überprüft. Versuche es nach dem erneuten Verbinden noch einmal.
+65|Ein unterbrochener Upload kann nicht fortgesetzt werden; er beginnt von vorn.
+66|YouTube Music wurde gebeten, das Nicht-gefällt-mir zu entfernen.
+67|YouTube Music wurde gebeten, das Gefällt-mir zu entfernen.
+68|Die Audioqualität wählt der eigene Player von YouTube Music. YTMuse misst oder wählt sie nicht.
+69|Autorisierung abgebrochen.
+70|Autorisierung abbrechen
+71|Abgebrochen. YouTube Music hatte diese Datei bereits und fügt sie möglicherweise noch hinzu.
+72|Abgebrochen. Deine Datei wurde nicht geändert.
+73|Lokalen Verlauf löschen …
+74|Auswahl aufheben
+75|Alle Wiedergaben von diesem Mac löschen?
+76|Mitwirkende können keine private Playlist nutzen. Stelle sie zuerst auf „Nicht gelistet“ oder „Öffentlich“.
+77|Nach mehreren Versuchen nicht abgeschlossen
+78|YouTube Music konnte nicht erreicht werden
+79|Playlist löschen
+80|Playlist löschen …
+81|Löscht lokale Zugangsdaten, Dateien und ausstehende Schreibvorgänge. Dein Google-Account und deine Remote-Playlists bleiben unverändert.
+82|Google-Autorisierung trennen
+83|Downloads sind wegen des Speicherplatzes pausiert. Nichts, was du behalten hast, wurde gelöscht. Wähle, wie du Platz schaffst:
+84|Für „Folgen“ und das Speichern in deiner Mediathek brauchst du einen angemeldeten YouTube-Music-Account.
+85|Für „Folgen“ brauchst du einen angemeldeten YouTube-Music-Account.
+86|Die Google-Autorisierung konnte nicht abgeschlossen werden. Es wurde keine Verbindung zu Music bestätigt. Versuche es erneut.
+87|Die Google-Autorisierung konnte den Server nicht erreichen. Prüfe die Verbindung und versuche es erneut.
+88|Die Google-Autorisierung ist abgelaufen, wurde widerrufen oder ihr Code wurde abgelehnt. Versuche, sie erneut zu autorisieren.
+89|Die Google-Autorisierung ist vorübergehend nicht verfügbar. Versuche es später erneut.
+90|Zeitüberschreitung bei der Google-Autorisierung. Versuche es erneut.
+91|Die Google-Autorisierung wurde abgebrochen oder ersetzt. Versuche es erneut, wenn du bereit bist.
+92|Die Google-Autorisierung wurde verweigert. Es wurde keine Verbindung zu Music bestätigt.
+93|Die Google-Client-Konfiguration ist nicht verfügbar oder wurde abgelehnt. Die Entwickler müssen die Registrierung dieser App prüfen.
+94|Google hat die Anmeldung bei YouTube Music nicht abgeschlossen. Es wurde nichts gesichert. Versuche es erneut.
+95|Google hat diese YouTube-Music-Sitzung beendet. Deine lokalen Daten bleiben erhalten.
+96|Google begrenzt Autorisierungsanfragen. Warte, bevor du es erneut versuchst.
+97|Google hat die Autorisierungsanfrage abgelehnt. Die Entwickler müssen die OAuth-Konfiguration dieser App prüfen.
+98|Google verlangt das Client-Secret dieser App. Die Entwickler müssen die sichere Konfiguration bereitstellen, bevor es erneut versucht wird. Es wurde keine Verbindung zu Music bestätigt.
+99|Anmeldeseite von Google
+100|Die Anmeldeseite von Google konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.
+101|„Beim Anmelden starten“ konnte nicht ausgeschaltet werden. Versuche es erneut oder schalte es in Systemeinstellungen > Allgemein > Anmeldeobjekte aus.
+102|„Beim Anmelden starten“ konnte nicht eingeschaltet werden. Versuche es erneut oder schalte es in Systemeinstellungen > Allgemein > Anmeldeobjekte ein.
+103|Anmeldung bei Google wird geladen
+104|Das Entfernen der lokalen Google-Zugangsdaten muss erneut versucht werden.
+105|Der lokale Verlauf ist in dieser Sitzung nicht verfügbar.
+106|Ein niedrigeres Limit entfernt nie Downloads, die du behalten möchtest.
+107|Songtext nicht verfügbar
+108|Accounts verwalten
+109|Accounts verwalten …
+110|Accounts verwalten
+111|Die erneute Verbindung zu Music wartet auf den Zugriff auf die Quellsitzung.
+112|Neue Playlists sind privat, sofern du nichts anderes wählst.
+113|Keine Accounts verbunden
+114|Für diesen Account nicht verfügbar
+115|Nicht angemeldet: Das sind die Ergebnisse, die jeder sieht.
+116|Es wurde nichts geändert. Versuche, deine Mediathek erneut zu lesen.
+117|Es wurde nichts gesendet.
+118|Mitteilungen sind für YTMuse ausgeschaltet. Schalte sie in Systemeinstellungen > Mitteilungen ein und versuche es dann erneut.
+119|Standardmäßig aus. Beim Einschalten fragt macOS nach der Erlaubnis, Mitteilungen anzuzeigen. Sie zeigen nur Titel und Interpret.
+120|Aus, bis du es einschaltest. Playlists, Uploads und Verlauf sind privat: Sie werden nur angezeigt, wenn du es möchtest, und aus Spotlight entfernt, wenn du dich abmeldest, den Account entfernst oder dies ausschaltest.
+121|Nur ein Teil dieser Änderung wurde angewendet. „Erneut versuchen“ sendet nur den Rest.
+122|Lade nur Musik hoch, zu der du die Rechte hast. YouTube Music prüft jede Datei nach dem Hochladen und entscheidet, was es akzeptiert. Deine Dateien auf diesem Mac werden nur gelesen, nie geändert oder gelöscht.
+123|Anmeldung bei Google wird geöffnet …
+124|Diese Art von Ergebnis kann noch nicht geöffnet werden.
+125|Wer beigetreten ist, kann keine Songs mehr hinzufügen. Diese App kann das nicht wieder öffnen; mach das in YouTube Music.
+126|Das Abspielen von Uploads ist in dieser Version nicht verfügbar.
+127|Offline gespeicherte Playlists
+128|Dein YouTube-Music-Account wird gelesen …
+129|Dein Accountname wird gelesen. In deiner Mediathek wird nichts geändert.
+130|Google-Autorisierung aktualisieren
+131|Nicht-gefällt-mir entfernen
+132|Download entfernen
+133|Lokale Daten entfernen
+134|Auswahl entfernen …
+135|Automatische Downloads entfernen
+136|Entferne Downloads, die du nicht mehr brauchst
+137|Aus der Mediathek entfernen
+138|Aus den Uploads entfernen
+139|Aus den Uploads entfernen …
+140|Samples konnten nicht geladen werden
+141|Gesicherte Sitzung auf diesem Mac nicht verfügbar
+142|Zum Speichern in deiner Mediathek brauchst du einen angemeldeten YouTube-Music-Account.
+143|Vor- und Zurückspulen sowie Überspringen sind während einer Werbeanzeige nicht verfügbar.
+144|Wähle zuerst einen angemeldeten Account aus und versuche es dann erneut.
+145|Wähle einen angemeldeten Account aus, um Audiodateien auf diesem Mac zu behalten.
+146|Wähle einen angemeldeten Account aus, um Dateien zu behalten
+147|Sitzung abgelaufen – melde dich erneut an
+148|Zeigt die öffentliche Startseite von YouTube Music. Melde dich an, um Bereiche für dich zu sehen.
+149|Melde dich erneut an, um fortzufahren
+150|Melde dich erneut an, um zu sehen, was YouTube Music für deinen Account bereithält.
+151|Melde dich zuerst in YTMuse bei YouTube Music an.
+152|Melde dich in YTMuse bei YouTube Music an.
+153|Melde dich bei YouTube Music an, um eine Playlist zu ändern.
+154|Melde dich bei YouTube Music an, um deine Mediathek zu ändern.
+155|Melde dich bei YouTube Music an, um Folgen abzuspielen.
+156|Melde dich bei YouTube Music an, um abzuspielen.
+157|Melde dich bei YouTube Music an, um Kommentare zu lesen.
+158|Melde dich bei YouTube Music an, um das zu lesen.
+159|Melde dich bei YouTube Music an, um Samples zu sehen.
+160|Melde dich bei YouTube Music an, um zu sehen, was es für deinen Account bereithält.
+161|Melde dich bei YouTube Music an, um einen Radiosender zu starten.
+162|Melde dich bei YouTube Music an, um hochzuladen.
+163|Melde dich bei YouTube Music an, um hochzuladen. Es wurde nichts hinzugefügt.
+164|Melde dich an, um diese Folge für später zu sichern.
+165|Melde dich an, um das zu sehen
+166|Anmeldung abgebrochen.
+167|Die Anmeldung konnte nicht abgeschlossen werden. Es wurde nichts gesichert. Versuche es erneut.
+168|Anmeldung nicht abgeschlossen
+169|Die Anmeldung wurde abgebrochen oder ersetzt. Versuche es erneut, wenn du bereit bist.
+170|Bei YouTube Music angemeldet
+171|Anmeldung bei YouTube Music …
+172|Einzelne Folgen können noch nicht über die Suche abgespielt werden.
+173|Intelligente Downloads sind noch nicht verfügbar: Nichts auf diesem Mac kann Objekte zum Behalten vorschlagen. Es wird nichts automatisch geladen.
+174|Speicher war nicht verfügbar
+175|Das Wechseln ist während einer Werbeanzeige nicht verfügbar.
+176|Dieser YouTube-Music-Account ist bereits auf diesem Mac vorhanden. Verwende „Erneut anmelden“ in seiner Zeile.
+177|Diese Änderung ist gerade nicht möglich.
+178|Das hat nicht geklappt. Es wurde nichts geändert. Versuche es erneut.
+179|Das ist kein Einladungslink für YouTube Music.
+180|Das ist gerade nicht verfügbar.
+181|Dieses Objekt kann nicht behalten werden. Wähle eine Audiodatei.
+182|Das ist ein anderer YouTube-Music-Account. Melde dich erneut mit dem Account an, der in dieser Zeile angezeigt wird.
+183|Der Google-Callback wurde nicht akzeptiert. Es wurde keine Verbindung zu Music bestätigt.
+184|Die Antwort von Google konnte nicht verifiziert werden. Es wurde keine Verbindung zu Music bestätigt.
+185|Die Account-Aktion konnte nicht abgeschlossen werden. Wiederhole die Aktion.
+186|Die Account-Aktion ist fehlgeschlagen. Versuche es erneut.
+187|Der Account hat sich geändert, daher wurde dieser Upload gestoppt.
+188|Das eigene Protokoll der App, was hier wiedergegeben wurde. Es ist nicht der Verlauf von YouTube Music und wird nie an YouTube Music gesendet.
+189|Der verbundene Account-Anbieter kann diese Aktion nicht ausführen.
+190|Der Songtext konnte gerade nicht geladen werden.
+191|Die Berechtigung, dieses Objekt zu behalten, ist abgelaufen. Erneuere sie oder lade es erneut herunter.
+192|Der Player kann gerade nicht an diese Stelle springen.
+193|Der Player hat die Geschwindigkeit nicht geändert. Er behält seine aktuelle Geschwindigkeit.
+194|Die Playlist konnte nach der letzten Änderung nicht zurückgelesen werden, daher ist die Anzeige eine Schätzung.
+195|Die Playlist konnte vorher nicht gelesen werden, daher wurde nichts gesendet.
+196|Die Playlist konnte nicht gelesen werden, daher wurde nichts erneut gesendet.
+197|Die Playlist wurde nicht vollständig gelesen und kann daher noch nicht neu angeordnet werden. Aktualisiere und versuche es erneut.
+198|Die Playlist wurde nicht vollständig gelesen, daher ist das Neuanordnen ausgeschaltet, bis das geschehen ist.
+199|Die Warteschlange konnte nicht neu angeordnet werden. Prüfe die bearbeitbaren Objekte und versuche es erneut.
+200|Die gesicherte Kopie war beschädigt und wurde entfernt
+201|Die Upload-Liste konnte nicht gelesen werden. Frühere Aufträge werden nicht angezeigt.
+202|Die Upload-Liste konnte nicht gesichert werden. Sie übersteht keinen Neustart.
+203|Das Video konnte nicht gewechselt werden. Versuche es erneut.
+204|Diese Wörter wurden nicht gesucht: Kein YTMuse-Fenster konnte sie annehmen, oder eine neuere Suche hat sie ersetzt. Öffne YTMuse und versuche es erneut.
+205|Der Eintrag dieses Mac konnte nicht gelesen oder gesichert werden.
+206|Dieser Account wurde abgemeldet, daher wurden seine Downloads entfernt
+207|Diese Aktion ist in der Region dieser Identität nicht verfügbar.
+208|Diese Aktion ist für dieses Objekt nicht verfügbar.
+209|Diese Aktion ist für diese Seite nicht verfügbar.
+210|Diese App kann die Datei nicht mehr lesen. Wähle sie erneut aus.
+211|Diese App kann das noch nicht aus YouTube Music lesen. Keine Antwort, die sie lesen kann, enthält es, daher wird nichts angezeigt und nichts erfunden.
+212|Diese App konnte die Datei nicht lesen, daher wurde sie nicht hinzugefügt.
+213|Diese App liest die Warteschlange eines Radiosenders noch nicht aus YouTube Music, daher kann sie nicht sagen, ob der Sender Regler zum Abstimmen hat. Es werden keine angezeigt und keine erfunden.
+214|Diese Änderung ist ungültig. Es wurde nichts geändert.
+215|Diese Änderung braucht zuerst deine Bestätigung. Es wurde nichts geändert.
+216|Diese Sammlung konnte nicht geladen werden
+217|Das konnte nicht geladen werden
+218|Dadurch werden die gesicherte Fensternavigation, Suchen, Filter und Auswahlen dieser App für alle Accounts gelöscht. Hörverlauf, Accounts, Musik und Remote-Daten werden nicht gelöscht.
+219|Das sieht nicht nach einer Audiodatei aus, daher wurde sie nicht hinzugefügt.
+220|Diese Folge hat nicht angegeben, aus welcher Sendung sie abgespielt werden soll, daher wird „Wiedergeben“ hier nicht angeboten. Öffne die Sendung, um sie abzuspielen.
+221|Diese Datei ist kopiergeschützt und kann nicht hochgeladen werden.
+222|Diese Datei ist leer, daher wurde sie nicht hinzugefügt.
+223|Diese Identität hat keine Berechtigung für diese Aktion.
+224|Diese Identität oder dieser Inhalt ist nicht verfügbar. Wähle einen anderen Account oder ein anderes Objekt.
+225|Das ist keine reguläre Datei, daher wurde sie nicht hinzugefügt.
+226|Dieses Objekt gehört zu einem anderen Account oder einer früheren Sitzung. Wähle es erneut aus.
+227|Dieses Objekt enthielt nichts zum Abspielen.
+228|Diese Seite enthielt nicht das, was zum Folgen oder Speichern von hier nötig ist.
+229|Diese Seite ist noch nicht lesbar
+230|Diese Seite wurde ohne ihre Details erneut geöffnet, daher ist die Verfügbarkeit nicht bekannt. „Wiedergeben“ und „Link kopieren“ funktionieren weiterhin.
+231|Diese Playlist ist privat, daher kann nur du ihren Link öffnen. Ändere zuerst ihre Sichtbarkeit, um sie zu teilen.
+232|Dadurch werden nur diese Einträge entfernt. Danach wird „Widerrufen“ angeboten.
+233|Dieses Ergebnis enthielt nichts zum Abspielen.
+234|Dieser Song hat keine Bewertung, die entfernt werden könnte.
+235|Dieser Titel ist für dich nicht verfügbar.
+236|Dieser Upload ist fehlgeschlagen.
+237|Google-Autorisierung wird aktualisiert …
+238|Account wird aktualisiert …
+239|Hochgeladen. YouTube Music verarbeitet diese Datei; sie ist noch nicht in deiner Mediathek.
+240|Das Hochladen kommt in einem späteren Update, daher wurde nichts hinzugefügt.
+241|Dein YouTube-Music-Account wird überprüft …
+242|YTMuse kann noch nicht von außerhalb der App etwas im Wiederholungsmodus starten.
+243|YTMuse kann noch nicht von außerhalb der App etwas im Zufallsmodus starten.
+244|YTMuse konnte das im aktuellen Account nicht finden.
+245|YTMuse konnte die Anmeldung auf diesem Mac nicht vorbereiten. Versuche es erneut.
+246|YTMuse konnte die gesicherte Sitzung dieses Accounts im Keychain auf diesem Mac nicht lesen oder aktualisieren. Dein Account wurde nicht abgemeldet. Versuche es erneut oder melde dich erneut an.
+247|YTMuse startet bereits etwas. Versuche es gleich noch einmal.
+248|YTMuse startet noch. Versuche es gleich noch einmal.
+249|Du kannst die Musik, die du bereits hochgeladen hast, durchsuchen und hier entfernen. Das Hinzufügen von Musik von diesem Mac ist noch nicht verfügbar.
+250|Du hast diesen Upload abgebrochen.
+251|YouTube Music hat auf eine Weise geantwortet, die YTMuse noch nicht erkennt, daher wurde kein Account hinzugefügt.
+252|YouTube Music hat auf eine Weise geantwortet, die YTMuse noch nicht erkennt. Das ist keine leere Mediathek.
+253|YouTube Music hat geantwortet, aber hier nichts für deinen Account gesendet. Es wird nichts an dessen Stelle geschätzt.
+254|YouTube Music kann diesen Upload nicht fortsetzen.
+255|YouTube Music kann einen unterbrochenen Upload nicht fortsetzen, daher muss er von vorn beginnen.
+256|YouTube Music konnte diese Anfrage nicht beantworten. Versuche es erneut.
+257|YouTube Music konnte gerade nicht angefragt werden. Neuer Versuch läuft.
+258|YouTube Music konnte nicht erreicht werden, und es gibt noch keine gesicherte Kopie dieser Sammlung.
+259|YouTube Music konnte nicht erreicht werden. Prüfe es später noch einmal.
+260|YouTube Music konnte diese Datei nicht verarbeiten.
+261|YouTube Music konnte es auch nicht sagen. Ein erneuter Versuch setzt denselben Zustand noch einmal und kann nichts doppelt anlegen.
+262|YouTube Music konnte diese Folge nicht starten. Versuche es erneut.
+263|YouTube Music konnte das nicht starten. Versuche es noch einmal mit „Wiedergeben“.
+264|YouTube Music konnte das nicht starten. Versuche es erneut.
+265|YouTube Music konnte diesen Upload gerade nicht annehmen.
+266|YouTube Music hat diese Änderung nicht akzeptiert. Es wurde nichts geändert.
+267|YouTube Music hat diese Datei nicht akzeptiert.
+268|YouTube Music hat das nicht akzeptiert. Es wurde nichts geändert.
+269|YouTube Music hat diese Änderung nicht angewendet. Sie wurde zurückgenommen.
+270|YouTube Music hat das Löschen nicht bestätigt.
+271|YouTube Music hat die neue Playlist nicht bestätigt. Sie existiert möglicherweise oder auch nicht.
+272|YouTube Music hat diese Änderung nicht bestätigt. Sie wurde möglicherweise angewendet oder auch nicht.
+273|YouTube Music hat das nicht bestätigt. Es ist möglicherweise geschehen oder auch nicht.
+274|YouTube Music hat das nicht bestätigt. Es ist möglicherweise geschehen oder auch nicht. Prüfe es, bevor du es noch einmal tust.
+275|YouTube Music hat das nicht bestätigt. Du bist möglicherweise beigetreten oder auch nicht.
+276|YouTube Music hat hier keine Kommentarfunktion angeboten.
+277|YouTube Music hat diese Aktion für diesen Kommentar nicht angeboten.
+278|YouTube Music hat diese Änderung für dieses Objekt nicht angeboten.
+279|YouTube Music hat diesen Regler für diesen Radiosender nicht bereitgestellt.
+280|YouTube Music erlaubt dir nicht, diese Playlist zu ändern, daher kann hier nichts sie bearbeiten.
+281|YouTube Music erlaubt dir nicht, diese Playlist zu ändern.
+282|YouTube Music erlaubt dir nicht, diese Playlist zu ändern. Es wurde nichts geändert.
+283|YouTube Music bietet auf dem Mac keine Downloads an.
+284|YouTube Music bietet diese Sammlung diesem Account oder dieser Version nicht an.
+285|YouTube Music hat die Verarbeitung dieser Datei abgeschlossen, aber deine Upload-Liste konnte nicht aktualisiert werden. Aktualisiere sie, um die Datei zu sehen.
+286|YouTube Music bittet um eine Pause, daher konnte der Songtext nicht geladen werden.
+287|YouTube Music bittet um eine Pause. Es wurde nichts geändert.
+288|YouTube Music bittet um eine Pause. Versuche es gleich noch einmal.
+289|YouTube Music begrenzt Anfragen. Warte einen Moment und versuche es dann erneut.
+290|YouTube Music ist vorübergehend nicht verfügbar. Versuche es später erneut.
+291|Objekte aus YouTube Music werden über den eigenen Player von YouTube abgespielt, den die App nicht für die Offline-Nutzung sichern kann.
+292|YouTube Music verwaltet die nächsten Objekte, daher kann YTMuse nichts zur Warteschlange hinzufügen oder als Nächstes abspielen.
+293|YouTube Music verwaltet die nächsten Songs dieser Warteschlange. Die App sieht nur den laufenden Song und kann diese Warteschlange daher nicht als Playlist sichern.
+294|YouTube Music hat eine Seite in einer Form gesendet, die diese Version noch nicht lesen kann.
+295|YouTube Music hat einen Songtext gesendet, den diese Version nicht lesen kann.
+296|YouTube Music hat diese Sammlung in einer Form gesendet, die diese Version nicht lesen kann. Das ist nicht dasselbe wie eine leere Mediathek.
+297|Die Antwort von YouTube Music konnte nicht gelesen werden, daher wird nichts angezeigt.
+298|Die Antwort von YouTube Music zu Samples konnte nicht gelesen werden, daher wird nichts angezeigt.
+299|Der eigene Verlauf von YouTube Music kann in dieser App nicht gelöscht werden: Der Dienst bietet dafür keine Anfrage an. Verwende die Aktivitätssteuerung deines Google-Accounts.
+300|Der eigene Verlauf von YouTube Music kann in dieser App nicht pausiert werden: Der Dienst bietet dafür keine Anfrage an. Verwende die Aktivitätssteuerung deines Google-Accounts.
+301|Die Vorschläge von YouTube Music konnten nicht gelesen werden. Deine Songs sind nicht betroffen.
+302|Dein Music-Account
+303|Deine YouTube-Music-Sitzung wurde beendet. Melde dich erneut an, um deine eigenen Ergebnisse zu sehen.
+304|Deine YouTube-Music-Sitzung wurde beendet. Melde dich erneut an, um Folgen abzuspielen.
+305|Deine YouTube-Music-Sitzung wurde beendet. Melde dich erneut an, um Samples zu sehen.
+306|Deine YouTube-Music-Sitzung wurde beendet. Melde dich erneut an, um einen Radiosender zu starten.
+307|Deine YouTube-Music-Sitzung wurde beendet. Melde dich erneut an.
+308|Dein Account hat sich geändert, bevor das begann. Versuche es noch einmal mit „Wiedergeben“.
+309|Dein Account hat sich während des Ladens geändert. Versuche es erneut.
+310|Deine Podcast-Einstellungen konnten auf diesem Mac nicht gesichert werden. Sie gelten, bis du die App beendest.
+311|Deine Sitzung wurde beendet, daher wurde nichts geändert. Melde dich erneut an.
+312|Deine Sitzung wurde beendet. Melde dich erneut an, um hochzuladen.
+313|Deine Sitzung wurde beendet. Melde dich erneut an.
+314|Deine Upload-Liste konnte es auch nicht sagen. Ein erneutes Entfernen kann nichts anderes entfernen.
+315|Du bist offline, daher konnten Samples nicht geladen werden.
+316|Du bist offline, daher wurde nichts gesendet oder geladen.
+317|Du bist offline, daher konnte der Songtext nicht geladen werden.
+318|Du bist offline. Der Upload wurde gestoppt und nichts wurde vorgemerkt.
+319|Du befindest dich auf der Anmeldeseite von Google. YTMuse sieht oder speichert dein Passwort nie.
+320|Textgröße
+321|Skaliert den Text von Listen, Details und Songtexten.
+322|Menüs und gesprochene Meldungen ändern sich, nachdem du YTMuse neu gestartet hast.
+323|%@ nach Name
+324|%@ bleiben auf diesem Mac immer frei.
+325|%@ von %@
+326|%@ früherer Downloads werden nicht mehr aufgelistet, zählen aber weiterhin zum Limit.
+327|%@ bisher · Größe noch nicht bekannt
+328|Den Kommentar von %2$@ %1$@?
+329|Diesen Kommentar von %2$@ %1$@?
+330|%@ von %@ belegt, über alle Accounts
+331|%@, %@, nur lokal
+332|%@: Kommentar von %@
+333|Ein globales Tastaturkürzel braucht Befehl, Control oder Option.
+334|In einem Livestream kann nicht gesprungen werden.
+335|Ein Livestream hat hier keine reine Audioversion, daher läuft das Video weiter.
+336|Ein Livestream hat kein Ende, daher kann der Timer nur Minuten zählen.
+337|Ein Livestream hat keine feste Länge und kein Ende, daher gibt es nichts Vollständiges zum Herunterladen.
+338|Ein Livestream hat keine Position zum Übernehmen und beginnt daher von vorn.
+339|Eine Musikquelle ist mit diesem Ziel noch nicht verbunden.
+340|Eine neuere Vorschau hat diese ersetzt.
+341|Ein Einschlaftimer pausiert hier, kann aber nicht ausblenden.
+342|Account
+343|Accounts
+344|Aktiv · Pausiert
+345|Werbung
+346|Werbung läuft
+347|Hinzufügen
+348|Audiodatei hinzufügen …
+349|Kommentar hinzufügen
+350|Füge einen Account hinzu, sobald die Anmeldung im Browser verfügbar ist.
+351|Füge eine Audiodatei von diesem Mac hinzu, um sie hier zu behalten und auf diesem Bildschirm abzuspielen.
+352|Zur Playlist hinzufügen
+353|Zur Playlist hinzufügen …
+354|Zu „%@“ hinzufügen
+355|„%@“ zu „%@“ hinzufügen?
+356|Zur Warteschlange hinzugefügt
+357|Weitere Ausgaben erfordern einen verbundenen Routenanbieter.
+358|Werbeanzeige
+359|AirPlay
+360|AirPlay kann in diesem Player nicht gewählt werden.
+361|AirPlay ist für diese Art der Wiedergabe nicht verfügbar.
+362|AirPlay-Empfänger
+363|AirPlay-Empfänger werden in der Systemauswahl gewählt.
+364|AirPlay-Empfänger werden in der Systemauswahl gewählt. Das Gruppieren überlässt du ihr, soweit das System es anbietet.
+365|Album
+366|Alben
+367|Alle
+368|Du bist bereits am Live-Punkt.
+369|Bereits vorhanden: %@. „Duplikate behalten“ fügt sie erneut hinzu; „Vorhandene überspringen“ lässt sie weg.
+370|Bereits der Fall: %@
+371|Auch meine Playlists, Uploads und meinen Hörverlauf anzeigen
+372|Eine Werbeanzeige läuft. Sie kann nicht übersprungen werden und es kann nicht darin gesprungen werden.
+373|Eine Werbeanzeige läuft. „Gefällt mir“ ist beim nächsten Song wieder verfügbar.
+374|Ein unabhängiger, nativer YouTube-Music-Client für den Mac
+375|Ein unterbrochener Upload kann fortgesetzt werden.
+376|Mit einem Einladungslink können Personen, denen du ihn sendest, beitreten und Songs hinzufügen. Diese App sendet nichts an andere.
+377|Eine weitere Anfrage dazu ist noch in Bearbeitung.
+378|Jeder mit dem Link kann diese Playlist öffnen.
+379|App-Lautstärke
+380|Die App-Lautstärke gilt. Die Lautstärke der Ausgabe selbst bestimmt der Mac.
+381|Die App-Lautstärke konnte nicht geändert werden. Versuche, die Lautstärke erneut anzupassen.
+382|Erscheinungsbild
+383|Das Erscheinungsbild wird auf diesem Mac gesichert und gilt für alle App-Fenster.
+384|Kommt mehrfach vor
+385|Erlaube YTMuse in Systemeinstellungen > Allgemein > Anmeldeobjekte, um den Vorgang abzuschließen.
+386|Ungefähre Übereinstimmung
+387|Interpret
+388|Interpreten
+389|YouTube Music wurde gebeten, diesen Song mit Nicht gefällt mir zu markieren.
+390|YouTube Music wurde gebeten, diesen Song mit Gefällt mir zu markieren.
+391|YouTube Music wurde gebeten, diesen Song in deiner Mediathek zu sichern.
+392|Beim Anmelden öffnet sich YTMuse nur in der Menüleiste, ohne Fenster und ohne Ton.
+393|Am Ende, nach „%@“
+394|Am Anfang, vor „%@“
+395|Nur Audio
+396|Nur Audio. Das Video wird nicht dekodiert.
+397|Automatisch
+398|Automatische Downloads sind aus. Schalte zuerst Intelligente Downloads ein.
+399|Automatische Downloads haben ihr Limit erreicht
+400|Automatische Wiedergabe

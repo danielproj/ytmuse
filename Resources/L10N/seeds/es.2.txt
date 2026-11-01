@@ -1,0 +1,300 @@
+401|Disponible para reproducir
+402|Atrás
+403|Volver a la colección
+404|Insignias
+405|Entre “%@” y “%@”
+406|Bluetooth
+407|Examinar
+408|Almacenando en búfer…
+409|Integrado
+410|Botón
+411|Cancelar temporizador
+412|Subtítulos
+413|Categoría
+414|Cambiar visibilidad
+415|Solo cambia lo que muestra este Mac
+416|Capítulos
+417|Los capítulos provienen de las marcas de tiempo de la descripción del episodio.
+418|Comprobar
+419|Comprobar ahora
+420|Comprobando
+421|Elegir
+422|Elegir archivos…
+423|Elegir salida…
+424|Elige una duración entre un segundo y 24 horas.
+425|Elige una posición dentro del elemento.
+426|Elige un elemento para empezar a escuchar.
+427|Elige entre 1 minuto y 24 horas.
+428|Elige música para subir
+429|Elige la duración de los saltos
+430|Borrar
+431|Borrar historial
+432|Cerrar
+433|Colaboración
+434|La colaboración está activada, pero YouTube Music no devolvió ningún enlace que esta app pueda mostrar.
+435|La colaboración está activada. El enlace de invitación está listo.
+436|Colaborador
+437|Contraer En reproducción
+438|Paleta de comandos
+439|Paleta de comandos…
+440|Comandos
+441|Comentar en %@
+442|Comentarios
+443|Los comentarios aún no están disponibles. Ninguna de las respuestas de YouTube Music que esta app puede leer los incluye, así que no hay nada que leer, publicar ni moderar.
+444|Compacto
+445|Tamaño compacto
+446|Conecta una fuente que pueda abrir este elemento o vuelve a tu colección.
+447|Continúa el álbum o la lista de reproducción desde esta canción.
+448|Copiar enlace de invitación
+449|Copiar enlace
+450|Copiar enlace a la canción actual
+451|Copiar enlaces
+452|No se pudo actualizar. Se muestra una copia guardada de %@. %@
+453|Contado por YTMuse a partir de lo que reprodujo en este Mac. No es el Recap de YouTube Music y nunca sale de este Mac.
+454|Crear
+455|Crear enlace de invitación
+456|Crear un enlace de invitación
+457|Se creó “%@” como %@.
+458|Creando la lista de reproducción…
+459|El fundido cruzado solapa el final de un elemento con el inicio del siguiente, y una transmisión en directo no tiene final que solapar.
+460|Minutos personalizados
+461|Oscuro
+462|Predeterminado
+463|Velocidad predeterminada
+464|¿Eliminar “%@”?
+465|Descripción
+466|Descripción (opcional)
+467|Descripción: “%@”
+468|Detalles
+469|¿Quisiste decir “%@”?
+470|Descubrimiento
+471|No me gusta
+472|Hecho.
+473|Hecho. YouTube Music lo confirmó.
+474|Descargar de nuevo
+475|Descargar con esta conexión
+476|Progreso de la descarga
+477|El almacenamiento de descargas está lleno
+478|Almacenamiento de descargas usado
+479|Descargado
+480|Solo descargados
+481|Descargando
+482|Editar lista de reproducción
+483|Final del episodio
+484|Final del elemento
+485|Final de la canción
+486|Finalizado
+487|Episodio
+488|Progreso del episodio
+489|Episodios
+490|Salir de pantalla completa
+491|Expandido
+492|Tamaño expandido
+493|Caducado
+494|Explícito
+495|Fallido
+496|Archivo elegido en este Mac
+497|Archivo en este Mac
+498|Filtrar
+499|Buscar
+500|Buscar…
+501|Termina o descarta primero la eliminación en curso.
+502|Seguir
+503|Siguiendo
+504|Seguir y guardar en tu biblioteca aún no están disponibles. YTMuse lee el catálogo, pero no modifica tu biblioteca.
+505|Seguir aún no está disponible. YTMuse lee el catálogo, pero no modifica tu biblioteca.
+506|Para sugerencias y descubrimiento, abre Inicio y Explorar.
+507|Adelante
+508|Espacio libre en disco en este Mac
+509|De YouTube Music
+510|De tu selección
+511|Pantalla completa
+512|Atajos globales
+513|Ir
+514|Ir al directo
+515|Ir a %@
+516|Volviendo.
+517|Cuadrícula
+518|La agrupación de receptores se deja al selector del sistema, en la medida en que la ofrezca.
+519|HDMI o DisplayPort
+520|Se desconectaron los auriculares, así que la reproducción se pausó.
+521|Oculto
+522|Historial
+523|En tu biblioteca
+524|Independiente. Nativa. Tuya.
+525|Enlace de invitación a la lista de reproducción “%@”
+526|Invitar a colaboradores desde YTMuse no está disponible en esta versión.
+527|Se puede reanudar.
+528|Solo se añade si pulsas Añadir.
+529|Elemento
+530|Los elementos terminan aquí una vez guardados en este Mac.
+531|Sus canciones se reproducen mediante YouTube Music y no se conservan en este Mac. Los archivos de audio que añadas aquí se conservan cifrados en este Mac y puedes reproducirlos desde esta pantalla.
+532|Unirse a la lista de reproducción
+533|Unirse a la lista de reproducción…
+534|Unirse a una lista de reproducción colaborativa
+535|¿Unirte a “%@”?
+536|Unirse…
+537|Saltar al directo
+538|Los saltos y la velocidad son para episodios de pódcast.
+539|Conservar duplicados
+540|Conservar mi cambio
+541|Conserva un archivo de audio de este Mac y reprodúcelo desde aquí
+542|Conservar en este Mac
+543|Mantener encima
+544|Mantener el minirreproductor encima
+545|Conservado para una lista de reproducción
+546|Conservado en este Mac
+547|EN DIRECTO
+548|Idioma y región
+549|Grande
+550|Más grande
+551|Máximo
+552|Abrir
+553|Abrir YTMuse al iniciar sesión
+554|Abrir al iniciar sesión no está disponible en esta compilación.
+555|Disposición
+556|Los cambios en la biblioteca se hacen elemento por elemento.
+557|Los cambios en la biblioteca se hacen elemento por elemento. Añadir canciones a una lista de reproducción pregunta antes.
+558|Los cambios en la biblioteca no están disponibles aquí.
+559|Biblioteca sin leer
+560|Listas de reproducción de la biblioteca
+561|Claro
+562|Me gusta
+563|Canciones que me gustan
+564|Dar “Me gusta” requiere la página de la canción: ábrela una vez y el control aparecerá aquí.
+565|Dar “Me gusta” requiere la página de la canción: abre la canción una vez y el control aparecerá aquí.
+566|Enlace copiado
+567|Lista
+568|Velocidad de escucha
+569|Velocidad de escucha de este programa
+570|En directo
+571|Cargar todo
+572|Cargar más
+573|Cargando
+574|Cargando Samples
+575|Cargando comentarios
+576|Cargando episodio
+577|Cargando biblioteca
+578|Cargando letras
+579|Cargando más
+580|Cargando, Pausar
+581|Las etiquetas y los valores predeterminados locales se aplican a este Mac. Las suscripciones a servicios siguen con YouTube.
+582|Solo local
+583|No se pudo abrir el almacenamiento local. Se conservaron los datos existentes.
+584|Bloqueado. Desbloquea para ver qué se está reproduciendo.
+585|Más largos primero
+586|Consultar
+587|El modo de datos bajos está activado para esta conexión. Las descargas automáticas esperan; puedes iniciar una de todos modos.
+588|Modo de bajo consumo: una descarga a la vez.
+589|Letras
+590|Aquí aparecen las letras de la canción que se está reproduciendo.
+591|Las letras aparecen cuando las proporciona la fuente.
+592|Establecer como predeterminado
+593|Marcar como reproducido
+594|Marcar como no reproducido
+595|Las coincidencias de tu biblioteca aparecen mientras escribes. Los resultados de YouTube Music llegan un momento después.
+596|Barra de menús y reposo
+597|Minirreproductor
+598|Minimizar
+599|Minutos
+600|Moderado
+601|Moderar un comentario
+602|Más
+603|Más acciones de reproducción
+604|Coincide más de un elemento. Elige uno.
+605|Coincide más de un elemento. Elige uno:
+606|Más de una lista de reproducción nueva tiene este título. ¿Cuál es la tuya?
+607|Artistas más reproducidos en este Mac
+608|Canciones más reproducidas en este Mac
+609|Mover hacia abajo
+610|Mover al final de la página
+611|Mover hacia arriba
+612|Lleva la reproducción a esta línea
+613|Sintonizador musical
+614|Silenciar
+615|No se pudo cambiar el silencio. Prueba la acción de silenciar de nuevo.
+616|Datos de prueba de diseño nativo · No es YouTube Music
+617|Datos de prueba de navegación · Sin contenido multimedia del servicio
+618|Nueva lista de reproducción
+619|Nueva ventana
+620|Siguiente canción
+621|Siguiente canción en YTMuse
+622|Página siguiente
+623|No hay Samples ahora mismo
+624|Aún no hay artistas en tu biblioteca
+625|Aún no hay comentarios.
+626|Sin descripción
+627|No hay elementos descargados
+628|No hay listas de reproducción descargadas
+629|Aún no hay canciones que te gusten
+630|No hay letras disponibles
+631|Sin coincidencias
+632|No hay listas de reproducción que coincidan
+633|Sin inicio nativo
+634|Sin conexión de red. Las descargas esperan y luego continúan por sí solas.
+635|Sin salida
+636|Ningún título de lista de reproducción de tu biblioteca coincide con esta búsqueda.
+637|Aún no hay listas de reproducción en tu biblioteca
+638|Aún no hay listas de reproducción en tu biblioteca.
+639|Aún no hay listas de reproducción
+640|No se ha iniciado ninguna radio. Los controles de diversidad y descubrimiento aparecen aquí solo si YouTube Music los proporciona para una radio.
+641|No se ha iniciado ninguna radio. Los controles de ajuste solo se pueden mostrar aquí cuando esta app pueda leer la cola de una radio.
+642|Sin resultados
+643|Aún no hay álbumes guardados
+644|Aún no hay episodios guardados
+645|Aún no hay pódcast guardados
+646|Ninguna canción de esta cola es una canción de YouTube Music que esta app conozca, así que no hay nada que guardar como lista de reproducción.
+647|No suena ninguna canción
+648|Aún no hay canciones en tu biblioteca
+649|Aún no hay subidas
+650|Ninguno
+651|No disponible para ti ahora mismo
+652|Aún no disponible
+653|No elegido
+654|No hay espacio libre suficiente en este Mac
+655|No está en la lista de reproducción
+656|Sin reproducir
+657|Sin establecer
+658|Aún no se ha descargado nada
+659|Aún no se ha reproducido nada en YTMuse en este Mac.
+660|Aún no hay nada aquí
+661|No se añade nada hasta que pulses Añadir.
+662|Aún no hay nada descargado
+663|No se está reproduciendo nada que cambiar.
+664|No se está reproduciendo nada, así que no hay ningún temporizador que ajustar.
+665|No se está reproduciendo nada, así que no hay nada que marcar con “Me gusta”.
+666|No se está reproduciendo nada.
+667|Nada coincide. Revisa la ortografía o prueba con menos palabras.
+668|Nada en reproducción
+669|Nada que mostrar aquí
+670|Aún no hay nada que mostrar
+671|Aún no hay nada desde donde empezar. Abre canciones, artistas y listas de reproducción en Inicio y Explorar; las radios que YouTube Music ofrece para ellos aparecen aquí.
+672|Notificaciones
+673|Notificar cuando cambie la canción
+674|En reproducción a pantalla completa
+675|Carátula de En reproducción
+676|Reproduciendo “%@”.
+677|OK
+678|Desactivado
+679|Desactivado salvo que lo actives. Cuando está activado, conserva sugerencias para ti usando como máximo %@, una cuarta parte del límite, y nunca elimina nada de lo que elegiste conservar.
+680|Activado
+681|En este Mac
+682|Solo el propietario de la lista de reproducción puede hacer esto.
+683|Abrir
+684|Abrir %@
+685|Abrir enlace del portapapeles
+686|Abrir Ajustes
+687|Abre YTMuse para empezar a reproducir.
+688|Abre YTMuse para usar este botón.
+689|Abrir tu biblioteca
+690|Opciones
+691|Orden original
+692|Desactualizado. Última actualización: %@.
+693|Salida
+694|La selección de salida aún no está disponible.
+695|Propietario
+696|Panel
+697|Una parte de este cambio necesita tu respuesta abajo.
+698|Pega un enlace de invitación
+699|Pausar historial
+700|Pausado por ti

@@ -1,0 +1,14 @@
+{
+  "_comment": "CLDR plural categories a catalog entry must define, per base language. Packages/NativeMusic/Sources/Domain/Localization/AppLocales.swift must agree (T28.4 checks).",
+  "default": ["one", "other"],
+  "ga": ["one", "two", "few", "many", "other"],
+  "mt": ["one", "two", "few", "many", "other"],
+  "cy": ["zero", "one", "two", "few", "many", "other"],
+  "sl": ["one", "two", "few", "other"],
+  "gd": ["one", "two", "few", "other"],
+  "lv": ["zero", "one", "other"],
+  "hr": ["one", "few", "other"], "sr": ["one", "few", "other"], "sr-Latn": ["one", "few", "other"], "bs": ["one", "few", "other"], "ro": ["one", "few", "other"],
+  "cs": ["one", "few", "many", "other"], "sk": ["one", "few", "many", "other"], "pl": ["one", "few", "many", "other"], "lt": ["one", "few", "many", "other"],
+  "ru": ["one", "few", "many", "other"], "uk": ["one", "few", "many", "other"], "be": ["one", "few", "many", "other"],
+  "fr": ["one", "many", "other"], "pt": ["one", "many", "other"], "es": ["one", "many", "other"], "it": ["one", "many", "other"], "ca": ["one", "many", "other"]
+}

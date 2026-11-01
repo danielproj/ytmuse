@@ -1,0 +1,18 @@
+1342|Une mise à jour est téléchargée et vérifiée en arrière-plan, jamais pendant la lecture de musique. Elle n’est installée que lorsque vous cliquez sur « Redémarrer pour mettre à jour ».
+1343|Demander une fois
+1344|Vérifier chaque jour
+1345|Rechercher les mises à jour une fois par jour ?
+1346|Télécharger la mise à jour
+1347|Télécharger les mises à jour automatiquement
+1348|Jamais pendant la lecture de musique. Une mise à jour est seulement téléchargée et vérifiée ; elle est installée lorsque vous cliquez sur « Redémarrer pour mettre à jour ».
+1349|Pas maintenant
+1350|Une fois par jour
+1351|Seulement quand je choisis « Vérifier maintenant »
+1352|La lecture est en cours. Mettez-la en pause ou arrêtez-la pour redémarrer et appliquer la mise à jour.
+1353|Redémarrer pour mettre à jour
+1354|La mise à jour n’a pas pu être installée. Rien n’a été modifié ; vous pouvez réessayer.
+1355|Cette version n’a pas de flux de mises à jour. Les versions compilées depuis le code source sont mises à jour depuis le dépôt du code source.
+1356|Cette version n’est pas signée avec une identité de publication ; elle ne peut donc ni vérifier ni installer de mises à jour.
+1357|Ceci est une session de test isolée. Elle ne contacte jamais de flux de mises à jour.
+1358|Fonctionne dans une version de publication signée qui dispose d’un flux de mises à jour. Une version compilée depuis le code source n’en a pas : elle ne vérifie ni n’installe rien, et l’indique sur cette page.
+1359|YTMuse peut rechercher une nouvelle version une fois par jour. La vérification télécharge un petit fichier signé et n’envoie aucune information sur le compte, l’écoute ou l’appareil. Vous pouvez modifier cela dans les Réglages.

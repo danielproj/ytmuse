@@ -1,0 +1,24 @@
+{
+  "use": "reference only for the W19 wire comparison; not copied into product",
+  "license": "MIT (ytmusicapi)",
+  "commit": "4da34b68e68d33356860fbf5d4f0245655969b08",
+  "retrieved_utc": "2026-10-30T06:17:29.882435+00:00",
+  "files": [
+    {
+      "source": "https://raw.githubusercontent.com/sigma67/ytmusicapi/4da34b68e68d33356860fbf5d4f0245655969b08/ytmusicapi/mixins/uploads.py",
+      "local": "ytmusicapi-uploads.py.txt",
+      "sha256": "0d8a327dbcb17434a736960c3e163f6be0bf63f010424225bece348398745544"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/sigma67/ytmusicapi/4da34b68e68d33356860fbf5d4f0245655969b08/ytmusicapi/parsers/uploads.py",
+      "local": "ytmusicapi-uploads-parser.py.txt",
+      "sha256": "8d29d01bc5fff0b4810d368c1b2368538daf158f796b809d4207aa3905b3fda9"
+    }
+  ],
+  "compared": [
+    "endpoint music/delete_privately_owned_entity and body {entityId} (mixins/uploads.py delete_upload_entity)",
+    "entity id read from musicDeletePrivatelyOwnedEntityCommand.entityId in the item's menu (parsers/uploads.py)",
+    "library page ids FEmusic_library_privately_owned_tracks / _releases / _artists (mixins/uploads.py)"
+  ],
+  "not_observed": "the success answer: ytmusicapi treats the absence of an `error` key as success; this app requires positive evidence (`actions`) and otherwise reads the Uploads list before anything is sent again"
+}

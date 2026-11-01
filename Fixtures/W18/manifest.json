@@ -1,0 +1,109 @@
+{
+ "mode": "synthetic-test-only",
+ "live_eligible": false,
+ "description": "Edge cases the W18 real captures do not show. Built by generate.py around entries copied unchanged from Fixtures/W18-real; NOT captures of the service and NOT live evidence.",
+ "changes": {
+  "next-lyrics-tab-unselectable.json": "lyrics tab replaced by an unselectable tab with no endpoint",
+  "next-without-lyrics-tab.json": "lyrics tab removed",
+  "next-not-a-queue.json": "up-next queue tab removed: not a watch-next page",
+  "lyrics-message.json": "a message in place of lyrics (invented wording)",
+  "lyrics-empty-description.json": "a description shelf holding only whitespace",
+  "lyrics-unreadable.json": "a layout this version does not know",
+  "lyrics-verbatim-edges.json": "invented placeholder text with whitespace edges, split over two runs, with a two-run footer",
+  "lyrics-timed.json": "the reference clients' timed shape with invented placeholder text (never observed from the service)",
+  "lyrics-timed-strings.json": "times as numeric strings",
+  "lyrics-timed-out-of-order.json": "a line that starts before the one before it",
+  "lyrics-timed-no-cue.json": "a line with no cue range",
+  "lyrics-timed-end-before-start.json": "a line that ends before it starts",
+  "episode-signed-unsaved.json": "default (add) side of the Episodes-for-Later toggle replaced by ACTION_ADD_VIDEO",
+  "episode-signed-saved-partly-played.json": "isToggled true; playbackProgressPercentage 37.5 (the scale is assumed 0-100)",
+  "episode-played.json": "playbackProgressPercentage 100",
+  "episode-progress-out-of-range.json": "playbackProgressPercentage 250 (out of range)",
+  "episode-chapters.json": "description replaced by placeholder show notes with four timestamped lines",
+  "episode-no-play-target.json": "play button removed",
+  "episode-no-title.json": "title removed",
+  "show-progress.json": "rows 0-3: progress 100, 37.5, 150 (out of range), true (not a number)"
+ },
+ "files": {
+  "episode-chapters.json": {
+   "sha256": "705b4300e6cd2b2abe94724d261ff3292f33195ffe25b24e3781dc04ba2bb719",
+   "bytes": 19280
+  },
+  "episode-no-play-target.json": {
+   "sha256": "2b56f5bac0890e302897792e1e89897e1587b7627f8fa2aecf509ed4841f9b30",
+   "bytes": 18182
+  },
+  "episode-no-title.json": {
+   "sha256": "77857ee85d2cf819b6cfcf8624516b29aabbfc753ee3c5b201953dd31f58a439",
+   "bytes": 19705
+  },
+  "episode-played.json": {
+   "sha256": "816e35556ecbff19371e68a3de47c1553da2841e9a14be77847645768e718105",
+   "bytes": 19890
+  },
+  "episode-progress-out-of-range.json": {
+   "sha256": "bc1af1cce9c3a7de59a04843274e59b8f42dc1d57df2512b5d734b377c13a53a",
+   "bytes": 19890
+  },
+  "episode-signed-saved-partly-played.json": {
+   "sha256": "4b161c53d3c39eeb8540ffe3728d17226306a525177d8c5b559e0f80114e4710",
+   "bytes": 18756
+  },
+  "episode-signed-unsaved.json": {
+   "sha256": "bab6abf2965ddf2334f8ee00cb4581d63c22755b92f5b64d72435512ed5a5b10",
+   "bytes": 18754
+  },
+  "lyrics-empty-description.json": {
+   "sha256": "862828134cc3b55ab406f6dca5d43763866507e61017726a0245d34ae8e69ecd",
+   "bytes": 291
+  },
+  "lyrics-message.json": {
+   "sha256": "98b11d930a5de0c14c397f815935eadc57b0fc00c76b0e415f3183f1d50f6839",
+   "bytes": 286
+  },
+  "lyrics-timed-end-before-start.json": {
+   "sha256": "88c704c83b5314b593a535f3e6ab337d399ef893d7adac195b083de4bc7e8c3c",
+   "bytes": 629
+  },
+  "lyrics-timed-no-cue.json": {
+   "sha256": "981d374fd5457685b9d4a273c4be643cd19936fbb694ac4fa41501a2bb929693",
+   "bytes": 691
+  },
+  "lyrics-timed-out-of-order.json": {
+   "sha256": "72735c554e86b74cb23139b9dd9f7dbe606d47b396c9ffa2463d5ab80d1e44f7",
+   "bytes": 880
+  },
+  "lyrics-timed-strings.json": {
+   "sha256": "d1a2528b8ed0eff55edef85d6a99b0ce7c00176d6f27708e3c44830a7cae87fd",
+   "bytes": 885
+  },
+  "lyrics-timed.json": {
+   "sha256": "c6400fcf6cb4047bb9b3beaa156610ab69708d7d15375f91a1b52bdabb7dcde6",
+   "bytes": 1392
+  },
+  "lyrics-unreadable.json": {
+   "sha256": "bb934bdb4d038425405598f5174c7db69b35e1789aac89b09c8c20a85df7d8ad",
+   "bytes": 176
+  },
+  "lyrics-verbatim-edges.json": {
+   "sha256": "f03d917fc4f2842cfcf44c3b2cced54b058494dcb5a8e4031e3e954904b9928c",
+   "bytes": 600
+  },
+  "next-lyrics-tab-unselectable.json": {
+   "sha256": "626c3f685eb92f30c7cae55fb23dd8e25af9b0401fb99083aec544d022b54d7b",
+   "bytes": 43018
+  },
+  "next-not-a-queue.json": {
+   "sha256": "3fa90a499e0f7e34387f5e89bebcfda5358a16be26b6dca445073bcc2f09d56b",
+   "bytes": 13629
+  },
+  "next-without-lyrics-tab.json": {
+   "sha256": "69a13e99b7608c5f913dba78a1fde67a9994d792269110f5e7ae31b6415e546d",
+   "bytes": 42873
+  },
+  "show-progress.json": {
+   "sha256": "fc671051933761ebb7d86ef22b931a00d2cbe40c19467c7f1ddd4d5b61d7f5f8",
+   "bytes": 313711
+  }
+ }
+}

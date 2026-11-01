@@ -1,0 +1,66 @@
+1|Início
+2|Explorar
+3|Biblioteca
+4|Pesquisar
+5|Definições
+6|Reproduzir
+7|Pausar
+8|Seguinte
+9|Anterior
+10|Fila
+11|Transferências
+12|A reproduzir
+13|Cancelar
+14|Concluído
+15|Tentar novamente
+16|Tente novamente
+17|Ignorar
+18|Iniciar sessão
+19|Terminar sessão
+20|Adicionar conta
+21|Remover
+22|Anular
+23|Mover para cima
+24|Mover para baixo
+25|Em pausa
+26|A reproduzir
+27|A carregar…
+28|Iniciar sessão com o Google
+29|Bem-vindo ao YTMuse
+30|Escolha música para começar
+31|A sua fila está vazia
+32|Sessão expirada
+33|Cancelar início de sessão
+34|Introduz a palavra-passe na página da Google, nunca no YTMuse.
+35|Inicie sessão novamente para reproduzir a sua biblioteca.
+36|A sua sessão terminou. Inicie sessão novamente para reproduzir.
+37|Volte a ligar esta conta para continuar.
+38|A ligação está offline. Tente novamente quando estiver ligado.
+39|Não foi possível contactar o YouTube Music. Verifique a ligação e tente novamente.
+40|Esta ação não está disponível neste momento.
+41|Não foi possível carregar esta página
+42|Está offline, por isso nada foi alterado. A ação não ficou em fila.
+43|Inicie sessão no YouTube Music para fazer isto.
+44|O YouTube Music não conseguiu fazer esta alteração neste momento. Nada foi alterado.
+45|A sua conta mudou antes de isto começar. Tente novamente.
+46|As pesquisas e os itens recentes ficam neste Mac, nunca são enviados para lado nenhum e são removidos juntamente com a conta.
+47|Isto remove apenas o registo guardado neste Mac. O histórico do próprio YouTube Music não é alterado.
+48|Limpar o histórico deste Mac
+49|O início de sessão expirou. Nada foi guardado. Tente novamente quando estiver pronto.
+50|Sessão terminada.
+51|Sessão iniciada como %@.
+52|Mudou para %@.
+53|Reproduzir %@
+54|Saída atual: %@
+55|Remover “%@” dos seus carregamentos?
+56|Está a ser reproduzido um anúncio
+57|O anúncio terminou
+58|A reproduzir “%@” de %@.
+59|Idioma da interface
+60|Idioma da música e das letras
+61|Região para recomendações
+62|Igual ao macOS
+63|A região só altera o que é sugerido. Nunca desbloqueia música ou funcionalidades que a sua conta ou localização não permitam.
+P1|one:%lld minuto	many:%lld de minutos	other:%lld minutos
+P2|one:Anular: %lld música adicionada	many:Anular: %lld de músicas adicionadas	other:Anular: %lld músicas adicionadas
+P3|one:Não foi possível mostrar %lld item	many:Não foi possível mostrar %lld de itens	other:Não foi possível mostrar %lld itens

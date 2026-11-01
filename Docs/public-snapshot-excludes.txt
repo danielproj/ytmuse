@@ -1,0 +1,11 @@
+# Paths left out of the PUBLIC source snapshot (scripts/make-public-snapshot.sh). One path per line, relative to the repository root.
+# The snapshot is the repository's committed tree at HEAD without these paths. It carries no history: publish it as a new, single-commit history.
+#
+# artifacts/ is the build harness's working evidence: live-run logs and screenshots that name the machine's account folder in about 1,700 files, copies of
+# third-party reference code and specifications under their own licences, and the account holder's e-mail address in commit records.
+# plans/ and the harness documents are internal coordination records.
+artifacts
+plans
+Docs/Harness-Brief.md
+Docs/Harness-Routing.json
+Docs/Parallel-Execution.md

@@ -1,0 +1,168 @@
+1174|No se pudo leer o limpiar una credencial.
+1175|Una descarga no se pudo completar
+1176|Un fallo reciente vino de la red: este Mac no pudo acceder al servicio.
+1177|Un fallo reciente vino del servicio: una caída de la fuente o un cambio por su parte. La app en sí no falló.
+1178|Un fallo reciente vino de este Mac o de la app.
+1179|Un resumen censurado que puedes leer antes de guardar. No contiene contenido multimedia, credenciales, nombres, búsquedas ni enlaces, y no se envía a ninguna parte.
+1180|Una solicitud fue rechazada por la política.
+1181|Una caída de la fuente significa que YouTube Music o la red no respondieron. Un cierre local significa que el proceso de esta app terminó de forma inesperada.
+1182|Un tono sutil tomado de la portada en reproducción. El contraste del texto no cambia.
+1183|Estado de la cuenta
+1184|Calidad real
+1185|Tras un inicio manual, la última canción aparece en pausa. No suena nada hasta que pulses Reproducir.
+1186|Mostrar también los mensajes de descargas y errores como notificaciones
+1187|Analíticas e informes remotos de cierres inesperados
+1188|App
+1189|Se aplica a todas las ventanas de la app en este Mac.
+1190|Se aplica a la música de archivos de este Mac. YouTube Music se reproduce en su propio reproductor, que esta app no puede procesar.
+1191|Caché de portadas
+1192|Preguntar
+1193|Preguntar una vez
+1194|Preguntar una vez; una comprobación diaria en segundo plano solo si la activas.
+1195|Calidad del audio
+1196|Audio si se permite
+1197|Audio cuando la cuenta y el contenido lo permitan.
+1198|Radio automática
+1199|Refuerzo de graves
+1200|La mejor disponible
+1201|La mejor disponible.
+1202|Caché borrada.
+1203|Puntos de acceso móvil y otras conexiones de coste elevado. El modo de datos bajos siempre bloquea las descargas automáticas.
+1204|Buscar actualizaciones
+1205|Elige una salida con el botón de salida del reproductor.
+1206|Salida elegida
+1207|Borrar caché
+1208|Recopilar tiempos de rendimiento locales
+1209|Fundido cruzado
+1210|Elimina de este Mac el inicio de sesión, las descargas, la caché y los ajustes de esta cuenta. Tu biblioteca de YouTube Music, tus listas de reproducción y tu cuenta de Google no cambian.
+1211|Icono del Dock
+1212|Los mensajes de descargas y errores siempre aparecen en la app. Actívalo para recibir también una notificación del sistema cuando una descarga termine o falle, o cuando tengas que iniciar sesión de nuevo.
+1213|Descargar automáticamente en redes de coste elevado
+1214|Descarga finalizada
+1215|Almacenamiento de descargas
+1216|Cada cuenta conserva en este Mac sus propios ajustes, descargas y caché. Eliminar una cuenta aquí borra solo sus datos locales. No se elimina nada de YouTube Music ni de tu cuenta de Google.
+1217|Ecualizador
+1218|Se eliminan todas las cuentas de este Mac y se restablecen todos los ajustes. Tu biblioteca de YouTube Music y tu cuenta de Google no cambian.
+1219|Fallos
+1220|Plano
+1221|Sigue las ventanas abiertas
+1222|Olvidar la salida recordada
+1223|Completo mientras hay una ventana visible. Se reduce automáticamente cuando está activado Reducir movimiento de macOS o el modo de bajo consumo.
+1224|Completo mientras es visible
+1225|General
+1226|En la app
+1227|Instalar actualizaciones automáticamente
+1228|Integración
+1229|Error interno
+1230|Conservar las canciones en cola
+1231|Conservar mis canciones en cola
+1232|¿Conservar las canciones en cola?
+1233|Idioma
+1234|Cierre inesperado local
+1235|Datos locales
+1236|Los datos locales se han restablecido.
+1237|No se pudo abrir el almacenamiento local.
+1238|Barra de menús
+1239|Control de la barra de menús
+1240|Movimiento
+1241|Red sin conexión
+1242|Visibilidad de las listas de reproducción nuevas
+1243|No hay ninguna cuenta con la sesión iniciada.
+1244|No hay fallos registrados.
+1245|No hay ruta de red hacia el servicio.
+1246|No hay ninguno hasta que grabes uno.
+1247|Normalizar el volumen
+1248|Aún no está disponible. Una radio que continúe la reproducción necesita una fuente de recomendaciones, que forma parte del trabajo de la cola y el descubrimiento (W05 y W38). Nada en esta app inicia una radio por sí solo.
+1249|Aún no está disponible. La comprobación e instalación de actualizaciones llegarán con la distribución firmada (prevista como W30 y W46), con su propia activación opcional. Esta versión no comprueba ni instala nada.
+1250|Desactivado durante la reproducción
+1251|Desactivado durante la reproducción; un reinicio siempre es explícito.
+1252|Desactivado. Si lo activas, YTMuse guarda unos pocos tiempos (inicio, búsqueda, comienzo de la reproducción) en un archivo pequeño de este Mac, que nunca se envía a ninguna parte. Al desactivarlo, el archivo se elimina.
+1253|Activado donde sea compatible
+1254|Activado donde sea compatible.
+1255|Pausar, sin reanudar automáticamente
+1256|Tiempos de rendimiento
+1257|Motor de reproducción
+1258|Fallo de reproducción
+1259|La reproducción se pausa. No se reanuda sola cuando se vuelven a conectar.
+1260|Previsualizar paquete de asistencia…
+1261|Privacidad
+1262|Rechazado por la política
+1263|Eliminación pendiente
+1264|Eliminar de este Mac
+1265|Eliminar de este Mac…
+1266|¿Eliminar esta cuenta de este Mac?
+1267|Sustituirlas
+1268|Sustituirlas
+1269|Restablecer todos los datos locales
+1270|Restablecer todos los datos locales…
+1271|¿Restablecer todos los datos locales de este Mac?
+1272|Restablece YTMuse en este Mac: elimina el inicio de sesión y los datos locales de todas las cuentas, borra las cachés y las copias de Spotlight y de los widgets, y restablece todos los ajustes. No elimina nada de YouTube Music ni de tu cuenta de Google, y no envía ninguna solicitud.
+1273|Restaurar valores predeterminados
+1274|Restaurar la última sesión al abrir
+1275|Restaura solo los ajustes de esta página. Tus listas de reproducción, tu biblioteca y tu cuenta no cambian.
+1276|Guardar…
+1277|Buscar en Ajustes
+1278|Segundos de solapamiento entre canciones.
+1279|Adaptador del servicio
+1280|El servicio cambió su respuesta
+1281|Caída del servicio
+1282|La reproducción aleatoria no se aplicó.
+1283|Inicia sesión de nuevo en YouTube Music
+1284|Inicio de sesión caducado
+1285|Sesión iniciada
+1286|Sesión cerrada
+1287|Descargas inteligentes necesita una fuente que permita conservar su música. Hoy ninguna lo permite, así que no tiene nada que sugerir.
+1288|Canciones o vídeos
+1289|Estado de la cuenta obsoleto o en conflicto.
+1290|Almacenamiento por cuenta
+1291|Vista previa del paquete de asistencia
+1292|Paquete de asistencia
+1293|Predeterminado del sistema
+1294|La cuenta no se pudo eliminar por completo. Abre Cuentas para reintentarlo.
+1295|La cuenta se eliminó de este Mac.
+1296|No se pudo guardar el paquete.
+1297|No se pudo borrar la caché.
+1298|La última ejecución de esta app terminó de forma inesperada: un cierre local, no una caída del servicio.
+1299|El minirreproductor flota sobre las demás ventanas.
+1300|Lo máximo que pueden conservar en este Mac las descargas de todas las cuentas.
+1301|El reproductor no respondió a tiempo.
+1302|El reproductor necesita que inicies sesión de nuevo.
+1303|La página del reproductor no se cargó.
+1304|La página del reproductor se sustituyó.
+1305|El reproductor intentó salir de YouTube Music; se rechazó.
+1306|La sesión del reproductor no estaba disponible.
+1307|El proceso de contenido web del reproductor terminó.
+1308|La ejecución anterior terminó sin un cierre correcto.
+1309|Se olvidó la salida recordada.
+1310|El servicio respondió con un formato que el adaptador no reconoce.
+1311|El servicio no respondió a tiempo o notificó un fallo del servidor.
+1312|El servicio está limitando las solicitudes de este cliente.
+1313|El servicio indicó que este elemento no se puede reproducir.
+1314|La página del servicio no era el reproductor esperado.
+1315|La sesión no está iniciada.
+1316|El valor predeterminado del sistema hasta que elijas otra salida.
+1317|Este Mac
+1318|Esta cuenta
+1319|Esta app
+1320|Esta ventana
+1321|Teñir la ventana con la portada
+1322|Total en este Mac
+1323|Refuerzo de agudos
+1324|Sin asignar
+1325|Fallo sin clasificar.
+1326|Actualizaciones
+1327|Visible mientras hay una ventana normal abierta; oculto cuando YTMuse se ejecuta solo en la barra de menús.
+1328|Voz
+1329|Lo que YTMuse conserva en este Mac. Las fijadas y las automáticas son descargas; la caché son portadas que se pueden volver a obtener.
+1330|Qué ocurre con las canciones que pusiste en cola tú mismo (Reproducir a continuación, Añadir a la cola) cuando inicias otra canción o álbum.
+1331|Qué sale de este Mac
+1332|Al desconectar los auriculares
+1333|Al empezar algo nuevo con canciones en cola
+1334|Dónde empieza el formulario de lista de reproducción nueva. No se crea nada hasta que pulses Crear.
+1335|YTMuse permanece en la barra de menús. Al cerrar la última ventana, la reproducción que pueda continuar sigue activa.
+1336|YTMuse solo habla con Google para iniciar sesión, con YouTube Music para la biblioteca y la reproducción, con los servidores de portadas que esas páginas indican y con los dispositivos que eliges para AirPlay y Cast. No envía datos de la cuenta a ningún otro servicio y no tiene analíticas.
+1337|YouTube Music no tiene descargas en el Mac. Este límite se aplica a los archivos que añades desde este Mac.
+1338|YouTube Music mantiene su propia cola, así que esta opción se aplica a la música de archivos de este Mac.
+1339|Tu sesión ha terminado. Tus datos locales se conservan.
+1340|macOS
+1341|informe fallido

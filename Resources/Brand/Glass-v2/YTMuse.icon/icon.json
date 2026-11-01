@@ -1,0 +1,38 @@
+{
+  "fill": {
+    "linear-gradient": [
+      "srgb:0.16000,0.07000,0.10000,1.00000",
+      "srgb:0.03500,0.04000,0.06500,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "blend-mode": "normal",
+      "blur-material": 0.5,
+      "layers": [
+        {
+          "image-name": "Musical-M.svg",
+          "name": "YTMuse musical M and play",
+          "glass": true,
+          "hidden": false,
+          "opacity": 1
+        }
+      ],
+      "lighting": "individual",
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": false,
+        "value": 0.5
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "macOS"
+    ]
+  }
+}

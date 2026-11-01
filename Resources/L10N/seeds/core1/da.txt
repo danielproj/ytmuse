@@ -1,0 +1,66 @@
+1|Hjem
+2|Udforsk
+3|Bibliotek
+4|Søg
+5|Indstillinger
+6|Afspil
+7|Sæt på pause
+8|Næste
+9|Forrige
+10|Kø
+11|Downloads
+12|Afspilles nu
+13|Annuller
+14|Færdig
+15|Prøv igen
+16|Prøv igen
+17|Afvis
+18|Log ind
+19|Log ud
+20|Tilføj konto
+21|Fjern
+22|Fortryd
+23|Flyt op
+24|Flyt ned
+25|På pause
+26|Afspiller
+27|Indlæser…
+28|Log ind med Google
+29|Velkommen til YTMuse
+30|Vælg musik for at komme i gang
+31|Din kø er tom
+32|Sessionen er udløbet
+33|Annuller login
+34|Du indtaster din adgangskode på Googles side, aldrig i YTMuse.
+35|Log ind igen for at afspille dit bibliotek.
+36|Din session er afsluttet. Log ind igen for at afspille.
+37|Opret forbindelse til denne konto igen for at fortsætte.
+38|Forbindelsen er offline. Prøv igen, når du har forbindelse.
+39|YouTube Music kunne ikke nås. Kontrollér din forbindelse, og prøv igen.
+40|Denne handling er ikke tilgængelig lige nu.
+41|Siden kunne ikke indlæses
+42|Du er offline, så intet blev ændret. Handlingen er ikke sat i kø.
+43|Log ind på YouTube Music for at gøre dette.
+44|YouTube Music kunne ikke foretage denne ændring lige nu. Intet blev ændret.
+45|Din konto blev ændret, før dette startede. Prøv igen.
+46|Seneste søgninger og emner bliver på denne Mac, sendes aldrig nogen steder hen og fjernes sammen med kontoen.
+47|Dette fjerner kun den registrering, der er gemt på denne Mac. YouTube Musics egen historik ændres ikke.
+48|Ryd denne Macs historik
+49|Login fik timeout. Intet blev gemt. Prøv igen, når du er klar.
+50|Logget ud.
+51|Logget ind som %@.
+52|Skiftede til %@.
+53|Afspil %@
+54|Aktuelt output: %@
+55|Vil du fjerne “%@” fra dine uploads?
+56|En reklame afspilles
+57|Reklamen sluttede
+58|Afspiller nu “%@” af %@.
+59|Grænsefladesprog
+60|Sprog for musik og sangtekster
+61|Område til anbefalinger
+62|Samme som macOS
+63|Området ændrer kun, hvad der foreslås. Det låser aldrig op for musik eller funktioner, som din konto eller placering ikke tillader.
+P1|one:%lld minut	other:%lld minutter
+P2|one:Fortryd: %lld sang tilføjet	other:Fortryd: %lld sange tilføjet
+P3|one:%lld emne kunne ikke vises	other:%lld emner kunne ikke vises

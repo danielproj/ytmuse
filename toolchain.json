@@ -1,0 +1,13 @@
+{
+  "xcode": "27.2",
+  "xcode_build": "27B52",
+  "swift": "6.4.2",
+  "swift_build": "swiftlang-6.4.2.1.9",
+  "macos_sdk": "27.2",
+  "deployment_target": "27.0",
+  "architecture": "arm64",
+  "observed_os": "27.2 (26B123)",
+  "identity": "local.native-music.development",
+  "signing": "ad-hoc; local development only",
+  "external_dependencies": []
+}

@@ -1,0 +1,66 @@
+1|Kryefaqja
+2|Eksploro
+3|Biblioteka
+4|Kërko
+5|Cilësimet
+6|Luaj
+7|Pusho
+8|Tjetri
+9|I mëparshmi
+10|Radha
+11|Shkarkimet
+12|Po luhet tani
+13|Anulo
+14|U krye
+15|Provo përsëri
+16|Provoni përsëri
+17|Mbyll
+18|Hyr
+19|Dil
+20|Shto llogari
+21|Hiq
+22|Zhbëj
+23|Lëviz lart
+24|Lëviz poshtë
+25|Në pushim
+26|Po luhet
+27|Po ngarkohet…
+28|Hyr me Google
+29|Mirë se vini në YTMuse
+30|Zgjidhni muzikë për të nisur
+31|Radha juaj është bosh
+32|Sesioni ka skaduar
+33|Anulo hyrjen
+34|Fjalëkalimin e shkruani në faqen e Google, kurrë në YTMuse.
+35|Hyni përsëri për të luajtur bibliotekën tuaj.
+36|Sesioni juaj përfundoi. Hyni përsëri për të luajtur.
+37|Lidheni përsëri këtë llogari për të vazhduar.
+38|Lidhja është jashtë linje. Provoni përsëri kur të lidheni.
+39|YouTube Music nuk u arrit dot. Kontrolloni lidhjen tuaj dhe provoni përsëri.
+40|Ky veprim nuk është i disponueshëm tani.
+41|Kjo faqe nuk u ngarkua dot
+42|Jeni jashtë linje, ndaj nuk u ndryshua asgjë. Veprimi nuk u vendos në radhë.
+43|Hyni në YouTube Music për ta bërë këtë.
+44|YouTube Music nuk e bëri dot këtë ndryshim tani. Nuk u ndryshua asgjë.
+45|Llogaria juaj ndryshoi para se të niste kjo. Provoni përsëri.
+46|Kërkimet dhe artikujt e fundit qëndrojnë në këtë Mac, nuk dërgohen kurrë askund dhe hiqen së bashku me llogarinë.
+47|Kjo heq vetëm regjistrimin e ruajtur në këtë Mac. Historiku i vetë YouTube Music nuk ndryshohet.
+48|Pastro historikun e këtij Mac
+49|Hyrja skadoi. Nuk u ruajt asgjë. Provoni përsëri kur të jeni gati.
+50|U dolët.
+51|Hyrë si %@.
+52|U kaluat te %@.
+53|Luaj %@
+54|Dalja aktuale: %@
+55|Të hiqet “%@” nga ngarkimet tuaja?
+56|Po luhet një reklamë
+57|Reklama përfundoi
+58|Po luhet tani “%@” nga %@.
+59|Gjuha e ndërfaqes
+60|Gjuha e muzikës dhe e teksteve
+61|Rajoni për rekomandimet
+62|Si macOS
+63|Rajoni ndryshon vetëm çfarë sugjerohet. Ai nuk zhbllokon kurrë muzikë ose veçori që llogaria ose vendndodhja juaj nuk i lejon.
+P1|one:%lld minutë	other:%lld minuta
+P2|one:Zhbëj: u shtua %lld këngë	other:Zhbëj: u shtuan %lld këngë
+P3|one:%lld artikull nuk u shfaq dot	other:%lld artikuj nuk u shfaqën dot

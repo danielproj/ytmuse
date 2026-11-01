@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!-- W17 synthetic stand-in for the YouTube Music app document with a playing <video>. It is NOT YouTube: the DOM nesting, the player API
+     and the router are simulated closely enough to exercise the app's own page scripts offline. Media are the repository's owned synthetic
+     video (video-only, 24 fps) and a silent audio-only file, embedded at run time by the probe ({{VIDEO}}, {{SONG}}). Nothing is fetched.
+     The playlist id selects the scenario: PLsyntheticLive simulates a live stream's seekable window. -->
+<html lang="en"><head><meta charset="utf-8"><title>YouTube Music</title>
+<style>body{margin:0;background:#111;color:#ccc;font:14px sans-serif} ytmusic-nav-bar{display:block;height:48px} #movie_player{position:relative;width:640px;height:360px;transform:translateZ(0)}
+.html5-video-container{width:640px;height:360px;transform:translate3d(0,0,0)} video{width:640px;height:360px;background:#222}
+.ytp-chrome-bottom{position:absolute;bottom:0;left:0;right:0;height:40px;background:#333}.ytp-ad-module{position:absolute;top:0;left:0;width:200px;height:30px;background:#c00}</style></head>
+<body>
+<ytmusic-app>
+  <ytmusic-nav-bar>Navigation chrome</ytmusic-nav-bar>
+  <ytmusic-player-page>
+    <ytmusic-player id="player" style="position:relative;z-index:5;transform:translateZ(0)">
+      <div id="song-video">
+        <div id="movie_player" class="html5-video-player">
+          <div class="html5-video-container"><video id="v" muted playsinline></video></div>
+          <div class="ytp-chrome-bottom">Page controls</div>
+          <div class="ytp-ad-module">Ad overlay</div>
+        </div>
+      </div>
+    </ytmusic-player>
+    <ytmusic-player-queue><ytmusic-player-queue-item id="q1"></ytmusic-player-queue-item><ytmusic-player-queue-item id="q2"></ytmusic-player-queue-item></ytmusic-player-queue>
+  </ytmusic-player-page>
+  <ytmusic-player-bar><span class="title">Probe Track</span><span class="byline">Probe Artist</span></ytmusic-player-bar>
+</ytmusic-app>
+<script>
+(function () {
+  var VIDEO = "data:video/mp4;base64,{{VIDEO}}", SONG = "data:audio/mp4;base64,{{SONG}}";
+  var params = new URLSearchParams(location.search), list = params.get("list") || "PLsyntheticVideo";
+  var ad = list === "PLsyntheticAd", live = list.indexOf("PLsyntheticLive") === 0, hasHead = list !== "PLsyntheticLiveNoHead";
+  var video = document.getElementById("v"), movie = document.getElementById("movie_player"), app = document.querySelector("ytmusic-app");
+  var state = { id: live ? "sLiveStrm01" : "sAmPleVid01", playlist: list, type: live ? "" : "MUSIC_VIDEO_TYPE_OMV" };
+  var VIDEOID = "sAmPleVid01", SONGID = "sOnGVersi01";
+  video.muted = true; video.volume = 0.001;
+  function setMedia(id) {
+    state.id = id;
+    if (id === SONGID) { state.type = "MUSIC_VIDEO_TYPE_ATV"; video.src = SONG; }
+    else { state.type = live ? "" : "MUSIC_VIDEO_TYPE_OMV"; video.src = VIDEO; video.loop = true; }
+    video.muted = true; video.volume = 0.001;
+    video.play().catch(function () {});
+    refreshQueue();
+  }
+  // The queue publishes the counterpart in the shape ytmusicapi documents for the service's own `next` response.
+  function refreshQueue() {
+    var item = document.getElementById("q2");
+    var renderer = function (id) { return { videoId: id, navigationEndpoint: { watchEndpoint: { watchEndpointMusicSupportedConfigs: { watchEndpointMusicConfig: { musicVideoType: id === SONGID ? "MUSIC_VIDEO_TYPE_ATV" : "MUSIC_VIDEO_TYPE_OMV" } } } } }; };
+    var other = state.id === SONGID ? VIDEOID : SONGID;
+    item.data = live ? { playlistPanelVideoRenderer: renderer(state.id) } :
+      { playlistPanelVideoWrapperRenderer: { primaryRenderer: { playlistPanelVideoRenderer: renderer(state.id) }, counterpart: [{ counterpartRenderer: { playlistPanelVideoRenderer: renderer(other) } }] } };
+    // An unrelated look-alike queued BEFORE the playing item must never be taken as its counterpart.
+    document.getElementById("q1").data = { playlistPanelVideoWrapperRenderer: { primaryRenderer: { playlistPanelVideoRenderer: renderer("sOtherTrk01") }, counterpart: [{ counterpartRenderer: { playlistPanelVideoRenderer: renderer("sUnrelated1") } }] } };
+  }
+  // Live simulation: the real element keeps decoding frames, but its timeline is a simulated 120 s window that grows with real time.
+  if (live) {
+    var base = 1000, started = Date.now(), pos = base + 120, lastTick = Date.now();
+    function end() { return base + 120 + (Date.now() - started) / 1000; }
+    function advance() { var now = Date.now(); if (!video.paused) { pos = Math.min(end(), pos + (now - lastTick) / 1000); } lastTick = now; }
+    Object.defineProperty(video, "duration", { get: function () { return Infinity; } });
+    Object.defineProperty(video, "seekable", { get: function () { return { length: 1, start: function () { return base; }, end: function () { return end(); } }; } });
+    Object.defineProperty(video, "currentTime", { get: function () { advance(); return pos; }, set: function (value) { advance(); pos = Math.max(base, Math.min(end(), value)); window.__liveSeeks = (window.__liveSeeks || []).concat([value]); } });
+  }
+  movie.getVideoData = function () { return { video_id: state.id, isLive: live }; };
+  movie.getPlaylistId = function () { return state.playlist; };
+  movie.getPlayerResponse = function () { return { videoDetails: { musicVideoType: state.type } }; };
+  movie.getPresentingPlayerType = function () { return ad ? 2 : 1; };
+  if (ad) { movie.classList.add("ad-showing"); }
+  movie.playVideo = function () { video.play().catch(function () {}); };
+  movie.pauseVideo = function () { video.pause(); };
+  movie.seekTo = function (seconds) { video.currentTime = seconds; };
+  if (hasHead) movie.seekToLiveHead = function () { window.__liveHead = (window.__liveHead || 0) + 1; video.currentTime = base + 1e9; };
+  movie.addEventListener = function () {};
+  var player = document.getElementById("player"); player.playerApi = movie;
+  window.ytcfg = { get: function (key) { return key === "LOGGED_IN" ? true : undefined; } };
+  app.resolveCommand = function (command) {
+    var endpoint = command.watchEndpoint || command.watchPlaylistEndpoint || {};
+    if (endpoint.playlistId) { state.playlist = endpoint.playlistId; }
+    window.__routed = (window.__routed || 0) + 1;
+    setMedia(endpoint.videoId || VIDEOID);
+  };
+  setMedia(state.id);
+})();
+</script>
+</body></html>

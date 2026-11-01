@@ -1,0 +1,42 @@
+.DS_Store
+.build/
+DerivedData/
+**/.build/
+**/xcuserdata/
+*.xcuserstate
+.env
+.env.*
+*.p12
+*.mobileprovision
+artifacts/harness/nodes/W01/clean-checkout/
+
+# W09 retains local XCTest diagnostic bundles; sanitized summaries and digests are committed.
+artifacts/harness/nodes/W09/raw/*.xcresult/
+artifacts/harness/nodes/W09/rework-1/**/*.xcresult/
+artifacts/harness/nodes/W09/rework-2/**/*.xcresult/
+artifacts/harness/nodes/W09/rework-3/**/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui2/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui3/**/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui4/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui4/**/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui5/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui5/**/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui6/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui7/*.xcresult/
+artifacts/harness/nodes/W09/integration/ui7/**/*.xcresult/
+artifacts/harness/nodes/W10/runs/*/*.xcresult/
+artifacts/harness/nodes/W11/runs/*/*.xcresult/
+artifacts/harness/nodes/W12/runs/*/*.xcresult/
+
+# W17 keeps hash-only snapshots and logs; XCTest result bundles stay local.
+artifacts/harness/nodes/W17/runs/**/*.xcresult/
+artifacts/harness/nodes/W17/runs/*/*.xcresult/
+artifacts/harness/nodes/W13/**/*.xcresult/
+
+# W19 retains local XCTest result bundles; logs, snapshots and digests are committed.
+artifacts/harness/nodes/W19/runs/**/*.xcresult/
+artifacts/harness/nodes/W20/runs/**/*.xcresult/
+artifacts/harness/nodes/W20/runs/*/*.xcresult/
+__pycache__/
+*.pyc

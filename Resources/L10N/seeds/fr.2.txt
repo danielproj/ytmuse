@@ -1,0 +1,300 @@
+401|Disponible à la lecture
+402|Retour
+403|Retour à la collection
+404|Badges
+405|Entre « %@ » et « %@ »
+406|Bluetooth
+407|Parcourir
+408|Mise en mémoire tampon…
+409|Intégré
+410|Bouton
+411|Annuler le minuteur
+412|Sous-titres
+413|Catégorie
+414|Modifier la visibilité
+415|Ne modifie que ce que ce Mac affiche
+416|Chapitres
+417|Les chapitres proviennent des repères temporels de la description de l’épisode.
+418|Vérifier
+419|Vérifier maintenant
+420|Vérification
+421|Choisir
+422|Choisir des fichiers…
+423|Choisir la sortie…
+424|Choisissez une durée comprise entre une seconde et 24 heures.
+425|Choisissez une position dans l’élément.
+426|Choisissez un élément pour commencer à écouter.
+427|Choisissez entre 1 minute et 24 heures.
+428|Choisir de la musique à importer
+429|Choisir la durée des sauts
+430|Effacer
+431|Effacer l’historique
+432|Fermer
+433|Collaboration
+434|La collaboration est activée, mais YouTube Music n’a renvoyé aucun lien que cette app puisse afficher.
+435|La collaboration est activée. Le lien d’invitation est prêt.
+436|Collaborateur
+437|Réduire Lecture en cours
+438|Palette de commandes
+439|Palette de commandes…
+440|Commandes
+441|Commenter %@
+442|Commentaires
+443|Les commentaires ne sont pas encore disponibles. Aucune des réponses de YouTube Music que cette app sait lire n’en contient ; il n’y a donc rien à lire, à publier ou à modérer.
+444|Compact
+445|Taille compacte
+446|Connectez une source capable d’ouvrir cet élément, ou revenez à votre collection.
+447|Poursuit l’album ou la playlist à partir de ce titre.
+448|Copier le lien d’invitation
+449|Copier le lien
+450|Copier le lien du titre en cours
+451|Copier les liens
+452|Actualisation impossible. Affichage d’une copie enregistrée de %@. %@
+453|Comptabilisé par YTMuse à partir de ce qu’il a lu sur ce Mac. Ce n’est pas le Recap de YouTube Music, et cela ne quitte jamais ce Mac.
+454|Créer
+455|Créer un lien d’invitation
+456|Créer un lien d’invitation
+457|« %@ » créée en tant que %@.
+458|Création de la playlist…
+459|Le fondu enchaîné superpose la fin d’un élément et le début du suivant, et un direct n’a pas de fin à superposer.
+460|Minutes personnalisées
+461|Sombre
+462|Par défaut
+463|Vitesse par défaut
+464|Supprimer « %@ » ?
+465|Description
+466|Description (facultative)
+467|Description : « %@ »
+468|Détails
+469|Vouliez-vous dire « %@ » ?
+470|Découverte
+471|Je n’aime pas
+472|Terminé.
+473|Terminé. YouTube Music l’a confirmé.
+474|Télécharger à nouveau
+475|Télécharger avec cette connexion
+476|Progression du téléchargement
+477|Le stockage des téléchargements est plein
+478|Stockage des téléchargements utilisé
+479|Téléchargé
+480|Téléchargés uniquement
+481|Téléchargement
+482|Modifier la playlist
+483|Fin de l’épisode
+484|Fin de l’élément
+485|Fin du titre
+486|Terminé
+487|Épisode
+488|Progression de l’épisode
+489|Épisodes
+490|Quitter le plein écran
+491|Développé
+492|Taille développée
+493|Expiré
+494|Explicite
+495|Échec
+496|Fichier choisi sur ce Mac
+497|Fichier sur ce Mac
+498|Filtre
+499|Rechercher
+500|Rechercher…
+501|Terminez ou fermez d’abord la suppression en cours.
+502|Suivre
+503|Suivi
+504|Suivre et enregistrer dans votre bibliothèque ne sont pas encore disponibles. YTMuse lit le catalogue mais ne modifie pas votre bibliothèque.
+505|Suivre n’est pas encore disponible. YTMuse lit le catalogue mais ne modifie pas votre bibliothèque.
+506|Pour des suggestions et de la découverte, ouvrez Accueil et Explorer.
+507|Avancer
+508|Espace disque libre sur ce Mac
+509|De YouTube Music
+510|Depuis votre sélection
+511|Plein écran
+512|Raccourcis globaux
+513|Aller
+514|Passer au direct
+515|Aller à %@
+516|Retour en cours.
+517|Grille
+518|Le regroupement des récepteurs est laissé au sélecteur système, dans la mesure où il le propose.
+519|HDMI ou DisplayPort
+520|Le casque a été débranché ; la lecture a donc été mise en pause.
+521|Masqué
+522|Historique
+523|Dans votre bibliothèque
+524|Indépendant. Natif. À vous.
+525|Lien d’invitation pour la playlist « %@ »
+526|L’invitation de collaborateurs depuis YTMuse n’est pas disponible dans cette version.
+527|Il peut être repris.
+528|Il n’est ajouté que si vous appuyez sur Ajouter.
+529|Élément
+530|Les éléments aboutissent ici une fois enregistrés sur ce Mac.
+531|Ses titres sont lus via YouTube Music et ne sont pas conservés sur ce Mac. Les fichiers audio que vous ajoutez ici sont conservés chiffrés sur ce Mac, et vous pouvez les lire depuis cet écran.
+532|Rejoindre la playlist
+533|Rejoindre la playlist…
+534|Rejoindre une playlist collaborative
+535|Rejoindre « %@ » ?
+536|Rejoindre…
+537|Aller au direct
+538|Les sauts et la vitesse concernent les épisodes de podcast.
+539|Conserver les doublons
+540|Conserver ma modification
+541|Conserver un fichier audio de ce Mac et le lire d’ici
+542|Conserver sur ce Mac
+543|Garder au premier plan
+544|Garder le mini-lecteur au premier plan
+545|Conservé pour une playlist
+546|Conservé sur ce Mac
+547|DIRECT
+548|Langue et région
+549|Grand
+550|Plus grand
+551|Le plus grand
+552|Lancer
+553|Lancer YTMuse à l’ouverture de session
+554|Le lancement à l’ouverture de session n’est pas disponible pour cette version.
+555|Disposition
+556|Les modifications de la bibliothèque se font un élément à la fois.
+557|Les modifications de la bibliothèque se font un élément à la fois. L’ajout de titres à une playlist demande d’abord confirmation.
+558|Les modifications de la bibliothèque ne sont pas disponibles ici.
+559|Bibliothèque non lue
+560|Playlists de la bibliothèque
+561|Clair
+562|J’aime
+563|Titres aimés
+564|Pour aimer un titre, il faut sa page : ouvrez-la une fois et la commande apparaîtra ici.
+565|Pour aimer un titre, il faut sa page : ouvrez le titre une fois et la commande apparaîtra ici.
+566|Lien copié
+567|Liste
+568|Vitesse d’écoute
+569|Vitesse d’écoute pour cette émission
+570|Direct
+571|Tout charger
+572|Charger plus
+573|Chargement
+574|Chargement de Samples
+575|Chargement des commentaires
+576|Chargement de l’épisode
+577|Chargement de la bibliothèque
+578|Chargement des paroles
+579|Chargement de la suite
+580|Chargement, Mettre en pause
+581|Les libellés et valeurs par défaut locaux s’appliquent à ce Mac. Les abonnements au service restent chez YouTube.
+582|Local uniquement
+583|Le stockage local n’a pas pu s’ouvrir. Les données existantes ont été préservées.
+584|Verrouillé. Déverrouillez pour voir ce qui est en cours de lecture.
+585|Plus longs d’abord
+586|Consulter
+587|Le mode économie de données est activé pour cette connexion. Les téléchargements automatiques attendent ; vous pouvez tout de même en lancer un.
+588|Mode économie d’énergie : un téléchargement à la fois.
+589|Paroles
+590|Les paroles du titre en cours de lecture s’affichent ici.
+591|Les paroles s’affichent lorsque la source les fournit.
+592|Définir par défaut
+593|Marquer comme lu
+594|Marquer comme non lu
+595|Les correspondances de votre bibliothèque s’affichent pendant la saisie. Les résultats de YouTube Music suivent un instant plus tard.
+596|Barre des menus et veille
+597|Mini-lecteur
+598|Réduire
+599|Minutes
+600|Modérer
+601|Modérer un commentaire
+602|Plus
+603|Plus d’actions de lecture
+604|Plusieurs éléments correspondent. Choisissez-en un.
+605|Plusieurs éléments correspondent. Choisissez-en un :
+606|Plusieurs nouvelles playlists portent ce titre. Laquelle est la vôtre ?
+607|Artistes les plus écoutés sur ce Mac
+608|Titres les plus écoutés sur ce Mac
+609|Descendre
+610|Aller à la fin de la page
+611|Monter
+612|Déplace la lecture à cette ligne
+613|Réglage de la musique
+614|Couper le son
+615|Le son n’a pas pu être coupé ou rétabli. Essayez à nouveau l’action de coupure du son.
+616|Données de test du design natif · Pas YouTube Music
+617|Données de test de navigation · Aucun média du service
+618|Nouvelle playlist
+619|Nouvelle fenêtre
+620|Titre suivant
+621|Titre suivant dans YTMuse
+622|Page suivante
+623|Aucun Samples pour le moment
+624|Aucun artiste dans votre bibliothèque pour le moment
+625|Aucun commentaire pour le moment.
+626|Aucune description
+627|Aucun élément téléchargé
+628|Aucune playlist téléchargée
+629|Aucun titre aimé pour le moment
+630|Aucune parole disponible
+631|Aucune correspondance
+632|Aucune playlist correspondante
+633|Aucun démarrage natif
+634|Aucune connexion au réseau. Les téléchargements attendent puis reprennent d’eux-mêmes.
+635|Aucune sortie
+636|Aucun titre de playlist de votre bibliothèque ne correspond à cette recherche.
+637|Aucune playlist dans votre bibliothèque pour le moment
+638|Aucune playlist dans votre bibliothèque pour le moment.
+639|Aucune playlist pour le moment
+640|Aucune radio démarrée. Les réglages de diversité et de découverte n’apparaissent ici que si YouTube Music les fournit pour une radio.
+641|Aucune radio démarrée. Les réglages ne peuvent s’afficher ici que lorsque cette app saura lire la file d’attente d’une radio.
+642|Aucun résultat
+643|Aucun album enregistré pour le moment
+644|Aucun épisode enregistré pour le moment
+645|Aucun podcast enregistré pour le moment
+646|Aucun titre de cette file d’attente n’est un titre YouTube Music connu de cette app ; il n’y a donc rien à enregistrer comme playlist.
+647|Aucun titre en cours de lecture
+648|Aucun titre dans votre bibliothèque pour le moment
+649|Aucun import pour le moment
+650|Aucun
+651|Non disponible pour vous actuellement
+652|Pas encore disponible
+653|Non choisi
+654|Espace libre insuffisant sur ce Mac
+655|Pas dans la playlist
+656|Pas en lecture
+657|Non défini
+658|Rien de téléchargé pour le moment
+659|Rien n’a encore été lu dans YTMuse sur ce Mac.
+660|Rien ici pour le moment
+661|Rien n’est ajouté tant que vous n’appuyez pas sur Ajouter.
+662|Rien n’est encore téléchargé
+663|Rien n’est en cours de lecture à changer.
+664|Rien n’est en cours de lecture ; il n’y a donc pas de minuteur à régler.
+665|Rien n’est en cours de lecture ; il n’y a donc rien à aimer.
+666|Rien n’est en cours de lecture.
+667|Aucune correspondance. Vérifiez l’orthographe ou essayez avec moins de mots.
+668|Aucune lecture en cours
+669|Rien à afficher ici
+670|Rien à afficher pour le moment
+671|Rien pour démarrer pour le moment. Ouvrez des titres, des artistes et des playlists dans Accueil et Explorer ; les radios que YouTube Music propose pour eux sont listées ici.
+672|Notifications
+673|Notifier au changement de titre
+674|Lecture en cours en plein écran
+675|Pochette de Lecture en cours
+676|Lecture en cours : « %@ ».
+677|OK
+678|Désactivé
+679|Désactivé tant que vous ne l’activez pas. Lorsqu’il est activé, il conserve des suggestions pour vous en utilisant au plus %@, soit un quart de la limite, et ne supprime jamais rien de ce que vous avez choisi de conserver.
+680|Activé
+681|Sur ce Mac
+682|Seul le propriétaire de la playlist peut faire cela.
+683|Ouvrir
+684|Ouvrir %@
+685|Ouvrir le lien du presse-papiers
+686|Ouvrir les Réglages
+687|Ouvrez YTMuse pour lancer la lecture.
+688|Ouvrez YTMuse pour utiliser ce bouton.
+689|Ouvrir votre bibliothèque
+690|Options
+691|Ordre d’origine
+692|Obsolète. Dernière mise à jour : %@.
+693|Sortie
+694|La sélection de la sortie n’est pas encore disponible.
+695|Propriétaire
+696|Panneau
+697|Une partie de cette modification attend votre réponse ci-dessous.
+698|Coller un lien d’invitation
+699|Mettre l’historique en pause
+700|Mis en pause par vous

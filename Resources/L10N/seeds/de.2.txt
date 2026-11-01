@@ -1,0 +1,300 @@
+401|Zum Abspielen verfügbar
+402|Zurück
+403|Zurück zur Sammlung
+404|Kennzeichnungen
+405|Zwischen „%@“ und „%@“
+406|Bluetooth
+407|Durchsuchen
+408|Puffern …
+409|Eingebaut
+410|Taste
+411|Timer abbrechen
+412|Untertitel
+413|Kategorie
+414|Sichtbarkeit ändern
+415|Ändert nur, was dieser Mac anzeigt
+416|Kapitel
+417|Kapitel stammen aus den Zeitmarken in der Beschreibung der Folge.
+418|Prüfen
+419|Jetzt prüfen
+420|Wird geprüft
+421|Wählen
+422|Dateien wählen …
+423|Ausgabe wählen …
+424|Wähle eine Dauer zwischen einer Sekunde und 24 Stunden.
+425|Wähle eine Position innerhalb des Objekts.
+426|Wähle ein Objekt, um mit dem Hören zu beginnen.
+427|Wähle zwischen 1 Minute und 24 Stunden.
+428|Musik zum Hochladen wählen
+429|Sprunglängen wählen
+430|Löschen
+431|Verlauf löschen
+432|Schließen
+433|Zusammenarbeit
+434|Die Zusammenarbeit ist eingeschaltet, aber YouTube Music hat keinen Link zurückgegeben, den diese App anzeigen kann.
+435|Die Zusammenarbeit ist eingeschaltet. Der Einladungslink ist bereit.
+436|Mitwirkender
+437|Aktuelle Wiedergabe einklappen
+438|Befehlspalette
+439|Befehlspalette …
+440|Befehle
+441|Kommentar zu %@
+442|Kommentare
+443|Kommentare sind noch nicht verfügbar. Keine der YouTube-Music-Antworten, die diese App lesen kann, enthält sie, daher gibt es nichts zu lesen, zu posten oder zu moderieren.
+444|Kompakt
+445|Kompakte Größe
+446|Verbinde eine Quelle, die dieses Objekt öffnen kann, oder kehre zu deiner Sammlung zurück.
+447|Setzt das Album oder die Playlist ab diesem Titel fort.
+448|Einladungslink kopieren
+449|Link kopieren
+450|Link zum aktuellen Song kopieren
+451|Links kopieren
+452|Aktualisieren war nicht möglich. Eine gesicherte Kopie von %1$@ wird angezeigt. %2$@
+453|Von YTMuse aus dem gezählt, was auf diesem Mac abgespielt wurde. Das ist nicht der Rückblick von YouTube Music, und er verlässt diesen Mac nie.
+454|Erstellen
+455|Einladungslink erstellen
+456|Einladungslink erstellen
+457|„%@“ wurde als %@ erstellt.
+458|Playlist wird erstellt …
+459|Beim Überblenden überlappen sich das Ende eines Objekts und der Anfang des nächsten, und ein Livestream hat kein Ende, das sich überlappen ließe.
+460|Eigene Minuten
+461|Dunkel
+462|Standard
+463|Standardgeschwindigkeit
+464|„%@“ löschen?
+465|Beschreibung
+466|Beschreibung (optional)
+467|Beschreibung: „%@“
+468|Details
+469|Meintest du „%@“?
+470|Entdecken
+471|Nicht gefällt mir
+472|Fertig.
+473|Fertig. YouTube Music hat es bestätigt.
+474|Erneut laden
+475|Über diese Verbindung laden
+476|Download-Fortschritt
+477|Der Download-Speicher ist voll
+478|Belegter Download-Speicher
+479|Heruntergeladen
+480|Nur heruntergeladene
+481|Wird heruntergeladen
+482|Playlist bearbeiten
+483|Ende der Folge
+484|Ende des Objekts
+485|Ende des Titels
+486|Beendet
+487|Folge
+488|Fortschritt der Folge
+489|Folgen
+490|Vollbild beenden
+491|Erweitert
+492|Erweiterte Größe
+493|Abgelaufen
+494|Explizit
+495|Fehlgeschlagen
+496|Auf diesem Mac gewählte Datei
+497|Datei auf diesem Mac
+498|Filter
+499|Suchen
+500|Suchen …
+501|Schließe zuerst das laufende Entfernen ab oder verwirf es.
+502|Folgen
+503|Gefolgt
+504|„Folgen“ und das Speichern in deiner Mediathek sind noch nicht verfügbar. YTMuse liest den Katalog, ändert aber nicht deine Mediathek.
+505|„Folgen“ ist noch nicht verfügbar. YTMuse liest den Katalog, ändert aber nicht deine Mediathek.
+506|Für Vorschläge und Entdeckungen öffne „Start“ und „Entdecken“.
+507|Vorwärts
+508|Freier Speicherplatz auf diesem Mac
+509|Von YouTube Music
+510|Aus deiner Auswahl
+511|Vollbild
+512|Globale Tastaturkürzel
+513|Los
+514|Zu Live wechseln
+515|Gehe zu %@
+516|Es geht zurück.
+517|Raster
+518|Das Gruppieren von Empfängern überlässt du der Systemauswahl, soweit sie es anbietet.
+519|HDMI oder DisplayPort
+520|Die Kopfhörer wurden getrennt, daher wurde die Wiedergabe pausiert.
+521|Ausgeblendet
+522|Verlauf
+523|In deiner Mediathek
+524|Unabhängig. Nativ. Deins.
+525|Einladungslink für die Playlist „%@“
+526|Das Einladen von Mitwirkenden aus YTMuse ist in dieser Version nicht verfügbar.
+527|Er kann fortgesetzt werden.
+528|Es wird nur hinzugefügt, wenn du auf „Hinzufügen“ klickst.
+529|Objekt
+530|Objekte sind hier fertig, sobald sie auf diesem Mac gesichert sind.
+531|Die Songs werden über YouTube Music abgespielt und nicht auf diesem Mac behalten. Audiodateien, die du hier hinzufügst, werden verschlüsselt auf diesem Mac behalten, und du kannst sie auf diesem Bildschirm abspielen.
+532|Playlist beitreten
+533|Playlist beitreten …
+534|Einer gemeinsamen Playlist beitreten
+535|„%@“ beitreten?
+536|Beitreten …
+537|Zum Live-Punkt springen
+538|Sprünge und Geschwindigkeit gelten für Podcast-Folgen.
+539|Duplikate behalten
+540|Meine Änderung behalten
+541|Eine Audiodatei von diesem Mac behalten und von hier abspielen
+542|Auf diesem Mac behalten
+543|Im Vordergrund halten
+544|Den Mini-Player im Vordergrund halten
+545|Für eine Playlist behalten
+546|Auf diesem Mac behalten
+547|LIVE
+548|Sprache und Region
+549|Groß
+550|Größer
+551|Am größten
+552|Starten
+553|YTMuse beim Anmelden starten
+554|„Beim Anmelden starten“ ist für diesen Build nicht verfügbar.
+555|Layout
+556|Änderungen an der Mediathek werden einzeln vorgenommen.
+557|Änderungen an der Mediathek werden einzeln vorgenommen. Beim Hinzufügen von Songs zu einer Playlist wird vorher nachgefragt.
+558|Änderungen an der Mediathek sind hier nicht verfügbar.
+559|Mediathek nicht gelesen
+560|Playlists der Mediathek
+561|Hell
+562|Gefällt mir
+563|Titel, die dir gefallen
+564|Für „Gefällt mir“ wird die Seite des Songs gebraucht: Öffne sie einmal, dann erscheint die Steuerung hier.
+565|Für „Gefällt mir“ wird die Seite des Songs gebraucht: Öffne den Song einmal, dann erscheint die Steuerung hier.
+566|Link kopiert
+567|Liste
+568|Hörgeschwindigkeit
+569|Hörgeschwindigkeit für diese Sendung
+570|Live
+571|Alle laden
+572|Mehr laden
+573|Wird geladen
+574|Samples werden geladen
+575|Kommentare werden geladen
+576|Folge wird geladen
+577|Mediathek wird geladen
+578|Songtext wird geladen
+579|Mehr wird geladen
+580|Wird geladen, Pause
+581|Lokale Bezeichnungen und Standardwerte gelten für diesen Mac. Abonnements des Dienstes bleiben bei YouTube.
+582|Nur lokal
+583|Der lokale Speicher konnte nicht geöffnet werden. Vorhandene Daten blieben erhalten.
+584|Gesperrt. Entsperre, um zu sehen, was gerade läuft.
+585|Längste zuerst
+586|Nachschlagen
+587|Der Datenmodus „Weniger Daten“ ist für diese Verbindung eingeschaltet. Automatische Downloads warten; du kannst trotzdem einen starten.
+588|Energiesparmodus: ein Download nach dem anderen.
+589|Songtext
+590|Der Songtext des laufenden Songs erscheint hier.
+591|Der Songtext erscheint, wenn die Quelle ihn liefert.
+592|Als Standard festlegen
+593|Als gespielt markieren
+594|Als nicht gespielt markieren
+595|Treffer aus deiner Mediathek erscheinen beim Tippen. Ergebnisse von YouTube Music folgen einen Moment später.
+596|Menüleiste und Ruhezustand
+597|Mini-Player
+598|Im Dock ablegen
+599|Minuten
+600|Moderieren
+601|Einen Kommentar moderieren
+602|Mehr
+603|Weitere Wiedergabeaktionen
+604|Mehr als ein Objekt passt. Wähle eines aus.
+605|Mehr als ein Objekt passt. Wähle eines aus:
+606|Mehr als eine neue Playlist hat diesen Titel. Welche ist deine?
+607|Am häufigsten gespielte Interpreten auf diesem Mac
+608|Am häufigsten gespielte Songs auf diesem Mac
+609|Nach unten
+610|Ans Ende der Seite verschieben
+611|Nach oben
+612|Setzt die Wiedergabe an dieser Zeile fort
+613|Musik-Tuner
+614|Stummschalten
+615|Die Stummschaltung konnte nicht geändert werden. Versuche die Stummschaltung erneut.
+616|Testdaten für natives Design · Nicht YouTube Music
+617|Testdaten für Navigation · Keine Medien des Dienstes
+618|Neue Playlist
+619|Neues Fenster
+620|Nächster Song
+621|Nächster Song in YTMuse
+622|Nächste Seite
+623|Gerade keine Samples
+624|Noch keine Interpreten in deiner Mediathek
+625|Noch keine Kommentare.
+626|Keine Beschreibung
+627|Keine heruntergeladenen Objekte
+628|Keine heruntergeladenen Playlists
+629|Noch keine Songs, die dir gefallen
+630|Kein Songtext verfügbar
+631|Keine Treffer
+632|Keine passenden Playlists
+633|Kein nativer Start
+634|Keine Netzwerkverbindung. Downloads warten und werden dann von selbst fortgesetzt.
+635|Keine Ausgabe
+636|Kein Playlist-Titel in deiner Mediathek passt zu dieser Suche.
+637|Noch keine Playlists in deiner Mediathek
+638|Noch keine Playlists in deiner Mediathek.
+639|Noch keine Playlists
+640|Es wurde kein Radiosender gestartet. Die Regler für Vielfalt und Entdeckung erscheinen hier nur, wenn YouTube Music sie für einen Sender liefert.
+641|Es wurde kein Radiosender gestartet. Abstimmungsregler können hier erst angezeigt werden, wenn diese App die Warteschlange eines Senders lesen kann.
+642|Keine Ergebnisse
+643|Noch keine gesicherten Alben
+644|Noch keine gesicherten Folgen
+645|Noch keine gesicherten Podcasts
+646|Kein Song in dieser Warteschlange ist ein YouTube-Music-Song, den diese App kennt, daher gibt es nichts, was als Playlist gesichert werden könnte.
+647|Es läuft kein Song
+648|Noch keine Songs in deiner Mediathek
+649|Noch keine Uploads
+650|Keine
+651|Für dich gerade nicht verfügbar
+652|Noch nicht verfügbar
+653|Nicht gewählt
+654|Nicht genug freier Speicherplatz auf diesem Mac
+655|Nicht in der Playlist
+656|Wird nicht abgespielt
+657|Nicht festgelegt
+658|Noch nichts heruntergeladen
+659|In YTMuse wurde auf diesem Mac noch nichts abgespielt.
+660|Hier ist noch nichts
+661|Es wird nichts hinzugefügt, bis du auf „Hinzufügen“ klickst.
+662|Noch nichts heruntergeladen
+663|Es läuft nichts, was gewechselt werden könnte.
+664|Es läuft nichts, daher gibt es keinen Timer, der eingestellt werden könnte.
+665|Es läuft nichts, daher gibt es nichts, das dir gefallen könnte.
+666|Es läuft nichts.
+667|Nichts gefunden. Prüfe die Schreibweise oder versuche weniger Wörter.
+668|Es läuft nichts
+669|Hier gibt es nichts anzuzeigen
+670|Noch nichts anzuzeigen
+671|Noch nichts, womit du starten könntest. Öffne Songs, Interpreten und Playlists in „Start“ und „Entdecken“; die Radiosender, die YouTube Music dafür anbietet, werden hier aufgelistet.
+672|Mitteilungen
+673|Mitteilen, wenn der Song wechselt
+674|Aktuelle Wiedergabe im Vollbild
+675|Cover der aktuellen Wiedergabe
+676|Aktuelle Wiedergabe: „%@“.
+677|OK
+678|Aus
+679|Standardmäßig aus. Wenn eingeschaltet, behält es Vorschläge für dich mit höchstens %@, einem Viertel des Limits, und entfernt nie etwas, das du behalten wolltest.
+680|Ein
+681|Auf diesem Mac
+682|Nur der Besitzer der Playlist kann das tun.
+683|Öffnen
+684|%@ öffnen
+685|Link aus der Zwischenablage öffnen
+686|Einstellungen öffnen
+687|Öffne YTMuse, um die Wiedergabe zu starten.
+688|Öffne YTMuse, um diese Taste zu verwenden.
+689|Deine Mediathek öffnen
+690|Optionen
+691|Ursprüngliche Reihenfolge
+692|Veraltet. Zuletzt aktualisiert: %@.
+693|Ausgabe
+694|Die Auswahl der Ausgabe ist noch nicht verfügbar.
+695|Besitzer
+696|Bereich
+697|Ein Teil dieser Änderung braucht unten deine Antwort.
+698|Einladungslink einfügen
+699|Verlauf pausieren
+700|Von dir pausiert

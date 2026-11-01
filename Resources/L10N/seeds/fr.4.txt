@@ -1,0 +1,213 @@
+1001|Ce lien ne peut pas être ouvert
+1002|Ce lien ne peut pas être ouvert. Utilisez un lien YouTube Music vers un titre, un album, un artiste ou une playlist.
+1003|Ce direct ne propose aucune partie antérieure où se déplacer.
+1004|Ce direct ne propose aucune partie antérieure où se déplacer. « Passer au direct » est la seule façon de se déplacer.
+1005|Cela nécessite d’abord votre confirmation.
+1006|Ce lecteur ne peut pas être dirigé vers une sortie ; il suit le Mac.
+1007|Cette playlist ne contient pas encore de titres.
+1008|Cette playlist est publique.
+1009|Cet aperçu n’a pas pu démarrer.
+1010|La file d’attente de cette radio a été lue et ne contenait aucun réglage.
+1011|Ce récepteur ne peut pas faire de fondu pour le minuteur de veille
+1012|Ce résultat n’a pas de lien.
+1013|Cela envoie la demande à YouTube Music pour le commentaire « %@ » de %@.
+1014|Cela envoie la demande à YouTube Music pour « %@ ».
+1015|Ce raccourci exécute déjà « %@ ».
+1016|Ce raccourci n’a pas pu être enregistré. Une autre app l’utilise peut-être ; choisissez-en un autre.
+1017|Ce titre est déjà dans la playlist
+1018|Ce titre est déjà dans la playlist.
+1019|Cette vidéo n’a aucun sous-titre à afficher.
+1020|Ce widget est obsolète. Ouvrez YTMuse et il sera actualisé.
+1021|Thunderbolt ou FireWire
+1022|Minuteur
+1023|Titre
+1024|Titre (A–Z)
+1025|Titre (Z–A)
+1026|Titre A–Z
+1027|Titre Z–A
+1028|Titre : « %@ »
+1029|Meilleur résultat
+1030|Essayez une autre commande ou recherchez de la musique.
+1031|Nouvelle tentative %@
+1032|Activer le minuteur
+1033|Saisissez une commande ou recherchez dans YouTube Music
+1034|USB
+1035|Indisponible
+1036|Annuler : description modifiée
+1037|Annuler : visibilité modifiée
+1038|Annuler : « %@ » déplacé
+1039|Annuler : playlist renommée
+1040|Ne plus suivre
+1041|Inconnu
+1042|Débit inconnu
+1043|Sortie inconnue
+1044|Fréquence d’échantillonnage inconnue
+1045|Titre inconnu
+1046|Non répertoriée
+1047|Rétablir le son
+1048|Désépingler
+1049|Non lus d’abord
+1050|Élément sans titre
+1051|À suivre
+1052|Mis à jour %@.
+1053|Importer
+1054|Albums importés
+1055|Artistes importés
+1056|Titres importés
+1057|Import de %@
+1058|L’import arrivera dans une prochaine mise à jour
+1059|Imports
+1060|Les imports ne sont pas encore connectés ; il n’y a donc rien à rechercher ici.
+1061|Imports en cours et terminés
+1062|Utiliser la vitesse par défaut pour cette émission
+1063|Utilisez un lien d’élément musical pris en charge, ou trouvez l’élément dans votre collection.
+1064|Vidéo
+1065|Fenêtre vidéo
+1066|Aperçu vidéo
+1067|Vidéos
+1068|Spectateur
+1069|Visibilité
+1070|Visibilité : %@
+1071|Volume
+1072|En attente d’une connexion réseau
+1073|En attente d’import
+1074|En attente : le mode économie de données est activé pour cette connexion
+1075|En attente : cette connexion est limitée
+1076|WebKit n’est pas passé en Image dans l’image pour cette vidéo.
+1077|WebKit n’a pas démarré Image dans l’image pour cette vidéo.
+1078|Ce que vous avez demandé
+1079|Où dans la file d’attente
+1080|Où rechercher
+1081|Lequel ?
+1082|Taille de la fenêtre
+1083|L’historique des fenêtres n’a pas pu être ouvert. Votre fenêtre actuelle a été préservée.
+1084|L’historique des fenêtres n’a pas pu être enregistré. Essayez de l’enregistrer à nouveau.
+1085|Avec seulement Option (et Majuscule), ce raccourci saisirait un caractère dans chaque champ de texte. Ajoutez Commande ou Contrôle.
+1086|Fonctionne depuis n’importe quelle app. Aucun n’est défini tant que vous n’en enregistrez pas un. Un raccourci nécessite Commande, Contrôle ou Option et ne peut pas remplacer un raccourci standard d’édition ou du système.
+1087|Traitement…
+1088|Écrivez quelque chose à publier.
+1089|YTMuse
+1090|YTMuse utilise déjà ce raccourci pour %@.
+1091|YTMuse ne peut aimer ou enregistrer que le titre en cours de lecture.
+1092|Vous ne suivez encore personne
+1093|Vous pouvez déjà modifier « %@ ». Rien n’a été envoyé.
+1094|Vous pouvez choisir l’apparence de l’app dans les Réglages.
+1095|Vous n’avez pas encore de playlist.
+1096|Vous avez rejoint la playlist.
+1097|Vous pourrez ajouter et modifier des titres dans cette playlist, et elle est ajoutée à votre bibliothèque.
+1098|YouTube Music
+1099|YouTube Music accepte les fichiers jusqu’à %@.
+1100|YouTube Music a répondu sous une forme que cette version ne sait pas lire. Rien n’a été modifié.
+1101|YouTube Music a demandé de ralentir. Affichage des correspondances de ce Mac ; réessayez dans un instant.
+1102|YouTube Music n’a pas pu démarrer cela. Essayez de lire à nouveau.
+1103|YouTube Music n’a pas pu démarrer. Essayez de lire à nouveau.
+1104|YouTube Music n’a pas pu être joint. Affichage des correspondances de ce Mac.
+1105|YouTube Music n’a pas pu faire cela pour le moment. Rien n’a été modifié.
+1106|YouTube Music n’a pas modifié les sous-titres.
+1107|YouTube Music n’a pas modifié la qualité.
+1108|YouTube Music n’a pas proposé « Enregistrer dans la bibliothèque » pour ce titre. Ouvrez le titre une fois pour lire sa page.
+1109|YouTube Music n’a pas indiqué s’il s’agit d’un titre ou d’une vidéo ; il ne peut donc pas être changé ici.
+1110|YouTube Music n’a pas confirmé la suppression. « %@ » a peut-être été supprimé, ou non.
+1111|YouTube Music n’a pas fourni de réglages de diversité ou de découverte pour cette radio ; aucun n’est donc affiché.
+1112|YouTube Music ne propose pas « Je n’aime pas » pour ce titre.
+1113|YouTube Music n’indique pas qu’il s’agit du même enregistrement ; la lecture démarre donc depuis le début.
+1114|YouTube Music a terminé le traitement de ce fichier.
+1115|YouTube Music a terminé le traitement de ce fichier. Votre liste d’imports a été mise à jour.
+1116|YouTube Music n’a rien fourni à lire pour cet élément.
+1117|YouTube Music n’a aucun Samples pour vous pour le moment.
+1118|YouTube Music n’a pas de paroles pour ce titre.
+1119|YouTube Music n’a pas d’élément suivant ou précédent ici.
+1120|YouTube Music n’a rien dans cette collection. Elle a été lue en entier.
+1121|YouTube Music n’a publié aucune version audio de cette vidéo ; la vidéo continue donc de jouer. L’image n’est pas masquée pour simuler un mode audio seul.
+1122|YouTube Music n’a publié aucune version vidéo de ce titre.
+1123|Historique de YouTube Music
+1124|Commandes de l’historique de YouTube Music
+1125|YouTube Music demande une pause. Réessayez Samples dans un instant.
+1126|YouTube Music traite encore ce fichier. Vérifiez à nouveau plus tard.
+1127|YouTube Music gère les éléments à venir de cette playlist ; ils ne sont donc ni listés ni modifiables ici.
+1128|YouTube Music gère les éléments à venir pendant la lecture ; cette app ne peut donc pas en ajouter.
+1129|Playlist YouTube Music
+1130|Les playlists YouTube Music sont diffusées en streaming, pas conservées sur ce Mac. Les fichiers audio que vous ajoutez dans Téléchargements apparaissent ici.
+1131|Les playlists YouTube Music de votre bibliothèque sont diffusées en streaming, pas conservées sur ce Mac.
+1132|YouTube Music lit dans son propre lecteur ; l’app ne peut donc ni superposer deux éléments ni traiter leur audio.
+1133|YouTube Music joue via la sortie son de ce Mac. Modifiez-la dans le Centre de contrôle.
+1134|YouTube Music a renvoyé cette page sans aucun élément.
+1135|YouTube Music a indiqué : %@
+1136|La recherche YouTube Music n’est pas disponible pour le moment. Affichage des correspondances de ce Mac.
+1137|YouTube Music a cessé d’envoyer la suite de cette collection avant la fin.
+1138|YouTube Music a activé la collaboration mais n’a renvoyé aucun lien d’invitation utilisable.
+1139|Volume de YouTube Music
+1140|YouTube Music, natif sur Mac.
+1141|Version de YouTube Music
+1142|La version audio de YouTube comporte encore une image ; le décodeur vidéo n’a donc peut-être pas été arrêté. Cela n’a pas pu être arrêté ni vérifié ici.
+1143|Votre sortie audio a changé. Confirmez « Lire ici » dans YTMuse pour démarrer la lecture.
+1144|Votre bibliothèque n’a pas pu être lue
+1145|Votre musique
+1146|Votre musique apparaîtra ici
+1147|Vos playlists
+1148|Votre session est terminée
+1149|Votre version
+1150|Vous êtes hors ligne
+1151|mise en mémoire tampon
+1152| • 
+1153|terminé
+1154|échec
+1155|inactif
+1156|macOS répertorie ce raccourci parmi ses propres raccourcis activés.
+1157|macOS signale ce raccourci comme déjà pris.
+1158|macOS utilise ce raccourci pour %@.
+1159|ou déposez des fichiers audio ici
+1160|en pause
+1161|en lecture
+1162|préparation
+1163|prêt
+1164|résolution
+1165|déplacement
+1166|la playlist « %@ »
+1167|cette playlist
+1168|inconnu
+1169|« %@ » est déjà là. « Conserver les doublons » l’ajoute à nouveau comme entrée distincte ; « Ignorer les existants » l’exclut.
+1170|« %@ » est déjà dans la liste des imports.
+1171|« %@ » n’est plus le titre que vous modifiiez.
+1172|« %@ » a également été déplacé ailleurs.
+1173|« %@ » a été retiré de la playlist ailleurs.
+Q1|one:%@ · %lld	many:%@ · %lld	other:%@ · %lld
+Q2|one:%lld en téléchargement, %lld en attente	many:%lld en téléchargement, %lld en attente	other:%lld en téléchargement, %lld en attente
+Q3|one:%lld en téléchargement, %lld en attente · %@ jusqu’ici	many:%lld en téléchargement, %lld en attente · %@ jusqu’ici	other:%lld en téléchargement, %lld en attente · %@ jusqu’ici
+Q4|one:%lld élément chargé jusqu’ici. Il y en a d’autres.	many:%lld d’éléments chargés jusqu’ici. Il y en a d’autres.	other:%lld éléments chargés jusqu’ici. Il y en a d’autres.
+Q5|one:%lld élément qui n’est pas un titre YouTube Music est exclu.	many:%lld d’éléments qui ne sont pas des titres YouTube Music sont exclus.	other:%lld éléments qui ne sont pas des titres YouTube Music sont exclus.
+Q6|one:%lld fichier de plus	many:%lld de fichiers de plus	other:%lld fichiers de plus
+Q7|one:%lld sur %lld téléchargés	many:%lld sur %lld téléchargés	other:%lld sur %lld téléchargés
+Q8|one:%lld pour cent	many:%lld pour cent	other:%lld pour cent
+Q9|one:%lld lecture · %@ d’écoute	many:%lld de lectures · %@ d’écoute	other:%lld lectures · %@ d’écoute
+Q10|one:%lld résultat n’a pas pu être lu et n’est pas affiché.	many:%lld de résultats n’ont pas pu être lus et ne sont pas affichés.	other:%lld résultats n’ont pas pu être lus et ne sont pas affichés.
+Q11|one:%lld résultat d’un type que cette app n’affiche pas a été exclu.	many:%lld de résultats d’un type que cette app n’affiche pas ont été exclus.	other:%lld résultats d’un type que cette app n’affiche pas ont été exclus.
+Q12|one:%lld seconde	many:%lld de secondes	other:%lld secondes
+Q13|one:%lld seconde restante	many:%lld de secondes restantes	other:%lld secondes restantes
+Q14|one:%lld sélectionné	many:%lld sélectionnés	other:%lld sélectionnés
+Q15|one:%lld titre	many:%lld de titres	other:%lld titres
+Q16|one:%lld titre de la file d’attente	many:%lld de titres de la file d’attente	other:%lld titres de la file d’attente
+Q17|one:%lld %% lu	many:%lld %% lu	other:%lld %% lu
+Q18|one:Ajouter %lld titre	many:Ajouter %lld de titres	other:Ajouter %lld titres
+Q19|one:Ajouter %lld titre à « %@ »	many:Ajouter %lld de titres à « %@ »	other:Ajouter %lld titres à « %@ »
+Q20|one:Ajouter %lld titre à « %@ » ?	many:Ajouter %lld de titres à « %@ » ?	other:Ajouter %lld titres à « %@ » ?
+Q21|one:Et %lld autre.	many:Et %lld d’autres.	other:Et %lld autres.
+Q22|one:Reculer de %lld seconde	many:Reculer de %lld de secondes	other:Reculer de %lld secondes
+Q23|one:Effacer %lld lecture de ce Mac ?	many:Effacer %lld de lectures de ce Mac ?	other:Effacer %lld lectures de ce Mac ?
+Q24|one:Personnalisé : %lld minute	many:Personnalisé : %lld de minutes	other:Personnalisé : %lld minutes
+Q25|one:Fondu · %lld seconde restante	many:Fondu · %lld de secondes restantes	other:Fondu · %lld secondes restantes
+Q26|one:Avancer de %lld seconde	many:Avancer de %lld de secondes	other:Avancer de %lld secondes
+Q27|one:Seul %lld élément chargé jusqu’ici est couvert. Chargez tout pour couvrir toute la collection.	many:Seuls les %lld d’éléments chargés jusqu’ici sont couverts. Chargez tout pour couvrir toute la collection.	other:Seuls les %lld éléments chargés jusqu’ici sont couverts. Chargez tout pour couvrir toute la collection.
+Q28|one:Page %lld	many:Page %lld	other:Page %lld
+Q29|one:Position de l’élément dans la file d’attente : %lld	many:Position de l’élément dans la file d’attente : %lld	other:Position de l’élément dans la file d’attente : %lld
+Q30|one:Supprimer %lld titre	many:Supprimer %lld de titres	other:Supprimer %lld titres
+Q31|one:Supprimer %lld titre de « %@ » ?	many:Supprimer %lld de titres de « %@ » ?	other:Supprimer %lld titres de « %@ » ?
+Q32|one:Résonance %lld	many:Résonance %lld	other:Résonance %lld
+Q33|one:Veille dans %llds%@	many:Veille dans %llds%@	other:Veille dans %llds%@
+Q34|one:Minuteur de veille réglé sur %lld minute.	many:Minuteur de veille réglé sur %lld de minutes.	other:Minuteur de veille réglé sur %lld minutes.
+Q35|one:Minuteur de veille : il reste %lld:%@	many:Minuteur de veille : il reste %lld:%@	other:Minuteur de veille : il reste %lld:%@
+Q36|one:Cette app ajoute jusqu’à %lld fichier à la fois. Les autres n’ont pas été ajoutés.	many:Cette app ajoute jusqu’à %lld de fichiers à la fois. Les autres n’ont pas été ajoutés.	other:Cette app ajoute jusqu’à %lld fichiers à la fois. Les autres n’ont pas été ajoutés.
+Q37|one:Cela supprime définitivement la playlist et son entrée (%lld) de YouTube Music. Cette action est irréversible.	many:Cela supprime définitivement la playlist et ses %lld d’entrées de YouTube Music. Cette action est irréversible.	other:Cela supprime définitivement la playlist et ses %lld entrées de YouTube Music. Cette action est irréversible.
+Q38|one:Annuler pour %lld titre	many:Annuler pour %lld de titres	other:Annuler pour %lld titres
+Q39|one:Annuler : %lld titre supprimé	many:Annuler : %lld de titres supprimés	other:Annuler : %lld titres supprimés
+Q40|one:Import… %lld %%	many:Import… %lld %%	other:Import… %lld %%

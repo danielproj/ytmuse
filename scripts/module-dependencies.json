@@ -1,0 +1,79 @@
+{
+  "Domain": [],
+  "DesignSystem": [
+    "Domain"
+  ],
+  "Diagnostics": [
+    "Domain"
+  ],
+  "Persistence": [
+    "Domain"
+  ],
+  "AccountSession": [
+    "Domain",
+    "Persistence"
+  ],
+  "YouTubeMusicAdapter": [
+    "Domain",
+    "AccountSession"
+  ],
+  "StreamResolver": [
+    "Domain",
+    "AccountSession"
+  ],
+  "Queue": [
+    "Domain",
+    "Persistence"
+  ],
+  "OutputRoutes": [
+    "Domain"
+  ],
+  "Playback": [
+    "Domain",
+    "Queue",
+    "OutputRoutes"
+  ],
+  "Downloads": [
+    "Domain",
+    "Persistence",
+    "StreamResolver",
+    "AccountSession",
+    "Playback"
+  ],
+  "Artwork": [
+    "Domain"
+  ],
+  "SystemIntegration": [
+    "Domain"
+  ],
+  "WidgetShared": [
+    "DesignSystem"
+  ],
+  "Features": [
+    "Domain",
+    "DesignSystem",
+    "AccountSession",
+    "Queue",
+    "Artwork",
+    "Diagnostics"
+  ],
+  "AppShell": [
+    "Features",
+    "Domain",
+    "OutputRoutes",
+    "DesignSystem",
+    "AccountSession",
+    "Persistence",
+    "Playback",
+    "Queue",
+    "Artwork",
+    "Downloads",
+    "SystemIntegration",
+    "WidgetShared",
+    "Diagnostics",
+    "Updates"
+  ],
+  "Updates": [
+    "Domain"
+  ]
+}

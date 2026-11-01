@@ -1,0 +1,66 @@
+1|Startsäit
+2|Entdecken
+3|Bibliothéik
+4|Sichen
+5|Astellungen
+6|Ofspillen
+7|Paus
+8|Nächst
+9|Virdrun
+10|Warteschlaang
+11|Downloads
+12|Elo am Spill
+13|Ofbriechen
+14|Fäerdeg
+15|Nach eng Kéier probéieren
+16|Probéiert nach eng Kéier
+17|Zoumaachen
+18|Umellen
+19|Ofmellen
+20|Kont derbäisetzen
+21|Ewechhuelen
+22|Réckgängeg maachen
+23|Erop réckelen
+24|Erof réckelen
+25|Pauséiert
+26|Spillt of
+27|Lued…
+28|Mat Google umellen
+29|Wëllkomm bei YTMuse
+30|Wielt Musek aus fir unzefänken
+31|Är Warteschlaang ass eidel
+32|D’Sëtzung ass ofgelaf
+33|Umeldung ofbriechen
+34|Dir gitt Äert Passwuert op der Säit vu Google an, ni am YTMuse.
+35|Mellt Iech nach eng Kéier un, fir Är Bibliothéik ofzespillen.
+36|Är Sëtzung ass eriwwer. Mellt Iech nach eng Kéier un, fir ofzespillen.
+37|Verbannt dëse Kont nach eng Kéier, fir weiderzemaachen.
+38|D’Verbindung ass offline. Probéiert et nach eng Kéier, wann Dir verbonnen sidd.
+39|YouTube Music war net erreechbar. Kontrolléiert Är Verbindung a probéiert et nach eng Kéier.
+40|Dës Aktioun ass de Moment net disponibel.
+41|Dës Säit konnt net gelueden ginn
+42|Dir sidd offline, dofir gouf näischt geännert. D’Aktioun gouf net an d’Warteschlaang gesat.
+43|Mellt Iech bei YouTube Music un, fir dat ze maachen.
+44|YouTube Music konnt dës Ännerung de Moment net maachen. Et gouf näischt geännert.
+45|Äre Kont huet sech geännert, ier dat ugefaangen huet. Probéiert et nach eng Kéier.
+46|Rezent Sichen an Elementer bleiwen op dësem Mac, ginn ni iergendwou higeschéckt a ginn zesumme mam Kont geläscht.
+47|Dëst läscht nëmmen den Androck, deen op dësem Mac gespäichert ass. De Verlaf vu YouTube Music selwer ännert sech net.
+48|Verlaf vun dësem Mac läschen
+49|D’Umeldung ass ofgelaf. Et gouf näischt gespäichert. Probéiert et nach eng Kéier, wann Dir prett sidd.
+50|Ofgemellt.
+51|Ugemellt als %@.
+52|Op %@ gewiesselt.
+53|%@ ofspillen
+54|Aktuellen Output: %@
+55|„%@“ aus Ären Uploads ewechhuelen?
+56|Eng Reklamm spillt of
+57|D’Reklamm ass eriwwer
+58|Elo am Spill: „%@“ vum %@.
+59|Sprooch vun der Interface
+60|Sprooch vun der Musek an den Texter
+61|Regioun fir Empfehlungen
+62|Wéi macOS
+63|D’Regioun ännert nëmmen dat, wat virgeschloe gëtt. Si schalt ni Musek oder Funktiounen fräi, déi Äre Kont oder Äre Standuert net erlaabt.
+P1|one:%lld Minutt	other:%lld Minutten
+P2|one:Réckgängeg: %lld Lidd derbäigesat	other:Réckgängeg: %lld Lidder derbäigesat
+P3|one:%lld Element konnt net gewise ginn	other:%lld Elementer konnten net gewise ginn

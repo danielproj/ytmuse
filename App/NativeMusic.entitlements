@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Applied only by scripts/sign-bundle.sh with an identity: $(TeamIdentifierPrefix) becomes the identity's Team ID and a dot there, never in this repository. Xcode's own signing uses NativeMusic-adhoc.entitlements. -->
+<plist version="1.0"><dict>
+    <key>com.apple.security.application-groups</key><array><string>$(TeamIdentifierPrefix)local.native-music.development</string></array>
+</dict></plist>

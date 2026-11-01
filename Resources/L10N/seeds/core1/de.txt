@@ -1,0 +1,66 @@
+1|Start
+2|Entdecken
+3|Mediathek
+4|Suchen
+5|Einstellungen
+6|Wiedergeben
+7|Pause
+8|Nächster
+9|Vorheriger
+10|Warteschlange
+11|Downloads
+12|Aktuelle Wiedergabe
+13|Abbrechen
+14|Fertig
+15|Erneut versuchen
+16|Erneut versuchen
+17|Schließen
+18|Anmelden
+19|Abmelden
+20|Account hinzufügen
+21|Entfernen
+22|Widerrufen
+23|Nach oben
+24|Nach unten
+25|Pausiert
+26|Wiedergabe
+27|Wird geladen …
+28|Mit Google anmelden
+29|Willkommen bei YTMuse
+30|Wähle Musik, um zu beginnen
+31|Deine Warteschlange ist leer
+32|Sitzung abgelaufen
+33|Anmeldung abbrechen
+34|Dein Passwort gibst du auf der Seite von Google ein, niemals in YTMuse.
+35|Melde dich erneut an, um deine Mediathek wiederzugeben.
+36|Deine Sitzung wurde beendet. Melde dich erneut an, um Musik abzuspielen.
+37|Verbinde diesen Account erneut, um fortzufahren.
+38|Die Verbindung ist offline. Versuche es erneut, sobald du verbunden bist.
+39|YouTube Music ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.
+40|Diese Aktion ist gerade nicht verfügbar.
+41|Diese Seite konnte nicht geladen werden
+42|Du bist offline, daher wurde nichts geändert. Die Aktion wurde nicht vorgemerkt.
+43|Melde dich bei YouTube Music an, um das zu tun.
+44|YouTube Music konnte diese Änderung gerade nicht vornehmen. Es wurde nichts geändert.
+45|Dein Account hat sich geändert, bevor das begann. Versuche es erneut.
+46|Letzte Suchanfragen und Objekte bleiben auf diesem Mac, werden nirgendwohin gesendet und zusammen mit dem Account entfernt.
+47|Dadurch wird nur der Verlauf entfernt, der auf diesem Mac gespeichert ist. Der eigene Verlauf von YouTube Music bleibt unverändert.
+48|Verlauf dieses Mac löschen
+49|Die Anmeldung ist abgelaufen. Es wurde nichts gesichert. Versuche es erneut, wenn du bereit bist.
+50|Abgemeldet.
+51|Angemeldet als %@.
+52|Zu %@ gewechselt.
+53|%@ wiedergeben
+54|Aktuelle Ausgabe: %@
+55|„%@“ aus deinen Uploads entfernen?
+56|Eine Werbeanzeige wird wiedergegeben
+57|Die Werbeanzeige ist beendet
+58|Aktuelle Wiedergabe: „%@“ von %@.
+59|Sprache der Benutzeroberfläche
+60|Sprache von Musik und Songtexten
+61|Region für Empfehlungen
+62|Wie macOS
+63|Die Region ändert nur die Vorschläge. Sie schaltet nie Musik oder Funktionen frei, die dein Account oder dein Standort nicht erlaubt.
+P1|one:%lld Minute	other:%lld Minuten
+P2|one:Widerrufen: %lld Song hinzugefügt	other:Widerrufen: %lld Songs hinzugefügt
+P3|one:%lld Objekt konnte nicht angezeigt werden	other:%lld Objekte konnten nicht angezeigt werden
