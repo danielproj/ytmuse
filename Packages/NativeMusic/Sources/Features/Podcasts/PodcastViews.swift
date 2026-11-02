@@ -107,6 +107,7 @@ public struct PodcastRateMenu: View {
     let rate: Double
     /// The player's actual speed, when it differs the label shows IT (and says what was chosen) rather than the choice.
     var actual: Double? = nil
+    public init(playback: PodcastPlaybackModel, show: String?, rate: Double, actual: Double? = nil) { self.playback = playback; self.show = show; self.rate = rate; self.actual = actual }
     private var display: PodcastRateDisplay { PodcastRateDisplay(chosen: rate, actual: actual) }
     public var body: some View {
         Menu {

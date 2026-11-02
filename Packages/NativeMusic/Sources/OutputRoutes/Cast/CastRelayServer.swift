@@ -3,10 +3,10 @@ import Foundation
 import Network
 import Synchronization
 
-// W39 (ROUTE07). The listening half of the relay: one TCP listener bound to ONE local IPv4 address, each connection answered once and closed.
+// W39 (ROUTE07). The listening half of the relay: one TCP listener bound to ONE local address (IPv4, or since TH4 IPv6), each connection answered once and closed.
 // Every decision is `CastRelayCore`'s. This file only moves bytes, enforces the connection cap and the read timeout, and refuses to exist where it must
-// not: `CastNetworkGate.requireBindable` rejects the wildcard, public and IPv6 addresses always, and any non-loopback address unless the real network has
-// been enabled (which never happens in a test process).
+// not: `CastNetworkGate.requireBindable` rejects the wildcard and public addresses always (IPv6: only loopback, unique-local and link-local are private), and any
+// non-loopback address unless the real network has been enabled (which never happens in a test process).
 
 public final class CastRelayServer: @unchecked Sendable {
     public let core: CastRelayCore
@@ -62,7 +62,7 @@ public final class CastRelayServer: @unchecked Sendable {
     public func url(serving file: URL) throws -> URL {
         guard let port, port != 0 else { throw CastRelayError.notStarted }
         let path = try core.register(file: file)
-        guard let url = URL(string: "http://\(bindAddress):\(port)\(path)") else { throw CastRelayError.notStarted }
+        guard let url = URL(string: "http://\(CastNetworkGate.urlHost(for: bindAddress)):\(port)\(path)") else { throw CastRelayError.notStarted }
         return url
     }
 
@@ -83,8 +83,13 @@ public final class CastRelayServer: @unchecked Sendable {
     // MARK: Connections
 
     private func peer(of connection: NWConnection) -> String? {
-        guard case .hostPort(let host, _) = connection.endpoint, case .ipv4(let address) = host else { return nil }
-        return String(address.debugDescription.split(separator: "%").first ?? "")
+        guard case .hostPort(let host, _) = connection.endpoint else { return nil }
+        // The zone (the interface a link-local peer arrived on) is not part of who the peer is.
+        switch host {
+        case .ipv4(let address): return String(address.debugDescription.split(separator: "%").first ?? "")
+        case .ipv6(let address): return String(address.debugDescription.split(separator: "%").first ?? "")
+        default: return nil
+        }
     }
     private func accept(_ connection: NWConnection) {
         guard !stopped, active < core.limits.maxConnections, let peer = peer(of: connection), CastNetworkGate.peerAllowed(peer, receiver: core.receiverAddress, boundTo: bindAddress) else { connection.cancel(); return }

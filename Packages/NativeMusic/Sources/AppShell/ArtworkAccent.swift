@@ -70,6 +70,43 @@ enum ArtworkAccent {
     }
 }
 
+/// POL-A: the decoded covers of the YouTube Music items that played last, keyed by the exact bytes the hidden player published. A cover view that
+/// replaces another (the bar morphing into Now Playing and back, the mini player opening) paints the cover in its first frame instead of the
+/// default note while its own decode runs. Keyed by the bytes, so it can only ever show a decode of the artwork the player holds right now: a
+/// different song or a closed player (`artwork == nil`) never matches. A few entries only; the player's artwork is at most 512 px.
+@MainActor final class WebCoverMemo {
+    static let shared = WebCoverMemo()
+    static let defaultCapacity = 6
+    let capacity: Int
+    private var entries: [(data: Data, image: NSImage)] = []
+    init(capacity: Int = WebCoverMemo.defaultCapacity) { self.capacity = max(1, capacity) }
+    var count: Int { entries.count }
+    func image(for data: Data?) -> NSImage? {
+        guard let data, let index = entries.firstIndex(where: { $0.data == data }) else { return nil }
+        let entry = entries.remove(at: index); entries.insert(entry, at: 0)
+        return entry.image
+    }
+    func remember(_ image: NSImage, for data: Data) {
+        entries.removeAll { $0.data == data }
+        entries.insert((data, image), at: 0)
+        if entries.count > capacity { entries.removeLast(entries.count - capacity) }
+    }
+    /// Empties the memo: called wherever the app drops one account's artwork (`ArtworkAccountParticipant`: detach on a switch or sign-out, removal, stop).
+    func removeAll() { entries.removeAll() }
+    /// What a view paints: the held decode of the bytes the player has now, so a song change whose cover is already held wins at once, else the view's own
+    /// image (still the previous song's until its decode lands).
+    func displayed(for data: Data?, current: NSImage?) -> NSImage? { image(for: data) ?? current }
+    /// The cover for `data`: a held decode, else a fresh one (decoded off the main actor, then held). Nil when there is no artwork or it does not decode.
+    func decoded(_ data: Data?) async -> NSImage? {
+        guard let data else { return nil }
+        if let held = image(for: data) { return held }
+        guard let decoded = await WebMusicQueueImageDecoder.decode(data) else { return nil }
+        if let held = image(for: data) { return held }
+        let image = NSImage(cgImage: decoded.image, size: NSSize(width: decoded.image.width, height: decoded.image.height))
+        remember(image, for: data); return image
+    }
+}
+
 #if DEBUG
 /// What tint each player surface was last given, so a test can prove the glass tint is the same input across the bar and the expanded player.
 @MainActor enum PlayerTintProbe {

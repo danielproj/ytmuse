@@ -8834,6 +8834,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Another start is still in progress. Try again in a moment.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ein anderer Start läuft noch. Versuche es gleich noch einmal."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ein anderer Start läuft noch. Versuche es gleich noch einmal."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Another start is still in progress. Try again in a moment."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Todavía hay otro inicio en curso. Inténtalo de nuevo en un momento."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Un autre démarrage est encore en cours. Réessayez dans un instant."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Другой запуск ещё выполняется. Повторите попытку через мгновение."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Anyone with the link can open this playlist.": {
       "localizations": {
         "de": {
@@ -18682,6 +18723,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "End": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ende"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ende"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Fin"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Fin"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Конец"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "End of episode": {
       "localizations": {
         "de": {
@@ -19550,6 +19632,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Огляд"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Fading": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ausblenden"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ausblenden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fading"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Atenuando"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Atténuation"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Затухание"
           }
         }
       },
@@ -27812,6 +27935,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "More items follow; YouTube Music lists only the next few.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Es folgen weitere Objekte; YouTube Music listet nur die nächsten auf."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Es folgen weitere Objekte; YouTube Music listet nur die nächsten auf."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More items follow; YouTube Music lists only the next few."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Siguen más elementos; YouTube Music solo muestra los próximos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "D’autres éléments suivent ; YouTube Music n’indique que les prochains."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Дальше будут и другие объекты; YouTube Music показывает только ближайшие."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "More playback actions": {
       "localizations": {
         "de": {
@@ -31417,40 +31581,10 @@
     },
     "Not built yet. A radio that continues playback needs a recommendation source, which belongs to the queue and discovery work (W05 and W38). Nothing in this app starts a radio by itself.": {
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Noch nicht umgesetzt. Ein Radio, das die Wiedergabe fortsetzt, braucht eine Empfehlungsquelle, die zur Arbeit an Warteschlange und Entdecken gehört (W05 und W38). Nichts in dieser App startet von selbst ein Radio."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Noch nicht umgesetzt. Ein Radio, das die Wiedergabe fortsetzt, braucht eine Empfehlungsquelle, die zur Arbeit an Warteschlange und Entdecken gehört (W05 und W38). Nichts in dieser App startet von selbst ein Radio."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Not built yet. A radio that continues playback needs a recommendation source, which belongs to the queue and discovery work (W05 and W38). Nothing in this app starts a radio by itself."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Aún no está disponible. Una radio que continúe la reproducción necesita una fuente de recomendaciones, que forma parte del trabajo de la cola y el descubrimiento (W05 y W38). Nada en esta app inicia una radio por sí solo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Pas encore disponible. Une radio qui poursuit la lecture a besoin d’une source de recommandations, qui relève du travail sur la file d’attente et la découverte (W05 et W38). Rien dans cette app ne démarre une radio de lui-même."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Пока не реализовано. Радио, продолжающему воспроизведение, нужен источник рекомендаций, который относится к работе над очередью и подборками (W05 и W38). В этом приложении радио само не запускается."
           }
         }
       },
@@ -31820,6 +31954,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Пока ничего не скачано"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Nothing else is queued after this item.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Nach diesem Objekt ist nichts weiter in der Warteschlange."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Nach diesem Objekt ist nichts weiter in der Warteschlange."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing else is queued after this item."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "No hay nada más en la cola después de este elemento."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Rien d’autre n’est en file d’attente après cet élément."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "После этого объекта в очереди ничего нет."
           }
         }
       },
@@ -40844,6 +41019,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Receiver volume": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Lautstärke des Empfängers"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Lautstärke des Empfängers"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Receiver volume"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Volumen del receptor"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Volume du récepteur"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Громкость приёмника"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Recent": {
       "localizations": {
         "de": {
@@ -44019,6 +44235,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Продление"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Repeat": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Wiederholen"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Wiederholen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repeat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Repetir"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Répéter"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Повтор"
           }
         }
       },
@@ -54349,6 +54606,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Sleep Timer": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Einschlaftimer"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Einschlaftimer"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep Timer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Temporizador de reposo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Minuteur de veille"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Таймер сна"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Sleep in %llds%@": {
       "localizations": {
         "de": {
@@ -57750,6 +58048,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "That item is no longer in the queue.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Dieses Objekt ist nicht mehr in der Warteschlange."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Dieses Objekt ist nicht mehr in der Warteschlange."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That item is no longer in the queue."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Este elemento ya no está en la cola."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Cet élément n’est plus dans la file d’attente."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Этого объекта больше нет в очереди."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "That position is not valid.": {
       "localizations": {
         "de": {
@@ -60355,6 +60694,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "The queue can’t be changed while an ad plays.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Warteschlange kann nicht geändert werden, solange eine Werbeanzeige läuft."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Warteschlange kann nicht geändert werden, solange eine Werbeanzeige läuft."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The queue can’t be changed while an ad plays."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "No se puede cambiar la cola mientras suena un anuncio."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "La file d’attente ne peut pas être modifiée pendant une publicité."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Очередь нельзя менять, пока играет реклама."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "The queue could not be reordered. Check the editable items and try again.": {
       "localizations": {
         "de": {
@@ -60603,40 +60983,10 @@
     },
     "The receiver sets the volume.": {
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Der Empfänger bestimmt die Lautstärke."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Der Empfänger bestimmt die Lautstärke."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "The receiver sets the volume."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "El receptor controla el volumen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Le récepteur règle le volume."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Громкость задаёт приёмник."
           }
         }
       },
@@ -65827,6 +66177,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "This receiver can't change its volume from here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Dieser Empfänger kann seine Lautstärke von hier aus nicht ändern."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Dieser Empfänger kann seine Lautstärke von hier aus nicht ändern."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This receiver can't change its volume from here."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Este receptor no puede cambiar su volumen desde aquí."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ce récepteur ne peut pas modifier son volume d'ici."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Этот приёмник не может менять громкость отсюда."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "This receiver can't fade the sleep timer": {
       "localizations": {
         "de": {
@@ -65863,6 +66254,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Этот приёмник не может плавно приглушать звук при срабатывании таймера сна"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "This receiver's volume is fixed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lautstärke dieses Empfängers ist fest."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Lautstärke dieses Empfängers ist fest."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This receiver's volume is fixed."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "El volumen de este receptor es fijo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Le volume de ce récepteur est fixe."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Громкость этого приёмника фиксирована."
           }
         }
       },
@@ -71629,6 +72061,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Waiting for the receiver's volume.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Warte auf die Lautstärke des Empfängers."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Warte auf die Lautstärke des Empfängers."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for the receiver's volume."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Esperando el volumen del receptor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "En attente du volume du récepteur."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ожидание громкости приёмника."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Waiting to upload": {
       "localizations": {
         "de": {
@@ -72538,6 +73011,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Какой именно?"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "While you cast, the volume slider sets the receiver's volume. The Mac's volume stays as it was.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Beim Casten stellt der Lautstärkeregler die Lautstärke des Empfängers ein. Die Lautstärke des Mac bleibt unverändert."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Beim Casten stellt der Lautstärkeregler die Lautstärke des Empfängers ein. Die Lautstärke des Mac bleibt unverändert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "While you cast, the volume slider sets the receiver's volume. The Mac's volume stays as it was."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Mientras envías con Cast, el control de volumen ajusta el volumen del receptor. El volumen del Mac no cambia."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Pendant la diffusion, le curseur de volume règle le volume du récepteur. Le volume du Mac reste inchangé."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Во время трансляции ползунок громкости меняет громкость приёмника. Громкость Mac остаётся прежней."
           }
         }
       },
@@ -75519,6 +76033,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "YouTube Music did not take that change.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat diese Änderung nicht übernommen."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat diese Änderung nicht übernommen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music did not take that change."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music no aplicó ese cambio."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music n’a pas pris en compte ce changement."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music не применил это изменение."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "YouTube Music didn’t accept this change. Nothing was changed.": {
       "localizations": {
         "de": {
@@ -77366,40 +77921,10 @@
     },
     "YouTube Music manages the upcoming items for this playlist, so they are not listed or editable here.": {
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music verwaltet die nächsten Objekte dieser Playlist, daher werden sie hier weder aufgelistet noch sind sie bearbeitbar."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music verwaltet die nächsten Objekte dieser Playlist, daher werden sie hier weder aufgelistet noch sind sie bearbeitbar."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "YouTube Music manages the upcoming items for this playlist, so they are not listed or editable here."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music gestiona los elementos siguientes de esta lista de reproducción, así que no se muestran ni se pueden editar aquí."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music gère les éléments à venir de cette playlist ; ils ne sont donc ni listés ni modifiables ici."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music управляет следующими объектами этого плейлиста, поэтому они здесь не перечислены и не редактируются."
           }
         }
       },
@@ -77482,6 +78007,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YouTube Music сам управляет следующими объектами, поэтому YTMuse не может добавить что-то в очередь или воспроизвести следующим."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "YouTube Music manages the upcoming items, so they can’t be reordered or removed here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music verwaltet die nächsten Objekte, daher lassen sie sich hier weder neu anordnen noch entfernen."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music verwaltet die nächsten Objekte, daher lassen sie sich hier weder neu anordnen noch entfernen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music manages the upcoming items, so they can’t be reordered or removed here."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music gestiona los elementos siguientes, así que aquí no se pueden reordenar ni quitar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music gère les éléments à venir ; ils ne peuvent donc être ni réorganisés ni supprimés ici."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music управляет следующими объектами, поэтому их нельзя здесь переставлять или удалять."
           }
         }
       },
@@ -78302,6 +78868,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Историю самого YouTube Music нельзя приостановить из этого приложения: сервис не предоставляет для этого запрос. Используйте настройки действий в вашем аккаунте Google."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "YouTube Music’s own player decides what plays after the queue ends; this app has no switch for it. To start a radio yourself, choose Start Radio where it is offered.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Musics eigener Player entscheidet, was nach dem Ende der Warteschlange spielt; diese App hat dafür keinen Schalter. Um selbst ein Radio zu starten, wähle „Radio starten“, wo es angeboten wird."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Musics eigener Player entscheidet, was nach dem Ende der Warteschlange spielt; diese App hat dafür keinen Schalter. Um selbst ein Radio zu starten, wähle „Radio starten“, wo es angeboten wird."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music’s own player decides what plays after the queue ends; this app has no switch for it. To start a radio yourself, choose Start Radio where it is offered."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "El reproductor de YouTube Music decide qué suena cuando termina la cola; esta app no tiene un interruptor para ello. Para iniciar una radio por tu cuenta, elige «Iniciar radio» donde se ofrezca."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Le lecteur de YouTube Music décide de ce qui se lit à la fin de la file d’attente ; cette app n’a pas de réglage pour cela. Pour lancer vous-même une radio, choisissez « Démarrer la radio » là où elle est proposée."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Что играет после окончания очереди, решает собственный плеер YouTube Music; в этом приложении для этого нет переключателя. Чтобы запустить радио самостоятельно, выберите «Запустить радио» там, где оно предлагается."
           }
         }
       },

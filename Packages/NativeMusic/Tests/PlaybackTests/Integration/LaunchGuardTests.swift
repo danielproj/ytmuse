@@ -43,13 +43,13 @@ enum LaunchGuard {
         ("UI test addressed by bundle identifier", p("XCUIAppli", "cation\\s*(?:\\.\\s*init)?\\s*\\(\\s*bundleIdentifier"), true),
         ("Apple script API", p("NSApple", "Script\\b|OSA", "Script\\b|NSUserApple", "ScriptTask|\\bOSA", "Kit\\b|\\bAESend", "Message|AEDetermine", "PermissionToAutomate"), true),
         // NSWorkspace opening or launching, on one line, across lines (`.shared` then `.open(` on the next) or through a variable (see `workspaceViaVariable`).
-        ("workspace launch", p("NSWork", "space\\s*(?:\\.\\s*\\w+|\\(\\s*\\))*\\s*\\.\\s*(?:open|openApplication|launchApplication|launchApp|urlForApplication)\\b|\\bLS", "Open\\w*|\\bLS", "Launch\\w*|NSWork", "space\\s+sharedWorkspace\\s*\\]\\s*(?:openURLs?|openApplicationAtURL|launchApplication\\w*|openFile|openTempFile|URLForApplication\\w*|urlForApplication)\\b"), true),
+        ("workspace launch", p("NSWork", "space\\s*(?:\\.\\s*\\w+|\\(\\s*\\))*\\s*\\.\\s*(?:(?:open|openApplication|launchApplication|launchApp|urlForApplication)\\b|(?:open|launch|urlFor)\\w*_)|\\bLS", "Open\\w*|\\bLS", "Launch\\w*|NSWork", "space\\s+sharedWorkspace\\s*\\]\\s*(?:openURLs?|openApplicationAtURL|launchApplication\\w*|openFile|openTempFile|URLForApplication\\w*|urlForApplication)\\b"), true),
         // The open command by bare name or by absolute path, in a shell line, a subprocess list, a Swift Process (executableURL / launchPath) ...
         // TH1: options may be long (`--env NAME=VALUE`, `--args`) and carry a value, and the target may be a variable (`"$APP"`, `$app`, `${app}`): `open`
-        // at command position with an option, a quoted word, a variable or a path as its argument is a finding, since nothing in the repository needs the system's open command.
-        ("shell open", p("(?m)(?<![\\w.-])op", "en\\s+(?:-[a-zA-Z]+\\s+)*[\"']?(?:ytmuse:|YTMuse|local\\.native-music|[^\\s\"']*\\.app\\b)|(?<![\\w.-])op", "en\\s+-[ab]\\b|(?:^|[;&|(`]|\\$\\()[ \\t]*(?:(?:exec|sudo|command|nohup|time|xargs|then|do|else)[ \\t]+)*op", "en[ \\t]+(?:-|[\"'$/~.]|\\\\)"), false),
+        // at command position (also right after a quote, as in a `sh -c` string, and after `find -exec`) with an option, a quoted word, a variable, a brace or a path as its argument is a finding, since nothing in the repository needs the system's open command.
+        ("shell open", p("(?m)(?<![\\w.-])op", "en\\s+(?:-[a-zA-Z]+\\s+)*[\"']?(?:ytmuse:|YTMuse|local\\.native-music|[^\\s\"']*\\.app\\b)|(?<![\\w.-])op", "en\\s+-[ab]\\b|(?:^|[;&|(`\"']|\\$\\(|-exec(?:dir)?(?=[ \\t]))[ \\t]*(?:(?:exec|sudo|command|nohup|time|xargs|then|do|else)[ \\t]+)*op", "en[ \\t]+(?:-|[\"'$/~.{]|\\\\)|(?<![\\w./-])op", "en[ \\t]+(?:(?:-\\S+|[A-Za-z_]\\w*=\\S*)[ \\t]+)*[\"']?\\$"), false),
         // A subprocess argument list whose second element is a flag, a ytmuse: URL or a variable, or a command string built with a variable, starting with the command name.
-        ("process open", p("[\"']op", "en[\"']\\s*,\\s*(?:[\"'](?:-|ytmuse:)|[A-Za-z_$][\\w.$]*\\s*[,\\])])|[\"']op", "en\\s+(?:-\\w|[$%{]|ytmuse:|[^\\s\"']*\\.app\\b)|[\"']op", "en\\s*[\"']\\s*(?:\\+|%|\\.format)"), false),
+        ("process open", p("[\"']op", "en[\"']\\s*,\\s*(?:[\"'](?:-|ytmuse:)|(?:\\*+|[A-Za-z_$])[\\w.$]*\\s*[,\\])])|[\"']op", "en\\s+(?:-\\w|[$%{]|ytmuse:|[^\\s\"']*\\.app\\b)|[\"']op", "en\\s*[\"']\\s*(?:\\+|%|\\.format)"), false),
         // The standard library's browser launcher goes through the same LaunchServices resolution.
         ("browser launch", p("\\bweb", "browser\\b"), false),
         // ... and the absolute path itself, anywhere: nothing here needs to call the system's open command.
@@ -65,7 +65,7 @@ enum LaunchGuard {
                 guard group < match.numberOfRanges else { continue }
                 guard let range = Range(match.range(at: group), in: code) else { continue }
                 let name = String(code[range])
-                if code.range(of: "\\b" + name + "\\s*\\.\\s*(?:open|openApplication|launchApplication|launchApp|urlForApplication)\\b|\\[\\s*" + name + "\\s+(?:openURLs?|openApplicationAtURL|launchApplication\\w*|openFile|openTempFile|URLForApplication\\w*)\\b", options: .regularExpression) != nil { return true }
+                if code.range(of: "\\b" + name + "\\s*\\.\\s*(?:(?:open|openApplication|launchApplication|launchApp|urlForApplication)\\b|(?:open|launch|urlFor)\\w*_)|\\[\\s*" + name + "\\s+(?:openURLs?|openApplicationAtURL|launchApplication\\w*|openFile|openTempFile|URLForApplication\\w*)\\b", options: .regularExpression) != nil { return true }
             }
         }
         return false
@@ -95,7 +95,7 @@ enum LaunchGuard {
             let target = rule.codeOnly ? code : raw
             if target.range(of: pattern, options: .regularExpression) != nil { result.append(Finding(file: path, rule: rule.name)) }
         }
-        if path.hasSuffix(".swift") || path.hasSuffix(".m") || path.hasSuffix(".mm"), !result.contains(where: { $0.rule == "workspace launch" }), workspaceViaVariable(code) { result.append(Finding(file: path, rule: "workspace launch")) }
+        if path.hasSuffix(".swift") || path.hasSuffix(".m") || path.hasSuffix(".mm") || path.hasSuffix(".py"), !result.contains(where: { $0.rule == "workspace launch" }), workspaceViaVariable(code) { result.append(Finding(file: path, rule: "workspace launch")) }
         if !path.hasPrefix(uiTestDirectory), code.range(of: processDescriptor, options: .regularExpression) != nil { result.append(Finding(file: path, rule: "process-id descriptor outside the UI tests")) }
         return result
     }
@@ -107,17 +107,36 @@ enum LaunchGuard {
             guard let walker = FileManager.default.enumerator(at: root.appendingPathComponent(directory), includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey]) else { continue }
             for case let url as URL in walker {
                 if [".build", ".git", "DerivedData", ".swiftpm"].contains(url.lastPathComponent) { walker.skipDescendants(); continue }
-                guard (try? url.resourceValues(forKeys: [.isRegularFileKey]))?.isRegularFile == true, (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0 <= 2_000_000,
-                      let text = try? String(contentsOf: url, encoding: .utf8) else { continue }
+                guard (try? url.resourceValues(forKeys: [.isRegularFileKey]))?.isRegularFile == true else { continue }
                 let ext = url.pathExtension
                 // A file with no extension is read as text whether or not it has a `#!` line (`sh scripts/x` runs it).
                 guard scriptExtensions.contains(ext) || ext.isEmpty else { continue }
                 let relative = url.resolvingSymlinksInPath().path.replacingOccurrences(of: base + "/", with: "")
+                // TH4 (L4): a script-like file the sweep cannot read as text is a finding, unless it is a known binary type. Skipping it silently would let a script hide in an odd encoding or a large file.
+                guard (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0 <= 2_000_000, let text = try? String(contentsOf: url, encoding: .utf8) else {
+                    if !GuardBinaryFiles.isKnownBinary(url) { findings.append(Finding(file: relative, rule: GuardBinaryFiles.unreadableRule)) }
+                    continue
+                }
                 files.append(relative)
                 findings += Self.findings(inText: text, path: relative)
             }
         }
         return (findings, files)
+    }
+}
+
+/// TH4 (L4): the one short list of binary types a guard's sweep may skip without reading, recognised by their first bytes (not by name). Anything else that a sweep
+/// cannot read as UTF-8 text (or that is over its size cap) is reported, so a script cannot hide in an odd encoding.
+enum GuardBinaryFiles {
+    static let unreadableRule = "script-like file that cannot be read as UTF-8 text (or is over 2 MB) and is not a known binary type"
+    /// binary property list, Mach-O (thin and fat, both byte orders), PNG, JPEG, PDF, zip, gzip.
+    static let magics: [[UInt8]] = [Array("bplist00".utf8), [0xCF, 0xFA, 0xED, 0xFE], [0xFE, 0xED, 0xFA, 0xCF], [0xCE, 0xFA, 0xED, 0xFE], [0xFE, 0xED, 0xFA, 0xCE], [0xCA, 0xFE, 0xBA, 0xBE], [0xBE, 0xBA, 0xFE, 0xCA],
+                                    [0x89, 0x50, 0x4E, 0x47], [0xFF, 0xD8, 0xFF], Array("%PDF".utf8), [0x50, 0x4B, 0x03, 0x04], [0x1F, 0x8B]]
+    static func isKnownBinary(_ url: URL) -> Bool {
+        guard let handle = try? FileHandle(forReadingFrom: url) else { return false }
+        defer { try? handle.close() }
+        let head = Array((try? handle.read(upToCount: 8)) ?? Data())
+        return magics.contains { head.starts(with: $0) }
     }
 }
 
@@ -184,10 +203,24 @@ enum LaunchGuard {
             ("Tools/PlantTH1d.m", "id s = [[\(script) alloc] initWithSource:@\"x\"];\n"),
             ("Tools/PlantTH1e.mm", "OSStatus r = LS" + "OpenApplication(&params, NULL);\n"),
             ("Packages/NativeMusic/Tests/PlaybackTests/PlantTH1f.m", "id d = [\(descriptor) descriptorWithProcessIdentifier:1];\n"),
+            // TH4: a command inside a quoted `-c` string, `find -exec`, and PyObjC (selector names end in an underscore), directly and through a variable.
+            ("scripts/plantTH4a.sh", "bash -c '\(open) \"$APP\"'\n"),
+            ("scripts/plantTH4a2.sh", "sh -c \"\(open) -n $app_path\"\n"),
+            ("scripts/plantTH4b.sh", "find build -name '*.app' -exec \(open) {} \\;\n"),
+            ("scripts/plantTH4c.py", "from AppKit import \(workspace)\n\(workspace).sharedWorkspace().\(open)URL_(url)\n"),
+            ("scripts/plantTH4c2.py", "ws = \(workspace).sharedWorkspace()\nws.launchApplication_(path)\n"),
+            ("scripts/plantTH4d.py", "import subprocess\nsubprocess.run((\"\(open)\", app_path))\n"),
+            // TH4 (L1): the variable target after `if !`, a wrapper, a brace group, `-W`, and a splat in an argument list.
+            ("scripts/plantTH4e.sh", "if ! \(open) \"$APP\"; then echo no; fi\n"),
+            ("scripts/plantTH4e2.sh", "env \(open) \"$APP\"\n"),
+            ("scripts/plantTH4e3.sh", "{ \(open) \"$APP\"; }\n"),
+            ("scripts/plantTH4e4.sh", "caffeinate -i \(open) -W \"$APP\"\n"),
+            ("scripts/plantTH4e5.sh", "run_it() { \(open) --env NAME=value ${APP}; }\n"),
+            ("scripts/plantTH4f.py", "import subprocess\nsubprocess.run([\"\(open)\", *args])\n"),
             ("Extensions/plant16.zsh", "#!/bin/zsh\nexec \(osa) -l JavaScript -e 'x'\n"),
         ]
     }
-    static var controls: [(path: String, text: String)] { let open = "op" + "en", browser = "web" + "browser"; return [
+    static var controls: [(path: String, text: String)] { let open = "op" + "en", browser = "web" + "browser", workspace = "NSWork" + "space"; return [
         ("Tests/NativeMusicUITests/Control.swift", "let app = XCUIApplication(url: u); app.launch()\nlet d = " + "NSAppleEvent" + "Descriptor(processIdentifier: pid)\n"),
         ("Tests/NativeMusicUITests/Control3.swift", "let app = XCUI" + "Application()\napp.launch()\napp.\(open)(URL(string: \"ytmuse://library\")!)\nlet running = NSWork" + "space.shared.runningApplications\nlet ws = NSWork" + "space.shared\nlet n = ws.runningApplications.count\nlet t = Process(); t.executableURL = URL(fileURLWithPath: \"/usr/bin/true\")\n"),
         ("scripts/control4", "just a text note without a shebang: reopen the window, the status is open_count=1, /usr/bin/true is harmless\n"),
@@ -197,6 +230,11 @@ enum LaunchGuard {
         ("Tools/ControlTH1.m", "// [[NSWork" + "space sharedWorkspace] \(open)URL:u] is not a use\nNSString *note = @\"NSWork" + "space\";\nNSArray *r = [[NSWork" + "space sharedWorkspace] runningApplications];\n"),
         ("scripts/controlTH1.py", "import json\nwith \(open)(\"notes.txt\") as f: data = f.read()\nweb_\(browser) = 1\nprint(\"opened\", data)\n"),
         ("scripts/controlTH1.sh", "#!/bin/sh\nreopen_count=1; echo \"the window was re\(open)ed\"; xcodebuild test\nexport \(browser)_note=1\n"),
+        // TH4: the same shapes without the app: prose in quotes, a file written with `-exec`, a PyObjC read-only call, a variable that is not a workspace.
+        ("scripts/controlTH4.sh", "#!/bin/sh\necho 'the window is \(open) now'; find build -name '*.o' -exec rm {} \\;\nbash -c 'echo \(open)ed'\n"),
+        ("scripts/controlTH4.py", "from AppKit import \(workspace)\nrunning = \(workspace).sharedWorkspace().runningApplications()\nws = dict()\nws.get_\(open)_flag()\n"),
+        ("scripts/controlTH4b.sh", "#!/bin/sh\nif ! command -v xcodebuild; then echo 'we \(open) nothing'; fi\nprice=5; echo \"it costs $price\"; { echo done; }\n"),
+        ("scripts/controlTH4b.py", "import subprocess\nsubprocess.run([\"ls\", *args])\nwith \(open)(path) as f: data = f.read()\n"),
         ("Tests/NativeMusicUITests/Control2.swift", "// a comment that mentions NSApple" + "Script is not a use\nlet note = \"NSWork" + "space\"\n"),
     ] }
 
@@ -223,6 +261,22 @@ enum LaunchGuard {
     }
 
     /// The System Events file may tell System Events and nothing else, and only while its bytes are the reviewed ones.
+    /// TH4 (L4): a script-like file the sweep cannot read is a finding unless it is a known binary type; a readable one is not.
+    @Test func aScriptLikeFileThatCannotBeReadIsReportedUnlessItIsAKnownBinary() throws {
+        let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("ytmuse-th4-unreadable-" + UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: scratch) }
+        try FileManager.default.createDirectory(at: scratch.appendingPathComponent("scripts"), withIntermediateDirectories: true)
+        let odd = Data([0xFF, 0xFE, 0x23, 0x21, 0x2F, 0x62, 0x69, 0x6E, 0x2F, 0x73, 0x68, 0x0A, 0x80, 0x81])   // not UTF-8, begins like a script
+        try odd.write(to: scratch.appendingPathComponent("scripts/hidden.sh"))
+        try odd.write(to: scratch.appendingPathComponent("scripts/hidden-noext"))
+        try (Data("bplist00".utf8) + Data([0, 1, 2, 0x80])).write(to: scratch.appendingPathComponent("scripts/binary-plist"))
+        try (Data([0xCF, 0xFA, 0xED, 0xFE]) + Data([0x07, 0x80, 0x90])).write(to: scratch.appendingPathComponent("scripts/tool"))
+        try Data("#!/bin/sh\necho hello\n".utf8).write(to: scratch.appendingPathComponent("scripts/ok.sh"))
+        let (findings, files) = LaunchGuard.scan(root: scratch)
+        #expect(files == ["scripts/ok.sh"], "only the readable script was read: \(files)")
+        #expect(findings.contains { $0.file == "scripts/hidden.sh" && $0.rule == GuardBinaryFiles.unreadableRule } && findings.contains { $0.file == "scripts/hidden-noext" && $0.rule == GuardBinaryFiles.unreadableRule })
+        #expect(!findings.contains { $0.file == "scripts/binary-plist" || $0.file == "scripts/tool" || $0.file == "scripts/ok.sh" }, "known binaries and a clean script are not findings: \(findings)")
+    }
     @Test func theSystemEventsExemptionCoversOnlyTheSystemEventsForm() {
         let events = ScriptText.tell + " \"System Events\"\n"
         let ours = events + ScriptText.tell + " \"YTMuse\" to quit\n"

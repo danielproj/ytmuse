@@ -25,7 +25,7 @@ public enum BrowserAuditPlacement {
     case "sidebarFooter": Placement(group: "sidebar-content", kind: .element, container: "sidebarPanel", alignLeading: nil, alignTop: nil, onGrid: false)
     case "sidebarSettings": Placement(group: "sidebar-settings", kind: .layer, container: "sidebarFooter", alignLeading: nil, alignTop: nil, onGrid: false)
     // Chrome rows between the toolbar and the panels: bands (regions without outer margins), so the audit also proves they never run under the player or each other.
-    case "banner", "debugRow": Placement(group: "chrome", kind: .band, container: nil, alignLeading: nil, alignTop: nil, onGrid: false)
+    case "banner", "debugRow", "debugPlayerRow": Placement(group: "chrome", kind: .band, container: nil, alignLeading: nil, alignTop: nil, onGrid: false)
     default: Placement(group: "browser-misc", kind: .layer, container: nil, alignLeading: nil, alignTop: nil, onGrid: false)
     }
   }

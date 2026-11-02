@@ -5,7 +5,7 @@
 # The entitlement files say `$(TeamIdentifierPrefix)local.native-music.development`; the prefix is the identity's Team ID, learned here from a throwaway signature of a COPY
 # of the extension, expanded into private temporary files, and written into both Info.plists (`YTMuseAppGroup`, which is how the code learns its group id). The Team ID
 # is never written into the repository, never printed, and the temporary files are removed on exit.
-# ANY failure after the bundle starts to change (an Info.plist write, either signature, the verification, a refused identity or mismatched teams) runs a restore from an EXIT
+# ANY failure from the first step on, including the probe signature (an Info.plist write, either signature, the verification, a refused identity or mismatched teams) runs a restore from an EXIT
 # trap: the embedded extension is REMOVED (an ad-hoc build embeds none; check-intents.py rejects one), the app's Info.plist group key goes back to the build variable, and the
 # app is signed ad hoc with the ad-hoc entitlements (no App Group). The result is exactly what an ad-hoc build is, and the script's own exit status is kept.
 set -euo pipefail
@@ -29,6 +29,9 @@ restore() {
   exit $status
 }
 trap restore EXIT
+# TH4 (W25 critic R3-1): arm BEFORE the probe signature. A probe failure (a locked keychain, errSecInternalComponent) or "no Team ID" used to leave the build exactly as build.sh produced it with
+# the ad-hoc widget extension embedded, which check-intents.py rejects. The restore is correct for a bundle nothing has yet changed.
+armed=1
 # 1. The identity's team, from a signature of a copy (the real extension is signed once, with its final entitlements).
 cp -R "$appex" "$scratch/probe.appex"
 codesign --force --options runtime --timestamp=none --sign "$identity" "$scratch/probe.appex" >/dev/null 2>&1 || { echo 'sign-bundle: the identity could not sign' >&2; exit 65; }
@@ -40,7 +43,6 @@ expand() { sed "s/\$(TeamIdentifierPrefix)/$prefix/g" "$1" > "$2"; }
 expand App/NativeMusic.entitlements "$scratch/app.entitlements"
 expand Extensions/NativeMusicWidget.entitlements "$scratch/widget.entitlements"
 group="${prefix}local.native-music.development"
-armed=1
 for plist in "$app/Contents/Info.plist" "$appex/Contents/Info.plist"; do
   /usr/libexec/PlistBuddy -c "Set :YTMuseAppGroup $group" "$plist" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :YTMuseAppGroup string $group" "$plist"
 done

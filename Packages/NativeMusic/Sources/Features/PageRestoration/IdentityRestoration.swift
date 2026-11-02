@@ -105,7 +105,20 @@ public enum IdentityTopRule {
 
     public var isPending: Bool { restoration.map { !$0.finished } ?? false }
     /// The items now on the page, in display order, and the item each one belongs to (a row's shelf).
-    public func setItems(_ ids: [String], parents: [String: String] = [:]) { order = ids; present = Set(ids); self.parents = parents }
+    public func setItems(_ ids: [String], parents: [String: String] = [:]) { order = ids; present = Set(ids); self.parents = parents; itemsStamp = nil }
+    /// W44-prep (PERF): the same as `setItems`, but the ids are only built (and hashed) when `stamp` differs from the one the last call recorded. A long list
+    /// asks on every update of its view; walking 50,000 rows each time to learn that nothing changed was the cost. `owner` keeps two lists' stamps apart.
+    public func setItems(owner: ObjectIdentifier, generation: Int, _ ids: () -> [String]) {
+        let stamp = ItemsStamp(owner: owner, generation: generation)
+        guard itemsStamp != stamp else { return }
+        let list = ids()
+        order = list; present = Set(list); parents = [:]
+        itemsStamp = stamp
+    }
+    private struct ItemsStamp: Equatable { let owner: ObjectIdentifier; let generation: Int }
+    @ObservationIgnored private var itemsStamp: ItemsStamp?
+    /// The items the page currently lists, in display order (for tests of `setItems`).
+    var listedItems: [String] { order }
     /// A row's view was created or removed by its lazy container.
     public func realisation(_ id: String, _ isRealised: Bool) { if isRealised { realised.insert(id) } else { realised.remove(id) } }
     public func visibility(_ id: String, visible: Bool, full: Bool) {

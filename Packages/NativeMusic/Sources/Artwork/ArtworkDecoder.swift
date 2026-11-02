@@ -1,4 +1,5 @@
 import Foundation
+import Diagnostics
 import CoreGraphics
 import ImageIO
 import UniformTypeIdentifiers
@@ -13,6 +14,9 @@ actor ArtworkDecoder {
     private var counters = ArtworkNativeCounters()
     func snapshot() -> ArtworkNativeCounters { counters }
     func decode(_ bytes: Data, size: ArtworkSize, configuration: ArtworkConfiguration, persist: Bool, savedPalette: ArtworkPalette? = nil) throws -> DecodedArtwork {
+        let signpost = PerformanceSignposts.begin(.artworkDecode)
+        var completed = false
+        defer { PerformanceSignposts.end(signpost, failed: !completed) }
         try Task.checkCancellation()
         counters.decodeAttempts += 1
         counters.largestInputBytes = max(counters.largestInputBytes, bytes.count)
@@ -59,6 +63,7 @@ actor ArtworkDecoder {
             encoded = output as Data
         }
         counters.completedDecodes += 1
+        completed = true
         counters.largestRasterBytes = max(counters.largestRasterBytes, image.bytesPerRow * image.height)
         return DecodedArtwork(image: ArtworkImage(cgImage: image, palette: palette), png: encoded, offMain: !Thread.isMainThread)
     }

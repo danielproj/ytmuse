@@ -49,7 +49,12 @@ struct SyntheticTrack {
     /// A live stream behind the live edge: the widest accessory set (LIVE badge and Go Live beside volume and queue).
     var live = false
     var colors: ((Double, Double, Double), (Double, Double, Double)) = ((0.96, 0.45, 0.20), (0.62, 0.12, 0.45))
+    /// What the page's own player bar reports for shuffle and repeat (nil: it does not say).
+    var shuffle: Bool? = nil
+    var repeatMode: String? = nil
     static let playing = SyntheticTrack()
+    /// Shuffle on and repeat-one: both accent glyphs with their dots.
+    static let shuffledRepeating = SyntheticTrack(shuffle: true, repeatMode: "one")
     static let advertisement = SyntheticTrack(title: "Advertisement", artist: "", position: 6, duration: 15, ad: true)
     static let liveStream = SyntheticTrack(title: "Synthetic Live Stream", artist: "Synthetic Channel", position: 83, duration: 0, live: true, colors: ((0.1, 0.7, 0.6), (0.05, 0.25, 0.4)))
     static let longTitle = SyntheticTrack(title: "A Synthetic Title Long Enough To Test Truncation Across Every Supported Window Width", artist: "Synthetic Artist With A Long Name And Featured Guests", position: 12, duration: 640, playing: false,
@@ -65,8 +70,11 @@ struct SyntheticTrack {
         }
         await player.play(playlistID: "PLsynthetic", title: "Synthetic Mix")
         page?.commitLast()
-        page?.send(["type": "state", "doc": 1, "load": 1, "playing": track.playing, "buffering": false, "position": track.position, "duration": track.duration,
-                    "videoId": "SYNTHvid001", "title": track.title, "artist": track.artist, "artwork": "https://lh3.googleusercontent.com/synthetic-art", "ad": track.ad])
+        var state: [String: Any] = ["type": "state", "doc": 1, "load": 1, "playing": track.playing, "buffering": false, "position": track.position, "duration": track.duration,
+                                    "videoId": "SYNTHvid001", "title": track.title, "artist": track.artist, "artwork": "https://lh3.googleusercontent.com/synthetic-art", "ad": track.ad]
+        if let shuffle = track.shuffle { state["shuffle"] = shuffle }
+        if let repeatMode = track.repeatMode { state["repeat"] = repeatMode }
+        page?.send(state)
         if track.live {
             page?.send(["type": "media", "doc": 1, "load": 1, "videoId": "SYNTHvid001", "kind": "live", "seekStart": 0.0, "seekEnd": 120.0, "width": 0, "height": 0, "frames": 0, "pip": "unsupported", "isolated": false])
         }

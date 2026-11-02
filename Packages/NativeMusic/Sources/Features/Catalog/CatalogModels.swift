@@ -114,6 +114,26 @@ public enum CatalogActionPlan {
         }
     }
     public static func playlist(for item: MusicCatalogItem) -> String? { target(for: item)?.playlistID }
+    /// The radio a song or video's own menu published ("Start mix"): its playlist and the track it starts from, exactly as the service
+    /// named them. Nothing is derived from an id prefix. Its `params` are deliberately NOT sent: every row radio carries the service's
+    /// radio flag (`wAEB`), and the hidden player treats any start with parameters as a shuffle that must show "shuffle on" in the
+    /// page, which a radio never does, so such a start fails and drops the page. The page-level Start Radio is sent the same way
+    /// (playlist only). Nil where the row published none, for an upload (no catalog radio) and for an unavailable track, and where the
+    /// row's own Play already starts that same radio playlist (a Home song row): one action per outcome, so Play then Start Radio can
+    /// never be a second start of what is already playing. Albums, playlists and artists keep their page-level Start Radio.
+    public static func radioTarget(for item: MusicCatalogItem) -> PlayTarget? {
+        guard item.kind == .song || item.kind == .video, !item.isUpload, item.availability != .unavailable, let radio = item.radio else { return nil }
+        guard target(for: item)?.playlistID != radio.playlistID else { return nil }
+        return PlayTarget(playlistID: radio.playlistID, videoID: radio.videoID)
+    }
+    /// What an item's action starts in the hidden player; nil for an action that starts nothing (copy link) or that this item does not have.
+    public static func target(for action: CatalogAction, on item: MusicCatalogItem) -> PlayTarget? {
+        switch action {
+        case .play: target(for: item)
+        case .radio: radioTarget(for: item)
+        case .shuffle, .copyLink: nil
+        }
+    }
     /// Whether the track's Play continues a collection from this track (rather than starting the song's radio).
     public static func continuesCollection(_ item: MusicCatalogItem) -> Bool { target(for: item)?.videoID != nil }
     /// The song's own radio is what Play already starts; for collections the radio is the service's published mix.
@@ -155,6 +175,8 @@ public enum CatalogActionPlan {
             } else {
                 offers.append(.init(action: .play, unavailable: playbackReason(playback)))
             }
+            // Start Radio is drawn only when the row published its own radio; where it did not, there is no control at all.
+            if radioTarget(for: item) != nil { offers.append(.init(action: .radio, unavailable: playbackReason(playback))) }
         }
         if link(for: item) != nil { offers.append(.init(action: .copyLink, unavailable: nil)) }
         return offers

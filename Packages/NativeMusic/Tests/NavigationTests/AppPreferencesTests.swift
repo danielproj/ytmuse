@@ -31,7 +31,7 @@ import Foundation
         let key = "isolation-probe-" + UUID().uuidString
         resolved.store.set("dark", forKey: key); resolved.store.synchronize()
         #expect(UserDefaults.standard.object(forKey: key) == nil, "an isolated write never reaches the standard domain")
-        #expect(UserDefaults(suiteName: "local.native-music.development")?.object(forKey: key) == nil)
+        #expect(CFPreferencesCopyAppValue(key as CFString, "local.native-music.development" as CFString) == nil, "read-only: the product's own domain never got the probe key")
         #expect(FileManager.default.fileExists(atPath: path), "the plist lives at the throwaway path")
         // The registration domain is in-memory: the standard domain now "has" the key for reads, and nothing is written to the shared preferences file.
         UserDefaults.standard.register(defaults: [key: "standard"])

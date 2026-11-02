@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 @testable import AppShell
+import TestSupport
 
 // W28 rework 1 (F2): an explicit interface language is turned into the process's argument-domain AppleLanguages (volatile, nothing written to any file), which is what makes
 // String(localized:) and the menu bar follow it from the next launch. The real lookup is exercised by the native UI test (relaunch with German); these are the decisions.
@@ -20,9 +21,8 @@ import Foundation
   }
   @Test func applyingMergesIntoTheArgumentDomainAndWritesNoFile() {
     // A per-test suite object: its volatile argument domain is in memory only.
-    let name = "ytmuse-w28-language-override-" + UUID().uuidString
-    let defaults = UserDefaults(suiteName: name)!
-    defer { defaults.removePersistentDomain(forName: name) }
+    let scratch = ScratchDefaults(), name = scratch.path, defaults = scratch.defaults
+    defer { scratch.clean() }
     defaults.setVolatileDomain(["-ApplePersistenceIgnoreState": "YES"], forName: UserDefaults.argumentDomain)
     UILanguageOverride.apply(["de"], to: defaults)
     let domain = defaults.volatileDomain(forName: UserDefaults.argumentDomain)

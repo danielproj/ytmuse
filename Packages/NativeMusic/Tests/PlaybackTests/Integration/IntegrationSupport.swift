@@ -4,6 +4,7 @@ import Testing
 @testable import Playback
 @testable import SystemIntegration
 @testable import AppShell
+import TestSupport
 
 // W26 test support. Everything is in-process and synthetic: a fake hidden page, in-memory login item, the recording hot-key registrar, notification
 // center, share sheet and a private pasteboard. No test here sends an Apple event, registers a real hot key, asks for real notification authorization
@@ -35,30 +36,7 @@ let integrationVideo = "SYNTHlife01"   // 11 characters: a valid video id shape,
     var hotKeys: RecordingHotKeys { shell.facilities.hotKeys as! RecordingHotKeys }
 }
 
-/// Preferences that never reach the disk. A named `UserDefaults` suite writes a property list into `~/Library/Preferences` through `cfprefsd`, which rewrites
-/// it after a test deletes it (the first version left hundreds of empty files there). This subclass answers every accessor the shell, the stores and the
-/// tests use from a dictionary in memory, so nothing is created and nothing needs removing.
-final class InMemoryDefaults: UserDefaults, @unchecked Sendable {
-    private let lock = NSLock()
-    private var values: [String: Any] = [:]
-    init() { super.init(suiteName: "local.native-music.test-w26-in-memory")! }
-    private func read(_ key: String) -> Any? { lock.withLock { values[key] } }
-    private func write(_ value: Any?, _ key: String) { lock.withLock { values[key] = value } }
-    override func object(forKey defaultName: String) -> Any? { read(defaultName) }
-    override func set(_ value: Any?, forKey defaultName: String) { write(value, defaultName) }
-    override func set(_ value: Bool, forKey defaultName: String) { write(value, defaultName) }
-    override func set(_ value: Int, forKey defaultName: String) { write(value, defaultName) }
-    override func set(_ value: Double, forKey defaultName: String) { write(value, defaultName) }
-    override func removeObject(forKey defaultName: String) { write(nil, defaultName) }
-    override func bool(forKey defaultName: String) -> Bool { (read(defaultName) as? Bool) ?? false }
-    override func integer(forKey defaultName: String) -> Int { (read(defaultName) as? Int) ?? 0 }
-    override func double(forKey defaultName: String) -> Double { (read(defaultName) as? Double) ?? 0 }
-    override func string(forKey defaultName: String) -> String? { read(defaultName) as? String }
-    override func data(forKey defaultName: String) -> Data? { read(defaultName) as? Data }
-    override func dictionaryRepresentation() -> [String: Any] { lock.withLock { values } }
-    var isEmpty: Bool { lock.withLock { values.isEmpty } }
-}
-
+// `InMemoryDefaults` (preferences that never reach the disk) lives in TestSupport since TH3, shared by every test target.
 /// A scripting target that records the call and answers with a set refusal.
 @MainActor final class RecordingScriptTarget: ScriptingTarget {
     var playerState: ScriptPlayerState = .playing

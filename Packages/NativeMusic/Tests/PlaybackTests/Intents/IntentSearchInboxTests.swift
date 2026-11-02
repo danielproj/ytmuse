@@ -7,6 +7,7 @@ import Synchronization
 import Testing
 @testable import AppShell
 @testable import SystemIntegration
+import TestSupport
 
 /// W24 rework 1 (finding 4): a search an App Intent asks for is a request that waits for a window and is reported honestly. These tests drive the REAL
 /// consumer (`SearchRequestReceiver`, the modifier `BrowserShell` applies) in a hosted SwiftUI view with a real `SearchModel`, so removing or disabling
@@ -66,36 +67,47 @@ import Testing
         #expect(!a, "the replaced request reports that it was NOT performed (it does not say \"searching\")")
         #expect(b)
     }
-    /// Resumes a continuation once, with the first value offered.
-    private final class Once<T: Sendable>: @unchecked Sendable {
-        private let lock = NSLock(); private var continuation: CheckedContinuation<T, Never>?; private var done = false
-        func install(_ c: CheckedContinuation<T, Never>) { lock.withLock { continuation = c } }
-        func finish(_ value: T) { let c: CheckedContinuation<T, Never>? = lock.withLock { if done { return nil }; done = true; return continuation }; c?.resume(returning: value) }
-    }
-    /// "Told at once", measured: the request's own timeout is an hour, so a reply within `bound` of NOW (the replace or the clear, on the monotonic clock) can only be the
-    /// inbox telling it. TH2 rework (critic M2): the bound is a timer that does not depend on the request, so a request that really waits is abandoned (and cancelled) at the
-    /// bound and reported as nil in `bound`, instead of holding the test for the hour. (A task group would wait for the request, as `withinDeadline` once did.)
-    private func repliesBeforeItsTimeout(_ request: Task<Bool, Never>, within bound: Duration = .seconds(3)) async -> (reply: Bool?, elapsed: Duration) {
-        let started = ContinuousClock.now
-        let once = Once<Bool?>()
-        let reply: Bool? = await withCheckedContinuation { continuation in
-            once.install(continuation)
-            Task.detached { once.finish(await request.value) }
-            Task.detached { try? await Task.sleep(for: bound); request.cancel(); once.finish(nil) }
-        }
-        return (reply, ContinuousClock.now - started)
+    /// TH5F (TH5 critic L2): "told at once" without a wall-clock margin. The inbox is given a timer the test never fires, so the request's hour-long timeout cannot elapse and
+    /// the only way the request can come back is the inbox telling it. The test then lets the main actor take turns (`Task.yield`) until the request has replied, up to a
+    /// generous COUNT of turns: how busy the rest of the module is changes how long a turn takes, not how many turns the reply needs. A request the inbox never tells is
+    /// reported as nil after the turns run out.
+    private func replyAfterTurns(_ request: Task<Bool, Never>, turns: Int = 20_000) async -> Bool? {
+        var reply: Bool?
+        let watcher = Task { @MainActor in reply = await request.value }
+        for _ in 0..<turns { if reply != nil { break }; await Task.yield() }
+        watcher.cancel(); request.cancel()
+        return reply
     }
     @Test func aReplacedRequestIsToldAtOnceNotAfterItsTimeout() async {
-        let inbox = SearchRequestInbox()
+        let timer = ManualSearchInboxTimer(), inbox = SearchRequestInbox(timer: timer)
         let first = Task { @MainActor in await inbox.request("old", show: {}, timeout: .seconds(3600)) }
         await wait { inbox.pending?.text == "old" }
         _ = inbox.post("new")
-        let (reply, elapsed) = await repliesBeforeItsTimeout(first)
-        #expect(reply == false, "it did not wait out its timeout for words that will never be searched (nil would mean it did, after \(elapsed))")
+        let reply = await replyAfterTurns(first)
+        #expect(reply == false, "it did not wait out its timeout for words that will never be searched (nil would mean it did)")
+        #expect(!timer.fired, "the timeout never elapsed: the inbox told it, not the clock")
         // and a later request being performed never counts for an older serial
         let older = inbox.post("older"), newer = inbox.post("newer")
         inbox.claim(eligible: true) { _ in }
         #expect(await !inbox.waitUntilPerformed(older, timeout: .milliseconds(80)) && inbox.performedSerial == newer)
+    }
+    /// TH5F: the timeout path, driven by the test's own timer: nothing elapses until the test fires it, then the request is reported as not performed and withdrawn.
+    @Test func aRequestNoWindowTookIsWithdrawnWhenItsTimeoutElapses() async {
+        let timer = ManualSearchInboxTimer(), inbox = SearchRequestInbox(timer: timer)
+        let waiting = Task { @MainActor in await inbox.request("nobody", show: {}, timeout: .seconds(3600)) }
+        await wait { inbox.pending?.text == "nobody" }
+        for _ in 0..<200 { await Task.yield() }
+        #expect(inbox.pending?.text == "nobody", "before the timeout the request is still waiting for a window")
+        timer.fire()
+        let reply = await replyAfterTurns(waiting)
+        #expect(reply == false && inbox.pending == nil, "after it, not performed and withdrawn")
+        // Control: a window that takes the request before the timeout makes it true, with the timer never fired.
+        let other = ManualSearchInboxTimer(), taken = SearchRequestInbox(timer: other)
+        let accepted = Task { @MainActor in await taken.request("soon", show: {}, timeout: .seconds(3600)) }
+        await wait { taken.pending?.text == "soon" }
+        #expect(taken.claim(eligible: true) { _ in })
+        let result = await replyAfterTurns(accepted)
+        #expect(result == true && !other.fired)
     }
     @Test func theIntentReportsNothingSearchedWhenItsRequestWasReplaced() async throws {
         let rig = try await IntentRig.make()
@@ -106,19 +118,20 @@ import Testing
     }
 
     @Test func clearingWithdrawsThePendingRequestAndTellsAWaitingIntentAtOnce() async {
-        let inbox = SearchRequestInbox()
+        let timer = ManualSearchInboxTimer(), inbox = SearchRequestInbox(timer: timer)
         let waiting = Task { @MainActor in await inbox.request("old account's words", show: {}, timeout: .seconds(3600)) }
         await wait { inbox.pending?.text == "old account's words" }
         inbox.clear()
-        let (reply, elapsed) = await repliesBeforeItsTimeout(waiting)
-        #expect(reply == false, "told at once, not after its timeout (nil would mean it waited, after \(elapsed))")
+        let reply = await replyAfterTurns(waiting)
+        #expect(reply == false, "told at once, not after its timeout (nil would mean it waited)")
+        #expect(!timer.fired, "the timeout never elapsed: the inbox told it, not the clock")
         var ran = false
         #expect(!inbox.claim(eligible: true) { _ in ran = true } && !ran, "a window that appears afterwards finds nothing to run")
     }
     @Test func anAccountBarrierClearsTheShellsPendingSearchSoItNeverRunsUnderTheNextAccount() async throws {
         let rig = try await MediaRig.make()
         let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         let serial = shell.searchInbox.post("words typed under the old account")
         #expect(shell.searchInbox.pending?.serial == serial)
         try await rig.detach()                                  // the account is switched away: the authority's barrier
@@ -210,4 +223,23 @@ import Testing
         #expect(frontSearch.query == "once" && backSearch.query.isEmpty && opened.count == 1, "the frontmost window ran it, the other did not")
         #expect(log.all == ["once"])
     }
+}
+
+/// A timer for `SearchRequestInbox` that elapses only when `fire()` is called (TH5F).
+final class ManualSearchInboxTimer: SearchInboxTimer, @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuations: [CheckedContinuation<Void, Never>] = []
+    private var isFired = false, started = 0
+    var fired: Bool { lock.withLock { isFired } }
+    var waitsStarted: Int { lock.withLock { started } }
+    func wait(_ timeout: Duration) async {
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                let resumeNow = lock.withLock { () -> Bool in started += 1; if isFired { return true }; continuations.append(continuation); return false }
+                if resumeNow { continuation.resume() }
+            }
+        } onCancel: { self.releaseAll() }
+    }
+    func fire() { lock.withLock { isFired = true }; releaseAll() }
+    private func releaseAll() { let all = lock.withLock { () -> [CheckedContinuation<Void, Never>] in let all = continuations; continuations = []; return all }; for continuation in all { continuation.resume() } }
 }

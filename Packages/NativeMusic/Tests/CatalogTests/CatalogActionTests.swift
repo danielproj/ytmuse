@@ -87,7 +87,14 @@ import YouTubeMusicAdapter
                     if offer.unavailable == nil { #expect(CatalogActionPlan.playlist(for: entry).map(WebMusicIdentifier.isPlaylistID) == true, "\(capture) \(entry.title)") }
                     else { #expect(offer.unavailable?.isEmpty == false) }
                 case .copyLink: #expect(CatalogActionPlan.link(for: entry) != nil)
-                case .shuffle, .radio: Issue.record("an entry offered \(offer.action)")
+                case .radio:
+                    // Only a song or video, only from the radio its own row published; the hidden player's validator accepts the playlist.
+                    let radio = try #require(CatalogActionPlan.radioTarget(for: entry), "\(capture) \(entry.title)")
+                    #expect(entry.kind == .song || entry.kind == .video)
+                    #expect(WebMusicIdentifier.isPlaylistID(radio.playlistID) && radio.playlistID == entry.radio?.playlistID, "\(capture) \(entry.title)")
+                    #expect(radio.params == nil, "a row radio is never sent with the shuffle-shaped parameters")
+                    #expect(offer.unavailable == nil)
+                case .shuffle: Issue.record("an entry offered \(offer.action)")
                 }
             }
         }
@@ -127,7 +134,23 @@ import YouTubeMusicAdapter
         if case .failed? = model.feedback[song.id] {} else { Issue.record("stale is reported") }
         performer.outcome = .busy
         await model.perform(.play, on: song)
-        #expect(model.feedback[song.id] == nil)
+        // C5: a start refused because another is still under way says so, at the item; it is neither silent nor a failure of the service.
+        guard case .failed(let busy)? = model.feedback[song.id] else { Issue.record("busy is not silent"); return }
+        #expect(!busy.isEmpty && busy != message)
+    }
+    @Test func aPlayPressedWhileAShuffleIsStillStartingSaysSoAtThePageAndAtTheItem() async throws {
+        let script = ServiceScript(), performer = StubPerformer()
+        await script.setPages(.home, [try realPage(.home)])
+        let model = makeModel(.home, script: script, performer: performer)
+        await model.load()
+        let song = model.shelves[0].items[0]
+        performer.outcome = .busy
+        await model.perform(.play, on: song)
+        guard case .failed(let first)? = model.feedback[song.id] else { Issue.record("expected the busy line"); return }
+        performer.outcome = .started
+        await model.perform(.play, on: song)
+        #expect(model.feedback[song.id] == .started, "once the other start is over the line is replaced by the real outcome")
+        #expect(!first.isEmpty)
     }
     @Test func signedOutPlayNeverReachesThePerformer() async throws {
         let script = ServiceScript(), performer = StubPerformer()
@@ -168,7 +191,7 @@ import YouTubeMusicAdapter
         let detail = try #require(SongDetail(item: song))
         #expect(detail.artists.map(\.browseID) == ["UCoIOOL7QKuBhQHVKL8y7BEQ"] && detail.album?.browseID == "MPREb_dqWTncCjkSp")
         #expect(detail.isAvailable && detail.quality == .chosenByService)
-        #expect(detail.offers(playback: .available).map(\.action) == [.play, .copyLink])
+        #expect(detail.offers(playback: .available).map(\.action) == [.play, .copyLink], "a Home song's Play already starts its radio, so there is no second control for it")
         let grey = try #require(try realPage(.playlist).shelves[0].items.first { $0.availability == .unavailable })
         let unavailable = try #require(SongDetail(item: grey))
         #expect(!unavailable.isAvailable && unavailable.offers(playback: .available).first?.unavailable != nil)
@@ -196,5 +219,92 @@ import YouTubeMusicAdapter
         #expect(CatalogTarget(item: mood) == CatalogTarget(browseID: "FEmusic_moods_and_genres_category", params: mood.browseParams))
         #expect(CatalogTarget(item: try item(.home)) == nil)
         #expect(CatalogTarget(link: MusicLink(kind: .other, title: "x", browseID: "FEmusic_new_releases_albums", params: "p%3D")).key == "FEmusic_new_releases_albums?p%3D")
+    }
+    // MARK: Start Radio on a song (CORE-B C3)
+
+    /// A song or video that published a radio gets Start Radio exactly where its Play does something else (it continues a collection): the
+    /// rule is written here from the row's own context, not from the production function. Where Play already starts that same radio there is no second control.
+    @Test func startRadioIsOfferedExactlyWhereItDiffersFromPlay() async throws {
+        var offeredCount = 0, suppressedCount = 0
+        for capture in Capture.allCases {
+            for entry in try realPage(capture).shelves.flatMap(\.items) where entry.kind == .song || entry.kind == .video {
+                let offered = CatalogActionPlan.offers(for: entry, playback: .available).contains { $0.action == .radio }
+                let playContinuesACollection = entry.contextPlaylistID.map { !$0.hasPrefix("RDAMVM") } ?? false
+                if let radio = entry.radio, entry.availability != .unavailable, !entry.isUpload {
+                    if playContinuesACollection {
+                        offeredCount += 1
+                        #expect(offered, "\(capture) \(entry.title): Play continues a collection, the radio is a different outcome")
+                        #expect(CatalogActionPlan.radioTarget(for: entry) == CatalogActionPlan.PlayTarget(playlistID: radio.playlistID, videoID: radio.videoID, params: nil))
+                    } else {
+                        suppressedCount += 1
+                        #expect(!offered, "\(capture) \(entry.title): Play already starts this radio")
+                    }
+                } else { #expect(!offered, "\(capture) \(entry.title) published none") }
+            }
+        }
+        #expect(offeredCount > 0 && suppressedCount > 0, "the captures must contain both kinds of row or this proves nothing (\(offeredCount), \(suppressedCount))")
+    }
+    @Test func aHomeSongPlayThatIsItsOwnRadioHasNoStartRadio() throws {
+        let song = try item(.home)
+        #expect(song.radio?.playlistID == "RDAMVMZ85lxckrtzg" && CatalogActionPlan.playlist(for: song) == "RDAMVMZ85lxckrtzg")
+        #expect(!CatalogActionPlan.offers(for: song, playback: .available).contains { $0.action == .radio })
+        #expect(CatalogActionPlan.radioTarget(for: song) == nil)
+    }
+    @Test func performingStartRadioSendsTheRowsOwnPlaylistAndTrackWithoutParameters() async throws {
+        var found: MusicCatalogItem?
+        for capture in Capture.allCases where found == nil {
+            found = try realPage(capture).shelves.flatMap(\.items).first { CatalogActionPlan.radioTarget(for: $0) != nil }
+        }
+        let row = try #require(found, "a real row with an offered Start Radio")
+        let radio = try #require(row.radio)
+        #expect(radio.params != nil, "the published radio carries the service's flag; it must not be sent")
+        let script = ServiceScript(), performer = StubPerformer()
+        let model = makeModel(.home, script: script, performer: performer)
+        await model.perform(.radio, on: row)
+        let call = try #require(performer.targets.first)
+        #expect(performer.targets.count == 1 && call.playlist == radio.playlistID && call.video == radio.videoID && call.params == nil)
+        #expect(performer.played.first?.1 == row.title && model.feedback[row.id] == .started)
+    }
+    @Test func aRowInsideACollectionStartsItsRadioNotTheCollection() async throws {
+        // Built by hand: an album track whose Play continues the album and whose menu also published "Start mix".
+        let radio = MusicRadioAction(playlistID: "RDAMVMtrackInAlbum", videoID: "trackInAlbum", params: "wAEB")
+        let track = MusicCatalogItem(kind: .song, title: "Track", videoID: "trackInAlbum", contextPlaylistID: "OLAK5uy_albumList0001", radio: radio)
+        let script = ServiceScript(), performer = StubPerformer()
+        let model = makeModel(.home, script: script, performer: performer)
+        #expect(model.offers(for: track).map(\.action) == [.play, .radio, .copyLink])
+        await model.perform(.play, on: track)
+        await model.perform(.radio, on: track)
+        #expect(performer.targets.count == 2)
+        #expect(performer.targets[0].playlist == "OLAK5uy_albumList0001" && performer.targets[0].video == "trackInAlbum" && performer.targets[0].params == nil)
+        #expect(performer.targets[1].playlist == "RDAMVMtrackInAlbum" && performer.targets[1].video == "trackInAlbum" && performer.targets[1].params == nil, "the radio's flag is not sent")
+    }
+    /// The action is absent, not disabled, and a stale tap starts nothing: a radio is never made from a video id.
+    @Test func aRowWithoutAPublishedRadioHasNoStartRadioAndNothingIsDerived() async throws {
+        let track = MusicCatalogItem(kind: .song, title: "Plain", videoID: "plainTrack01", contextPlaylistID: "OLAK5uy_albumList0001")
+        let script = ServiceScript(), performer = StubPerformer()
+        let model = makeModel(.home, script: script, performer: performer)
+        #expect(!model.offers(for: track).contains { $0.action == .radio })
+        #expect(!SongDetail(item: track)!.offers(playback: .available).contains { $0.action == .radio })
+        #expect(CatalogActionPlan.radioTarget(for: track) == nil)
+        await model.perform(.radio, on: track)
+        #expect(performer.targets.isEmpty)
+        guard case .failed? = model.feedback[track.id] else { Issue.record("a stale tap is reported"); return }
+    }
+    @Test func startRadioIsNeverOfferedForAnUploadAnUnavailableTrackOrAnotherKind() throws {
+        let radio = MusicRadioAction(playlistID: "RDAMVMsomething01", videoID: "something01")
+        let upload = MusicCatalogItem(kind: .song, title: "Mine", videoID: "something01", isUpload: true, radio: radio)
+        let grey = MusicCatalogItem(kind: .song, title: "Grey", availability: .unavailable, videoID: "something01", radio: radio)
+        let album = MusicCatalogItem(kind: .album, title: "Album", browseID: "MPREb_x", playlistID: "OLAK5uy_albumList0001", radio: radio)
+        for entry in [upload, grey, album] { #expect(!CatalogActionPlan.offers(for: entry, playback: .available).contains { $0.action == .radio }, "\(entry.title)") }
+    }
+    @Test func signedOutStartRadioCarriesTheSameReasonAsPlayAndSendsNothing() async throws {
+        let radio = MusicRadioAction(playlistID: "RDAMVMsomething01", videoID: "something01")
+        let track = MusicCatalogItem(kind: .song, title: "Track", videoID: "something01", contextPlaylistID: "OLAK5uy_albumList0001", radio: radio)
+        let script = ServiceScript(), performer = StubPerformer()
+        let model = makeModel(.home, script: script, performer: performer, playback: .needsSignIn)
+        let offers = CatalogActionPlan.offers(for: track, playback: .needsSignIn)
+        #expect(offers.first { $0.action == .radio }?.unavailable != nil && offers.first { $0.action == .radio }?.unavailable == offers.first { $0.action == .play }?.unavailable)
+        await model.perform(.radio, on: track)
+        #expect(performer.targets.isEmpty)
     }
 }

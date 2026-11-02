@@ -68,19 +68,6 @@ public struct SectionShelf<Content: View>: View {
         }
     }
 }
-/// Native controls retain platform keyboard/focus/hover/disabled behavior.
-public struct TransportBar<Content: View>: View {
-    let content: Content
-    let tint: MusicTint?
-    let morph: MusicMorph?
-    @Environment(\.colorScheme) private var scheme
-    public init(tint: MusicTint? = nil, morph: MusicMorph? = nil, @ViewBuilder content: () -> Content) { self.tint = tint; self.morph = morph; self.content = content() }
-    public var body: some View {
-        VStack(spacing: MusicSpace.xs) { content }.padding(MusicSpace.sm)
-            .musicSurface(.player, tint: tint?.glassColor(scheme: scheme), morph: morph).musicElevation(.floating)
-            .musicAnimation(.artworkColor, value: tint)
-    }
-}
 public struct QueueRow: Identifiable, Sendable {
     public let id: UUID; public let title: String; public let segment: String; public let current: Bool; public let enabled: Bool; public let editable: Bool
     public init(id: UUID, title: String, segment: String, current: Bool, enabled: Bool = true, editable: Bool = true) { self.id = id; self.title = title; self.segment = segment; self.current = current; self.enabled = enabled; self.editable = editable }

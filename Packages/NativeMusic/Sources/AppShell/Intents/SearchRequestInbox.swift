@@ -10,8 +10,24 @@ import SwiftUI
 // no window took within the timeout is withdrawn and reported as not done. A window that appears AFTER the post (a cold launch, a restored window)
 // takes it when it becomes visible, and two windows never both take it.
 
+/// TH5F: how a request's timeout elapses. The product waits on the system clock; a test supplies a timer it fires itself, so a test of "told at once" depends on no wall-clock margin.
+protocol SearchInboxTimer: Sendable {
+    /// Returns when `timeout` has elapsed (or the calling task is cancelled).
+    func wait(_ timeout: Duration) async
+}
+struct SystemSearchInboxTimer: SearchInboxTimer {
+    func wait(_ timeout: Duration) async { try? await Task.sleep(for: timeout) }
+}
+
 @MainActor @Observable final class SearchRequestInbox {
     struct Request: Equatable, Sendable { let serial: Int; let text: String }
+    @ObservationIgnored private let timer: any SearchInboxTimer
+    /// A waiting intent: resumed whenever the inbox changes, when its timeout elapses, or when it is cancelled (TH5F: it used to poll every 25 ms).
+    @MainActor private final class Waiter { var continuation: CheckedContinuation<Void, Never>?; var expired = false }
+    @ObservationIgnored private var waiters: [Waiter] = []
+    init(timer: any SearchInboxTimer = SystemSearchInboxTimer()) { self.timer = timer }
+    private func wake(_ waiter: Waiter) { let continuation = waiter.continuation; waiter.continuation = nil; continuation?.resume() }
+    private func changed() { for waiter in waiters { wake(waiter) } }
     private(set) var pending: Request?
     private(set) var performedSerial = 0
     @ObservationIgnored private var serial = 0
@@ -22,6 +38,7 @@ import SwiftUI
     func post(_ text: String) -> Int {
         serial += 1
         pending = Request(serial: serial, text: text)
+        changed()
         return serial
     }
     /// An eligible window takes the pending request and performs it, exactly once. False when nothing is pending or the window is not eligible.
@@ -32,6 +49,7 @@ import SwiftUI
         performedSerial = request.serial
         performed.insert(request.serial)
         if performed.count > 64 { performed = performed.filter { $0 > request.serial - 32 } }
+        changed()
         return true
     }
     /// Posts the request, brings a window forward with `show`, and waits for a window to perform it. True only if one did; otherwise the request is
@@ -44,13 +62,24 @@ import SwiftUI
         return false
     }
     /// Withdraws whatever is pending (an account barrier). Intents waiting on it are told, at once, that their request was not performed.
-    func clear() { pending = nil }
-    func withdraw(_ serial: Int) { if pending?.serial == serial { pending = nil } }
+    func clear() { pending = nil; changed() }
+    func withdraw(_ serial: Int) { if pending?.serial == serial { pending = nil; changed() } }
     /// True only if a window performed THIS request. A request that a newer one replaced, that was withdrawn, or that no window took within `timeout` was not
     /// performed, and is reported so at once (a replaced request does not wait out its timeout: its words will never be searched).
     func waitUntilPerformed(_ serial: Int, timeout: Duration) async -> Bool {
-        let deadline = ContinuousClock.now + timeout
-        while !performed.contains(serial), pending?.serial == serial, ContinuousClock.now < deadline, !Task.isCancelled { try? await Task.sleep(for: .milliseconds(25)) }
+        let waiter = Waiter()
+        let clock = Task { @MainActor [timer] in await timer.wait(timeout); if !Task.isCancelled { waiter.expired = true }; self.wake(waiter) }
+        defer { clock.cancel(); waiters.removeAll { $0 === waiter } }
+        while !performed.contains(serial), pending?.serial == serial, !waiter.expired, !Task.isCancelled {
+            waiters.append(waiter)
+            await withTaskCancellationHandler {
+                await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                    // Everything here runs on the main actor, so no change can slip in between the check above and this registration.
+                    if Task.isCancelled { continuation.resume() } else { waiter.continuation = continuation }
+                }
+            } onCancel: { Task { @MainActor in self.wake(waiter) } }
+            waiters.removeAll { $0 === waiter }
+        }
         return performed.contains(serial)
     }
 }

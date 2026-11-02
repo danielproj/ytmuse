@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import OutputRoutes
+import TestSupport
 
 /// The coordinator with a scripted directory, an in-memory preferred-route store and a recording engine per kind.
 @MainActor struct Rig {
@@ -191,8 +192,7 @@ import Testing
         #expect(rig.store.load() == .systemDefault, "choosing the system output is a choice too")
     }
     @Test func aDamagedStoredValueFallsBackToTheSystemOutput() {
-        let defaults = UserDefaults(suiteName: "ytmuse-w22-" + UUID().uuidString)!
-        defer { defaults.removePersistentDomain(forName: defaults.volatileDomainNames.first ?? "") }
+        let defaults = InMemoryDefaults()
         defaults.set("not a route", forKey: DefaultsPreferredRoute.key)
         #expect(DefaultsPreferredRoute(defaults).load() == nil)
         DefaultsPreferredRoute(defaults).save(.device(uid: "SYNTH-X"))

@@ -3,6 +3,7 @@ import Foundation
 import Testing
 @testable import Playback
 @testable import AppShell
+import TestSupport
 
 @MainActor final class RecordingShell: ShellCommanding {
     var transport = ShellTransportState.idle
@@ -57,7 +58,7 @@ import Testing
     }
     @Test func theMenuTheStatusItemBuildsHasTheSameEntriesAndEnabledStateAsTheModel() async throws {
         let rig = try await LifecycleRig.make()
-        let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(), preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+        let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(), preferences: InMemoryDefaults(), installsStatusItem: false)
         let controller = StatusItemController(shell: shell, preferences: shell.preferences)
         let idle = controller.makeMenu()
         #expect(idle.items.filter { !$0.isSeparatorItem }.map(\.title) == titles(StatusMenuModel.entries(for: .idle)).filter { $0 != "-" })

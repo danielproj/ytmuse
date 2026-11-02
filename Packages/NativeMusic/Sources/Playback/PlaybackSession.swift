@@ -94,6 +94,11 @@ public actor PlaybackSession {
     private var handoffAttemptRetries = 0
     private var handoffPersistenceFailures = 0
     private var adoptionWaiters: [CheckedContinuation<Void, Never>] = []
+    /// TH5: true from the moment the session receives the end of an occurrence until it has finished committing it (the end's checkpoint, and the queue's exhaustion
+    /// or advance). A pause or sleep that arrives in that window waits for it (`awaitEndCommit`), so it lands AFTER the end like any later control, instead of
+    /// bumping `sequenceRevision` (which cancelled the advance) or pausing the queue first (the queue then refuses `.ended`, because its intent is no longer play).
+    private var endCommitInFlight = false
+    private var endCommitWaiters: [CheckedContinuation<Void, Never>] = []
     private var failedNext: (token: UUID, occurrence: UUID, retryAfter: Date)?
     private var preparedNext: (QueueHandoff, QueueEntry, PlaybackContext, MediaVariant)?
     private var listeningStarted: Date?
@@ -316,6 +321,18 @@ public actor PlaybackSession {
         }
         return output
     }
+    /// TH3: the harness entry for a loop that renders "until the queue clears". The player reports the end of the last occurrence, the session then retires the
+    /// decoded backend, and only after that does the queue commit the exhaustion (`current` becomes nil). In that window the owner's state is `.ended` and the
+    /// engine rightly refuses to render (no backend), so a loop that decided to render a moment earlier must read the refusal as "the item has ended", which is
+    /// `nil` here, and not as a failure. A refusal from any other state still throws. The device-driven pump never takes this path: it returns quietly when the
+    /// backend is gone (`serviceDecoded`), and `renderSelected` itself is used by tests only.
+    func renderSelectedUnlessEnded(_ frames: UInt32, throughPump: Bool = false) async throws -> sending AVAudioPCMBuffer? {
+        do { return try await renderSelected(frames, throughPump: throughPump) }
+        catch DomainError.staleContext {
+            guard await commands.snapshot().state == .ended else { throw DomainError.staleContext }
+            return nil
+        }
+    }
     func unattendedFailureCountForMeasurement() -> Int { consecutiveFailures }
     func handoffRetryCountForMeasurement() -> Int { handoffCommitRetries }
     /// TH1: how many times `renderSelected` re-read the context after the engine refused a context the session had itself moved past.
@@ -357,6 +374,7 @@ public actor PlaybackSession {
         _ = try await queue.execute(.replace(items, source: ServiceID("owned-test-context"), cursor: nil, decision: replacement, remember: false), context: context, origin: .userInterface)
     }
     public func sendQueue(_ command: QueueCommand, origin: CommandOrigin = .userInterface) async throws {
+        if case .pause = command { await awaitEndCommit() }
         try await requireActive(); defer { finishOperation() }; failedNext = nil
         switch command {
         case .select, .replace, .startContext, .resume, .previousItem, .nextItem:
@@ -368,12 +386,18 @@ public actor PlaybackSession {
         _ = try await queue.execute(command, context: context, origin: origin)
     }
     public func playPause() async throws {
+        await awaitEndCommit()
         try await requireActive(); defer { finishOperation() }
         let state = await commands.snapshot()
-        if state.intent == .play { try await pause(.user) }
+        if state.intent == .play { try await pauseWithinEndCommit(.user) }
         else { try await resume() }
     }
     public func pause(_ reason: PauseReason = .user) async throws {
+        await awaitEndCommit()
+        try await pauseWithinEndCommit(reason)
+    }
+    /// The pause itself. The session's own pauses that run inside an end's commit (the end-of-item sleep timer, the failure limit) call this directly.
+    private func pauseWithinEndCommit(_ reason: PauseReason) async throws {
         try await requireActive(); defer { finishOperation() }; sequenceRevision += 1; cancelScrub()
         _ = await commands.execute(.pause(reason), context: context, origin: .userInterface)
         _ = try await queue.execute(.pause(reason), context: context, origin: .userInterface)
@@ -539,6 +563,7 @@ public actor PlaybackSession {
         if before.state != after.state || before.intent != after.intent || before.context != after.context { notifyChanged() }
     }
     private func tickOnce() async {
+        await awaitEndCommit()
         await awaitAdoption()
         guard !stopped else { return }
         activeOperations += 1; defer { finishOperation(notify: false) }
@@ -546,7 +571,7 @@ public actor PlaybackSession {
         if state.state == .playing { scheduleFollowing(state.context) }
         if let deadline, wall.now() >= deadline, fadeStart == nil {
             if state.pauseReason == .sleep || state.state != .playing {
-                try? await pause(.user); timer = nil; self.deadline = nil
+                try? await pauseWithinEndCommit(.user); timer = nil; self.deadline = nil
             } else { fadeStart = clock.now(); fadingContext = state.context }
         }
         if timer == .endOfItem, fadeStart == nil, state.state == .playing,
@@ -560,7 +585,7 @@ public actor PlaybackSession {
             let seconds = Double(parts.seconds) + Double(parts.attoseconds) / 1e18
             _ = await engine.setFadeFactor(max(0, 1 - seconds / 5), context: state.context)
             if seconds >= 5 {
-                try? await pause(.user); try? await setTimer(nil)
+                try? await pauseWithinEndCommit(.user); try? await setTimer(nil)
             }
         }
         if let expiry = await commands.variantExpiry(), expiry.timeIntervalSince(wall.now()) <= 15,
@@ -595,17 +620,19 @@ public actor PlaybackSession {
         _ = await commands.execute(.route(route), context: context, origin: .userInterface)
     }
     public func sleep() async {
+        await awaitEndCommit()
         await awaitAdoption()
         guard !stopped else { return }
         activeOperations += 1; defer { finishOperation() }; cancelScrub()
         _ = await commands.execute(.sleep, context: context, origin: .userInterface)
     }
     public func wake(safeRoute: Bool, resumeEnabled: Bool) async {
+        await awaitEndCommit()
         await awaitAdoption()
         guard !stopped else { return }
         activeOperations += 1; defer { finishOperation() }
         if deadline.map({ wall.now() >= $0 }) == true || fadeStart != nil {
-            try? await pause(.user); try? await setTimer(nil)
+            try? await pauseWithinEndCommit(.user); try? await setTimer(nil)
         }
         await tick()
         closedIntervalContext = nil
@@ -624,6 +651,16 @@ public actor PlaybackSession {
     }
     private func awaitAdoption() async {
         while adoptionInProgress { await withCheckedContinuation { adoptionWaiters.append($0) } }
+    }
+    /// TH5: waits until an end being committed has finished (see `endCommitInFlight`). Called by the controls BEFORE they count as an operation, so a waiting
+    /// control never holds up an adoption. The session's own pauses inside the commit (`pauseWithinEndCommit`) never call it: they would wait on themselves.
+    private func awaitEndCommit() async {
+        while endCommitInFlight { await withCheckedContinuation { endCommitWaiters.append($0) } }
+    }
+    private func finishEndCommit() {
+        endCommitInFlight = false
+        let waiters = endCommitWaiters; endCommitWaiters.removeAll()
+        for waiter in waiters { waiter.resume() }
     }
     private func requireActive() async throws {
         await awaitAdoption()
@@ -648,6 +685,8 @@ public actor PlaybackSession {
         let sequence = sequenceRevision
         let before = await commands.snapshot()
         guard before.context == event.context else { return }
+        if case .ended = event.event { endCommitInFlight = true }
+        defer { if endCommitInFlight { finishEndCommit() } }
         await commands.receive(event)
         switch event.event {
         case .started:
@@ -678,7 +717,7 @@ public actor PlaybackSession {
                current.current?.segment != .advertisement,
                !(current.current.map { current.metadata.immutable.contains($0.id) } ?? false) {
                 consecutiveFailures += 1
-                if consecutiveFailures >= 3 { try? await pause(.user) }
+                if consecutiveFailures >= 3 { try? await pauseWithinEndCommit(.user) }
                 else { await advanceQueue(current.playbackToken, sequence: sequence, skipFailed: true) }
             }
         }
@@ -721,7 +760,7 @@ public actor PlaybackSession {
         let state = await commands.snapshot()
         guard state.context == token, sequenceRevision == sequence else { return }
         if timer == .endOfItem || fadeStart != nil {
-            try? await pause(.user); try? await setTimer(nil); return
+            try? await pauseWithinEndCommit(.user); try? await setTimer(nil); return
         }
         await checkpoint(state)
         guard state.intent == .play, sequenceRevision == sequence else { return }
@@ -755,7 +794,7 @@ public actor PlaybackSession {
                 failures = Array(failures.suffix(100))
                 guard consecutiveFailures < 3, let current, current.intent == .play,
                       current.current?.segment != .advertisement,
-                      !(current.current.map { current.metadata.immutable.contains($0.id) } ?? false) else { try? await pause(.user); return }
+                      !(current.current.map { current.metadata.immutable.contains($0.id) } ?? false) else { try? await pauseWithinEndCommit(.user); return }
                 nextToken = current.playbackToken; failure = true
             }
         }

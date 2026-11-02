@@ -72,7 +72,8 @@
 1245|No hay ruta de red hacia el servicio.
 1246|No hay ninguno hasta que grabes uno.
 1247|Normalizar el volumen
-1248|Aún no está disponible. Una radio que continúe la reproducción necesita una fuente de recomendaciones, que forma parte del trabajo de la cola y el descubrimiento (W05 y W38). Nada en esta app inicia una radio por sí solo.
+1248|El reproductor de YouTube Music decide qué suena cuando termina la cola; esta app no tiene un interruptor para ello. Para iniciar una radio por tu cuenta, elige «Iniciar radio» donde se ofrezca.
+2001|Todavía hay otro inicio en curso. Inténtalo de nuevo en un momento.
 1249|Aún no está disponible. La comprobación e instalación de actualizaciones llegarán con la distribución firmada (prevista como W30 y W46), con su propia activación opcional. Esta versión no comprueba ni instala nada.
 1250|Desactivado durante la reproducción
 1251|Desactivado durante la reproducción; un reinicio siempre es explícito.

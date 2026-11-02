@@ -51,17 +51,28 @@ import DesignSystem
 @MainActor @Observable public final class ArtworkUIAuthority {
     public private(set) var context = RequestContext(account: nil, accountGeneration: 0, requestGeneration: 0)
     private var removedAccounts: Set<UUID> = []
-    public init() {}
+    /// POL-A: the few covers this authority's views displayed last, so a view that replaces another for the same cover (the bar morphing into Now
+    /// Playing and back) paints it in its first frame. Fenced here: it is emptied when an account is removed or the bound account or generation
+    /// moves, and it is only ever read through `recentImage(for:)`, which asks `accepts` first.
+    public let recents: RecentArtworkStore
+    public init(recentCapacity: Int = RecentArtworkStore.defaultCapacity) { recents = RecentArtworkStore(capacity: recentCapacity) }
     public func removeAccount(_ id: UUID) {
         var transaction = Transaction(animation: nil); transaction.disablesAnimations = true
+        recents.removeAll()
         withTransaction(transaction) { _ = removedAccounts.insert(id) }
     }
     @discardableResult public func bind(_ value: RequestContext) -> Bool {
         if let account = value.account, removedAccounts.contains(account.accountID) { return false }
         guard value.accountGeneration > context.accountGeneration || (value.accountGeneration == context.accountGeneration && value.account == context.account) else { return false }
         var transaction = Transaction(animation: nil); transaction.disablesAnimations = true
+        if value.account != context.account || value.accountGeneration != context.accountGeneration { recents.removeAll() }
         withTransaction(transaction) { context = value }
         return true
+    }
+    /// The cover last displayed for this identity (any size), or nil when none is held or the request's account is not the one on screen.
+    public func recentImage(for request: ArtworkRequest) -> ArtworkImage? {
+        guard accepts(request.context) else { return nil }
+        return recents.image(for: ArtworkImageIdentity(request))
     }
     public func accepts(_ request: RequestContext) -> Bool {
         context.account != nil && !removedAccounts.contains(context.account!.accountID) && context.account == request.account && context.accountGeneration == request.accountGeneration
@@ -77,6 +88,31 @@ public struct ArtworkTintIdentity: Hashable, Sendable {
     public init(_ request: ArtworkRequest, consumerID: UUID?) { resource = request.resource; policy = request.policy; context = request.context; self.consumerID = consumerID }
     public func matchesRequest(_ other: Self) -> Bool { resource == other.resource && policy == other.policy && context == other.context }
 }
+/// A cover's identity without its raster size: `resource + policy + context`, as `ArtworkTintIdentity`. The decode for another size is the same cover.
+public struct ArtworkImageIdentity: Hashable, Sendable {
+    let resource: ArtworkResource; let policy: ArtworkCachePolicy; let context: RequestContext
+    public init(_ request: ArtworkRequest) { resource = request.resource; policy = request.policy; context = request.context }
+}
+/// A small most-recently-displayed set of decoded covers (POL-A). Bounded by count, so the artwork memory footprint stays the pipeline's: a few
+/// entries that the pipeline's own cache already holds as the same `CGImage`s.
+@MainActor public final class RecentArtworkStore {
+    public static let defaultCapacity = 6
+    public let capacity: Int
+    private var entries: [(identity: ArtworkImageIdentity, image: ArtworkImage)] = []
+    public init(capacity: Int = RecentArtworkStore.defaultCapacity) { self.capacity = max(1, capacity) }
+    public var count: Int { entries.count }
+    public func image(for identity: ArtworkImageIdentity) -> ArtworkImage? {
+        guard let index = entries.firstIndex(where: { $0.identity == identity }) else { return nil }
+        let entry = entries.remove(at: index); entries.insert(entry, at: 0)
+        return entry.image
+    }
+    public func remember(_ image: ArtworkImage, for identity: ArtworkImageIdentity) {
+        entries.removeAll { $0.identity == identity }
+        entries.insert((identity, image), at: 0)
+        if entries.count > capacity { entries.removeLast(entries.count - capacity) }
+    }
+    public func removeAll() { entries.removeAll() }
+}
 public struct ArtworkConsumerKey: Hashable, Sendable {
     let resource: ArtworkResource; let size: ArtworkSize; let policy: ArtworkCachePolicy; let context: RequestContext
     public init(_ request: ArtworkRequest) { resource = request.resource; size = request.size; policy = request.policy; context = request.context }
@@ -84,25 +120,39 @@ public struct ArtworkConsumerKey: Hashable, Sendable {
 /// Each view owns one consumer; peers may have unrelated query generations.
 @MainActor @Observable public final class ArtworkConsumer {
     private var image: ArtworkImage?
+    /// The cover `image` is a decode of. A reload that only changes the SIZE keeps showing `image` until the new size arrives (POL-A).
+    private var imageIdentity: ArtworkImageIdentity?
     public private(set) var unavailable = false
     private var current: ArtworkConsumerKey?
     private var revision: UInt64 = 0
     public init() {}
-    public func cancel() { revision += 1; current = nil; image = nil; unavailable = false }
+    public func cancel() { revision += 1; current = nil; image = nil; imageIdentity = nil; unavailable = false }
+    /// What to paint for `request` right now, synchronously: this consumer's own decode, else (size-only change) the one it already shows, else
+    /// the cover the authority's views displayed last for the same identity. Nil request, a failed load and an account the authority does not
+    /// accept all give nil, which is the original static art.
     public func displayed(for request: ArtworkRequest?, authority: ArtworkUIAuthority) -> ArtworkImage? {
-        guard let request, current == ArtworkConsumerKey(request), authority.accepts(request.context) else { return nil }
-        return image
+        guard let request, authority.accepts(request.context) else { return nil }
+        let key = ArtworkConsumerKey(request), identity = ArtworkImageIdentity(request)
+        if current == key {
+            if let image { return image }
+            if unavailable { return nil }
+        }
+        if let image, imageIdentity == identity { return image }
+        return authority.recentImage(for: request)
     }
     public func load(_ request: ArtworkRequest, pipeline: ArtworkPipeline, authority: ArtworkUIAuthority, visible: Bool = true) async {
         revision += 1; let ticket = revision
-        current = ArtworkConsumerKey(request); image = nil; unavailable = false
+        let identity = ArtworkImageIdentity(request)
+        current = ArtworkConsumerKey(request); unavailable = false
+        if imageIdentity != identity { image = nil; imageIdentity = nil }
         guard visible, authority.accepts(request.context), !Task.isCancelled else { return }
         for attempt in 0...1 {
             do {
                 let response = try await pipeline.image(for: request)
                 try Task.checkCancellation()
                 guard ticket == revision, current == ArtworkConsumerKey(request), response.context == request.context, authority.accepts(response.context) else { return }
-                image = response.image
+                image = response.image; imageIdentity = identity
+                authority.recents.remember(response.image, for: identity)
                 return
             } catch {
                 guard ticket == revision, !Task.isCancelled, authority.accepts(request.context) else { return }
@@ -112,7 +162,7 @@ public struct ArtworkConsumerKey: Hashable, Sendable {
                     guard ticket == revision, !Task.isCancelled, current == ArtworkConsumerKey(request), authority.accepts(request.context) else { return }
                     continue
                 }
-                unavailable = true
+                image = nil; imageIdentity = nil; unavailable = true
                 return
             }
         }
@@ -156,8 +206,11 @@ public struct NativeArtworkView: View {
             .onGeometryChange(for: CGSize.self, of: { $0.size }) { size = $0 }
     }
     private func artwork(_ measured: ArtworkRequest?) -> some View {
-        let image = consumer.displayed(for: measured, authority: authority)
-        let publication = TintPublication(palette: image?.palette, identity: measured.map { ArtworkTintIdentity($0, consumerID: tintConsumerID) })
+        // POL-A: before the first measurement `measured` is nil, but the cover is already known from the template, so a view that replaces another
+        // paints the shown cover in its first frame instead of the default art.
+        let shown = measured ?? request
+        let image = consumer.displayed(for: shown, authority: authority)
+        let publication = TintPublication(palette: image?.palette, identity: shown.map { ArtworkTintIdentity($0, consumerID: tintConsumerID) })
         let demand = Demand(key: measured.map(ArtworkConsumerKey.init), visible: visible && phase != .background, owner: authority.context)
         driver.apply(demand) { [consumer, authority, pipeline] in
             guard demand.visible, let pipeline, let measured else { consumer.cancel(); return }

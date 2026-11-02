@@ -210,7 +210,11 @@ actor RecordingResumeStore: MusicResumeStoring {
             try await rig.store.set("normalization", .bool(true))
             #expect(ChosenAudioEffects.make(from: rig.store)?.normalize == true)
         },
-        "autoplayRadio": { _ in Self.mustBeUnavailable("autoplayRadio", plannedIn: "W05") },
+        "autoplayRadio": { _ in
+            // C5: the row is read-only because YouTube Music's player owns what plays next, not because a feature is planned.
+            let definition = SettingsRegistry.definition("autoplayRadio")
+            #expect(definition?.availability.isControllable == false && definition?.availability.note?.contains("YouTube Music") == true)
+        },
         "replaceExplicitQueue": { rig in
             #expect(ReplacementPreference(rawValue: rig.store.text("replaceExplicitQueue")) == .ask, "Ask by default")
             try await rig.store.set("replaceExplicitQueue", .text("keep"))

@@ -122,8 +122,9 @@ final class NWCastChannel: CastChannel, @unchecked Sendable {
         tcp.enableKeepalive = true; tcp.keepaliveIdle = 10; tcp.connectionTimeout = 10
         let parameters = NWParameters(tls: tls, tcp: tcp)
         parameters.prohibitedInterfaceTypes = [.cellular]
-        // The relay is IPv4 only (it binds one private IPv4 address), so the control connection must be too: Network.framework would otherwise race the receiver's
-        // addresses and may land on IPv6, leaving a working channel with no way to serve it media.
+        // The control connection is held to IPv4 (W39 F1). The relay can serve IPv6 since TH4 (loopback, unique-local and link-local only; `CastNetworkGate.IPv6`), but a dual-stack
+        // receiver may be reached over a global (public-prefix) IPv6 address, which the relay will not bind, and Network.framework races the receiver's addresses. Releasing this
+        // pin is a decision for the live check on real hardware (end-of-project list), not for a unit test: until then the relay serves the family the channel actually uses.
         (parameters.defaultProtocolStack.internetProtocol as? NWProtocolIP.Options)?.version = .v4
         // A Bonjour service endpoint has no port; receivers listen on 8009.
         connection = NWConnection(to: endpoint, using: parameters)
@@ -154,8 +155,13 @@ final class NWCastChannel: CastChannel, @unchecked Sendable {
     }
     private func recordAddresses() {
         func text(_ endpoint: NWEndpoint?) -> String? {
-            guard case .hostPort(let host, _)? = endpoint, case .ipv4(let address) = host else { return nil }
-            return String(address.debugDescription.split(separator: "%").first ?? "")
+            guard case .hostPort(let host, _)? = endpoint else { return nil }
+            // IPv4 loses any zone; an IPv6 address keeps it (the relay needs the interface of a link-local address to bind and to build its URL).
+            switch host {
+            case .ipv4(let address): return String(address.debugDescription.split(separator: "%").first ?? "")
+            case .ipv6(let address): return address.debugDescription
+            default: return nil
+            }
         }
         let path = connection.currentPath
         addresses.withLock { $0 = (text(path?.localEndpoint), text(path?.remoteEndpoint)) }

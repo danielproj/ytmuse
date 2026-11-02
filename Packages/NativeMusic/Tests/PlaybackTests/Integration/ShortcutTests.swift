@@ -6,6 +6,7 @@ import WebKit
 @testable import Playback
 @testable import SystemIntegration
 @testable import AppShell
+import TestSupport
 
 /// A shell that records the table actions it was asked to run.
 @MainActor final class RecordingPerformer: ShortcutPerforming {

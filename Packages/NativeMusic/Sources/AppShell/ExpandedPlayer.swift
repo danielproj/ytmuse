@@ -112,22 +112,22 @@ struct ExpandedPlayer<Trailing: View>: View {
     @ViewBuilder private var controls: some View {
         if let player = model.music, WebMusicQueueSummary.isActive(player) {
             VStack(spacing: MusicSpace.xs) {
-                WebMusicTimelineView(player: player).audit("nowPlayingTimeline", group: "expandedColumn", within: "playerExpanded")
+                WebMusicTimelineView(player: player, plain: true).audit("nowPlayingTimeline", group: "expandedColumn", within: "playerExpanded")
                 transportRow {
-                    WebMusicControlsView(player: player, large: true, namespace: namespace)
+                    WebMusicControlsView(player: player, large: true, namespace: namespace, plain: true)
                 } accessories: {
-                    WebMusicAccessories(player: player, compact: compact, showVideo: nil, showQueue: showQueue, outputs: model.outputs, playback: model)
+                    WebCapsuleSecondary(player: player, compact: compact, expanded: true, showVideo: nil, showQueue: showQueue, outputs: model.outputs, playback: model)
                 }
                 SleepTimerLine(model: model, episode: model.playingEpisode(model.episodes), identifier: "nowPlayingSleepRemaining")
             }
         } else {
             VStack(spacing: MusicSpace.xs) {
-                PlaybackTimeline(model: model.timeline, seek: { target in Task { await model.act(action: .seek) { try await $0.seek(target) } } })
+                PlaybackTimeline(model: model.timeline, seek: { target in Task { await model.act(action: .seek) { try await $0.seek(target) } } }, plain: true)
                     .audit("nowPlayingTimeline", group: "expandedColumn", within: "playerExpanded")
                 transportRow {
-                    OwnedControlsView(model: model, large: true, namespace: namespace)
+                    OwnedControlsView(model: model, large: true, namespace: namespace, plain: true)
                 } accessories: {
-                    OwnedAccessories(model: model, compact: compact, showQueue: showQueue)
+                    OwnedCapsuleSecondary(model: model, compact: compact, expanded: true, showQueue: showQueue)
                 }
                 SleepTimerLine(model: model, identifier: "nowPlayingSleepRemaining")
             }

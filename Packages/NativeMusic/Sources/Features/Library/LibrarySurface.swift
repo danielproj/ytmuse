@@ -129,8 +129,11 @@ public enum LibraryControls {
         case .copyLink:
             guard let link = CatalogActionPlan.link(for: item) else { feedback[key] = .failed(String(localized: "This item has no link.")); return }
             performer.copy(link: link); feedback[key] = .copied
-        case .play:
-            guard let target = CatalogActionPlan.target(for: item) else { feedback[key] = .failed(String(localized: "This item didn’t include anything to play.")); return }
+        case .play, .radio:
+            guard let target = CatalogActionPlan.target(for: action, on: item) else {
+                feedback[key] = .failed(action == .radio ? String(localized: "This action isn’t available for this item.") : String(localized: "This item didn’t include anything to play."))
+                return
+            }
             let scope = accountScope()
             feedback[key] = .working
             let outcome = (target.videoID == nil && target.params == nil)
@@ -139,11 +142,12 @@ public enum LibraryControls {
             guard accountScope() == scope else { feedback[key] = nil; return }
             switch outcome {
             case .started: feedback[key] = .started
-            case .busy: feedback[key] = nil
+            // Another start is under way (a shuffle still being set up); this one was not sent. Said, never silent.
+            case .busy: feedback[key] = .failed(String(localized: "Another start is still in progress. Try again in a moment."))
             case .stale: feedback[key] = .failed(String(localized: "Your account changed before this started. Try again."))
             case .failed: feedback[key] = .failed(String(localized: "YouTube Music couldn’t start this. Try again."))
             }
-        case .shuffle, .radio: feedback[key] = .failed(String(localized: "This action isn’t available for this item."))
+        case .shuffle: feedback[key] = .failed(String(localized: "This action isn’t available for this item."))
         }
     }
     /// Copies the links of the selected entries (a non-changing action on a selection).

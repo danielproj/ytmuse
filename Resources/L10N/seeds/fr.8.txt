@@ -20,3 +20,7 @@
 1389|Ce Mac n’a pas pu préparer l’audio pour le récepteur.
 1390|Cet élément n’a aucun fichier audio pouvant être diffusé avec Cast.
 1391|YouTube Music ne peut pas être diffusé depuis cette app.
+1392|En attente du volume du récepteur.
+1393|Le volume de ce récepteur est fixe.
+1394|Ce récepteur ne peut pas modifier son volume d'ici.
+1395|Volume du récepteur

@@ -5,6 +5,7 @@ import SwiftUI
 import Testing
 @testable import Playback
 @testable import AppShell
+import TestSupport
 
 /// T21.1 / T21.2 / T21.3: the window census, the activation policy, the hidden player and the mini-player never being a regular window, and the
 /// mini-player's size, pin and focus rules.
@@ -115,7 +116,7 @@ import Testing
     }
     @Test func theMiniPlayerPanelIsNonActivatingNeverMainAndOutOfTheDocumentLists() throws {
         var shownWindow: NSWindow?
-        let controller = MiniPlayerController(preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!) { _ in AnyView(Color.clear) }
+        let controller = MiniPlayerController(preferences: InMemoryDefaults()) { _ in AnyView(Color.clear) }
         controller.onVisibilityChange = { window in if let window { window.alphaValue = 0; shownWindow = window } }
         controller.show(); defer { controller.close() }
         let panel = try #require(controller.panel)
@@ -140,7 +141,7 @@ import Testing
         try #require(ProcessIsolation.isIsolated, "a test process is isolated: otherwise this test must not run the show path")
         let key = "NSWindow Frame YTMuseMiniPlayer"
         let before = UserDefaults.standard.object(forKey: key) as? String   // a READ of the runner's domain, to compare
-        let controller = MiniPlayerController(preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!) { _ in AnyView(Color.clear) }
+        let controller = MiniPlayerController(preferences: InMemoryDefaults()) { _ in AnyView(Color.clear) }
         controller.onVisibilityChange = { $0?.alphaValue = 0 }
         controller.show()
         let panel = try #require(controller.panel)
@@ -151,8 +152,7 @@ import Testing
         #expect(UserDefaults.standard.object(forKey: key) as? String == before, "the shared domain's frame entry is exactly what it was")
     }
     @Test func pinningFloatsAboveAndIsRememberedAndExpandingChangesTheSizeNotTheOrigin() throws {
-        let suite = "local.native-music.test-" + UUID().uuidString
-        let store = UserDefaults(suiteName: suite)!; defer { store.removePersistentDomain(forName: suite) }
+        let store = InMemoryDefaults()
         let controller = MiniPlayerController(preferences: store) { _ in AnyView(Color.clear) }
         controller.onVisibilityChange = { $0?.alphaValue = 0 }
         controller.show(); defer { controller.close() }
@@ -172,7 +172,7 @@ import Testing
     @Test func aMetadataChangeNeverTakesFocusOrMakesTheMiniPlayerKey() async throws {
         let rig = try await LifecycleRig.make()
         let (_, page) = try await rig.play()
-        let controller = MiniPlayerController(preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!) { _ in AnyView(Color.clear) }
+        let controller = MiniPlayerController(preferences: InMemoryDefaults()) { _ in AnyView(Color.clear) }
         controller.onVisibilityChange = { $0?.alphaValue = 0 }
         controller.show(); defer { controller.close() }
         let panel = try #require(controller.panel)

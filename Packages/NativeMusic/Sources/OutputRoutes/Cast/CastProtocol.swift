@@ -72,7 +72,13 @@ public struct CastMediaStatus: Equatable, Sendable {
     public let capabilities: CastReceiverCapabilities?
     public let volume: CastVolume?
 }
-public struct CastVolume: Equatable, Sendable { public let level: Double?, muted: Bool? }
+public struct CastVolume: Equatable, Sendable {
+    public let level: Double?, muted: Bool?
+    /// The receiver's own word for how its volume is controlled: "attenuation", "master" or "fixed" (a fixed-volume receiver ignores SET_VOLUME). nil: not reported.
+    public let controlType: String?
+    public init(level: Double?, muted: Bool?, controlType: String? = nil) { self.level = level; self.muted = muted; self.controlType = controlType }
+    public var isFixed: Bool { controlType?.lowercased() == "fixed" }
+}
 public struct CastApplication: Equatable, Sendable {
     public let appID: String, sessionID: String, transportID: String, displayName: String?, namespaces: [String]
 }
@@ -172,6 +178,6 @@ public enum CastMessages {
     }
     private static func volume(_ value: Any?) -> CastVolume? {
         guard let object = value as? [String: Any] else { return nil }
-        return CastVolume(level: (object["level"] as? NSNumber)?.doubleValue, muted: object["muted"] as? Bool)
+        return CastVolume(level: (object["level"] as? NSNumber)?.doubleValue, muted: object["muted"] as? Bool, controlType: object["controlType"] as? String)
     }
 }

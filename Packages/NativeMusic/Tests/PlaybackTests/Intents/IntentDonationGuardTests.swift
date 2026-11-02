@@ -26,11 +26,11 @@ import Testing
         Rule(name: "relevant intents", pattern: #"RelevantIntentManager|\bRelevantIntent\b|\bRelevantContext\b"#, planted: "RelevantIntentManager.shared.updateRelevantIntents([])"),
         Rule(name: "SiriKit interaction donation", pattern: #"INInteraction|INVoiceShortcut|INShortcut|\bimport Intents\b|requestSiriAuthorization"#, planted: "import Intents"),
         Rule(name: "activity-based Siri suggestions", pattern: #"isEligibleForPrediction"#, planted: "activity.isEligibleForPrediction = true"),
-        Rule(name: "invoking the Shortcuts app", pattern: #"shortcuts://|x-apple-shortcuts|ShortcutsLink|WFWorkflow|tell\s+app(?:lication)?\s+(?:id\s+)?\\*[\"']*(?:Shortcuts|com\.apple\.shortcuts)|\bShortcuts Events\b|\bApplication\(\s*[\"']Shortcuts|com\.apple\.shortcuts\.events"#, planted: "open shortcuts://run-shortcut?name=x"),
-        Rule(name: "the shortcuts command line", pattern: #"(?m)(^|[;&|`(\s])(/usr/bin/)?shortcuts\s+(run|view|list|sign)\b"#, planted: "shortcuts run \"Pause\""),
+        Rule(name: "invoking the Shortcuts app", pattern: #"shortcuts://|x-apple-shortcuts|ShortcutsLink|WFWorkflow|tell\s+(?:app(?:lication)?\s+(?:id\s+)?|process\s+)?\\*[\"']*(?:Shortcuts|com\.apple\.shortcuts)|(?:-a|-b)\s+[\"']?(?:Shortcuts|com\.apple\.shortcuts)\b|\bShortcuts Events\b|\bApplication\(\s*[\"']Shortcuts|com\.apple\.shortcuts\.events"#, planted: "open shortcuts://run-shortcut?name=x"),
+        Rule(name: "the shortcuts command line", pattern: #"(?m)(^|[;&|`(\s\"'])(/usr/bin/)?shortcuts\s+(run|view|list|sign)\b"#, planted: "shortcuts run \"Pause\""),
         // TH1: the same command as an argument LIST (Python `subprocess.run(["shortcuts", "run", ...])`, a Swift `Process` with `executableURL` and `arguments`),
         // where the words are separated by quotes and commas and the text rule above sees no whitespace.
-        Rule(name: "the shortcuts command as an argument list", pattern: #"[\"']shortcuts[\"']\s*,\s*[\"'](?:run|view|list|sign)[\"']|/usr/bin/shortcuts\b"#, planted: "subprocess.run([\"shortcuts\", \"run\", \"Pause\"])"),
+        Rule(name: "the shortcuts command as an argument list", pattern: #"[\"']shortcuts[\"']\s*,\s*(?:[\"'](?:run|view|list|sign)[\"']|[A-Za-z_$][\w.$]*\s*[,\])])|/usr/bin/shortcuts\b"#, planted: "subprocess.run([\"shortcuts\", \"run\", \"Pause\"])"),
         Rule(name: "Siri / Shortcuts preferences", pattern: #"defaults\s+(write|delete)\s+com\.apple\.(Siri|assistant|shortcuts)"#, planted: "defaults write com.apple.Siri x 1"),
     ]
     /// Files that may NAME a forbidden call because they are the rule itself.
@@ -57,7 +57,18 @@ import Testing
         if swift, !donateCallsOutsideTheAllowlist(in: text).isEmpty { found.append("\(file): a donate( call outside the allowlist") }
         return found
     }
-    nonisolated static let scriptExtensions: Set<String> = ["py", "sh", "zsh", "bash", "command", "applescript", "scpt", "js", "rb", "pl", "swift"]
+    /// The largest file the sweep reads as text (the launch guard's cap). TH5 (TH4 critic L-d): a larger one is REPORTED, not skipped (unless it is a known binary type).
+    nonisolated static let maximumBytes = 2_000_000
+    /// One file of the sweep. TH4 (L4): a file that cannot be read as UTF-8 text is reported unless it is a known binary type (the list is shared with the launch guard).
+    /// TH5: so is a file over `maximumBytes`; `swept` no longer drops it before this point.
+    nonisolated static func findings(inFile url: URL, swift: Bool) -> [String] {
+        let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
+        guard size <= maximumBytes, let text = try? String(contentsOf: url, encoding: .utf8) else {
+            return GuardBinaryFiles.isKnownBinary(url) ? [] : ["\(url.lastPathComponent): \(GuardBinaryFiles.unreadableRule)"]
+        }
+        return violations(in: text, file: url.lastPathComponent, swift: swift)
+    }
+    nonisolated static let scriptExtensions: Set<String> = ["py", "sh", "zsh", "bash", "command", "applescript", "scpt", "js", "rb", "pl", "swift", "m", "mm"]
     /// Swift everywhere, and every script-like file under scripts/, Tools/, Fixtures/ and the test trees (extensionless ones included).
     nonisolated static var swept: [(url: URL, swift: Bool)] {
         let swiftRoots = ["Packages/NativeMusic/Sources", "Packages/NativeMusic/Tests", "Tests", "App/Sources", "Extensions/Sources"]
@@ -67,7 +78,7 @@ import Testing
             guard let walker = FileManager.default.enumerator(at: base, includingPropertiesForKeys: [.isRegularFileKey, .fileSizeKey]) else { continue }
             for case let url as URL in walker {
                 let values = try? url.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey])
-                guard values?.isRegularFile == true, (values?.fileSize ?? 0) < 2_000_000, !url.path.contains("/.build/"), !url.path.contains(".xcodeproj/") else { continue }
+                guard values?.isRegularFile == true, !url.path.contains("/.build/"), !url.path.contains(".xcodeproj/") else { continue }
                 let ext = url.pathExtension
                 if ext == "swift" { continue }
                 if scriptExtensions.contains(ext) || (ext.isEmpty && ["scripts", "Tools"].contains(root)) { files.append((url, false)) }
@@ -82,8 +93,7 @@ import Testing
             let files = Self.swept
             var found: [String] = []
             for (url, swift) in files {
-                guard let text = try? String(contentsOf: url, encoding: .utf8) else { continue }
-                found += Self.violations(in: text, file: url.lastPathComponent, swift: swift)
+                found += Self.findings(inFile: url, swift: swift)
             }
             return (files, found)
         }
@@ -93,6 +103,37 @@ import Testing
         let scripts = files.filter { !$0.swift }.map(\.url.lastPathComponent)
         #expect(scripts.contains("test.sh") && scripts.contains("check-intents.py") && scripts.contains("generate-project.py"), "scripts are swept: \(scripts.count) files")
         #expect(found.isEmpty, "\(found)")
+    }
+    @Test func theSweepReportsAFileItCannotReadUnlessItIsAKnownBinary() throws {
+        let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("ytmuse-th4-donation-unreadable-" + UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: scratch) }
+        try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+        let odd = scratch.appendingPathComponent("hidden.py"), binary = scratch.appendingPathComponent("binary.sh"), fine = scratch.appendingPathComponent("fine.sh")
+        try Data([0xFF, 0xFE, 0x73, 0x68, 0x80, 0x81]).write(to: odd)
+        try (Data("bplist00".utf8) + Data([0, 1, 2, 0x80])).write(to: binary)
+        try Data("echo hello\n".utf8).write(to: fine)
+        #expect(Self.findings(inFile: odd, swift: false) == ["hidden.py: \(GuardBinaryFiles.unreadableRule)"])
+        #expect(Self.findings(inFile: binary, swift: false).isEmpty && Self.findings(inFile: fine, swift: false).isEmpty)
+    }
+    /// TH5 (TH4 critic L-d): a script-like file over 2 MB is reported by this guard as well (it used to be dropped by the sweep before it was read). Plants: a clean-text
+    /// file just over the cap, and one that would itself violate a rule (a donate call); controls: a file exactly at the cap and a known binary over it.
+    @Test func theSweepReportsAFileOverTwoMegabytesInsteadOfSkippingIt() throws {
+        let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("ytmuse-th5-donation-size-" + UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: scratch) }
+        try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+        let over = scratch.appendingPathComponent("big.py"), hidden = scratch.appendingPathComponent("hidden.sh"), exact = scratch.appendingPathComponent("exact.sh"), binary = scratch.appendingPathComponent("big.bin.sh")
+        let line = Data("# comment\n".utf8)
+        func filler(_ count: Int) -> Data { var data = Data(); while data.count < count { data += line }; return data.prefix(count) }
+        try filler(2_000_001).write(to: over)
+        try (Data("x.donate(result: r)\n".utf8) + filler(2_000_000)).write(to: hidden)
+        try filler(2_000_000).write(to: exact)
+        try (Data("bplist00".utf8) + Data(repeating: 0, count: 2_000_000)).write(to: binary)
+        #expect(Self.maximumBytes == 2_000_000, "the launch guard's cap")
+        #expect(Self.findings(inFile: over, swift: false) == ["big.py: \(GuardBinaryFiles.unreadableRule)"], "a text file over the cap is reported")
+        #expect(Self.findings(inFile: hidden, swift: false) == ["hidden.sh: \(GuardBinaryFiles.unreadableRule)"], "a donate call hidden in a file over the cap is not silently unread")
+        #expect(Self.findings(inFile: exact, swift: false).isEmpty, "control: exactly at the cap is read, and clean")
+        #expect(Self.findings(inFile: binary, swift: false).isEmpty, "control: a known binary type over the cap is not a finding")
+        #expect(GuardBinaryFiles.unreadableRule.contains("2 MB"), "the rule's wording names the size")
     }
     @Test func theRuleFlagsEachForbiddenCallAndPassesTheCodeThatIsLegitimate() {
         for rule in Self.rules {
@@ -133,6 +174,21 @@ import Testing
             ("l.swift", "let p = Process(); p.arguments = [\"\(shortcuts)\", \"run\", \"Pause\"]\n", true),
             ("m.sh", "\(shortcuts) run \"Pause\"\n", false),
             ("n.sh", "cd x && /usr/bin/\(shortcuts) list\n", false),
+            // TH4: the command inside a quoted string (os.system, `-c`, shell=True), the Shortcuts process addressed through System Events or by a bare tell,
+            // the open command with -a or -b, and Objective-C files (which this sweep did not read).
+            ("o.py", "import os\nos.system(\"\(shortcuts) run Pause\")\n", false),
+            ("p.sh", "sh -c '\(shortcuts) run Pause'\n", false),
+            ("q.py", "subprocess.run(\"\(shortcuts) list\", shell=True)\n", false),
+            ("r.applescript", "\(tell) \"System Events\"\n  tell process \"Shortcuts\"\n    click\n", false),
+            ("s.applescript", "tell \"Shortcuts\" to activate\n", false),
+            ("t.sh", "op" + "en -a Shortcuts\n", false),
+            ("u.sh", "op" + "en -b com.apple.\(shortcuts)\n", false),
+            ("v.m", "id c = @\"x\"; [x updateAppShortcut" + "Parameters];\n", false),
+            ("w.mm", "id m = [Intent" + "DonationManager new];\n", false),
+            // TH4 (L2): the verb held in a variable.
+            ("x.py", "import subprocess\nsubprocess.run([\"\(shortcuts)\", verb, name])\n", false),
+            ("y.py", "subprocess.run(['\(shortcuts)',action,'x'], check=True)\n", false),
+            ("z.swift", "let p = Process(); p.arguments = [\"\(shortcuts)\", verb]\n", true),
         ]
         for plant in plants { #expect(!Self.violations(in: plant.text, file: plant.file, swift: plant.swift).isEmpty, Comment(rawValue: "NOT FLAGGED: \(plant.file): \(plant.text)")) }
         let controls: [(file: String, text: String, swift: Bool)] = [
@@ -141,8 +197,14 @@ import Testing
             ("c3.applescript", "\(tell) \(application) \"Finder\" to activate\n", false),
             ("c4.swift", "let names = [\"\(shortcuts)\"]\nlet verbs = [\"run\"]\n", true),
             ("c5.js", "const f = Appli" + "cation(\"Finder\");\n", false),
+            ("c6.sh", "echo 'run the list of \(shortcuts) later'; " + "op" + "en -a Finder\n", false),
+            ("c7.applescript", "tell process \"Finder\" to activate\n", false),
+            ("c8.m", "NSString *note = @\"nothing here\"; [x reload];\n", false),
+            ("c9.py", "names = [\"\(shortcuts)\", \"widgets\"]\nsubprocess.run([\"ls\", verb])\n", false),
         ]
         for control in controls { #expect(Self.violations(in: control.text, file: control.file, swift: control.swift).isEmpty, Comment(rawValue: "control flagged: \(control.file)")) }
+        // TH4: the sweep reads Objective-C and scripts too (a list that names the extensions is what makes the plants above reachable from the repository walk).
+        #expect(Self.scriptExtensions.isSuperset(of: ["m", "mm", "py", "sh", "applescript", "swift"]), "\(Self.scriptExtensions.sorted())")
     }
     /// The three plants the critic named, compiled and read at the symbol level, and the real build output scanned (the T24 runner runs the same script over
     /// the package objects and the built app).

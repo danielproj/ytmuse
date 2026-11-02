@@ -55,20 +55,86 @@ public enum CastNetworkGate {
         public var text: String { octets.map(String.init).joined(separator: ".") }
     }
 
+    /// TH4: an IPv6 address, parsed strictly (RFC 4291 text forms: eight groups, one `::`, no embedded IPv4, no brackets, no leading or trailing colon outside `::`).
+    /// The relay may serve IPv6 on the same terms as IPv4: loopback (tests), a unique-local address (`fc00::/7`) or a link-local one (`fe80::/10`, which names its
+    /// interface as a zone: `fe80::1%en0`). Never the unspecified address, a multicast, a global unicast (public) or an IPv4-mapped address.
+    public struct IPv6: Equatable, Sendable {
+        public let groups: [UInt16]
+        /// The interface name after `%`, for a link-local address.
+        public let zone: String?
+        public init?(_ text: String) {
+            var body = Substring(text)
+            var zone: String?
+            if let percent = body.firstIndex(of: "%") {
+                let name = body[body.index(after: percent)...]
+                guard (1...15).contains(name.count), name.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "." || $0 == "_" || $0 == "-") }) else { return nil }
+                zone = String(name); body = body[..<percent]
+            }
+            guard body.contains(":"), body.allSatisfy({ $0.isASCII && ($0.isHexDigit || $0 == ":") }) else { return nil }
+            let halves = body.components(separatedBy: "::")
+            guard halves.count <= 2 else { return nil }
+            func groups(_ part: String) -> [UInt16]? {
+                if part.isEmpty { return [] }
+                var result: [UInt16] = []
+                for piece in part.split(separator: ":", omittingEmptySubsequences: false) {
+                    guard (1...4).contains(piece.count), let value = UInt16(piece, radix: 16) else { return nil }
+                    result.append(value)
+                }
+                return result
+            }
+            guard let head = groups(halves[0]) else { return nil }
+            if halves.count == 1 {
+                guard head.count == 8 else { return nil }
+                self.groups = head
+            } else {
+                guard let tail = groups(halves[1]), head.count + tail.count <= 7 else { return nil }
+                self.groups = head + [UInt16](repeating: 0, count: 8 - head.count - tail.count) + tail
+            }
+            self.zone = zone
+        }
+        public var isUnspecified: Bool { groups.allSatisfy { $0 == 0 } }
+        public var isLoopback: Bool { groups == [0, 0, 0, 0, 0, 0, 0, 1] }
+        public var isLinkLocal: Bool { groups[0] & 0xffc0 == 0xfe80 }
+        public var isUniqueLocal: Bool { groups[0] & 0xfe00 == 0xfc00 }
+        /// The networks a receiver on a home network is on: unique-local and link-local (never global unicast, which is public).
+        public var isPrivateLAN: Bool { isUniqueLocal || isLinkLocal }
+        /// The same address regardless of zone: a peer's zone is the interface it arrived on, which is not part of its identity.
+        public func sameAddress(as other: IPv6) -> Bool { groups == other.groups }
+        /// The form used in a URL host: bracketed, with a zone percent-encoded (`[fe80::1%25en0]`).
+        public var urlHost: String {
+            "[" + groups.map { String($0, radix: 16) }.joined(separator: ":") + (zone.map { "%25" + $0 } ?? "") + "]"
+        }
+    }
+
     /// Whether the relay may listen on `address`: a loopback address always (that is what tests use); otherwise only a private LAN address, never the
-    /// wildcard, and only when the real network has been enabled.
+    /// wildcard, and only when the real network has been enabled. IPv6 follows the same rules (`IPv6`); a link-local address must name its interface.
     public static func requireBindable(_ address: String) throws {
-        guard let ip = IPv4(address) else { throw address.contains(":") || address.isEmpty ? Refusal.notIPv4 : Refusal.notLocalAddress("not an address") }
+        if address.contains(":") {
+            guard let ip = IPv6(address) else { throw Refusal.notLocalAddress("not an address") }
+            if ip.isUnspecified { throw Refusal.wildcardAddress }
+            if ip.isLoopback { guard ip.zone == nil else { throw Refusal.notLocalAddress("not an address") }; return }
+            guard ip.isPrivateLAN, !ip.isLinkLocal || ip.zone != nil, ip.isLinkLocal || ip.zone == nil else { throw Refusal.notLocalAddress("not a private network address") }
+            try requireLive()
+            return
+        }
+        guard let ip = IPv4(address) else { throw address.isEmpty ? Refusal.notIPv4 : Refusal.notLocalAddress("not an address") }
         if ip.isUnspecified { throw Refusal.wildcardAddress }
         if ip.isLoopback { return }
         guard ip.isPrivateLAN else { throw Refusal.notLocalAddress("not a private network address") }
         try requireLive()
     }
-    /// Whether a connecting peer may be served: the receiver itself, or (only on a loopback bind) a loopback peer.
+    /// Whether a connecting peer may be served: the receiver itself (same family, same address), or (only on a loopback bind) a loopback peer.
     public static func peerAllowed(_ peer: String, receiver: String?, boundTo bind: String) -> Bool {
-        guard let peerIP = IPv4(peer) else { return false }
-        if let receiver, let receiverIP = IPv4(receiver), receiverIP == peerIP { return true }
-        if let bindIP = IPv4(bind), bindIP.isLoopback, peerIP.isLoopback { return true }
+        if let peerIP = IPv4(peer) {
+            if let receiver, let receiverIP = IPv4(receiver), receiverIP == peerIP { return true }
+            if let bindIP = IPv4(bind), bindIP.isLoopback, peerIP.isLoopback { return true }
+            return false
+        }
+        guard let peerIP = IPv6(peer) else { return false }
+        if let receiver, let receiverIP = IPv6(receiver), receiverIP.sameAddress(as: peerIP) { return true }
+        if let bindIP = IPv6(bind), bindIP.isLoopback, peerIP.isLoopback { return true }
         return false
     }
+    /// The host part of the URL the receiver is given for a relay bound to `address`.
+    public static func urlHost(for address: String) -> String { IPv6(address)?.urlHost ?? address }
 }

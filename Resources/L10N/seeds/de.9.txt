@@ -1,0 +1,9 @@
+1396|Es folgen weitere Objekte; YouTube Music listet nur die nächsten auf.
+1397|Nach diesem Objekt ist nichts weiter in der Warteschlange.
+1398|Wiederholen
+1399|Dieses Objekt ist nicht mehr in der Warteschlange.
+1400|Die Warteschlange kann nicht geändert werden, solange eine Werbeanzeige läuft.
+1401|YouTube Music hat diese Änderung nicht übernommen.
+1402|Ausblenden
+1403|Ende
+1404|Einschlaftimer

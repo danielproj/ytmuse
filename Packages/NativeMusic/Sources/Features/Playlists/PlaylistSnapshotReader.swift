@@ -24,9 +24,9 @@ public struct PlaylistPageSource: Sendable {
 /// - A token that repeats, or a page that adds nothing new, ends the walk (a bound against a service that never stops).
 /// - A command or header that names another playlist than the one read is not trusted (a row is not removable, the page is not editable).
 public enum PlaylistSnapshotReader {
-    public static let maximumPages = 200
+    public static let maximumPages = 600
     public static let maximumRestarts = 2
-    public static let maximumOccurrences = 5_000
+    public static let maximumOccurrences = 20_000
     public static let maximumSuggestionPages = 3
 
     public static func read(playlistID: String, source: PlaylistPageSource) async throws -> PlaylistSnapshot {

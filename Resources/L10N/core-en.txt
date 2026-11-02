@@ -959,7 +959,7 @@
 959|The queue could not take that song.
 960|The queue is shown in the main window.
 961|The radio could not start. What was playing is unchanged.
-962|The receiver sets the volume.
+962|While you cast, the volume slider sets the receiver's volume. The Mac's volume stays as it was.
 963|The selected queue item could not open. Try selecting it again.
 964|The session for %@ ended. Sign in again.
 965|The sleep timer could not change. Try setting the timer again.
@@ -1124,7 +1124,7 @@
 1124|YouTube Music history controls
 1125|YouTube Music is asking for a pause. Try Samples again in a moment.
 1126|YouTube Music is still processing this file. Check again later.
-1127|YouTube Music manages the upcoming items for this playlist, so they are not listed or editable here.
+1127|YouTube Music manages the upcoming items, so they can’t be reordered or removed here.
 1128|YouTube Music manages the upcoming items while it plays, so this app cannot add to them.
 1129|YouTube Music playlist
 1130|YouTube Music playlists are streamed, not kept on this Mac. Audio files you add in Downloads appear here.
@@ -1245,7 +1245,8 @@
 1245|No network path to the service.
 1246|None is set until you record one.
 1247|Normalize volume
-1248|Not built yet. A radio that continues playback needs a recommendation source, which belongs to the queue and discovery work (W05 and W38). Nothing in this app starts a radio by itself.
+1248|YouTube Music’s own player decides what plays after the queue ends; this app has no switch for it. To start a radio yourself, choose Start Radio where it is offered.
+2001|Another start is still in progress. Try again in a moment.
 1249|Not built yet. Update checking and installation arrive with the signed distribution (planned as W30 and W46), with their own opt-in. This build checks and installs nothing.
 1250|Off while playing
 1251|Off while playing; a restart is always explicit.
@@ -1389,6 +1390,16 @@
 1389|This Mac couldn't prepare the audio for the receiver.
 1390|This item has no audio file that can be cast.
 1391|YouTube Music can't be cast from this app.
+1392|Waiting for the receiver's volume.
+1393|This receiver's volume is fixed.
+1394|This receiver can't change its volume from here.
+1395|Receiver volume
+1396|More items follow; YouTube Music lists only the next few.
+1397|Nothing else is queued after this item.
+1398|Repeat
+1399|That item is no longer in the queue.
+1400|The queue can’t be changed while an ad plays.
+1401|YouTube Music did not take that change.
 P1|one:%lld minute	other:%lld minutes
 P2|one:Undo: added %lld song	other:Undo: added %lld songs
 P3|one:%lld item couldn’t be shown	other:%lld items couldn’t be shown
@@ -1432,3 +1443,6 @@ Q37|This permanently deletes the playlist and its %lld entries from YouTube Musi
 Q38|Undo for %lld Songs
 Q39|Undo: removed %lld songs
 Q40|Uploading… %lld%%
+1402|Fading
+1403|End
+1404|Sleep Timer

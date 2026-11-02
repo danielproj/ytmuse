@@ -4,6 +4,7 @@ import Testing
 import SystemIntegration
 import WidgetShared
 @testable import AppShell
+import TestSupport
 
 /// F4 (MAC05, MAC06): the surfaces are tied to the REAL account lifecycle. The playback authority hands its barrier listeners the account that is leaving, captured before it clears
 /// its own scope; these tests drive the authority's own `detach`, `removeLocal` and `quit` (the calls the lifecycle makes) with the wiring `LocalAccountBootstrap` installs, and read
@@ -11,12 +12,11 @@ import WidgetShared
 @Suite @MainActor struct SurfaceBarrierTests {
     @MainActor struct Rig {
         let media: MediaRig, dir: URL, store: WidgetSnapshotStore, index = InMemorySearchableIndex(), source = SpotlightControllerTests.Source()
-        let publisher: WidgetSnapshotPublisher, controller: SpotlightController, settings: SpotlightSettings, defaultsName: String
+        let publisher: WidgetSnapshotPublisher, controller: SpotlightController, settings: SpotlightSettings, scratch = ScratchDefaults()
         init() async throws {
             media = try await MediaRig.make()
             dir = Scratch.make(); store = WidgetSnapshotStore(directory: dir)
-            defaultsName = "local.native-music.test-" + UUID().uuidString
-            settings = SpotlightSettings(defaults: UserDefaults(suiteName: defaultsName)!)
+            settings = SpotlightSettings(defaults: scratch.defaults)
             let authority = media.authority
             let scope: @MainActor () async -> IntentScope? = { await authority.activeScope().map { IntentScope(accountID: $0.account, generation: $0.generation) } }
             publisher = WidgetSnapshotPublisher(store: store, reloader: RecordingTimelineReloader(), nowPlaying: media.model.nowPlaying, liveScope: scope, reloadInterval: .milliseconds(1))
@@ -38,7 +38,7 @@ import WidgetShared
         }
         func snapshot() -> WidgetSnapshot? { if case .snapshot(let s) = store.read() { s } else { nil } }
         var accountTitles: Set<String> { Set(index.entries.filter { $0.accountToken == token }.map(\.title)) }
-        func clean() { Scratch.remove(dir); UserDefaults().removePersistentDomain(forName: defaultsName) }
+        func clean() { Scratch.remove(dir); scratch.clean() }
         static let barrier = RequestContext(account: nil, accountGeneration: 99, requestGeneration: 0)
     }
 

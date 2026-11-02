@@ -21,6 +21,9 @@ struct ShellTransportState: Equatable {
     var isLive = false
     var hasPicture = false
     var volume = 1.0
+    /// TH4: false while a receiver is cast to that cannot take a level (fixed volume, no stream-volume support, or not reported yet); `volumeHelp` says why.
+    var volumeEnabled = true
+    var volumeHelp: String?
     /// The sleep timer of whichever engine plays (PLAY17), nil without one.
     var sleepTimer: SleepTimerDisplay?
     /// Next and Previous: only for an item that can be skipped. An advertisement is never skipped, so both are off during one.
@@ -53,8 +56,8 @@ extension PlaybackModel {
         if session != nil, let snapshot = state, snapshot.playback.state != .idle {
             return ShellTransportState(source: .owned, title: currentTitle, artist: nil, hasItem: snapshot.queue.current != nil, isPlaying: snapshot.playback.intent == .play,
                                        isLoading: snapshot.playback.state == .buffering || snapshot.playback.state == .resolving, isAd: false, canSkip: true,
-                                       canSeek: snapshot.media?.userSeekable == true, isLive: false, hasPicture: nativeVideo.hasPicture, volume: requestedGain,
-                                       sleepTimer: sleepTimerDisplay)
+                                       canSeek: snapshot.media?.userSeekable == true, isLive: false, hasPicture: nativeVideo.hasPicture, volume: volumeSlider.level,
+                                       volumeEnabled: volumeSlider.isEnabled, volumeHelp: volumeSlider.disabledReason, sleepTimer: sleepTimerDisplay)
         }
         return .idle
     }
@@ -66,7 +69,7 @@ extension PlaybackModel {
     func shellSetVolume(_ level: Double) {
         guard level.isFinite else { return }
         if let player = music, !player.isClosed { Task { await player.setVolume(min(1, max(0, level))) } }
-        else if session != nil { changeGain(min(max(level, gainRange.lowerBound), gainRange.upperBound)) }
+        else if session != nil { setSliderVolume(level) }
     }
 }
 

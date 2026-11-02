@@ -5,6 +5,8 @@ import OutputRoutes
 import Testing
 @testable import Playback
 @testable import AppShell
+@testable import SystemIntegration
+import TestSupport
 
 /// T39 at the app level: the native session as the Cast driver's transport (a real `PlaybackSession` over the bundled owned audio, silent clock while a
 /// receiver renders), the picker's sentences, lazy discovery, and the full path through the real relay to a simulated receiver. No test here names a real
@@ -39,11 +41,12 @@ final class RecordingCastDirectory: CastDirectory, @unchecked Sendable {
     let controller: OutputController
     var model: PlaybackModel { base.model }
     var coordinator: OutputRouteCoordinator { controller.coordinator }
-    static func make(preferred: OutputRouteID? = nil) async throws -> CastAppRig {
+    static func make(preferred: OutputRouteID? = nil, receiverOptions: SimulatedCastReceiver.Options? = nil, receiverLevel: Double? = nil) async throws -> CastAppRig {
         let base = try await LifecycleRig.make()
         let directory = PlaybackScriptedDirectory([routeSpeakers, routeBuds], defaultUID: routeBuds.uid)
         let controller = OutputController(coordinator: OutputRouteCoordinator(directory: directory, store: MemoryPreferredRoute(preferred)), applier: NoOutputApplier())
-        let cast = RecordingCastDirectory(), receiver = SimulatedCastReceiver()
+        let cast = RecordingCastDirectory(), receiver = SimulatedCastReceiver(options: receiverOptions ?? SimulatedCastReceiver.Options())
+        if let receiverLevel { receiver.setLevel(receiverLevel) }
         controller.castDirectory = cast; controller.castFactory = receiver
         await controller.bind(to: base.model)
         return CastAppRig(base: base, directory: directory, cast: cast, receiver: receiver, controller: controller)
@@ -102,7 +105,7 @@ private let living = CastDevice(id: CastDeviceID("APP-CAST-LIVING")!, friendlyNa
         value = OutputPickerMapping.content(for: rig.controller)
         let row = try #require(value.rows.first { $0.id == living.routeID.rawValue })
         #expect(row.title == "Living Room" && row.detail == "Cast" && row.selectable && row.state == .available)
-        #expect(row.volume == "The receiver sets the volume.")
+        #expect(row.volume == "While you cast, the volume slider sets the receiver's volume. The Mac's volume stays as it was.")
         #expect(row.unsupported.contains("A sleep timer pauses here but can't fade."))
         #expect(!value.castNotes.contains { $0.contains("stops when you quit") }, "not casting yet: no quit statement")
     }
@@ -243,6 +246,102 @@ private let living = CastDevice(id: CastDeviceID("APP-CAST-LIVING")!, friendlyNa
         await rig.base.authority.quit()
         #expect(rig.receiver.receivedTypes().contains("STOP") && !rig.receiver.hasApplication)
         #expect(rig.controller.cast?.isLive == false)
+    }
+    @Test func whileCastingTheSliderIsTheReceiversLevelAndTheMacsVolumeIsLeftAlone() async throws {
+        let rig = try await CastAppRig.make(receiverLevel: 0.4)
+        _ = try await rig.nativePlaying()
+        rig.model.changeGain(0.0008)   // a distinctive Mac volume (the harness's range is 0...0.001)
+        await rig.model.refresh()
+        let macGain = rig.model.requestedGain
+        #expect(macGain == 0.0008 && rig.model.volumeSlider == PlaybackModel.VolumeSlider(level: macGain, range: rig.model.gainRange, isReceiver: false, isEnabled: true, disabledReason: nil))
+        rig.cast.found([living])
+        #expect(await rig.coordinator.select(living.routeID, engine: .localMedia) == .selected)
+        #expect(await waitUntil { rig.model.volumeSlider.isReceiver && rig.model.volumeSlider.isEnabled })
+        #expect(rig.model.volumeSlider.level == 0.4 && rig.model.volumeSlider.range == 0...1, "the slider shows the receiver's level, not the Mac's \(macGain)")
+        #expect(rig.model.shellState.volume == 0.4 && rig.model.shellState.volumeEnabled, "the mini-player and status item show the same")
+        rig.model.setSliderVolume(0.45)   // every surface (bottom player, mini-player, status item, scripting) comes through here
+        await rig.controller.cast?.volumeSettled()
+        #expect(await waitUntil { abs(rig.receiver.volume - 0.45) < 1e-9 }, "a small move: about the receiver's level, never the Mac's or full: \(rig.receiver.volume)")
+        #expect(rig.model.requestedGain == macGain, "the Mac's saved volume is not touched while casting")
+        let snapshotGain = try await rig.model.session?.snapshot().gain
+        #expect(snapshotGain == macGain, "nor is the session's gain")
+        await rig.coordinator.leaveCast()
+        #expect(!rig.model.volumeSlider.isReceiver && rig.model.volumeSlider.level == macGain && rig.model.requestedGain == macGain, "casting ended: the Mac's volume is exactly what it was")
+        let after = try await rig.model.session?.snapshot().gain
+        #expect(after == macGain, "the next local playback does not start quiet or loud")
+        let sent = rig.receiver.receivedTypes().filter { $0 == "SET_VOLUME" }.count
+        rig.model.setSliderVolume(0.0003)
+        #expect(rig.model.requestedGain == 0.0003 && rig.receiver.receivedTypes().filter { $0 == "SET_VOLUME" }.count == sent, "the slider is the Mac's again")
+    }
+    @Test func aFixedVolumeReceiverDisablesTheSliderWithAReasonAndIsSentNothing() async throws {
+        var options = SimulatedCastReceiver.Options(); options.volumeControlType = "fixed"
+        let rig = try await CastAppRig.make(receiverOptions: options, receiverLevel: 0.5)
+        _ = try await rig.nativePlaying()
+        rig.cast.found([living])
+        #expect(await rig.coordinator.select(living.routeID, engine: .localMedia) == .selected)
+        #expect(await waitUntil { rig.model.volumeSlider.isReceiver && rig.model.volumeSlider.disabledReason == "This receiver's volume is fixed." })
+        await rig.model.refresh()
+        #expect(!rig.model.volumeSlider.isEnabled && !rig.model.shellState.volumeEnabled && rig.model.shellState.volumeHelp == "This receiver's volume is fixed.")
+        rig.model.setSliderVolume(0.9)
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(rig.receiver.receivedTypes().filter { $0 == "SET_VOLUME" }.isEmpty && rig.receiver.volume == 0.5)
+        await rig.coordinator.leaveCast()
+    }
+    /// TH5 (TH4 critic L-c): a script's `set volume` while the receiver cannot take a level is refused with the sentence the slider shows (localized in en, ru, de,
+    /// es and fr), not answered with success while nothing is sent. The control: an adjustable receiver is sent the level and the script is told nothing is wrong.
+    @Test func aScriptedVolumeChangeIsRefusedWhenTheCastReceiverCannotTakeALevelAndSucceedsWhenItCan() async throws {
+        func shell(_ rig: CastAppRig) -> ShellCoordinator {
+            ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(), preferences: InMemoryDefaults(), installsStatusItem: false)
+        }
+        var fixed = SimulatedCastReceiver.Options(); fixed.volumeControlType = "fixed"
+        var unsupported = SimulatedCastReceiver.Options(); unsupported.supportedMediaCommands = 15 & ~4
+        var silent = SimulatedCastReceiver.Options(); silent.reportsVolumeLevel = false
+        let cases: [(String, SimulatedCastReceiver.Options, String)] = [
+            ("fixed", fixed, "This receiver's volume is fixed."),
+            ("unsupported", unsupported, "This receiver can't change its volume from here."),
+            ("no level reported", silent, "Waiting for the receiver's volume."),
+        ]
+        for (name, options, sentence) in cases {
+            let rig = try await CastAppRig.make(receiverOptions: options, receiverLevel: 0.5)
+            _ = try await rig.nativePlaying()
+            rig.cast.found([living])
+            #expect(await rig.coordinator.select(living.routeID, engine: .localMedia) == .selected, "\(name)")
+            #expect(await waitUntil { rig.model.volumeSlider.isReceiver && rig.model.volumeSlider.disabledReason == sentence }, "\(name): the slider says why")
+            await rig.model.refresh()
+            let scripting = shell(rig)
+            let refusal = scripting.setVolume(percent: 80)
+            #expect(refusal == .notAllowedNow(sentence), "\(name): refused with the slider's sentence, not nil (success): \(String(describing: refusal))")
+            #expect(refusal?.message == sentence && refusal?.code == ScriptRefusal.notAllowedNow("").code, "\(name)")
+            try await Task.sleep(for: .milliseconds(100))
+            #expect(rig.receiver.receivedTypes().filter { $0 == "SET_VOLUME" }.isEmpty && rig.receiver.volume == 0.5, "\(name): nothing was sent")
+            await rig.coordinator.leaveCast()
+        }
+        // Control: a receiver that can take a level.
+        let rig = try await CastAppRig.make(receiverLevel: 0.4)
+        _ = try await rig.nativePlaying()
+        rig.cast.found([living])
+        #expect(await rig.coordinator.select(living.routeID, engine: .localMedia) == .selected)
+        #expect(await waitUntil { rig.model.volumeSlider.isReceiver && rig.model.volumeSlider.isEnabled })
+        await rig.model.refresh()
+        let scripting = shell(rig)
+        #expect(scripting.setVolume(percent: 45) == nil, "an adjustable receiver is not refused")
+        await rig.controller.cast?.volumeSettled()
+        #expect(await waitUntil { abs(rig.receiver.volume - 0.45) < 1e-9 }, "and is sent the level: \(rig.receiver.volume)")
+        await rig.coordinator.leaveCast()
+    }
+    /// TH5: the sentences a refusal can carry exist in all five launch languages (the catalog is the source for the window's slider too).
+    @Test func theReceiverVolumeSentencesAreTranslatedInEnRuDeEsAndFr() throws {
+        let catalog = try JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Resources/Localizable.xcstrings"))) as? [String: Any]
+        let strings = try #require(catalog?["strings"] as? [String: [String: Any]])
+        for key in ["This receiver's volume is fixed.", "This receiver can't change its volume from here.", "Waiting for the receiver's volume."] {
+            let localizations = try #require(strings[key]?["localizations"] as? [String: [String: Any]], "\(key) is in the catalog")
+            for language in ["en", "ru", "de", "es", "fr"] {
+                let unit = localizations[language]?["stringUnit"] as? [String: Any]
+                let value = unit?["value"] as? String
+                #expect(value?.isEmpty == false, "\(key) has a \(language) translation")
+                if language != "en" { #expect(value != key, "\(key) \(language) is translated, not copied") }
+            }
+        }
     }
     @Test func anAccountBarrierEndsTheCastSession() async throws {
         let rig = try await CastAppRig.make()

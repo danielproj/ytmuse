@@ -1,0 +1,9 @@
+1396|D’autres éléments suivent ; YouTube Music n’indique que les prochains.
+1397|Rien d’autre n’est en file d’attente après cet élément.
+1398|Répéter
+1399|Cet élément n’est plus dans la file d’attente.
+1400|La file d’attente ne peut pas être modifiée pendant une publicité.
+1401|YouTube Music n’a pas pris en compte ce changement.
+1402|Atténuation
+1403|Fin
+1404|Minuteur de veille

@@ -53,7 +53,7 @@ struct ShellQueuePanel: View {
     let shell: ShellCoordinator
     var body: some View {
         if let player = playback.music, WebMusicQueueSummary.isActive(player) {
-            WebMusicQueueView(player: player)
+            ScrollView { WebMusicQueueView(player: player) }
         } else {
             VStack(spacing: MusicSpace.xs) {
                 Text("The queue is shown in the main window.").font(.callout)

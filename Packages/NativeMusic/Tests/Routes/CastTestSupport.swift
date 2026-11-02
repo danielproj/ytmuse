@@ -30,6 +30,7 @@ enum LoopbackHTTP {
     enum Failure: Error { case notLoopback, connect, closedWithoutReply }
 
     static func connected(port: UInt16, host: String = "127.0.0.1") throws -> Int32 {
+        if host == "::1" { return try connectedIPv6Loopback(port: port) }
         guard host == "127.0.0.1" else { throw Failure.notLoopback }
         let descriptor = socket(AF_INET, SOCK_STREAM, 0)
         guard descriptor >= 0 else { throw Failure.connect }
@@ -39,6 +40,19 @@ enum LoopbackHTTP {
         var timeout = timeval(tv_sec: 5, tv_usec: 0)
         setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
         let result = withUnsafePointer(to: &address) { $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { Darwin.connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in>.size)) } }
+        guard result == 0 else { Darwin.close(descriptor); throw Failure.connect }
+        return descriptor
+    }
+    /// TH4: the IPv6 loopback address only. The literal is the one address this client ever connects to.
+    private static func connectedIPv6Loopback(port: UInt16) throws -> Int32 {
+        let descriptor = socket(AF_INET6, SOCK_STREAM, 0)
+        guard descriptor >= 0 else { throw Failure.connect }
+        var address = sockaddr_in6()
+        address.sin6_len = UInt8(MemoryLayout<sockaddr_in6>.size); address.sin6_family = sa_family_t(AF_INET6); address.sin6_port = port.bigEndian
+        guard inet_pton(AF_INET6, "::1", &address.sin6_addr) == 1 else { Darwin.close(descriptor); throw Failure.connect }
+        var timeout = timeval(tv_sec: 5, tv_usec: 0)
+        setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
+        let result = withUnsafePointer(to: &address) { $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { Darwin.connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in6>.size)) } }
         guard result == 0 else { Darwin.close(descriptor); throw Failure.connect }
         return descriptor
     }
@@ -61,19 +75,19 @@ enum LoopbackHTTP {
         return Reply(status: status, headers: headers, body: Data(raw[split.upperBound...]), raw: raw)
     }
     /// One request on one connection; nil when the server closed it without a reply.
-    static func request(port: UInt16, raw: String) throws -> Reply? {
-        let descriptor = try connected(port: port)
+    static func request(port: UInt16, raw: String, host: String = "127.0.0.1") throws -> Reply? {
+        let descriptor = try connected(port: port, host: host)
         defer { Darwin.close(descriptor) }
         send(descriptor, Data(raw.utf8))
         return parse(readAll(descriptor))
     }
-    static func get(port: UInt16, path: String, headers: [String: String] = [:], method: String = "GET") throws -> Reply? {
-        var text = "\(method) \(path) HTTP/1.1\r\nHost: 127.0.0.1\r\n"
+    static func get(port: UInt16, path: String, headers: [String: String] = [:], method: String = "GET", host: String = "127.0.0.1") throws -> Reply? {
+        var text = "\(method) \(path) HTTP/1.1\r\nHost: \(host == "::1" ? "[::1]" : host)\r\n"
         for (name, value) in headers { text += "\(name): \(value)\r\n" }
-        return try request(port: port, raw: text + "\r\n")
+        return try request(port: port, raw: text + "\r\n", host: host)
     }
     /// Whether anything accepts connections on the port.
-    static func isListening(port: UInt16) -> Bool { (try? connected(port: port)).map { Darwin.close($0); return true } ?? false }
+    static func isListening(port: UInt16, host: String = "127.0.0.1") -> Bool { (try? connected(port: port, host: host)).map { Darwin.close($0); return true } ?? false }
 }
 
 func waitUntil(_ seconds: Double = 3, _ condition: @MainActor () -> Bool) async -> Bool {
@@ -142,7 +156,7 @@ final class SharedLog: @unchecked Sendable {
     }
     static func make(devices: [CastDevice] = [CastFixtures.livingRoom], preferred: OutputRouteID? = nil, playing: Bool = true, position: Double = 12, item makeItem: ((URL) -> CastLocalItem?)? = nil,
                      factory: (@MainActor (SimulatedCastReceiver) -> any CastChannelFactory)? = nil, driverConfiguration: CastDriverConfiguration? = nil,
-                     quitChoice: CastQuitChoice? = nil, withDevicesListed: Bool = true) async throws -> CastRig {
+                     quitChoice: CastQuitChoice? = nil, withDevicesListed: Bool = true, receiverOptions: SimulatedCastReceiver.Options? = nil, receiverLevel: Double? = nil) async throws -> CastRig {
         let file = try CastFixtures.audioFile()
         let log = SharedLog()
         let directory = ScriptedDirectory([Synthetic.speakers], defaultUID: Synthetic.speakers.uid)
@@ -152,7 +166,8 @@ final class SharedLog: @unchecked Sendable {
         let local = FakeLocal(item: makeItem?(file) ?? item(file: file), playing: playing, position: position, sharedLog: log)
         let engine = CastTestEngine(local: local), music = RecordingEngine(.youTubeMusic)
         await coordinator.register(music); await coordinator.register(engine)
-        let receiver = SimulatedCastReceiver()
+        let receiver = SimulatedCastReceiver(options: receiverOptions ?? SimulatedCastReceiver.Options())
+        if let receiverLevel { receiver.setLevel(receiverLevel) }
         var configuration = driverConfiguration ?? CastDriverConfiguration()
         configuration.session.runsHeartbeat = false
         let quit = MemoryCastQuitChoice(quitChoice)

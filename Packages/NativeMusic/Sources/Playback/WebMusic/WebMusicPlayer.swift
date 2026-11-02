@@ -296,6 +296,49 @@ import Observation
             if await run(forward ? .next : .previous, on: page) == .ad { refusal = .advertisement }
         }
     }
+    /// CORE-A: plays an item from the page's own queue (one the page lists after the playing item). It starts sound like Next does, so it asks the
+    /// output gate the same way. Refused during an ad. The result is what the page does next: the new item reports itself like any other.
+    public func playQueueItem(_ videoID: String) async {
+        if let gate = audibleStartGate { await gate { [weak self] in await self?.playQueueItemAfterAdmission(videoID) }; return }
+        await playQueueItemAfterAdmission(videoID)
+    }
+    private func playQueueItemAfterAdmission(_ videoID: String) async {
+        guard let page, !closed else { return }
+        commandRevision &+= 1
+        switch transport.admitQueueSelection(videoID) {
+        case .failure(let reason): refusal = reason
+        case .success:
+            refusal = nil; transport.setIntent(true); publish()
+            refusal = Self.refusal(for: await run(.playQueueItem(videoID), on: page), itemCommand: true)
+        }
+    }
+    /// CORE-A: asks the page's player bar to turn shuffle on or off. The state shown afterwards is whatever the page then reports, never this request.
+    public func setShuffle(_ on: Bool) async {
+        guard let page, !closed else { return }
+        commandRevision &+= 1
+        switch transport.admitQueueSetting() {
+        case .failure(let reason): refusal = reason
+        case .success: refusal = nil; refusal = Self.refusal(for: await run(.shuffle(on), on: page))
+        }
+    }
+    /// CORE-A: asks the page's player bar for a repeat mode (its own button is stepped until the page shows it).
+    public func setRepeat(_ mode: WebMusicRepeatMode) async {
+        guard let page, !closed else { return }
+        commandRevision &+= 1
+        switch transport.admitQueueSetting() {
+        case .failure(let reason): refusal = reason
+        case .success: refusal = nil; refusal = Self.refusal(for: await run(.repeatMode(mode), on: page))
+        }
+    }
+    /// What the page's answer to a queue, shuffle or repeat request means for the person: nothing when it took, a stated reason otherwise.
+    static func refusal(for reply: WebMusicCommandReply, itemCommand: Bool = false) -> WebMusicRefusal? {
+        switch reply {
+        case .ok: nil
+        case .ad: .queueAdvertisement
+        case .rejected: itemCommand ? .queueItemGone : .pageDidNotTake
+        default: .pageDidNotTake
+        }
+    }
     /// The speed the page's `<video>` is ACTUALLY playing at: what its periodic report says (and a speed command's read-back), 1 until the page
     /// has said for this item. It is reconciled on every report, so a new item, a full load or an ad that changed the element's speed shows here.
     /// Position and duration are always in media seconds, whatever the speed.

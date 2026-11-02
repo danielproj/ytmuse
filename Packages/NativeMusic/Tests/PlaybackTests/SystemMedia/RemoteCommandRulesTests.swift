@@ -7,6 +7,7 @@ import Testing
 @testable import Playback
 @testable import SystemIntegration
 @testable import AppShell
+import TestSupport
 
 /// T23.3 (ARCH03): Play, seek, jumps, speed, like, dislike and save from a media key, an accessory or Control Center obey the same capabilities, the
 /// same generation and account fencing, the same advertisement restrictions and the same Play here gate as the window's own controls. A command the
@@ -191,7 +192,7 @@ import Testing
     @Test func theShellIsTheLedgerSideAndTellsEachCauseApart() async throws {
         let rig = try await MediaRig.make()
         let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         #expect(rig.model.remoteLibrary === shell, "the model's library side is the shell, the one that owns the like path")
         guard case .unavailable(let nothing) = shell.remoteLibraryControl(.like) else { Issue.record("nothing playing"); return }
         let (_, page) = try await rig.play()

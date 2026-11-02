@@ -72,7 +72,8 @@
 1245|Kein Netzwerkpfad zum Dienst.
 1246|Nichts festgelegt, bis du etwas aufzeichnest.
 1247|Lautstärke normalisieren
-1248|Noch nicht umgesetzt. Ein Radio, das die Wiedergabe fortsetzt, braucht eine Empfehlungsquelle, die zur Arbeit an Warteschlange und Entdecken gehört (W05 und W38). Nichts in dieser App startet von selbst ein Radio.
+1248|YouTube Musics eigener Player entscheidet, was nach dem Ende der Warteschlange spielt; diese App hat dafür keinen Schalter. Um selbst ein Radio zu starten, wähle „Radio starten“, wo es angeboten wird.
+2001|Ein anderer Start läuft noch. Versuche es gleich noch einmal.
 1249|Noch nicht umgesetzt. Die Suche nach Updates und deren Installation kommen mit der signierten Verteilung (geplant als W30 und W46), jeweils mit eigener Zustimmung. Dieser Build sucht und installiert nichts.
 1250|Aus während der Wiedergabe
 1251|Aus während der Wiedergabe; ein Neustart erfolgt immer ausdrücklich.

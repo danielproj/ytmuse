@@ -259,7 +259,7 @@
 959|La cola no pudo aceptar esa canción.
 960|La cola se muestra en la ventana principal.
 961|No se pudo iniciar la radio. Lo que sonaba no ha cambiado.
-962|El receptor controla el volumen.
+962|Mientras envías con Cast, el control de volumen ajusta el volumen del receptor. El volumen del Mac no cambia.
 963|No se pudo abrir el elemento seleccionado de la cola. Prueba a seleccionarlo de nuevo.
 964|La sesión de %@ terminó. Inicia sesión de nuevo.
 965|No se pudo cambiar el temporizador de reposo. Prueba a configurarlo de nuevo.

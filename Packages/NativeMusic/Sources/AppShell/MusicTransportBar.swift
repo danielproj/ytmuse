@@ -91,56 +91,79 @@ struct WebMusicTransportContent: View {
     @State private var image: NSImage?
     @State private var artworkDecode = ArtworkDemandDriver()
     @State private var accentSequence = AccentSequencer()
+    @State private var hovering = false
+    @State private var preview = SeekPreview()
     var body: some View {
         let state = player.snapshot
-        HStack(spacing: MusicSpace.md) {
-            Button(action: showNowPlaying) { artwork.frame(width: compact ? 40 : 52, height: compact ? 40 : 52).playerMatched("current-artwork", namespace) }
-                .buttonStyle(.musicTile(.playerInset, edge: compact ? 40 : 52)).accessibilityLabel(Text("Show Now Playing")).help(Text("Show Now Playing"))
-                .audit("playerArtwork", group: "playerRow", within: "playerBar")
-            VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                HStack(spacing: MusicSpace.xs) {
-                    Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(.headline).lineLimit(1)
-                        .accessibilityIdentifier("musicTitle").playerMatched("player-title", namespace, .position)
-                    if state.isAd {
-                        MusicBadge("Ad", style: .advertisement)
-                            .accessibilityLabel(Text("Advertisement playing")).accessibilityIdentifier("musicAdBadge")
-                    }
-                }
-                Text(state.artist ?? status(state)).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1)
-                    .accessibilityIdentifier("musicArtist").playerMatched("player-artist", namespace, .position)
-            }.frame(minWidth: 112, maxWidth: 240, alignment: .leading).audit("playerTitle", group: "playerRow", within: "playerBar")
-            Spacer(minLength: 0)
-            WebMusicControlsView(player: player, namespace: namespace).audit("playerControls", group: "playerRow", within: "playerBar")
-            Spacer(minLength: 0)
-            WebMusicAccessories(player: player, compact: compact, showVideo: showVideo, showQueue: showQueue, outputs: outputs, playback: playback).audit("playerAccessories", group: "playerRow", within: "playerBar")
-        }.audit("playerRow", group: "playerBar", within: "playerBar")
+        let seekState = preview.state(hovering: hovering)
+        MusicCapsuleRow {
+            HStack(spacing: MusicSpace.sm) {
+                Button(action: showNowPlaying) { artwork.musicCapsuleCover(compact: compact).playerMatched("current-artwork", namespace) }
+                    .buttonStyle(.plain).accessibilityLabel(Text("Show Now Playing")).help(Text("Show Now Playing"))
+                    .audit("playerArtwork", group: "playerRow", within: "playerBar")
+                titleBlock(state).audit("playerTitle", group: "playerRow", within: "playerBar")
+            }
+            WebCapsuleTransport(player: player, compact: compact, namespace: namespace, showsTimes: seekState.showsTimes, preview: preview).audit("playerControls", group: "playerRow", within: "playerBar")
+            WebCapsuleSecondary(player: player, compact: compact, showVideo: showVideo, showQueue: showQueue, outputs: outputs, playback: playback)
+                .audit("playerAccessories", group: "playerRow", within: "playerBar")
+        }.audit("playerRow", group: "playerBar", kind: .layer, within: "playerBar")
+            .overlay(alignment: .bottom) {
+                WebCapsuleSeek(player: player, state: seekState, compact: compact, preview: preview).audit("playerTimeline", group: "playerBar", kind: .layer, within: "playerBar")
+            }
+            // A prompt that carries buttons floats just above the capsule instead of adding a row under it.
+            .overlay(alignment: .top) {
+                if let outputs { OutputPromptHost(controller: outputs).frame(maxWidth: PlayerCapsule.maximumWidth / 2).alignmentGuide(.top) { $0[.bottom] + MusicSpace.xs } }
+            }
+            .onHover { hovering = $0 }
             .announcesTransport(state)
-        WebMusicTimelineView(player: player).audit("playerTimeline", group: "playerBar", within: "playerBar")
-        if let playback { SleepTimerLine(model: playback, episode: playback.playingEpisode(playback.episodes), identifier: "musicSleepRemaining") }
-        if let outputs { OutputPromptHost(controller: outputs) }
+    }
+    /// Title and artist, two lines. A failure, a notice or a refusal takes the artist line for as long as it lasts.
+    private func titleBlock(_ state: WebMusicSnapshot) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: MusicSpace.xs) {
+                Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(.system(size: 13, weight: .semibold)).lineLimit(1)
+                    .accessibilityIdentifier("musicTitle").playerMatched("player-title", namespace, .position)
+                if state.isAd {
+                    MusicBadge("Ad", style: .advertisement).fixedSize()
+                        .accessibilityLabel(Text("Advertisement playing")).accessibilityIdentifier("musicAdBadge")
+                }
+                if state.isLive {
+                    MusicBadge("LIVE", style: .live(atEdge: state.atLiveEdge)).fixedSize()
+                        .accessibilityLabel(Text(state.atLiveEdge ? "Live" : "Behind live")).accessibilityIdentifier("musicLiveBadge")
+                }
+            }
+            subtitle(state).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1)
+        }.frame(maxWidth: PlayerCapsule.titleWidth, alignment: .leading)
+    }
+    @ViewBuilder private func subtitle(_ state: WebMusicSnapshot) -> some View {
         if case .failed(let failure) = state.phase {
-            Text(failure.message).font(.caption).accessibilityIdentifier("musicFailure")
+            Text(failure.message).foregroundStyle(MusicStyle.errorText).help(Text(failure.message)).accessibilityIdentifier("musicFailure")
         } else if let notice = state.notice {
-            Text(notice.message).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("musicNotice")
+            Text(notice.message).help(Text(notice.message)).accessibilityIdentifier("musicNotice")
         } else if let refusal = player.refusal {
-            Text(refusal.message).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("musicRefusal")
+            Text(refusal.message).help(Text(refusal.message)).accessibilityIdentifier("musicRefusal")
+        } else {
+            Text(state.artist ?? status(state)).accessibilityIdentifier("musicArtist").playerMatched("player-artist", namespace, .position)
         }
     }
     /// Decoded once per artwork change, not on every position update.
     private var artwork: some View {
         // W09-F1b: applied from the body, not `.task(id:)` (see `ArtworkDemandDriver`).
         artworkDecode.apply(player.artwork) {
-            let decoded = player.artwork.flatMap(NSImage.init(data:))
+            let data = player.artwork
+            let decoded = await WebCoverMemo.shared.decoded(data)
+            guard !Task.isCancelled else { return }
             image = decoded
-            accentSequence.publish(player.artwork) { accentChanged($0) }
+            accentSequence.publish(data) { accentChanged($0) }
         }
         return Group {
-            if let image {
-                Image(nsImage: image).resizable().aspectRatio(contentMode: .fill)
+            // POL-A: a view that replaces another paints the held decode of the same bytes in its first frame (no flash of the default note).
+            if let shown = WebCoverMemo.shared.displayed(for: player.artwork, current: image) {
+                Image(nsImage: shown).resizable().aspectRatio(contentMode: .fill)
             } else {
                 Image(systemName: "music.note").font(.title2).frame(maxWidth: .infinity, maxHeight: .infinity).background(.quaternary)
             }
-        }.musicClip(.playerInset, edge: compact ? 40 : 52).accessibilityHidden(true)
+        }.accessibilityHidden(true)
             .musicAnimation(.artworkColor, value: image != nil)
             .onAppear { artworkDecode.resume() }.onDisappear { artworkDecode.suspend() }
     }
@@ -163,25 +186,35 @@ struct WebMusicTransportContent: View {
 /// snapshot fields that decide whether seeking is possible.
 struct WebMusicTimelineView: View {
     let player: WebMusicPlayer
+    /// The expanded player's slim look: a 4 pt track, an accent fill and a small knob only under the pointer or while dragged (the times stay beside it).
+    var plain = false
     @State private var preview: Double?
+    @State private var hovering = false
+    @State private var dragging = false
     var body: some View {
         let state = player.snapshot
         let position = player.timeline.position
         // A live stream has no duration: the slider spans the rewindable window, and the clock says how far behind live it is.
         let behind = player.timeline.behindLive
         let span = state.isLive ? max(position + (behind ?? 0), 0.001) : max(state.duration, 0.001)
+        let shown = preview ?? min(position, span)
+        let slider = Slider(value: Binding(get: { shown }, set: { preview = $0 }), in: 0...span) {
+            Text("Playback position")
+        } onEditingChanged: { editing in
+            dragging = editing
+            if !editing, let target = preview { preview = nil; Task { await player.seek(target) } }
+        }
+        .disabled(!state.canSeek).labelsHidden()
+        .accessibilityLabel(Text("Playback position"))
+        .accessibilityValue(Text(state.isAd ? "Ad playing" : (state.isLive ? (state.atLiveEdge ? "Live" : "\(Self.format(behind ?? 0)) behind live") : "\(Self.format(position)) of \(Self.format(state.duration))")))
+        .accessibilityIdentifier("musicTimeline")
         HStack {
             Text(state.isAd ? "Ad" : (state.isLive ? (state.atLiveEdge ? String(localized: "Live") : Self.format(behind ?? 0)) : Self.format(preview ?? position))).monospacedDigit().frame(minWidth: 36)
                 .accessibilityIdentifier("musicElapsed")
-            Slider(value: Binding(get: { preview ?? min(position, span) }, set: { preview = $0 }), in: 0...span) {
-                Text("Playback position")
-            } onEditingChanged: { editing in
-                if !editing, let target = preview { preview = nil; Task { await player.seek(target) } }
-            }
-            .disabled(!state.canSeek).labelsHidden().tint(MusicStyle.accent)
-            .accessibilityLabel(Text("Playback position"))
-            .accessibilityValue(Text(state.isAd ? "Ad playing" : (state.isLive ? (state.atLiveEdge ? "Live" : "\(Self.format(behind ?? 0)) behind live") : "\(Self.format(position)) of \(Self.format(state.duration))")))
-            .accessibilityIdentifier("musicTimeline")
+            if plain {
+                MusicSlimSlider(fraction: shown / span, active: hovering || dragging, enabled: state.canSeek, thickness: PlayerCapsule.seekHoverThickness) { slider }
+                    .onHover { hovering = $0 }
+            } else { slider.tint(MusicStyle.accent) }
             Text(state.isAd || state.isLive ? "" : "-" + Self.format(max(0, state.duration - (preview ?? position)))).monospacedDigit().frame(minWidth: 40)
                 .accessibilityIdentifier("musicRemaining")
         }.font(.caption).foregroundStyle(MusicStyle.secondaryText)
@@ -197,9 +230,14 @@ struct WebMusicControlsView: View {
     let player: WebMusicPlayer
     var large = false
     var namespace: Namespace.ID? = nil
+    /// The expanded player's look: the capsule's plain glyphs and accent Play circle, larger (the mini player and the popover keep the boxed controls).
+    var plain = false
     var body: some View {
+        if plain { WebCapsuleButtons(player: player, large: large, namespace: namespace) } else { boxed }
+    }
+    private var boxed: some View {
         let state = player.snapshot
-        HStack(spacing: MusicSpace.xs) {
+        return HStack(spacing: MusicSpace.xs) {
             Button { Task { await player.previous() } } label: { Label("Previous", systemImage: "backward.end.fill") }
                 .disabled(!state.canSkip).accessibilityIdentifier("musicPrevious")
             Button { Task { await player.playPause() } } label: {
@@ -221,42 +259,5 @@ extension View {
     /// Gives a player element its identity in the shared namespace (nil outside the shell: no identity).
     @ViewBuilder func playerMatched(_ id: String, _ namespace: Namespace.ID?, _ properties: MatchedGeometryProperties = .frame) -> some View {
         if let namespace { musicMatched(id, in: namespace, properties: properties) } else { self }
-    }
-}
-
-/// Live state, video, volume and queue of the YouTube Music transport: one definition for the bar and the expanded player.
-struct WebMusicAccessories: View {
-    @Environment(\.podcastsSurface) private var podcasts
-    let player: WebMusicPlayer
-    var compact = false
-    var showVideo: (() -> Void)? = nil
-    var showQueue: () -> Void = {}
-    var outputs: OutputController? = nil
-    /// P17-WEB: when given, the sleep-timer menu is offered (the playback owner sets the timer; this view never talks to the page).
-    var playback: PlaybackModel? = nil
-    var body: some View {
-        let state = player.snapshot
-            HStack(spacing: MusicSpace.xs) {
-                if state.isLive {
-                    MusicBadge("LIVE", style: .live(atEdge: state.atLiveEdge))
-                        .accessibilityLabel(Text(state.atLiveEdge ? "Live" : "Behind live")).accessibilityIdentifier("musicLiveBadge")
-                    Button { Task { await player.goLive() } } label: { Label("Go Live", systemImage: "dot.radiowaves.left.and.right") }.labelStyle(.iconOnly)
-                        .disabled(!state.canGoLive).help(Text("Jump to the live edge")).accessibilityIdentifier("musicGoLive")
-                }
-                if let showVideo, state.hasPicture {
-                    Button(action: showVideo) { Label("Show Video", systemImage: "play.rectangle") }.labelStyle(.iconOnly).help(Text("Show the video in its own window"))
-                        .accessibilityIdentifier("musicShowVideo")
-                }
-                // Speed and the jump buttons, only while the item that plays is an episode.
-                if let podcasts, let episode = podcasts.playback.current, episode.videoID == state.videoID {
-                    PodcastTransportControls(playback: podcasts.playback, rate: podcasts.playback.rate(forShow: episode.show), actual: player.confirmedRate)
-                }
-                Slider(value: Binding(get: { state.volume }, set: { level in Task { await player.setVolume(level) } }), in: 0...1) {
-                    Text("YouTube Music volume")
-                }.labelsHidden().tint(MusicStyle.accent).frame(width: compact ? 64 : 100).accessibilityLabel(Text("YouTube Music volume")).accessibilityIdentifier("musicVolume")
-                if let outputs { OutputPickerHost(controller: outputs).labelStyle(.iconOnly) }
-                if let playback { MusicSleepTimerMenu(model: playback, episode: podcasts?.playback.current.map { $0.videoID == state.videoID } ?? false) }
-                Button(action: showQueue) { Label("Queue", systemImage: "list.bullet") }.labelStyle(.iconOnly).help(Text("Queue")).accessibilityIdentifier("transportQueue")
-        }.musicButtons()
     }
 }

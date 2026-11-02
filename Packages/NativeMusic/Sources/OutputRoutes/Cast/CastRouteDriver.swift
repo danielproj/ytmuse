@@ -53,6 +53,24 @@ public struct CastLocalState: Equatable, Sendable {
     func seekLocal(_ seconds: Double) async
 }
 
+/// TH4 (rework of M1): what the app's volume slider shows and drives WHILE an owned or local item is cast through the relay. It is the RECEIVER's level, as the
+/// receiver reports it, and it is separate from the Mac's own app gain (which is neither read nor changed while casting). nil: not casting such an item, so
+/// the slider is the Mac's.
+public struct CastVolumeControl: Equatable, Sendable {
+    public enum Unavailable: Equatable, Sendable {
+        /// The receiver has not yet said what its level or its abilities are: nothing is sent until it has.
+        case notReported
+        /// The receiver says its volume is fixed (`controlType: "fixed"`).
+        case fixed
+        /// The receiver's media status says it cannot set the stream volume.
+        case unsupported
+    }
+    public let level: Double
+    public let unavailable: Unavailable?
+    public var isAdjustable: Bool { unavailable == nil }
+    public init(level: Double, unavailable: Unavailable?) { self.level = level; self.unavailable = unavailable }
+}
+
 public enum CastNotice: Equatable, Sendable {
     case itemNotCastable(CastNotCastable)
     case receiverCouldNotPlay
@@ -79,9 +97,20 @@ public struct CastDriverConfiguration: Sendable {
     @ObservationIgnored public private(set) var ignoredStale = 0
     /// Told when a session becomes live or ends, so the app can keep looking for receivers only while it needs to.
     @ObservationIgnored public var onLiveChange: (@MainActor (Bool) -> Void)?
+    /// TH4: the slider while an owned or local item is cast (see `CastVolumeControl`); nil otherwise.
+    public private(set) var volumeControl: CastVolumeControl?
+    /// The newest level the slider asked for, not yet sent (a burst sends the newest). Written synchronously on the main actor by `requestVolume` and read and
+    /// cleared synchronously by the send loop, so which level is newest never depends on the order of tasks. (TH5: a generation counter used to be written
+    /// beside it and never read; it decided nothing and is gone.)
+    @ObservationIgnored private var pendingVolume: Double?
+    @ObservationIgnored private var volumeTask: Task<Void, Never>?
+    /// What the person asked for, shown until the receiver next reports its own level with nothing left to send.
+    @ObservationIgnored private var requestedLevel: Double?
     private func setLive(_ value: Bool, name: String?) {
         let changed = isLive != value
         isLive = value; liveDeviceName = name
+        if !value { pendingVolume = nil; requestedLevel = nil }
+        refreshVolumeControl()
         if changed { onLiveChange?(value) }
     }
 
@@ -106,6 +135,10 @@ public struct CastDriverConfiguration: Sendable {
         var continuation: CastContinuation = .macRelays
         var pendingSwitch: Task<Void, Never>?
         var ending = false
+        /// The receiver's own volume reports (RECEIVER_STATUS) and abilities (MEDIA_STATUS `supportedMediaCommands`), as reported.
+        var reportedLevel: Double?
+        var fixedVolume = false
+        var streamVolume: Bool?
     }
     @ObservationIgnored private var live: Live?
     /// Where the receiver last said it was, for the item it was playing, kept across a loss so Reconnect and Play here continue from there.
@@ -150,6 +183,7 @@ public struct CastDriverConfiguration: Sendable {
         session.onEvent = { [weak self] event in self?.handle(event, from: sessionID) }
         live = Live(session: session, remoteID: remoteID, lastLocalPlaying: state.playing, expectedAt: now())
         setLive(true, name: device.friendlyName)
+        try? await session.requestReceiverStatus()   // the receiver's own level, so the slider can start where the speaker is
         coordinator.remoteEvent(.state(.connecting), session: remoteID)
         guard let item = state.item else { return true }   // nothing is queued yet: the first item is loaded when playback starts
         let start = reconnecting && resumePoint?.key == item.key ? (resumePoint?.seconds ?? state.position) : state.position
@@ -195,11 +229,11 @@ public struct CastDriverConfiguration: Sendable {
                 continuation = .macRelays
             } catch {
                 if case CastRelayError.bindRefused = error { notice = .networkNotAllowed } else { notice = .relayUnavailable }
-                live?.loadedKey = nil
+                live?.loadedKey = nil; refreshVolumeControl()
                 return .failed
             }
         }
-        live?.continuation = continuation
+        live?.continuation = continuation; refreshVolumeControl()
         guard let session = live?.session, session.id == sessionID else { return .superseded }
         do {
             _ = try await session.load(CastMessages.Load(url: url.absoluteString, contentType: contentType, title: item.title, artist: item.artist,
@@ -210,7 +244,7 @@ public struct CastDriverConfiguration: Sendable {
             return .superseded
         } catch {
             guard live?.session.id == sessionID else { return .superseded }
-            live?.loadedKey = nil
+            live?.loadedKey = nil; refreshVolumeControl()
             notice = .receiverCouldNotPlay
             return .failed
         }
@@ -230,6 +264,38 @@ public struct CastDriverConfiguration: Sendable {
             do { if state.playing { try await current.session.play() } else { try await current.session.pause() } } catch { }
         }
     }
+    // MARK: Volume: the slider drives the receiver's own level (TH4)
+
+    /// Recomputes what the slider shows. Called wherever its inputs change: going live or ending, an item loaded or dropped, a receiver report.
+    private func refreshVolumeControl() {
+        var value: CastVolumeControl?
+        if let current = live, !current.ending, current.loadedKey != nil, current.continuation == .macRelays {
+            let shown = requestedLevel ?? current.reportedLevel
+            let why: CastVolumeControl.Unavailable? = current.fixedVolume ? .fixed : current.streamVolume == false ? .unsupported : (shown == nil || current.streamVolume == nil) ? .notReported : nil
+            value = CastVolumeControl(level: shown ?? 0, unavailable: why)
+        }
+        if volumeControl != value { volumeControl = value }
+    }
+    /// The slider moved while an owned or local item is cast through the relay. Nothing is sent unless the receiver has reported its level, is not fixed and can
+    /// set the stream volume (`volumeControl.isAdjustable`); a non-finite level is ignored; the level is clamped to 0...1; the newest level wins (it is handed
+    /// over here, synchronously, so task order cannot decide). The Mac's own volume is never read or changed. Connecting sets nothing.
+    public func requestVolume(_ level: Double) {
+        guard level.isFinite, let control = volumeControl, control.isAdjustable else { return }
+        let clamped = min(1, max(0, level))
+        pendingVolume = clamped; requestedLevel = clamped
+        refreshVolumeControl()
+        if volumeTask == nil { volumeTask = Task { @MainActor [weak self] in await self?.sendPendingVolume() } }
+    }
+    private func sendPendingVolume() async {
+        while let next = pendingVolume {
+            pendingVolume = nil
+            guard let session = live?.session, live?.ending == false else { break }
+            try? await session.setVolume(level: next)
+        }
+        volumeTask = nil
+    }
+    /// Waits until every level handed to `requestVolume` has been sent (for tests).
+    public func volumeSettled() async { await volumeTask?.value }
     /// A person's seek (or the item restarting): the receiver is sought to the same place. Positions shown still come from the receiver's next report.
     public func nativeSeek(to seconds: Double) async {
         guard let current = live, !current.ending, current.loadedKey != nil else { return }
@@ -241,7 +307,7 @@ public struct CastDriverConfiguration: Sendable {
         guard let item = state.item else {
             // The queue ran out. A receiver within a few seconds of the end of the last item is let finish it (the silent local clock is slightly ahead);
             // anything else is stopped so nothing keeps playing for an empty queue.
-            current.loadedKey = nil; live = current
+            current.loadedKey = nil; live = current; refreshVolumeControl()
             if let position = current.lastPosition, let duration = current.duration, duration - position <= Double(configuration.switchGrace.components.seconds) { return }
             try? await current.session.stopMedia(); return
         }
@@ -261,7 +327,7 @@ public struct CastDriverConfiguration: Sendable {
                 guard !Task.isCancelled, self?.live?.session.id == sessionID else { return }
                 await self?.loadCurrentAfterSwitch()
             }
-            live = current
+            live = current; refreshVolumeControl()
             return
         }
         live = current
@@ -288,10 +354,15 @@ public struct CastDriverConfiguration: Sendable {
             guard report.generation == current.session.loadGeneration else { ignoredStale += 1; return }
             if let position = report.position { live?.lastPosition = position; coordinator.remoteEvent(.position(position, observedAt: report.observedAt), session: current.remoteID) }
             if let duration = report.duration { live?.duration = duration }
-            if let capabilities = report.capabilities { coordinator.remoteEvent(.capabilities(capabilities), session: current.remoteID) }
+            if let capabilities = report.capabilities { coordinator.remoteEvent(.capabilities(capabilities), session: current.remoteID); live?.streamVolume = capabilities.canSetStreamVolume; refreshVolumeControl() }
             coordinator.remoteEvent(.state(Self.remoteState(report.state)), session: current.remoteID)
             Task { @MainActor [weak self] in await self?.reconcile(report, session: sessionID) }
-        case .volume(let level, let muted): coordinator.remoteEvent(.volume(ReceiverVolume(level: level, muted: muted)), session: current.remoteID)
+        case .volume(let level, let muted, let fixed):
+            coordinator.remoteEvent(.volume(ReceiverVolume(level: level, muted: muted, fixed: fixed)), session: current.remoteID)
+            if let level, level.isFinite { live?.reportedLevel = min(1, max(0, level)) }
+            live?.fixedVolume = fixed
+            if pendingVolume == nil, volumeTask == nil { requestedLevel = nil }   // nothing left to send: the receiver's word is what is shown
+            refreshVolumeControl()
         case .finished(let generation):
             guard generation == current.session.loadGeneration else { ignoredStale += 1; return }
             if current.pendingSwitch != nil {

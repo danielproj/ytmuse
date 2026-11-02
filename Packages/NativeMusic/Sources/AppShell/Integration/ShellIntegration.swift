@@ -301,6 +301,10 @@ extension ShellCoordinator: ScriptingTarget {
     }
     func setVolume(percent: Int) -> ScriptRefusal? {
         guard playback.shellState.hasItem else { return .nothingPlaying }
+        // TH5: while a cast receiver is the slider (TH4) and it cannot take a level now (fixed, unable to set the stream volume, or not yet reported), nothing is
+        // sent, so the script is told so with the sentence the slider shows (already localized); success would be a fake one.
+        let slider = playback.volumeSlider
+        if slider.isReceiver, !slider.isEnabled { return .notAllowedNow(slider.disabledReason ?? String(localized: "That command is not available right now.")) }
         playback.shellSetVolume(Double(percent) / 100)
         return nil
     }

@@ -27,7 +27,7 @@ public struct CastMediaReport: Equatable, Sendable {
 public enum CastSessionEvent: Equatable, Sendable {
     case ready
     case media(CastMediaReport)
-    case volume(level: Double?, muted: Bool?)
+    case volume(level: Double?, muted: Bool?, fixed: Bool)
     /// The loaded item played to its end (the receiver went idle with FINISHED).
     case finished(generation: UInt64)
     case mediaFailed(generation: UInt64)
@@ -171,6 +171,11 @@ public enum CastShutdown: Sendable, Equatable {
         try await send(CastMessages.setVolume(level: nil, muted: muted, requestID: nextRequestID()))
     }
     /// Asks the receiver for its media status; the answer arrives as an ordinary `.media` event.
+    /// TH4: asks the receiver for its own status (its volume and applications); the answer arrives as an ordinary `.volume` event.
+    public func requestReceiverStatus() async throws {
+        guard phase == .ready else { throw CastError.notConnected }
+        try await send(CastMessages.getStatus(requestID: nextRequestID()))
+    }
     public func requestStatus() async throws {
         guard phase == .ready, let transport = transportID else { throw CastError.notConnected }
         try await send(CastMessages.mediaGetStatus(transportID: transport, requestID: nextRequestID()))
@@ -275,7 +280,7 @@ public enum CastShutdown: Sendable, Equatable {
             return
         }
         guard phase == .ready else { return }
-        if let volume = status.volume { onEvent?(.volume(level: volume.level, muted: volume.muted)) }
+        if let volume = status.volume { onEvent?(.volume(level: volume.level, muted: volume.muted, fixed: volume.isFixed)) }
         // Our application is gone from the receiver (another sender launched something else, or the device ended it).
         if let session = applicationSessionID, !status.applications.contains(where: { $0.sessionID == session }) { lose(.receiverClosed) }
     }

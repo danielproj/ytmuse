@@ -4,6 +4,7 @@ import Domain
 import AccountSession
 @testable import AppShell
 @testable import YouTubeMusicAdapter
+import TestSupport
 
 // W28 rework 1 (F1): the content language and region chosen in Settings are what the clients put into the request context. Fake transports only: nothing leaves
 // the process, and the preferences are a per-test suite with a unique name that is removed afterwards.
@@ -40,9 +41,8 @@ private struct SendableDefaults: @unchecked Sendable { let value: UserDefaults; 
 
 @Suite struct ContentLocaleRequestTests {
   private func store() -> (SendableDefaults, () -> Void) {
-    let name = "ytmuse-w28-content-locale-" + UUID().uuidString
-    let defaults = UserDefaults(suiteName: name)!
-    return (SendableDefaults(defaults), { defaults.removePersistentDomain(forName: name) })
+    let defaults = InMemoryDefaults()
+    return (SendableDefaults(defaults), {})
   }
   @Test func aChangedSettingChangesTheNextPublicRequest() async throws {
     let (defaults, cleanup) = store(); defer { cleanup() }

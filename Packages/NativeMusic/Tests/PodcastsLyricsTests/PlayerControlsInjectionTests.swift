@@ -87,20 +87,24 @@ private func state(_ video: String, position: Double = 100) -> [String: Any] {
     return Rig(accounts: accounts, player: player, page: page, window: window, host: host)
 }
 
+/// What the capsule's ⋯ menu offers for what `rig` hosted: the episode's controls only while the item that plays is the registered episode.
+@MainActor private func moreItems(_ rig: Rig) -> [CapsuleMoreItem] {
+    let episode = rig.accounts.podcasts.playback.current.map { $0.videoID == rig.player.snapshot.videoID } ?? false
+    return WebCapsuleSecondary.moreItems(state: rig.player.snapshot, hasSleepTimer: true, canShowVideo: true, episode: episode)
+}
+
+// PLAYER-1: the floating capsule keeps its transport row to the glyphs a song needs; an episode's skip buttons, speed menu and skip-length menu moved into
+// the ⋯ menu (the old bar grew two controls and two menus). A menu SwiftUI builds on click cannot be read from AppKit, so the choice of what ⋯ offers is a
+// pure function (`WebCapsuleSecondary.moreItems`) that the view renders, and these tests state it for the hosted shell's own player and podcast model.
 @MainActor @Suite struct PlayerControlsInjectionTests {
-    @Test func whileAnEpisodePlaysTheBarGrowsTheTwoSkipControls() async throws {
+    @Test func whileAnEpisodePlaysTheMoreMenuOffersTheEpisodeControlsAndTheBarGrowsNothing() async throws {
         let episode = try await rig(playing: episodeID, isEpisode: true)
         defer { episode.window.orderOut(nil); withExtendedLifetime(episode.accounts) {} }
         let song = try await rig(playing: episodeID, isEpisode: false)       // the same item, NOT registered as an episode
         defer { song.window.orderOut(nil); withExtendedLifetime(song.accounts) {} }
-        let withControls = barControls(episode.host), without = barControls(song.host)
-        #expect(without.count >= 4, "the bar itself is hosted and its transport is there: \(without)")
-        let added = withControls.filter { control in !without.contains { abs($0.minX - control.minX) < 1 && abs($0.minY - control.minY) < 1 } }
-        let slider = without.first { $0.width == 100 }
-        #expect(added.count >= 2 && added.allSatisfy { $0.minY > episode.host.bounds.height - 160 && ($0.maxX < (slider?.minX ?? 0) + 1) }, "the new controls sit in the bar, left of the volume slider: \(added)")
-        // Skip back and skip forward are two more focusable controls in the transport row, to the left of the volume slider (the speed and skip-length
-        // menus are not key-view stops, so they add no proxy of their own; their presence is the same view and the source check below).
-        #expect(withControls.count == without.count + 2, "episode \(withControls.count) vs plain \(without.count): \(withControls) | \(without)")
+        #expect(barControls(song.host).count >= 4, "the bar itself is hosted and its transport is there: \(barControls(song.host))")
+        #expect(barControls(episode.host).count == barControls(song.host).count, "the capsule's row is the same for an episode: \(barControls(episode.host)) | \(barControls(song.host))")
+        #expect(moreItems(episode).contains(.episodeControls) && !moreItems(song).contains(.episodeControls))
     }
     @Test func aSongShowsNoneOfThem() async throws {
         let song = try await rig(playing: songID, isEpisode: false)
@@ -108,37 +112,35 @@ private func state(_ video: String, position: Double = 100) -> [String: Any] {
         let plain = try await rig(playing: episodeID, isEpisode: false)
         defer { plain.window.orderOut(nil); withExtendedLifetime(plain.accounts) {} }
         #expect(barControls(song.host).count == barControls(plain.host).count && barControls(song.host).count >= 4)
-        #expect(barMenus(song.host).isEmpty && barMenus(plain.host).isEmpty, "and no speed or skip-length menu")
+        #expect(!moreItems(song).contains(.episodeControls) && !moreItems(plain).contains(.episodeControls))
     }
-    /// A: the episode is registered BEFORE the shell is hosted, but the item playing is a song (the player moved on): nothing is drawn. (Registering after
+    /// A: the episode is registered BEFORE the shell is hosted, but the item playing is a song (the player moved on): nothing is offered. (Registering after
     /// hosting would never reach the off-screen host, so the case could not fail.)
-    @Test func aRegisteredEpisodeThatIsNotTheItemPlayingDrawsNothing() async throws {
+    @Test func aRegisteredEpisodeThatIsNotTheItemPlayingOffersNothing() async throws {
         let song = try await rig(playing: songID, isEpisode: false)
         defer { song.window.orderOut(nil); withExtendedLifetime(song.accounts) {} }
         let moved = try await rig(playing: songID, isEpisode: false, registered: episodeID)
         defer { moved.window.orderOut(nil); withExtendedLifetime(moved.accounts) {} }
         #expect(moved.accounts.podcasts.playback.current?.videoID == episodeID && moved.player.snapshot.videoID == songID, "the case is what it says: an episode is registered and a song plays")
         #expect(barControls(moved.host).count == barControls(song.host).count && barControls(song.host).count >= 4)
-        #expect(barMenus(moved.host).isEmpty)
+        #expect(!moreItems(moved).contains(.episodeControls))
     }
-    /// B: the speed menu and the skip-length menu are in the bar while an episode plays — found as the pop-up buttons SwiftUI hosts there.
-    @Test func whileAnEpisodePlaysTheBarHasTheSpeedMenuAndTheSkipLengthMenu() async throws {
-        let episode = try await rig(playing: episodeID, isEpisode: true)
-        defer { episode.window.orderOut(nil); withExtendedLifetime(episode.accounts) {} }
-        let menus = barMenus(episode.host)
-        #expect(menus.count == 2, "speed and skip lengths: \(menus.map(\.title))")
-        #expect(menus.contains { $0.title == "1×" }, "the speed menu, labelled with the speed in effect: \(menus.map(\.title))")
-        #expect(menus.contains { $0.title.isEmpty }, "and the image-only skip-length menu")
+    @Test func theMoreMenuListsWhatHasNoSlotOfItsOwn() async throws {
+        var live = WebMusicSnapshot(); live.representation = .live
+        #expect(WebCapsuleSecondary.moreItems(state: live, hasSleepTimer: true, canShowVideo: false, episode: false) == [.sleepTimer, .goLive])
+        #expect(WebCapsuleSecondary.moreItems(state: live, hasSleepTimer: false, canShowVideo: false, episode: true) == [.goLive, .episodeControls])
     }
-    /// The label is the ACTUAL speed (the page refused 1.5×, so the element stays at 1× while 1.5× is the show's choice).
+    /// The speed menu is labelled with the ACTUAL speed (the page refused 1.5×, so the element stays at 1× while 1.5× is the show's choice), and the capsule
+    /// hands the menu the player's confirmed rate.
     @Test func theSpeedMenuIsLabelledWithTheActualSpeedNotTheChoice() async throws {
         let episode = try await rig(playing: episodeID, isEpisode: true, chosenRate: 1.5, pageRefusesSpeed: true)
         defer { episode.window.orderOut(nil); withExtendedLifetime(episode.accounts) {} }
         for _ in 0..<10 { episode.host.layoutSubtreeIfNeeded(); try await Task.sleep(for: .milliseconds(40)) }
-        let speed = try #require(barMenus(episode.host).first { !$0.title.isEmpty })
         #expect(episode.player.confirmedRate == 1 && episode.accounts.podcasts.playback.rate(forShow: "MPSPPLshowAAAAAAA") == 1.5)
-        #expect(speed.title == "1×", "what is playing, not what was chosen")
-        // (The help text lives on SwiftUI's side and is not reachable from the AppKit view; `PodcastRateDisplayTests` pins its wording.)
+        #expect(PodcastRateDisplay(chosen: 1.5, actual: episode.player.confirmedRate).title == "1×", "what is playing, not what was chosen")
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let views = try String(contentsOf: root.appendingPathComponent("Sources/AppShell/PlayerCapsuleViews.swift"), encoding: .utf8)
+        #expect(views.contains("actual: player.confirmedRate"), "the capsule passes the actual speed to the speed menu")
     }
     @Test func theControlsCallTheSharedModel() async throws {
         let episode = try await rig(playing: episodeID, isEpisode: true)

@@ -41,7 +41,8 @@
     "Playback"
   ],
   "Artwork": [
-    "Domain"
+    "Domain",
+    "Diagnostics"
   ],
   "SystemIntegration": [
     "Domain"

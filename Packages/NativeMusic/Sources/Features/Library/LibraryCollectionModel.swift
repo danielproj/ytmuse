@@ -1,4 +1,5 @@
 import AccountSession
+import Diagnostics
 import Foundation
 import Observation
 
@@ -80,6 +81,24 @@ public struct LibraryEntry: Identifiable, Equatable, Sendable {
     public let section: String?
     /// The same item also appears at an earlier ordinal; both rows are kept.
     public let repeats: Bool
+    /// W44-prep (PERF): the row's title and detail line folded once (case, diacritics, width), so a query over tens of thousands of rows compares
+    /// plain strings instead of running a locale-aware search per row per keystroke. Internal: it is derived from `item`, never shown.
+    let searchKey: String
+    init(id: String, ordinal: Int, item: MusicCatalogItem, section: String?, repeats: Bool) {
+        self.id = id; self.ordinal = ordinal; self.item = item; self.section = section; self.repeats = repeats
+        searchKey = LibraryEntry.fold(([item.title] + item.details).joined(separator: " "))
+    }
+    /// Case, diacritic and width folded, then composed, so equal-looking text is byte-equal and a plain byte search can stand in for the locale-aware one.
+    /// Known differences from the reference (`LibraryCollectionModel.matches`, a locale-aware search), all pathological queries: a lone Devanagari vowel sign
+    /// (such as `ि`) and the ligature `ﬁ`/`ﬂ` typed as the query. Everything else tried agrees, including Russian ё/й, German ß, Turkish İ/ı, Greek σ/ς, CJK,
+    /// Hangul, wide forms, decomposed accents and emoji (`LibraryModelEquivalenceTests` pins both lists).
+    static func fold(_ text: String) -> String { text.folding(options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive], locale: nil).precomposedStringWithCanonicalMapping }
+    /// Whether the folded key contains the folded needle (a byte search over the two UTF-8 buffers).
+    func matches(folded needle: String) -> Bool {
+        if needle.isEmpty { return true }
+        var needle = needle, key = searchKey
+        return needle.withUTF8 { n in key.withUTF8 { k in memmem(k.baseAddress, k.count, n.baseAddress, n.count) != nil } }
+    }
     public var artistName: String? { item.links.first { $0.kind == .artist }?.title ?? (item.kind == .artist ? nil : item.details.first) }
 }
 
@@ -171,7 +190,8 @@ public enum LibraryViewState: Sendable, Equatable {
     public typealias Continuer = @Sendable (String) async throws -> MusicBrowseReply<MusicContinuationPage>
 
     public let source: LibrarySource
-    public private(set) var entries: [LibraryEntry] = []
+    public private(set) var entries: [LibraryEntry] = [] { didSet { entriesRevision &+= 1 } }
+    @ObservationIgnored private var entriesRevision = 0
     public private(set) var phase: Phase = .idle
     public private(set) var fetchedAt: Date?
     public private(set) var isRefreshing = false
@@ -192,6 +212,24 @@ public enum LibraryViewState: Sendable, Equatable {
     @ObservationIgnored private var lastPageIDs: [String] = []
     @ObservationIgnored private var generation: UInt64 = 0
     @ObservationIgnored private var cache: [String: Cached] = [:]
+    /// W44-prep (PERF): what `loadMore` needs to place a page without walking every row already loaded (the occurrence ids and per-item counts of
+    /// `entries[..<indexedEntries]`), and the last `visibleEntries` result with the inputs it was made from.
+    @ObservationIgnored private var seenOccurrences = Set<String>()
+    @ObservationIgnored private var idCounts: [String: Int] = [:]
+    @ObservationIgnored private var indexedEntries = 0
+    @ObservationIgnored private var staged: [LibraryEntry] = []
+    /// TH5F: the account scope the shown rows, the staged rows and the paging tokens were READ under (set where a read or a saved copy becomes what is shown; nil when
+    /// nothing is). The saved copy is filed under THIS scope, and no further page is read while `accountScope()` says otherwise: the shell learns of a change of account in a
+    /// later turn (`accountChanged()` from a SwiftUI `.onChange`), and until then rows must not move from one scope to the other in either direction.
+    @ObservationIgnored private var rowsScope: String?
+    /// What the model held before the first page that is still only staged (the tokens and counters that page moved), so rows dropped on a scope change take their
+    /// effect on the paging state with them and the state stays the one the shown rows were read with.
+    private struct StagingBase { var tokens: [String]; var lastPageIDs: [String]; var accounting: MusicParseAccounting; var wrongKind: Int; var occurrenceDuplicates: Int; var replayedPages: Int; var replayedItems: Int; var pagingEnded: CatalogPageModel.PagingEnd? }
+    @ObservationIgnored private var stagingBase: StagingBase?
+    @ObservationIgnored private var sortedCache: (revision: Int, sort: LibrarySort, value: [LibraryEntry])?
+    /// Counts the times `visibleEntries` had to be recomputed; equal values mean the very same list (a view may skip work that depends only on it).
+    @ObservationIgnored public private(set) var visibleGeneration = 0
+    @ObservationIgnored private var visibleCache: (revision: Int, sort: LibrarySort, query: String, value: [LibraryEntry])?
     @ObservationIgnored private let reader: Reader
     @ObservationIgnored private let continuer: Continuer
     @ObservationIgnored private let accountScope: @MainActor () -> String
@@ -204,7 +242,7 @@ public enum LibraryViewState: Sendable, Equatable {
     private struct Cached { let entries: [LibraryEntry]; let tokens: [String]; let fetchedAt: Date; let accounting: MusicParseAccounting; let wrongKind: Int; let lastPage: [String] }
 
     public init(source: LibrarySource, reader: @escaping Reader, continuer: @escaping Continuer, accountScope: @escaping @MainActor () -> String = { "" },
-                now: @escaping @MainActor () -> Date = { Date() }, maximumEntries: Int = 20_000, maximumPages: Int = 400,
+                now: @escaping @MainActor () -> Date = { Date() }, maximumEntries: Int = 60_000, maximumPages: Int = 1_000,
                 onItems: @escaping @MainActor ([MusicCatalogItem]) -> Void = { _ in }) {
         self.source = source; self.reader = reader; self.continuer = continuer; self.accountScope = accountScope; self.now = now
         self.maximumEntries = maximumEntries; self.maximumPages = maximumPages; self.onItems = onItems
@@ -221,11 +259,24 @@ public enum LibraryViewState: Sendable, Equatable {
     /// Every parsed item is one of: a row, left out, or a counted duplicate. A test asserts this holds on every fixture.
     public var accountedFor: Bool { entries.count + leftOut + accounting.duplicates + occurrenceDuplicates + replayedItems == accounting.items }
     @ObservationIgnored private var replayedItems = 0
-    /// Rows after search, then sort. A view over `entries`; never stored.
+    /// Rows after search, then sort. A view over `entries`; never changes it. W44-prep (PERF): the sorted order is kept until `entries` or the sort changes, and
+    /// the result until the query changes too, because the view asks for it on every update (a sort of 50,000 titles per update was the cost). A query is a
+    /// filter of the sorted order, which is the sorted order of the filtered rows (the sort is a total order: equal keys fall back to the service ordinal).
     public var visibleEntries: [LibraryEntry] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        let filtered = trimmed.isEmpty ? entries : entries.filter { Self.matches($0, trimmed) }
-        return sort.apply(filtered)
+        if let hit = visibleCache, hit.revision == entriesRevision, hit.sort == sort, hit.query == trimmed { return hit.value }
+        let ordered: [LibraryEntry]
+        if let hit = sortedCache, hit.revision == entriesRevision, hit.sort == sort { ordered = hit.value }
+        else { ordered = sort.apply(entries); sortedCache = (entriesRevision, sort, ordered) }
+        let result: [LibraryEntry]
+        if trimmed.isEmpty { result = ordered }
+        else {
+            let needles = trimmed.split(whereSeparator: \.isWhitespace).map { LibraryEntry.fold(String($0)) }
+            result = ordered.filter { entry in needles.allSatisfy { entry.matches(folded: $0) } }
+        }
+        visibleCache = (entriesRevision, sort, trimmed, result)
+        visibleGeneration &+= 1
+        return result
     }
     public var searching: Bool { !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     /// Sorting or searching a collection that is still being read covers only what has been read.
@@ -249,6 +300,8 @@ public enum LibraryViewState: Sendable, Equatable {
         if searching, visibleEntries.isEmpty { return .noMatches }
         return .content(stale: isStale, refreshFailed: refreshFailure)
     }
+    /// The reference matching rule (a locale-aware search of the haystack per needle). `visibleEntries` applies the same rule through each row's folded
+    /// `searchKey`; a test compares the two on accented, wide and mixed-case rows.
     static func matches(_ entry: LibraryEntry, _ query: String) -> Bool {
         let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive, .widthInsensitive]
         let needles = query.split(whereSeparator: \.isWhitespace).map(String.init)
@@ -263,6 +316,7 @@ public enum LibraryViewState: Sendable, Equatable {
         guard phase == .idle || phase.isFailed else { return }
         let scope = accountScope()
         if let saved = cache[scope] {
+            resetIndex(); stagingBase = nil; rowsScope = scope
             entries = saved.entries; tokens = saved.tokens; fetchedAt = saved.fetchedAt; accounting = saved.accounting; wrongKind = saved.wrongKind; lastPageIDs = saved.lastPage
             phase = .loaded
             if isStale { await refresh() }
@@ -278,6 +332,7 @@ public enum LibraryViewState: Sendable, Equatable {
     /// The shell calls this when the active account (or whether its session is live) changes: nothing read for the old scope stays.
     public func accountChanged() {
         generation &+= 1
+        resetIndex(); stagingBase = nil; rowsScope = nil
         entries = []; tokens = []; lastPageIDs = []; cache = [:]; selection = []; fetchedAt = nil; accounting = MusicParseAccounting()
         wrongKind = 0; occurrenceDuplicates = 0; replayedPages = 0; replayedItems = 0; pagingEnded = nil; refreshFailure = nil; moreFailure = nil
         loadingMore = false; isRefreshing = false
@@ -310,7 +365,9 @@ public enum LibraryViewState: Sendable, Equatable {
             // A page whose entries were all of another kind or all unreadable is a layout we don't know, not an empty library.
             if rows.isEmpty, page.accounting.items > 0, page.accounting.classified == 0 || wrong == page.accounting.classified { fail(.unrecognised, preserving: preserving); return }
             let time = now()
-            entries = rows; selection = selection.filter { id in rows.contains { $0.id == id } }
+            resetIndex(); stagingBase = nil; rowsScope = scope
+            let keptSelection = Set(rows.map(\.id))
+            entries = rows; selection = selection.filter { keptSelection.contains($0) }
             tokens = Self.tokens(of: page.shelves.map(\.continuation) + [page.continuation])
             accounting = page.accounting; wrongKind = wrong; occurrenceDuplicates = dropped; replayedPages = 0; replayedItems = 0
             lastPageIDs = rows.map(\.item.id); pagingEnded = nil; moreFailure = nil
@@ -323,6 +380,16 @@ public enum LibraryViewState: Sendable, Equatable {
             if (error as? MusicSessionError) == .stale || (error as? MusicSessionError) == .cancelled { return }
             fail(LibraryFailure(error), preserving: preserving)
         }
+    }
+    private func resetIndex() { seenOccurrences.removeAll(keepingCapacity: true); idCounts.removeAll(keepingCapacity: true); indexedEntries = 0; staged = [] }
+    /// Brings the index up to the rows appended since it was last used (the rows already counted are not walked again).
+    private func syncIndex() {
+        if indexedEntries > entries.count { resetIndex() }
+        for entry in entries[indexedEntries...] {
+            if let occurrence = entry.item.occurrenceID { seenOccurrences.insert(occurrence) }
+            idCounts[entry.item.id, default: 0] += 1
+        }
+        indexedEntries = entries.count
     }
     private func fail(_ failure: LibraryFailure, preserving: Bool) {
         if preserving && !entries.isEmpty { refreshFailure = failure } else { phase = .failed(failure) }
@@ -342,27 +409,40 @@ public enum LibraryViewState: Sendable, Equatable {
     // MARK: Paging
 
     /// Reads the next page. A failure keeps the token, so asking again retries the same page.
-    public func loadMore() async {
-        guard let token = tokens.first, !loadingMore, entries.count < maximumEntries else { return }
+    public func loadMore() async { await loadPage(publish: true) }
+    /// One page. With `publish` false the rows wait in `staged` (still counted, indexed and numbered) until `flushStaged()`: the list view's cost grows with the
+    /// rows it shows, so a read of hundreds of pages publishes in a few large steps, not hundreds of small ones.
+    private func loadPage(publish: Bool) async {
+        guard let token = tokens.first, !loadingMore, totalCount < maximumEntries else { return }
+        // TH5F: the tokens belong to the scope the shown rows were read under. Once the scope has moved (and `accountChanged()` has not arrived yet) nothing more is
+        // read with them: the next page would be filed under the new scope with the old one's rows.
+        guard rowsScope == accountScope() else { return }
         loadingMore = true; moreFailure = nil
         let ticket = generation, scope = accountScope()
-        defer { loadingMore = false }
+        let signpost = PerformanceSignposts.begin(.listPage, label: "libraryPage")
+        var pageCompleted = false
+        defer { loadingMore = false; PerformanceSignposts.end(signpost, failed: !pageCompleted) }
         do {
             let reply = try await continuer(token)
             guard ticket == generation, accountScope() == scope else { return }
             let page = reply.value
+            if stagingBase == nil {
+                stagingBase = StagingBase(tokens: tokens, lastPageIDs: lastPageIDs, accounting: accounting, wrongKind: wrongKind, occurrenceDuplicates: occurrenceDuplicates,
+                                          replayedPages: replayedPages, replayedItems: replayedItems, pagingEnded: pagingEnded)
+            }
             var rows: [LibraryEntry] = [], dropped = 0, wrong = 0, offered: [MusicCatalogItem] = []
-            var seen = Set(entries.compactMap(\.item.occurrenceID))
-            var counts: [String: Int] = [:]
-            for entry in entries { counts[entry.item.id, default: 0] += 1 }
-            var ordinal = entries.count
+            syncIndex()
+            var pageOccurrences = Set<String>(), pageCounts: [String: Int] = [:]
+            var ordinal = totalCount
             // Rows continuing a shelf stay under that shelf's heading; a new shelf in the answer brings its own.
-            let lastSection = entries.last?.section
+            let lastSection = (staged.last ?? entries.last)?.section
             let candidates = page.items.map { ($0, lastSection) } + page.shelves.flatMap { shelf in shelf.items.map { ($0, shelf.title ?? lastSection) } }
             for (item, section) in candidates {
                 guard source.holds.contains(item.kind) else { wrong += 1; continue }
-                if let occurrence = item.occurrenceID, !seen.insert(occurrence).inserted { dropped += 1; continue }
-                rows.append(Self.entry(item, ordinal: ordinal, section: section, counts: &counts)); ordinal += 1; offered.append(item)
+                if let occurrence = item.occurrenceID, seenOccurrences.contains(occurrence) || !pageOccurrences.insert(occurrence).inserted { dropped += 1; continue }
+                let earlier = idCounts[item.id, default: 0] + pageCounts[item.id, default: 0]
+                pageCounts[item.id, default: 0] += 1
+                rows.append(LibraryEntry(id: earlier == 0 ? item.id : item.id + "#\(earlier)", ordinal: ordinal, item: item, section: section, repeats: earlier > 0)); ordinal += 1; offered.append(item)
             }
             var remaining = Array(tokens.dropFirst())
             let next = Self.tokens(of: [page.continuation] + page.shelves.map(\.continuation))
@@ -371,14 +451,15 @@ public enum LibraryViewState: Sendable, Equatable {
             let replay = !pageIDs.isEmpty && pageIDs == lastPageIDs && dropped == 0
             let progressed = !rows.isEmpty && !replay
             if replay { replayedPages += 1; replayedItems += rows.count; rows = [] }
-            else { entries.append(contentsOf: rows); lastPageIDs = pageIDs; onItems(offered) }
+            else { indexAdd(rows); staged.append(contentsOf: rows); lastPageIDs = pageIDs; onItems(offered) }
             wrongKind += wrong; occurrenceDuplicates += dropped
             accounting.add(page.accounting)
             if next.contains(token) { pagingEnded = .repeatedToken; remaining = [] }
             else if !progressed && !next.isEmpty { pagingEnded = .noNewEntries; remaining = [] }
             else { for token in next where !remaining.contains(token) { remaining.append(token) } }
             tokens = remaining
-            cache[scope] = Cached(entries: entries, tokens: tokens, fetchedAt: fetchedAt ?? now(), accounting: accounting, wrongKind: wrongKind, lastPage: lastPageIDs)
+            if publish { flushStaged() }
+            pageCompleted = true
         } catch is CancellationError {
         } catch {
             guard ticket == generation, (error as? MusicSessionError) != .stale else { return }
@@ -389,14 +470,51 @@ public enum LibraryViewState: Sendable, Equatable {
     /// when paging ends; returns whether the collection is now complete.
     @discardableResult public func loadAll() async -> Bool {
         var pages = 0
-        while hasMore, moreFailure == nil, pages < maximumPages, entries.count < maximumEntries, !Task.isCancelled {
-            let before = (entries.count, tokens)
-            await loadMore()
+        defer { flushStaged() }
+        while hasMore, moreFailure == nil, pages < maximumPages, totalCount < maximumEntries, !Task.isCancelled {
+            let before = (totalCount, tokens)
+            await loadPage(publish: false)
             pages += 1
             if loadingMore { break }
-            if before.0 == entries.count && before.1 == tokens { break }
+            if before.0 == totalCount && before.1 == tokens { break }
+            // Publish in steps that grow with the list (at least 2,000 rows, a quarter of what is shown): the screen keeps up with the read without
+            // re-listing 50,000 rows for every hundred that arrive.
+            if staged.count >= max(2_000, entries.count / 4) { flushStaged() }
         }
         return isComplete
+    }
+    /// The saved copy kept for an account scope: its row count and the tokens left to read (for tests of the saved state).
+    /// The tokens left to read, in order (internal: for the tests of the paging state).
+    var pendingTokens: [String] { tokens }
+    func savedState(scope: String) -> (entries: Int, tokens: [String])? { cache[scope].map { ($0.entries.count, $0.tokens) } }
+    private var totalCount: Int { entries.count + staged.count }
+    private func indexAdd(_ rows: [LibraryEntry]) {
+        for entry in rows {
+            if let occurrence = entry.item.occurrenceID { seenOccurrences.insert(occurrence) }
+            idCounts[entry.item.id, default: 0] += 1
+        }
+    }
+    /// Shows the rows read so far (in one change) and saves the collection's state for this account scope. A page that added no rows (a replay, a page with
+    /// nothing new, only wrong-kind items) still moved the tokens and the accounting, so the saved copy is refreshed whether or not rows were staged.
+    private func flushStaged() {
+        // TH5F: rows are only ever published, and saved, under the scope they were read under. If the scope has moved since, what was only staged is dropped together
+        // with the paging state it moved (the shown rows stay as they were read), nothing is saved, and `loadPage` reads no more until `accountChanged()` arrives.
+        guard let readScope = rowsScope else { return }
+        if readScope != accountScope() {
+            if let base = stagingBase {
+                tokens = base.tokens; lastPageIDs = base.lastPageIDs; accounting = base.accounting; wrongKind = base.wrongKind; occurrenceDuplicates = base.occurrenceDuplicates
+                replayedPages = base.replayedPages; replayedItems = base.replayedItems; pagingEnded = base.pagingEnded
+            }
+            stagingBase = nil; resetIndex()
+            return
+        }
+        stagingBase = nil
+        if !staged.isEmpty {
+            entries.append(contentsOf: staged); staged = []
+            indexedEntries = entries.count      // every staged row was indexed when it was read
+        }
+        guard !entries.isEmpty else { return }
+        cache[readScope] = Cached(entries: entries, tokens: tokens, fetchedAt: fetchedAt ?? now(), accounting: accounting, wrongKind: wrongKind, lastPage: lastPageIDs)
     }
 
     // MARK: Selection (a view state: it never changes the collection)

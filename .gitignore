@@ -40,3 +40,5 @@ artifacts/harness/nodes/W20/runs/**/*.xcresult/
 artifacts/harness/nodes/W20/runs/*/*.xcresult/
 __pycache__/
 *.pyc
+artifacts/harness/nodes/W44-prep/runs/**/*.xcresult/
+artifacts/harness/nodes/W44-prep/final/**/*.xcresult/

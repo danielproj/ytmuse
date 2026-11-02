@@ -4,14 +4,14 @@ import Foundation
 import Testing
 @testable import Playback
 @testable import AppShell
+import TestSupport
 
 /// T21.4 (launch half): a login launch is menu-bar only; a cold launch restores paused; launch at login is off by default and is only ever changed
 /// by the Settings toggle, through a protocol, and no test can reach the real login item.
 @Suite @MainActor struct LifecycleLaunchTests {
     private func tempStore() -> (UserDefaults, () -> Void) {
-        let suite = "local.native-music.test-" + UUID().uuidString
-        let store = UserDefaults(suiteName: suite)!
-        return (store, { store.removePersistentDomain(forName: suite) })
+        let store = InMemoryDefaults()
+        return (store, {})
     }
     @Test func theShellsDefaultsAreTheSpecifiedOnes() {
         let (store, clean) = tempStore(); defer { clean() }

@@ -24,6 +24,10 @@ fileprivate struct SimState {
 public final class SimulatedCastReceiver: CastChannelFactory, @unchecked Sendable {
     public struct Options: Sendable {
         public var supportedMediaCommands = 15
+        /// "attenuation", "master" or "fixed". A fixed-volume receiver reports so and ignores SET_VOLUME, as a real one does.
+        public var volumeControlType = "attenuation"
+        /// TH5: false makes RECEIVER_STATUS leave out the volume `level` (a receiver that has not said where it is), so a sender must not guess one.
+        public var reportsVolumeLevel = true
         public var answersPings = true
         public var autoAdvance = false
         public var localAddress: String? = "127.0.0.1"
@@ -49,6 +53,11 @@ public final class SimulatedCastReceiver: CastChannelFactory, @unchecked Sendabl
     public var playerState: String { state.withLock { $0.playerState } }
     public var position: Double { state.withLock { $0.position } }
     public var contentID: String? { state.withLock { $0.contentID } }
+    /// The level and mute the receiver was last set to (starts at 1.0, not muted).
+    public var volume: Double { state.withLock { $0.volume } }
+    public var muted: Bool { state.withLock { $0.muted } }
+    /// Sets the level the receiver is at (before or after a sender connects), as if someone used the speaker's own control.
+    public func setLevel(_ level: Double) { state.withLock { $0.volume = level } }
     public var hasApplication: Bool { state.withLock { $0.appSession != nil } }
     public var currentMediaSessionID: Int { state.withLock { $0.mediaSession } }
     /// Replies are queued instead of delivered until `releaseReplies()` (in order), to reproduce a report that arrives after a newer command was sent.
@@ -139,7 +148,7 @@ public final class SimulatedCastReceiver: CastChannelFactory, @unchecked Sendabl
                 state.appSession = nil; state.transport = nil; state.playerState = "IDLE"
                 if let reply = receiverStatus(&state, requestID: request) { replies.append(reply) }
             case (CastNamespace.receiver, "SET_VOLUME"):
-                if let volume = object["volume"] as? [String: Any] { if let level = (volume["level"] as? NSNumber)?.doubleValue { state.volume = level }; if let muted = volume["muted"] as? Bool { state.muted = muted } }
+                if state.options.volumeControlType != "fixed", let volume = object["volume"] as? [String: Any] { if let level = (volume["level"] as? NSNumber)?.doubleValue { state.volume = level }; if let muted = volume["muted"] as? Bool { state.muted = muted } }
                 if let reply = receiverStatus(&state, requestID: request) { replies.append(reply) }
             case (CastNamespace.media, "LOAD"):
                 guard state.appSession != nil, message.destinationID == state.transport, let media = object["media"] as? [String: Any], let url = media["contentId"] as? String else {
@@ -170,7 +179,9 @@ public final class SimulatedCastReceiver: CastChannelFactory, @unchecked Sendabl
 
 
 fileprivate func receiverStatus(_ state: inout SimState, requestID: Int?) -> CastMessage? {
-    var status: [String: Any] = ["volume": ["level": state.volume, "muted": state.muted, "controlType": "attenuation"], "isActiveInput": false]
+    var volume: [String: Any] = ["muted": state.muted, "controlType": state.options.volumeControlType]
+    if state.options.reportsVolumeLevel { volume["level"] = state.volume }
+    var status: [String: Any] = ["volume": volume, "isActiveInput": false]
     if let session = state.appSession, let transport = state.transport {
         status["applications"] = [["appId": CastIdentity.defaultMediaReceiverAppID, "displayName": "Default Media Receiver", "sessionId": session, "transportId": transport,
                                    "namespaces": [["name": CastNamespace.media], ["name": CastNamespace.connection]], "statusText": "Ready"]]

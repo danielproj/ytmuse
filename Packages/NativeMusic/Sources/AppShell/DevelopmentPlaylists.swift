@@ -45,6 +45,16 @@ actor DevelopmentPlaylistService: PlaylistServing {
         add(DevelopmentPlaylists.publicList, Entry(title: "Public Picks", privacy: .public, role: .viewer, rows: rows(Array(songs.prefix(3)))))
         // A collaborative playlist the person can join by invite link; it is not in their library until they do.
         seeded[DevelopmentPlaylists.joinable] = Entry(title: "Joinable Mix", privacy: .public, role: .viewer, rows: rows(Array(songs.prefix(2))))
+        // W44-prep: the synthetic PERF04 playlists (a 10,000-entry one and 1,000 ordinary ones) when the performance flag is also set.
+        if DevelopmentPerformance.enabled {
+            add(DevelopmentPerformance.bigPlaylistID, Entry(title: "Synthetic 10,000-entry playlist", role: .owner,
+                                                            rows: DevelopmentPerformance.bigPlaylistRows().map { Row(setVideoID: $0.setVideoID, videoID: $0.videoID, title: $0.title) }))
+            for n in 1..<DevelopmentPerformance.Scale.standard.playlists {
+                let size = 10 + n % 90
+                add("PLperf" + String(format: "%05d", n), Entry(title: "Synthetic playlist \(n)", role: .owner,
+                                                                rows: (0..<size).map { Row(setVideoID: "PERFP\(n)X\($0)", videoID: "perfpl\(n)x\($0 % 40)", title: DevelopmentPerformance.title(n * 100 + $0)) }))
+            }
+        }
         lists = seeded; order = seededOrder
     }
     private func add(_ id: String, _ entry: Entry) { lists[id] = entry; order.append(id) }

@@ -102,7 +102,9 @@ public actor EncryptedStore: AccountLifecycleParticipant, OfflineMediaStore {
     /// How long a decrypted master key may stay in memory. One second in the product, always. `package` (not public): only this package's tests may lengthen it, to count key
     /// retrievals for a whole decode without the count depending on how long the machine took to decode (TH2).
     private var keyLifetime: Duration = .seconds(1)
+    #if DEBUG   // TH5: a test hook is Debug only; the product's lifetime is fixed at one second
     package func setKeyLifetimeForTests(_ lifetime: Duration) { keyLifetime = lifetime }
+    #endif
     private struct ClockFault: Codable {
         let floor: Date // unauthenticated local observation, never source authority
         var blocked: Bool? = true

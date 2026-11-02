@@ -90,7 +90,7 @@ import Testing
         try await h.session.play()
         #expect(await waitUntil { h.reports.last?.state == .playing })
         try await h.session.setVolume(level: 0.25)
-        #expect(await waitUntil { h.events.contains { if case .volume(let level, _) = $0 { level == 0.25 } else { false } } })
+        #expect(await waitUntil { h.events.contains { if case .volume(let level, _, _) = $0 { level == 0.25 } else { false } } })
     }
     @Test func commandsBeforeALoadOrBeforeConnectingAreRefusedLocally() async throws {
         let idle = CastSession(device: CastFixtures.livingRoom, factory: SimulatedCastReceiver())

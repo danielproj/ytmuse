@@ -26,6 +26,13 @@ public enum WebMusicCommand: Sendable, Equatable {
     /// Quality is one of the levels the page itself offered; captions on/off. Both are the page's own player settings.
     case quality(String)
     case captions(Bool)
+    /// CORE-A: plays an item of the page's own queue (one after the playing item), by handing the page's router that item's own published
+    /// endpoint, as a click on its row does. The page refuses it (reply `ad`) while an advertisement shows.
+    case playQueueItem(String)
+    /// CORE-A: the page player bar's own shuffle and repeat controls. The page reads the state back and answers `ok` only when it took; it refuses (reply
+    /// `ad`) while an advertisement shows, and never clicks a control whose state it cannot read.
+    case shuffle(Bool)
+    case repeatMode(WebMusicRepeatMode)
 
     public struct Invocation: @unchecked Sendable {
         public let body: String
@@ -68,6 +75,11 @@ public enum WebMusicCommand: Sendable, Equatable {
             guard WebMusicBridge.isQualityToken(level) else { throw .invalidArgument }
             return .init(body: WebMusicScripts.quality, arguments: ["level": level])
         case .captions(let on): return .init(body: WebMusicScripts.captions, arguments: ["on": on])
+        case .playQueueItem(let id):
+            guard WebMusicIdentifier.isVideoID(id) else { throw .invalidArgument }
+            return .init(body: WebMusicScripts.playQueueItem, arguments: ["videoId": id])
+        case .shuffle(let on): return .init(body: WebMusicScripts.setShuffle, arguments: ["on": on])
+        case .repeatMode(let mode): return .init(body: WebMusicScripts.setRepeat, arguments: ["mode": mode.rawValue])
         }
     }
 }

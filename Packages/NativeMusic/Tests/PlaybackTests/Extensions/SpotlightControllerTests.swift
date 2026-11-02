@@ -5,6 +5,7 @@ import Testing
 import WidgetShared
 @testable import SystemIntegration
 @testable import AppShell
+import TestSupport
 
 /// T25.3 (MAC05): the controller turns the library the windows already loaded into entries, honours the opt-in, follows changes, and removes an account's entries
 /// when the account goes. Over a fake source and the in-memory index; nothing is requested and the system's index is never called.
@@ -22,11 +23,10 @@ import WidgetShared
         func read() -> IntentScope? { reads += 1; if let after, reads > after.reads { return after.scope }; return scope }
     }
     @MainActor struct Rig {
-        let source = Source(), index = InMemorySearchableIndex(), settings: SpotlightSettings, live: Live, controller: SpotlightController, defaultsName: String
+        let source = Source(), index = InMemorySearchableIndex(), settings: SpotlightSettings, live: Live, controller: SpotlightController, scratch = ScratchDefaults()
         let account = WidgetFixtures.account
         init() {
-            defaultsName = "local.native-music.test-" + UUID().uuidString
-            settings = SpotlightSettings(defaults: UserDefaults(suiteName: defaultsName)!)
+            settings = SpotlightSettings(defaults: scratch.defaults)
             live = Live(IntentScope(accountID: WidgetFixtures.account, generation: 3))
             let live = self.live
             controller = SpotlightController(indexer: SpotlightIndexer(backend: index), settings: settings, source: source, liveScope: { live.read() }, debounce: .milliseconds(5))
@@ -41,7 +41,7 @@ import WidgetShared
             ]
             source.history = [LocalHistoryRecord(videoID: "vHist", title: "Listened Song", artist: "Synthetic Artist", startedAt: Date(), listenedSeconds: 60)]
         }
-        func cleanUp() { UserDefaults().removePersistentDomain(forName: defaultsName) }
+        func cleanUp() { scratch.clean() }
         var titles: Set<String> { Set(index.entries.map(\.title)) }
     }
 
@@ -52,7 +52,7 @@ import WidgetShared
         #expect(rig.settings.policy == SpotlightPolicy(enabled: false, includePrivate: false), "private without the first opt-in is nothing")
         rig.settings.setEnabled(true)
         #expect(rig.settings.policy == SpotlightPolicy(enabled: true, includePrivate: true))
-        let again = SpotlightSettings(defaults: UserDefaults(suiteName: rig.defaultsName)!)
+        let again = SpotlightSettings(defaults: rig.scratch.reopen())
         #expect(again.enabled && again.includePrivate, "the choices are stored")
     }
     @Test func offByDefaultNothingIsIndexedWhateverTheLibraryHolds() async {

@@ -91,7 +91,7 @@ struct RootMode: Sendable { let qa: Bool; let banner: Bool }
         }
         let views = descendants(try #require(window.contentView?.superview))
         let footer = try #require(frames.values["sidebarFooter"]), settings = try #require(frames.values["sidebarSettings"])
-        #expect(settings.minY >= footer.minY && settings.maxY <= footer.maxY && settings.maxY <= player.minY + 1)
+        #expect(settings.minY >= footer.minY && settings.maxY <= footer.maxY && settings.maxX <= player.minX + 1)   // PLAYER-1: the sidebar runs the full height; the capsule floats beside it, in the detail column
         #expect(settings.minX >= 0 && settings.maxX <= width && settings.height > 0)
         // Actual real-app Settings keyboard focus remains a native CUA observation;
         // invisible hosts do not expose SettingsLink's virtual AX item reliably.

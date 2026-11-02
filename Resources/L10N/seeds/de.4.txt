@@ -124,7 +124,7 @@
 1124|Steuerung des YouTube-Music-Verlaufs
 1125|YouTube Music bittet um eine Pause. Versuche es mit Samples gleich noch einmal.
 1126|YouTube Music verarbeitet diese Datei noch. Prüfe es später noch einmal.
-1127|YouTube Music verwaltet die nächsten Objekte dieser Playlist, daher werden sie hier weder aufgelistet noch sind sie bearbeitbar.
+1127|YouTube Music verwaltet die nächsten Objekte, daher lassen sie sich hier weder neu anordnen noch entfernen.
 1128|YouTube Music verwaltet die nächsten Objekte während der Wiedergabe, daher kann diese App ihnen nichts hinzufügen.
 1129|YouTube-Music-Playlist
 1130|Playlists von YouTube Music werden gestreamt und nicht auf diesem Mac behalten. Audiodateien, die du unter „Downloads“ hinzufügst, erscheinen hier.

@@ -14,6 +14,9 @@ public enum AuditKind: String, Sendable {
   /// A full-width chrome row between the toolbar and the panels (history banner, QA readouts): excluded from every other region like a panel is,
   /// but flush with its column by design, so the outer-margin rule does not apply to it.
   case band
+  /// A region that floats over the window by design (the player capsule): mutually exclusive with every other region and inside the window like a region, but not
+  /// held to the one outer margin the panels share.
+  case floating
 }
 
 /// What a tagged view declares about itself.
@@ -116,7 +119,7 @@ public enum LayoutAudit {
     }
     // Regions (panels, the player, banners) are mutually exclusive whatever group they were tagged in: a player floating over a
     // panel, or a banner under the toolbar edge, is an occlusion even though each sits in its own group. Declared layers are exempt.
-    let regionFrames = frames.filter { ($0.tag.kind == .region || $0.tag.kind == .band) && !$0.rect.isEmpty }
+    let regionFrames = frames.filter { ($0.tag.kind == .region || $0.tag.kind == .band || $0.tag.kind == .floating) && !$0.rect.isEmpty }
     for i in regionFrames.indices {
       for j in regionFrames.indices where j > i {
         let overlap = regionFrames[i].rect.intersection(regionFrames[j].rect)

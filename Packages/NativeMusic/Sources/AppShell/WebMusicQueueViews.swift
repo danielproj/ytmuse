@@ -1,4 +1,5 @@
 import AppKit
+import ImageIO
 import DesignSystem
 import Features
 import Playback
@@ -21,13 +22,16 @@ struct WebMusicArtworkView: View {
         artworkDecode.hold(!visible)
         // W09-F1b: applied from the body, not `.task(id:)` (see `ArtworkDemandDriver`).
         artworkDecode.apply(player.artwork) {
-            let decoded = player.artwork.flatMap(NSImage.init(data:))
+            let data = player.artwork
+            let decoded = await WebCoverMemo.shared.decoded(data)
+            guard !Task.isCancelled else { return }
             image = decoded
-            accentSequence.publish(player.artwork) { accentChanged($0) }
+            accentSequence.publish(data) { accentChanged($0) }
         }
         return Group {
-            if let image {
-                Image(nsImage: image).resizable().aspectRatio(contentMode: .fill)
+            // POL-A: a view that replaces another paints the held decode of the same bytes in its first frame (no flash of the default note).
+            if let shown = WebCoverMemo.shared.displayed(for: player.artwork, current: image) {
+                Image(nsImage: shown).resizable().aspectRatio(contentMode: .fill)
             } else {
                 Image(systemName: "music.note").font(.title2).frame(maxWidth: .infinity, maxHeight: .infinity).background(.quaternary)
             }
@@ -37,20 +41,27 @@ struct WebMusicArtworkView: View {
     }
 }
 
-/// What the Queue and Now Playing surfaces can truthfully say about YouTube Music playback:
-/// the item the page reports and the playlist it was started from. There is deliberately no
-/// list of upcoming items, because the page does not report one and the app does not invent it.
+/// What the Queue and Now Playing surfaces can truthfully say about YouTube Music playback: the item the page reports, the playlist it was started
+/// from and, when the page's own queue can be read, the items it lists after the playing one. Nothing is invented: a page whose queue cannot be
+/// read leaves `upcoming` unlisted (`isListed` false) and the surface says only that YouTube Music manages the queue.
 struct WebMusicQueueSummary: Equatable {
     var title: String
     var artist: String?
     var playlist: String?
     var isAd: Bool
-    /// YouTube Music owns the upcoming items; this is shown instead of an invented list.
-    static let managedByYouTubeMusic = String(localized: "YouTube Music manages the upcoming items for this playlist, so they are not listed or editable here.")
+    /// CORE-A: the page's own queue after the playing item, in the page's order; empty both when the page lists nothing after this item and when it lists no queue at all (`isListed`).
+    var upcoming: [WebMusicQueueItem]
+    /// True when the page listed a queue for the playing item (an empty `upcoming` then means nothing follows it).
+    var isListed: Bool
+    /// True when the page lists further items beyond the bounded window shown.
+    var hasMore: Bool
+    /// YouTube Music owns the queue; the items are shown but cannot be reordered or removed here.
+    static let managedByYouTubeMusic = String(localized: "YouTube Music manages the upcoming items, so they can’t be reordered or removed here.")
     init(_ state: WebMusicSnapshot) {
         title = state.title ?? state.playlistTitle ?? "YouTube Music"
         artist = state.artist; isAd = state.isAd
         playlist = state.playlistTitle
+        upcoming = state.queue?.upcoming ?? []; isListed = state.queue != nil; hasMore = (state.queue?.more ?? 0) > 0
     }
     /// True while the hidden player is the active source and has something to describe.
     @MainActor static func isActive(_ player: WebMusicPlayer?) -> Bool {
@@ -59,11 +70,9 @@ struct WebMusicQueueSummary: Equatable {
     }
 }
 
-/// The Queue panel while YouTube Music plays. YouTube Music owns this queue: the page
-/// reports the item that is playing and the playlist it was started from, and nothing
-/// else, so only those are shown, plus an honest statement that the rest is managed
-/// by YouTube Music. No upcoming item is invented, and no reorder/remove control is
-/// offered for a queue the app cannot edit.
+/// The Queue panel while YouTube Music plays. YouTube Music owns this queue: the page reports the item that is playing, the playlist it was started
+/// from and (read only) the items it lists after it. Those are shown as the page lists them, and an item can be played; no reorder/remove control is
+/// offered for a queue the app cannot edit, and a page whose queue cannot be read shows no list at all.
 struct WebMusicQueueView: View {
     let player: WebMusicPlayer
     var body: some View {
@@ -90,11 +99,92 @@ struct WebMusicQueueView: View {
                     Text(playlist).font(.body).lineLimit(2)
                 }.accessibilityElement(children: .combine).accessibilityIdentifier("musicQueuePlaylist")
             }
+            if summary.isListed { upNext(summary) }
             Text(LocalizedStringKey(WebMusicQueueSummary.managedByYouTubeMusic))
                 .font(.callout).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("musicQueueManaged")
             Spacer(minLength: 0)
         }.padding(MusicSpace.md).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+    /// The page's own list after the playing item. An item is a button that asks the page to play it; during an ad it is off (it would end the ad early).
+    @ViewBuilder private func upNext(_ summary: WebMusicQueueSummary) -> some View {
+        VStack(alignment: .leading, spacing: MusicSpace.xs) {
+            Text("Up next").font(.headline).accessibilityAddTraits(.isHeader).accessibilityIdentifier("musicQueueUpNextHeader")
+            if summary.upcoming.isEmpty {
+                Text("Nothing else is queued after this item.").font(.callout).foregroundStyle(MusicStyle.secondaryText)
+                    .accessibilityIdentifier("musicQueueEmpty")
+            } else {
+                LazyVStack(alignment: .leading, spacing: MusicSpace.xxs) {
+                    ForEach(Array(summary.upcoming.enumerated()), id: \.element.id) { offset, item in
+                        WebMusicQueueRow(player: player, item: item, index: offset, enabled: !summary.isAd)
+                    }
+                }.accessibilityElement(children: .contain).accessibilityIdentifier("musicQueueUpNext")
+                if summary.hasMore {
+                    Text("More items follow; YouTube Music lists only the next few.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                        .accessibilityIdentifier("musicQueueMore")
+                }
+            }
+        }
+    }
+}
+
+/// One upcoming item: artwork, title and artist exactly as the page lists them. Playing it hands the page its own queue item.
+struct WebMusicQueueRow: View {
+    let player: WebMusicPlayer
+    let item: WebMusicQueueItem
+    let index: Int
+    let enabled: Bool
+    var body: some View {
+        let title = item.title ?? "YouTube Music"
+        Button { Task { await player.playQueueItem(item.videoID) } } label: {
+            HStack(spacing: MusicSpace.sm) {
+                WebMusicQueueArtwork(url: item.artworkURL, edge: 36)
+                VStack(alignment: .leading, spacing: MusicSpace.hairline) {
+                    Text(verbatim: title).font(.body).lineLimit(1)
+                    if let artist = item.artist { Text(verbatim: artist).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1) }
+                }
+                Spacer(minLength: 0)
+            }.contentShape(Rectangle())
+        }.buttonStyle(.plain).disabled(!enabled)
+            .accessibilityLabel(Text("Play \(title)"))
+            .accessibilityIdentifier("musicQueueItem-\(index)")
+    }
+}
+
+/// Decodes a queue row's cover off the main actor (the loader already bounded it to 512 px); the main actor only wraps the result.
+enum WebMusicQueueImageDecoder {
+    struct Decoded: @unchecked Sendable { let image: CGImage }
+    nonisolated static func decode(_ data: Data) async -> Decoded? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil), CGImageSourceGetCount(source) >= 1,
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
+        return Decoded(image: image)
+    }
+}
+
+/// A queue row's cover: fetched from YouTube's image hosts only (the same bounded, credential-free loader the player uses), remembered per address.
+struct WebMusicQueueArtwork: View {
+    let url: URL?
+    let edge: CGFloat
+    @State private var image: NSImage?
+    private static let cache = NSCache<NSURL, NSImage>()
+    private static let loader = WebMusicArtworkLoader()
+    var body: some View {
+        Group {
+            if let image {
+                Image(nsImage: image).resizable().aspectRatio(contentMode: .fill)
+            } else {
+                Image(systemName: "music.note").font(.body).frame(maxWidth: .infinity, maxHeight: .infinity).background(.quaternary)
+            }
+        }.frame(width: edge, height: edge).musicClip(.thumbnail).accessibilityHidden(true)
+            .task(id: url) {
+                guard let url else { image = nil; return }
+                if let cached = Self.cache.object(forKey: url as NSURL) { image = cached; return }
+                image = nil
+                guard let data = await Self.loader.artwork(url), let bitmap = await WebMusicQueueImageDecoder.decode(data), !Task.isCancelled else { return }
+                let decoded = NSImage(cgImage: bitmap.image, size: NSSize(width: bitmap.image.width, height: bitmap.image.height))
+                Self.cache.setObject(decoded, forKey: url as NSURL)
+                image = decoded
+            }
     }
 }
 

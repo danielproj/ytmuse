@@ -228,7 +228,8 @@ private func media(video: String = episode, rate: Any? = nil, load: Int = 1) -> 
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let panel = try String(contentsOf: root.appendingPathComponent("Sources/AppShell/PlaybackPanel.swift"), encoding: .utf8)
         #expect(panel.contains("Self.webNowPlayingItem(snapshot, artwork: artwork, player: music, route:") && panel.contains("rate: player?.confirmedRate ?? 1"))
-        let bar = try String(contentsOf: root.appendingPathComponent("Sources/AppShell/MusicTransportBar.swift"), encoding: .utf8)
+        // PLAYER-1: the speed menu lives in the capsule's (and the expanded player's) ⋯ menu, built in PlayerCapsuleViews.
+        let bar = try String(contentsOf: root.appendingPathComponent("Sources/AppShell/PlayerCapsuleViews.swift"), encoding: .utf8)
         #expect(bar.contains("actual: player.confirmedRate"), "the transport is given the player's actual speed")
         let views = try String(contentsOf: root.appendingPathComponent("Sources/Features/Podcasts/PodcastViews.swift"), encoding: .utf8)
         #expect(views.contains("Text(display.title)") && views.contains("accessibilityValue(Text(display.accessibilityValue))") && views.contains("display.differenceHelp"))

@@ -11,13 +11,21 @@ struct AuditRecord: Codable {
     var surface: String; var size: String; var scheme: String; var frames: Int; var violations: [String]; var snapshot: String?
 }
 @MainActor final class AuditLog { static var records: [AuditRecord] = [] }
+/// One audited render at a time in the process: suites run in parallel, and a render may force the capsule's seek state (a process-wide seam), which another
+/// suite's render would otherwise reset under it.
+@MainActor enum RenderGate {
+    private static var busy = false
+    private static var waiters: [CheckedContinuation<Void, Never>] = []
+    static func enter() async { if busy { await withCheckedContinuation { waiters.append($0) } } else { busy = true } }
+    static func leave() { if waiters.isEmpty { busy = false } else { waiters.removeFirst().resume() } }
+}
 
 @Suite(.serialized, .enabled(if: ProcessInfo.processInfo.environment["YTMUSE_NATIVE_DESIGN_TEST"] == "1"))
 @MainActor struct SurfaceAuditTests {
     enum Surface: String, CaseIterable, Sendable {
         case home, explore, detail, library, search, downloads, uploads, history, nowPlaying, queuePanel
         /// A hidden-player stand-in is playing (synthetic track), so the bar, Now Playing and the queue show real states.
-        case playerPlaying, nowPlayingSong, nowPlayingAd, nowPlayingLongTitle, nowPlayingLive, queueSong
+        case playerPlaying, playerShuffleRepeat, playerAd, playerLongTitle, playerLive, nowPlayingSong, nowPlayingAd, nowPlayingLongTitle, nowPlayingLive, queueSong
         /// Now Playing with the queue panel inline (1120 pt and wider; below that the panel is a sheet), for both playback paths.
         case nowPlayingQueueOwned, nowPlayingQueueSong
         /// F4: the Library with the history banner, the Debug QA readouts and a long player error, all at once (the minimum-size contract).
@@ -25,6 +33,10 @@ struct AuditRecord: Codable {
         var track: SyntheticTrack? {
             switch self {
             case .playerPlaying, .nowPlayingSong, .queueSong, .nowPlayingQueueSong: .playing
+            case .playerShuffleRepeat: .shuffledRepeating
+            case .playerAd: .advertisement
+            case .playerLongTitle: .longTitle
+            case .playerLive: .liveStream
             case .nowPlayingAd: .advertisement
             case .nowPlayingLive: .liveStream
             case .nowPlayingLongTitle: .longTitle
@@ -35,7 +47,7 @@ struct AuditRecord: Codable {
             switch self {
             case .home: .home; case .explore: .explore; case .detail: .search; case .library: .library; case .search: .search; case .downloads: .downloads
             case .uploads: .uploads; case .history: .history; case .nowPlaying: .nowPlaying; case .queuePanel: .library
-            case .playerPlaying: .home; case .nowPlayingSong, .nowPlayingAd, .nowPlayingLongTitle, .nowPlayingLive, .nowPlayingQueueOwned, .nowPlayingQueueSong: .nowPlaying; case .queueSong: .queue
+            case .playerPlaying, .playerShuffleRepeat, .playerAd, .playerLongTitle, .playerLive: .home; case .nowPlayingSong, .nowPlayingAd, .nowPlayingLongTitle, .nowPlayingLive, .nowPlayingQueueOwned, .nowPlayingQueueSong: .nowPlaying; case .queueSong: .queue
             case .chromeLoaded: .library
             }
         }
@@ -43,9 +55,9 @@ struct AuditRecord: Codable {
         var expanded: Bool { destination == .nowPlaying }
         /// Tags that must have been reported, or the render proved nothing.
         var required: [String] {
-            var base = ["detailPanel", "sidebarPanel"]
+            var base = ["detailPanel", "sidebarPanel", "sidebarFirstRow"]
             if expanded { base += ["playerExpanded", "nowPlayingControls", "nowPlayingAccessories", "nowPlayingTimeline", "nowPlayingHero", "nowPlayingMain", "lightLayer"] }
-            else { base += ["playerBar", "playerRow", "playerTimeline", "playerArtwork", "playerTitle", "playerControls"] }
+            else { base += ["playerBar", "playerRow", "playerTimeline", "playerArtwork", "playerTitle", "playerControls", "playerAccessories", "detailColumn"] }
             switch self {
             case .home, .explore, .library, .search, .history, .uploads, .downloads, .chromeLoaded: base += ["destinationTitle"]
             case .nowPlayingSong, .nowPlayingLongTitle, .nowPlayingAd, .nowPlayingLive, .nowPlaying, .nowPlayingQueueOwned, .nowPlayingQueueSong: base += ["nowPlayingArtwork"]
@@ -63,7 +75,12 @@ struct AuditRecord: Codable {
         var opensQueue: Bool { self == .queuePanel || self == .nowPlayingQueueOwned || self == .nowPlayingQueueSong }
     }
 
-    func render(_ surface: Surface, size: AuditSize, scheme: AuditScheme, mode: AuditPolicyMode = .standard, localeMode: AuditLocaleMode = .standard, inspect: ((AuditHost) -> Void)? = nil) async throws -> (violations: [AuditViolation], record: AuditRecord) {
+    func render(_ surface: Surface, size: AuditSize, scheme: AuditScheme, mode: AuditPolicyMode = .standard, localeMode: AuditLocaleMode = .standard, seek: MusicSeekState? = nil, inspect: ((AuditHost) -> Void)? = nil) async throws -> (violations: [AuditViolation], record: AuditRecord) {
+        // PLAYER-1: a hosted render cannot hover or drag, so the capsule's seek state is forced (nil: the pointer's, i.e. at rest).
+        await RenderGate.enter()
+        defer { RenderGate.leave() }
+        CapsuleDebug.forcedSeekState = seek
+        defer { CapsuleDebug.forcedSeekState = nil }
         let accounts = LocalAccountBootstrap()
         await accounts.load()
         #expect(!accounts.failure && accounts.developmentQueue != nil)
@@ -85,6 +102,9 @@ struct AuditRecord: Codable {
         if surface.opensQueue { panels.selection = .queue; await host.settle() }
         await host.settle(milliseconds: surface == .home || surface == .explore || surface == .detail ? 2500 : 900)
         await host.settleUntilReported(surface.required(width: size.width))
+        if seek != nil {   // the track's 0.11 s growth finishes before it is measured
+            await host.settle(until: { host.box.frames.first { $0.tag.name == "playerSeekTrack" }.map { abs($0.rect.height - PlayerCapsule.seekHoverThickness) <= 0.5 } ?? false }, milliseconds: 3000)
+        }
         // Large text draws the content `scale` times larger: the grid, alignment and margin rules are stated in unscaled points, so only the scale-independent rules apply there.
         let scaleFree: Set<AuditViolation.Rule> = [.overlap, .containment, .missing, .empty]
         let violations = host.violations(expecting: surface.required(width: size.width)).filter { localeMode != .largeText || scaleFree.contains($0.rule) }
@@ -92,6 +112,15 @@ struct AuditRecord: Codable {
         // Page titles share one height: 24 pt below the detail panel's top, on the grid (the audit's `pageTitleTop` key checks the rest within a render).
         let frames = Dictionary(host.box.frames.map { ($0.tag.name, $0.rect) }, uniquingKeysWith: { first, _ in first })
         if let title = frames["destinationTitle"], let panel = frames["detailPanel"] { #expect(abs(title.minY - panel.minY - MusicSpace.lg * (localeMode == .largeText ? 1.5 : 1)) <= LayoutAudit.tolerance, "\(surface) title sits \(title.minY - panel.minY) pt below the panel top") }
+        // POL-A: the first sidebar row's highlight must not crowd the panel's rounded top edge. The audit sees the row's label (the highlight is drawn by
+        // the list and has no frame of its own), which sits inside the highlight, so the label's gap to the panel's top must be at least the margin the sidebar
+        // adds above its first row; the list's own ~4 pt inset and the highlight's inner padding come on top, which is what puts the highlight ~16 pt from the
+        // edge as it is from the sides. Without that margin the label sat ~7 pt below the edge (measured before the change).
+        if let row = frames["sidebarFirstRow"], let sidebar = frames["sidebarPanel"] {
+            let gap = row.minY - sidebar.minY, side = row.minX - sidebar.minX
+            #expect(gap >= BrowserShell.sidebarTopInset + MusicSpace.xxs, "first sidebar row sits \(gap) pt below the panel top (side gap \(side))")
+            #expect(gap >= MusicSpace.md, "first sidebar row sits \(gap) pt below the panel top; the highlight needs ~16 pt around it")
+        }
         if surface.expanded {
             // The expanded player takes the detail panel's place and extends to the window's trailing/bottom margin; it never covers the sidebar or leaves the window.
             let expanded = try #require(frames["playerExpanded"]), panel = try #require(frames["detailPanel"]), sidebar = try #require(frames["sidebarPanel"])
@@ -105,6 +134,58 @@ struct AuditRecord: Codable {
             // The sidebar uses the full height while the bar is expanded: both panels end 12 pt above the window's bottom edge, so no band is left under the sidebar.
             #expect(abs(host.bounds.maxY - sidebar.maxY - MusicSpace.sm) <= LayoutAudit.tolerance, "sidebar bottom margin \(host.bounds.maxY - sidebar.maxY)")
             #expect(abs(sidebar.maxY - expanded.maxY) <= LayoutAudit.tolerance, "sidebar and expanded player end together")
+        }
+        else {
+            // PLAYER-1: the bar is a floating capsule at the bottom of the detail column.
+            let bar = try #require(frames["playerBar"]), column = try #require(frames["detailColumn"]), sidebar = try #require(frames["sidebarPanel"]), controls = try #require(frames["playerControls"])
+            let tolerance = LayoutAudit.tolerance, compact = size.width < 1000, margin: CGFloat = 16   // the brief's MusicSpace.md, as a literal
+            #expect(abs(bar.height - PlayerCapsule.height(compact: compact)) <= tolerance, "the capsule is \(PlayerCapsule.height(compact: compact)) pt tall (\(bar.height))")
+            #expect(bar.minX >= column.minX + margin - tolerance && bar.maxX <= column.maxX - margin + tolerance, "inside the detail column with its margins: bar \(bar), column \(column)")
+            #expect(abs(bar.midX - column.midX) <= tolerance, "centred in the detail column (\(bar.midX) vs \(column.midX))")
+            #expect(abs(bar.width - min(column.width - 2 * margin, PlayerCapsule.maximumWidth)) <= tolerance, "the column's width less the margins, capped at \(PlayerCapsule.maximumWidth) (\(bar.width) in a \(column.width) column)")
+            #expect(abs(host.bounds.maxY - bar.maxY - margin) <= tolerance, "\(margin) pt above the window's bottom (\(host.bounds.maxY - bar.maxY))")
+            #expect(column.maxX <= host.bounds.maxX + tolerance && column.minX >= sidebar.maxX - tolerance, "the column is the area beside the sidebar")
+            // No panel reaches the capsule, and each ends above it with the gap.
+            for name in ["detailPanel", "trailingPanel"] {
+                guard let panel = frames[name] else { continue }
+                #expect(!panel.intersects(bar), "\(name) \(panel) does not intersect the capsule \(bar)")
+                #expect(panel.maxY <= bar.minY - PlayerCapsule.panelGap + tolerance, "\(name) ends \(bar.minY - panel.maxY) pt above the capsule")
+            }
+            // The sidebar uses the full height: it ends at the window's bottom margin, where the bar used to be.
+            #expect(abs(host.bounds.maxY - sidebar.maxY - MusicSpace.sm) <= tolerance, "the sidebar reaches the window's bottom margin (\(host.bounds.maxY - sidebar.maxY))")
+            #expect(abs(controls.midX - bar.midX) <= 1, "the transport is centred in the capsule (\(controls.midX) vs \(bar.midX))")
+            // The three groups sit side by side, in either reading direction, and stay inside the capsule.
+            if let title = frames["playerTitle"], let accessories = frames["playerAccessories"] {
+                func apart(_ x: CGRect, _ y: CGRect) -> Bool { x.maxX <= y.minX + tolerance || y.maxX <= x.minX + tolerance }
+                #expect(apart(title, controls) && apart(controls, accessories) && apart(title, accessories), "title, transport and secondary controls do not overlap")
+                #expect(accessories.maxX <= bar.maxX + tolerance && accessories.minX >= bar.minX - tolerance && title.maxX <= bar.maxX + tolerance && title.minX >= bar.minX - tolerance, "the groups stay inside the capsule")
+            }
+        }
+        if let seek, !surface.expanded {
+            // PLAYER-1, hover and drag: the times, the track and the thumb never intersect the cover, the title block, the transport buttons or the secondary
+            // controls, and stay at least 2 pt inside the capsule. The 4 pt track runs from the title's leading edge to the trailing inset.
+            let bar = try #require(frames["playerBar"]), cover = try #require(frames["playerArtwork"]), title = try #require(frames["playerTitle"])
+            let buttons = try #require(frames["playerButtons"]), accessories = try #require(frames["playerAccessories"]), track = try #require(frames["playerSeekTrack"])
+            let compact = size.width < 1000, tolerance = LayoutAudit.tolerance
+            var parts: [(String, CGRect)] = [("track", track)]
+            if let thumb = frames["playerSeekThumb"] { parts.append(("thumb", thumb)) }
+            for name in ["playerElapsed", "playerRemaining"] { if let r = frames[name], r.width > 0, r.height > 0 { parts.append((name, r)) } }
+            for (name, rect) in parts {
+                #expect(rect.minX >= bar.minX + 2 && rect.maxX <= bar.maxX - 2 && rect.minY >= bar.minY + 2 && rect.maxY <= bar.maxY - 2, "\(name) \(rect) stays 2 pt inside the capsule \(bar)")
+                for (other, frame) in [("cover", cover), ("title", title), ("buttons", buttons), ("accessories", accessories)] {
+                    #expect(!rect.insetBy(dx: 0.01, dy: 0.01).intersects(frame), "\(name) \(rect) does not intersect the \(other) \(frame)")
+                }
+            }
+            #expect(abs(track.minX - title.minX) <= 1, "the track starts at the title's leading edge (\(track.minX) vs \(title.minX)), never under the cover")
+            #expect(track.minX >= cover.maxX, "and never under the cover")
+            #expect(abs(bar.maxX - track.maxX - bar.height / 2) <= 1, "and ends at the trailing inset, the corner radius (\(bar.maxX - track.maxX))")
+            #expect(abs(track.height - PlayerCapsule.seekHoverThickness) <= 0.5, "4 pt under the pointer (\(track.height))")
+            #expect((frames["playerSeekThumb"] != nil) == (seek == .active && surface != .playerAd), "a thumb only while dragging or focused, and never on a seek that is disabled (an ad)")
+            if let thumb = frames["playerSeekThumb"] { #expect(abs(thumb.width - PlayerCapsule.thumbEdge(compact: compact)) <= 0.5) }
+            if let elapsed = frames["playerElapsed"], let remaining = frames["playerRemaining"], !compact {
+                #expect(elapsed.maxX <= buttons.minX + tolerance && remaining.minX >= buttons.maxX - tolerance, "the times sit beside the buttons: elapsed left of Previous, remaining right of Next")
+                #expect(abs(elapsed.midY - buttons.midY) <= 1 && abs(remaining.midY - buttons.midY) <= 1, "at the buttons' centre height")
+            }
         }
         var snapshotPath: String?
         if let directory = AuditOutput.directory {
@@ -274,5 +355,42 @@ struct AuditRecord: Codable {
         try await stage("collapsed-again", 3)
         await accounts.shutdown()
         await accounts.isolatedStorage?.destroy()
+    }
+}
+
+/// PLAYER-1: the capsule's seek under the pointer and while dragged (the audit forces the state: a hosted render cannot hover).
+@Suite(.serialized, .enabled(if: ProcessInfo.processInfo.environment["YTMUSE_NATIVE_DESIGN_TEST"] == "1"))
+@MainActor struct CapsuleHoverAuditTests {
+    struct Case: Sendable, CustomTestStringConvertible {
+        let surface: SurfaceAuditTests.Surface; let size: AuditSize; let state: MusicSeekState; let scheme: AuditScheme
+        var testDescription: String { "\(surface.rawValue) \(size.name) \(state) \(scheme.rawValue)" }
+        static let all: [Case] = [SurfaceAuditTests.Surface.playerPlaying, .playerAd, .playerLongTitle, .playerLive].flatMap { surface in
+            [AuditSize.minimum, .standard].flatMap { size in
+                [MusicSeekState.hover, .active].map { Case(surface: surface, size: size, state: $0, scheme: .dark) }
+            }
+        } + [Case(surface: .playerPlaying, size: .standard, state: .hover, scheme: .light), Case(surface: .playerPlaying, size: .large, state: .active, scheme: .light)]
+    }
+    @Test(arguments: Case.all)
+    func timesTrackAndThumbNeverTouchTheControls(_ item: Case) async throws {
+        let result = try await SurfaceAuditTests().render(item.surface, size: item.size, scheme: item.scheme, seek: item.state)
+        #expect(result.violations.isEmpty, Comment(rawValue: result.violations.map(\.description).joined(separator: "\n")))
+    }
+    /// The slots are reserved at rest: the buttons are where they were when the times appear.
+    @Test func theButtonsDoNotMoveWhenTheTimesAppear() async throws {
+        var rest: [String: CGRect] = [:], hover: [String: CGRect] = [:]
+        func buttons(_ host: AuditHost) -> [String: CGRect] { Dictionary(host.box.frames.filter { ["playerButtons", "playerControls", "playerArtwork", "playerTitle", "playerAccessories"].contains($0.tag.name) }.map { ($0.tag.name, $0.rect) }, uniquingKeysWith: { first, _ in first }) }
+        _ = try await SurfaceAuditTests().render(.playerPlaying, size: .standard, scheme: .dark) { rest = buttons($0) }
+        _ = try await SurfaceAuditTests().render(.playerPlaying, size: .standard, scheme: .dark, seek: .hover) { hover = buttons($0) }
+        #expect(rest.count == 5 && hover.count == 5)
+        for (name, frame) in rest { #expect(abs((hover[name] ?? .zero).minX - frame.minX) <= 0.5 && abs((hover[name] ?? .zero).minY - frame.minY) <= 0.5 && abs((hover[name] ?? .zero).width - frame.width) <= 0.5, "\(name) moved: \(frame) -> \(String(describing: hover[name]))") }
+    }
+    /// The times are laid out at rest (40 pt slots, invisible by colour): present in the view tree, so tests and VoiceOver find them; none in the compact capsule.
+    @Test(arguments: [AuditSize.standard, AuditSize.minimum]) func theTimeSlotsExistAtRest(_ size: AuditSize) async throws {
+        var slots: [String: CGRect] = [:]
+        _ = try await SurfaceAuditTests().render(.playerPlaying, size: size, scheme: .dark) { host in
+            slots = Dictionary(host.box.frames.filter { ["playerElapsed", "playerRemaining"].contains($0.tag.name) }.map { ($0.tag.name, $0.rect) }, uniquingKeysWith: { first, _ in first })
+        }
+        #expect(slots.count == 2, "both times are in the view tree at rest")
+        #expect(slots.values.allSatisfy { abs($0.width - (size.width < 1000 ? 0 : PlayerCapsule.timeSlotWidth)) <= 0.5 }, "\(slots)")
     }
 }

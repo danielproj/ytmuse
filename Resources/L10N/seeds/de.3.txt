@@ -259,7 +259,7 @@
 959|Die Warteschlange konnte diesen Song nicht aufnehmen.
 960|Die Warteschlange wird im Hauptfenster angezeigt.
 961|Das Radio konnte nicht gestartet werden. Was lief, bleibt unverändert.
-962|Der Empfänger bestimmt die Lautstärke.
+962|Beim Casten stellt der Lautstärkeregler die Lautstärke des Empfängers ein. Die Lautstärke des Mac bleibt unverändert.
 963|Das gewählte Objekt der Warteschlange konnte nicht geöffnet werden. Versuche, es erneut auszuwählen.
 964|Die Sitzung für %@ wurde beendet. Melde dich erneut an.
 965|Der Einschlaftimer konnte nicht geändert werden. Versuche, den Timer erneut einzustellen.

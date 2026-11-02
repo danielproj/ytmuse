@@ -62,6 +62,8 @@ enum DevelopmentLibrary {
         return MusicContinuationPage(items: items, shelves: [], continuation: nil, accounting: accounting)
     }
     @Sendable static func reader(_ source: LibrarySource) async throws -> MusicBrowseReply<MusicBrowsePage> {
+        // W44-prep: with the synthetic performance flag the songs and playlists collections are the PERF04 stress dataset (the rest is as before).
+        if DevelopmentPerformance.enabled, let page = DevelopmentPerformance.libraryPage(for: source.kind) { return MusicBrowseReply(value: page, mode: .signedIn, accountGeneration: 0) }
         // With the development playlists' own flag the Playlists collection lists them (W13); without it everything is as in W12.
         if DevelopmentPlaylists.enabled, source.kind == .playlists { return MusicBrowseReply(value: await DevelopmentPlaylists.shared.libraryPage(), mode: .signedIn, accountGeneration: 0) }
         switch source.kind {
@@ -75,7 +77,7 @@ enum DevelopmentLibrary {
         return MusicBrowseReply(value: page, mode: .signedIn, accountGeneration: 0)
     }
     @Sendable static func continuer(_ token: String) async throws -> MusicBrowseReply<MusicContinuationPage> {
-        guard let page = continuation(token) else { throw MusicSessionError.unrecognised }
+        guard let page = (DevelopmentPerformance.enabled ? DevelopmentPerformance.continuation(token) : nil) ?? continuation(token) else { throw MusicSessionError.unrecognised }
         return MusicBrowseReply(value: page, mode: .signedIn, accountGeneration: 0)
     }
     /// Answers like a service: slowly enough for the pending state to be seen, refusing one rating and leaving one unconfirmed.

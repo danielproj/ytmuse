@@ -7,6 +7,7 @@ import MediaPlayer
 import ImageIO
 import CoreGraphics
 import JavaScriptCore
+import CryptoKit
 import Observation
 @testable import Playback
 @testable import AppShell
@@ -1233,7 +1234,7 @@ private enum JSONLiteral {
 // MARK: C1 — Queue and Now Playing while YouTube Music plays (W09 review finding 6)
 
 @Suite @MainActor struct WebMusicQueueSummaryTests {
-    @Test func theQueueSurfaceShowsOnlyWhatThePageReportsAndInventsNoItems() async throws {
+    @Test func theQueueSurfaceShowsTheCurrentItemAndOnlyTheUpcomingItemsThePageListed() async throws {
         let (player, page) = makePlayer()
         #expect(!WebMusicQueueSummary.isActive(player), "nothing is shown before Play")
         await player.play(playlistID: "PLsynthetic", title: "Synthetic Mix")
@@ -1241,16 +1242,21 @@ private enum JSONLiteral {
         #expect(WebMusicQueueSummary.isActive(player))
         let loading = WebMusicQueueSummary(player.snapshot)
         #expect(loading.title == "Synthetic Mix" && loading.playlist == "Synthetic Mix" && loading.artist == nil, "before the first sample only the known playlist is named")
+        #expect(!loading.isListed && loading.upcoming.isEmpty, "no list before the page lists one")
         fake.send(state())
         let playing = WebMusicQueueSummary(player.snapshot)
         #expect(playing == WebMusicQueueSummary(player.snapshot))
         #expect(playing.title == "Synthetic Song" && playing.artist == "Synthetic Artist" && playing.playlist == "Synthetic Mix" && !playing.isAd)
+        #expect(!playing.isListed && playing.upcoming.isEmpty, "a page that reports no queue yields no list: nothing is invented")
+        fake.send(queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Second Song", "Second Artist")]))
+        let listed = WebMusicQueueSummary(player.snapshot)
+        #expect(listed.isListed && listed.upcoming.map(\.videoID) == [otherVideo] && listed.upcoming.first?.title == "Second Song" && !listed.hasMore)
         fake.send(state(position: 3, duration: 15, video: adVideo, title: "Advertiser", ad: true))
         let advert = WebMusicQueueSummary(player.snapshot)
         #expect(advert.isAd && advert.title == "Synthetic Song", "the ad state is shown, with the content's own text kept")
+        #expect(advert.upcoming.map(\.videoID) == [otherVideo], "the list the page gave before the ad stays")
         #expect(WebMusicQueueSummary.managedByYouTubeMusic.contains("YouTube Music manages the upcoming items"))
-        let mirror = Mirror(reflecting: playing).children.compactMap(\.label)
-        #expect(!mirror.contains(where: { $0.lowercased().contains("upcoming") || $0.lowercased().contains("items") || $0.lowercased().contains("queue") }), "the summary has no list of upcoming items to fill in")
+        #expect(!WebMusicQueueSummary.managedByYouTubeMusic.contains("not listed"), "the text no longer says the items are not listed")
         await player.teardown()
         #expect(!WebMusicQueueSummary.isActive(player), "a closed player is not described")
     }
@@ -1428,5 +1434,551 @@ private enum JSONLiteral {
         let context = try #require(JSContext())
         context.evaluateScript("var window = { __ytmuseState: { doc: 1 } }; var document = { querySelector: function () { return null; } }; function f(playlistId, videoId, params, load) { \(WebMusicScripts.loadTarget) }")
         #expect(context.objectForKeyedSubscript("f").call(withArguments: ["PLx", "", "p", 1])?.toString() == "fallback")
+    }
+}
+
+// MARK: CORE-A — the page's own queue (read only), and the player bar's shuffle and repeat
+
+/// A well-formed `queue` message: the playing item first (marked), then the upcoming items, as the observer script posts it.
+private func queueBody(playing: String?, upcoming: [(String, String, String)] = [], more: Int = 0, doc: Int = 1, load: Int = 1) -> [String: Any] {
+    var items: [[String: Any]] = []
+    if let playing { items.append(["i": playing, "t": "Playing now", "c": true]) }
+    for entry in upcoming { items.append(["i": entry.0, "t": entry.1, "a": entry.2, "u": "https://lh3.googleusercontent.com/\(entry.0)"]) }
+    let text = String(decoding: try! JSONSerialization.data(withJSONObject: items), as: UTF8.self)
+    return ["type": "queue", "doc": doc, "load": load, "videoId": playing ?? "", "items": text, "more": more]
+}
+private func queueItemsText(_ items: [[String: Any]]) -> String { String(decoding: try! JSONSerialization.data(withJSONObject: items), as: UTF8.self) }
+
+@Suite struct WebMusicQueueBridgeTests {
+    private func validate(_ body: [String: Any]) -> Result<WebMusicMessage, WebMusicRejection> { WebMusicBridge.validate(body, frame: music, document: 1, load: 1) }
+    private func queue(_ body: [String: Any]) throws -> WebMusicQueue {
+        guard case .queue(let queue) = try validate(body).get().event else { throw WebMusicRejection.malformed }
+        return queue
+    }
+    @Test func aQueueMessageCarriesTheUpcomingItemsInThePagesOrder() throws {
+        let queue = try queue(queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "Artist Two"), ("SYNTHvid003", "Three", "Artist Three")], more: 7))
+        #expect(queue.videoID == syntheticVideo && queue.upcoming.map(\.videoID) == [otherVideo, "SYNTHvid003"] && queue.more == 7)
+        #expect(queue.upcoming.map(\.title) == ["Two", "Three"] && queue.upcoming.map(\.artist) == ["Artist Two", "Artist Three"])
+        #expect(queue.upcoming.first?.artworkURL?.host == "lh3.googleusercontent.com")
+    }
+    @Test func aVideoListedTwiceGetsTwoDistinctRowIdentities() throws {
+        let queue = try queue(queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "A", "x"), ("SYNTHvid003", "B", "y"), (otherVideo, "A again", "x")]))
+        #expect(queue.upcoming.map(\.id) == ["\(otherVideo)#0", "SYNTHvid003#0", "\(otherVideo)#1"] && Set(queue.upcoming.map(\.id)).count == 3)
+    }
+    @Test func anEmptyListAndALoneCurrentItemAreBothValidAndMeanDifferentThings() throws {
+        let unreadable = try queue(queueBody(playing: nil))
+        #expect(unreadable.videoID == nil && unreadable.upcoming.isEmpty, "no video id: the page lists no queue the app can read")
+        let last = try queue(queueBody(playing: syntheticVideo))
+        #expect(last.videoID == syntheticVideo && last.upcoming.isEmpty, "the playing item alone: nothing follows it")
+    }
+    @Test func theListMustLeadWithTheMarkedPlayingItemAndMatchTheMessagesVideo() {
+        var body = queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "x")])
+        body["videoId"] = otherVideo
+        #expect(validate(body) == .failure(.malformed), "the list is not about the video the message names")
+        let unmarked = ["type": "queue", "doc": 1, "load": 1, "videoId": syntheticVideo, "more": 0, "items": queueItemsText([["i": syntheticVideo], ["i": otherVideo]])] as [String: Any]
+        #expect(validate(unmarked) == .failure(.malformed), "no item is marked as the playing one")
+        let twoMarked = ["type": "queue", "doc": 1, "load": 1, "videoId": syntheticVideo, "more": 0, "items": queueItemsText([["i": syntheticVideo, "c": true], ["i": otherVideo, "c": true]])] as [String: Any]
+        #expect(validate(twoMarked) == .failure(.malformed))
+        let markedLater = ["type": "queue", "doc": 1, "load": 1, "videoId": syntheticVideo, "more": 0, "items": queueItemsText([["i": syntheticVideo], ["i": otherVideo, "c": true]])] as [String: Any]
+        #expect(validate(markedLater) == .failure(.malformed))
+    }
+    @Test func malformedItemsAreRejectedNotRepaired() {
+        func body(_ items: Any, videoId: String = syntheticVideo) -> [String: Any] {
+            let text = (items as? String) ?? String(decoding: try! JSONSerialization.data(withJSONObject: items), as: UTF8.self)
+            return ["type": "queue", "doc": 1, "load": 1, "videoId": videoId, "more": 0, "items": text]
+        }
+        #expect(validate(body("not json")) == .failure(.malformed))
+        #expect(validate(body(["i": syntheticVideo, "c": true] as [String: Any])) == .failure(.malformed), "an object is not a list")
+        #expect(validate(body([["i": syntheticVideo, "c": true, "cookie": "x"]])) == .failure(.malformed), "unknown item keys reject")
+        #expect(validate(body([["i": "short", "c": true]], videoId: syntheticVideo)) == .failure(.malformed), "an item with a bad video id rejects")
+        #expect(validate(body([["i": syntheticVideo, "c": true], ["i": "bad id!"]])) == .failure(.malformed))
+        #expect(validate(body([["i": syntheticVideo, "c": 1]])) == .failure(.malformed), "the marker is a boolean")
+        #expect(validate(body([["i": syntheticVideo, "c": true, "t": 5]])) == .failure(.malformed), "text is text")
+        #expect(validate(body([["i": syntheticVideo, "c": true, "t": ["a"]]])) == .failure(.malformed))
+        var wrongItems = body([["i": syntheticVideo, "c": true]]); wrongItems["items"] = 5
+        #expect(validate(wrongItems) == .failure(.malformed))
+        var wrongMore = body([["i": syntheticVideo, "c": true]]); wrongMore["more"] = -1
+        #expect(validate(wrongMore) == .failure(.malformed))
+        var unknownKey = body([["i": syntheticVideo, "c": true]]); unknownKey["extra"] = "x"
+        #expect(validate(unknownKey) == .failure(.malformed))
+    }
+    @Test func theListIsBoundedAtThirtyOneItemsAndByBytes() throws {
+        func many(_ count: Int) -> [String: Any] {
+            var items: [[String: Any]] = [["i": syntheticVideo, "c": true]]
+            for n in 1..<count { items.append(["i": String(format: "SYNTH%06d", n)]) }
+            return ["type": "queue", "doc": 1, "load": 1, "videoId": syntheticVideo, "more": 0, "items": queueItemsText(items)]
+        }
+        #expect(try queue(many(31)).upcoming.count == 30)
+        #expect(validate(many(32)) == .failure(.malformed), "beyond the window is malformed, not truncated")
+        var huge = queueBody(playing: syntheticVideo); huge["items"] = String(repeating: "[", count: 40_001)
+        #expect(validate(huge) == .failure(.oversized), "the queue bound is larger than a state's but still a bound")
+        var big = queueBody(playing: syntheticVideo); big["items"] = String(repeating: " ", count: 36_001)
+        #expect(validate(big) == .failure(.malformed))
+        // The larger bound belongs to the queue message alone: a state message of the same size is still oversized.
+        var heavy = state(); heavy["title"] = String(repeating: "a", count: 7000)
+        #expect(validate(heavy) == .failure(.oversized))
+    }
+    @Test func titlesAreCleanedAndBoundedAndArtworkIsLimitedToYouTubeImageHosts() throws {
+        let long = String(repeating: "x", count: 1400)
+        let items: [[String: Any]] = [["i": syntheticVideo, "c": true], ["i": otherVideo, "t": "  Line\u{0}\u{7}One  ", "a": long, "u": "https://example.com/a.jpg"]]
+        let queue = try queue(["type": "queue", "doc": 1, "load": 1, "videoId": syntheticVideo, "more": 0, "items": queueItemsText(items)])
+        let item = try #require(queue.upcoming.first)
+        #expect(item.title == "LineOne" && (item.artist?.utf8.count ?? 0) <= 512 && item.artworkURL == nil, "control characters go, long text is cut, a foreign host is dropped")
+    }
+    @Test func theStateMessageCarriesShuffleAndRepeatAndRejectsAnythingElse() throws {
+        for (raw, mode) in [("off", WebMusicRepeatMode.off), ("all", .all), ("one", .one)] {
+            var body = state(shuffle: true); body["repeat"] = raw
+            guard case .state(let sample) = try validate(body).get().event else { Issue.record("not state"); return }
+            #expect(sample.repeatMode == mode && sample.shuffle == true)
+        }
+        var bogus = state(); bogus["repeat"] = "NONE"
+        #expect(validate(bogus) == .failure(.malformed), "only the three names the observer posts")
+        var typed = state(); typed["repeat"] = 1
+        #expect(validate(typed) == .failure(.malformed))
+        guard case .state(let plain) = try validate(state()).get().event else { return }
+        #expect(plain.repeatMode == nil, "a page that does not say leaves it unreported")
+        #expect(WebMusicRepeatMode.off.next == .all && WebMusicRepeatMode.all.next == .one && WebMusicRepeatMode.one.next == .off, "the page's own button order")
+    }
+}
+
+private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal? { if case .failure(let reason) = result { reason } else { nil } }
+
+@Suite struct WebMusicQueueTransportTests {
+    private func playing(_ transport: inout WebMusicTransport) throws {
+        _ = transport.begin(playlistID: "PLsynthetic", title: "Mix"); _ = transport.reserveDocument()
+        transport.apply(try WebMusicBridge.validate(state(), frame: music, document: 1, load: 1).get())
+    }
+    private func apply(_ transport: inout WebMusicTransport, _ body: [String: Any]) throws {
+        transport.apply(try WebMusicBridge.validate(body, frame: music, document: 1, load: 1).get())
+    }
+    @Test func aQueueForThePlayingItemIsShownAndAnotherItemsQueueIsHeldNotShown() throws {
+        var transport = WebMusicTransport(); try playing(&transport)
+        try apply(&transport, queueBody(playing: otherVideo, upcoming: [("SYNTHvid003", "Three", "x")]))
+        #expect(transport.snapshot.queue == nil, "a list about another item is not this item's list")
+        try apply(&transport, queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "x")]))
+        #expect(transport.snapshot.queue?.upcoming.map(\.videoID) == [otherVideo])
+    }
+    @Test func theNextItemDropsTheOldListAndTakesAHeldOneForItself() throws {
+        var transport = WebMusicTransport(); try playing(&transport)
+        try apply(&transport, queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "x"), ("SYNTHvid003", "Three", "y")]))
+        try apply(&transport, queueBody(playing: otherVideo, upcoming: [("SYNTHvid003", "Three", "y")]))   // arrives before the item shows
+        #expect(transport.snapshot.queue?.upcoming.count == 2, "still the old item's list")
+        try apply(&transport, state(video: otherVideo, title: "Two"))
+        #expect(transport.snapshot.queue?.upcoming.map(\.videoID) == ["SYNTHvid003"], "the held list for the new item replaces the old one")
+        try apply(&transport, state(video: "SYNTHvid003", title: "Three"))
+        #expect(transport.snapshot.queue == nil, "a new item with no list reported yet shows none")
+    }
+    @Test func aListWithoutAVideoIdClearsWhatWasShown() throws {
+        var transport = WebMusicTransport(); try playing(&transport)
+        try apply(&transport, queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "x")]))
+        try apply(&transport, queueBody(playing: nil))
+        #expect(transport.snapshot.queue == nil, "the page no longer lists a readable queue")
+    }
+    @Test func aNewLoadResetsTheList() throws {
+        var transport = WebMusicTransport(); try playing(&transport)
+        try apply(&transport, queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "x")]))
+        _ = transport.begin(playlistID: "PLother", title: nil)
+        #expect(transport.snapshot.queue == nil && transport.snapshot.shuffle == nil && transport.snapshot.repeatMode == nil)
+    }
+    @Test func shuffleAndRepeatAreOnlyWhatTheLastReportSaid() throws {
+        var transport = WebMusicTransport(); try playing(&transport)
+        var body = state(shuffle: true); body["repeat"] = "all"
+        try apply(&transport, body)
+        #expect(transport.snapshot.shuffle == true && transport.snapshot.repeatMode == .all)
+        try apply(&transport, state())
+        #expect(transport.snapshot.shuffle == nil && transport.snapshot.repeatMode == nil, "a report that does not say clears them: a stale value would be a guess")
+    }
+    @Test func selectionShuffleAndRepeatAreRefusedDuringAnAdAndForAnItemNotListed() throws {
+        var transport = WebMusicTransport(); try playing(&transport)
+        try apply(&transport, queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "x")]))
+        if case .success = transport.admitQueueSelection(otherVideo) {} else { Issue.record("a listed item is admitted") }
+        #expect(refusal(transport.admitQueueSelection("SYNTHvid009")) == .queueItemGone)
+        if case .success = transport.admitQueueSetting() {} else { Issue.record("shuffle and repeat are admitted") }
+        try apply(&transport, state(position: 3, duration: 15, video: adVideo, title: "Advertiser", ad: true))
+        #expect(refusal(transport.admitQueueSelection(otherVideo)) == .queueAdvertisement)
+        #expect(refusal(transport.admitQueueSetting()) == .queueAdvertisement)
+        #expect(transport.snapshot.queue?.upcoming.map(\.videoID) == [otherVideo], "the ad leaves the list as it was")
+    }
+    @Test func nothingIsAdmittedWithoutAPlayingItem() {
+        let transport = WebMusicTransport()
+        #expect(refusal(transport.admitQueueSelection(otherVideo)) == .nothingLoaded)
+        #expect(refusal(transport.admitQueueSetting()) == .nothingLoaded)
+    }
+}
+
+@Suite @MainActor struct WebMusicQueuePlayerTests {
+    private func started(shuffle: Bool? = false, mode: String? = "off") async throws -> (WebMusicPlayer, FakeMusicPage) {
+        let (player, page) = makePlayer()
+        await player.play(playlistID: "PLsynthetic", title: "Synthetic Mix")
+        let fake = try #require(page()); fake.commitLast()
+        var body = state(shuffle: shuffle)
+        if let mode { body["repeat"] = mode }
+        fake.send(body)
+        fake.send(queueBody(playing: syntheticVideo, upcoming: [(otherVideo, "Two", "x"), ("SYNTHvid003", "Three", "y")]))
+        return (player, fake)
+    }
+    private func commands(_ fake: FakeMusicPage, _ body: String) -> [WebMusicCommand.Invocation] { fake.commands.filter { $0.body == body } }
+    @Test func playingAListedItemHandsThePageOnlyItsVideoIdAndTheOutputGateComesFirst() async throws {
+        let (player, fake) = try await started()
+        var gated = false
+        player.audibleStartGate = { proceed in gated = true; await proceed() }
+        await player.playQueueItem(otherVideo)
+        let sent = commands(fake, WebMusicScripts.playQueueItem)
+        #expect(gated && sent.count == 1 && sent.first?.arguments["videoId"] as? String == otherVideo && player.refusal == nil)
+        #expect(player.snapshot.intent, "selecting an item is a request to play")
+        await player.teardown()
+    }
+    @Test func anItemTheFakePageDoesNotListIsRefusedWithoutReachingThePage() async throws {
+        let (player, fake) = try await started()
+        await player.playQueueItem("SYNTHvid009")
+        #expect(commands(fake, WebMusicScripts.playQueueItem).isEmpty && player.refusal == .queueItemGone)
+        await player.teardown()
+    }
+    @Test func selectionShuffleAndRepeatNeverReachThePageDuringAnAd() async throws {
+        let (player, fake) = try await started()
+        fake.send(state(position: 3, duration: 15, video: adVideo, title: "Advertiser", ad: true))
+        await player.playQueueItem(otherVideo)
+        #expect(player.refusal == .queueAdvertisement)
+        await player.setShuffle(true)
+        #expect(player.refusal == .queueAdvertisement)
+        await player.setRepeat(.all)
+        #expect(player.refusal == .queueAdvertisement)
+        #expect([WebMusicScripts.playQueueItem, WebMusicScripts.setShuffle, WebMusicScripts.setRepeat].allSatisfy { commands(fake, $0).isEmpty }, "no command was sent")
+        await player.teardown()
+    }
+    @Test func aPageAnswerBecomesAStatedReasonAndNothingIsShownAsDone() async throws {
+        let (player, fake) = try await started()
+        fake.replies = [.ad]
+        await player.playQueueItem(otherVideo)
+        #expect(player.refusal == .queueAdvertisement, "the page's own ad check also refuses")
+        fake.replies = [.rejected]
+        await player.playQueueItem(otherVideo)
+        #expect(player.refusal == .queueItemGone)
+        fake.replies = [.rejected]
+        await player.setShuffle(true)
+        #expect(player.refusal == .pageDidNotTake)
+        fake.replies = [.unsupported]
+        await player.setRepeat(.one)
+        #expect(player.refusal == .pageDidNotTake)
+        fake.replies = [.ok]
+        await player.setRepeat(.one)
+        #expect(player.refusal == nil)
+        await player.teardown()
+    }
+    @Test func shuffleAndRepeatStateChangeOnlyWhenThePageReportsIt() async throws {
+        let (player, fake) = try await started()
+        #expect(player.snapshot.shuffle == false && player.snapshot.repeatMode == .off)
+        await player.setShuffle(true)
+        await player.setRepeat(.all)
+        let shuffle = try #require(commands(fake, WebMusicScripts.setShuffle).first), repeating = try #require(commands(fake, WebMusicScripts.setRepeat).first)
+        #expect(shuffle.arguments["on"] as? Bool == true && repeating.arguments["mode"] as? String == "all")
+        #expect(player.snapshot.shuffle == false && player.snapshot.repeatMode == .off, "an acknowledged command is not the page's state: nothing changes until it reports")
+        var report = state(shuffle: true); report["repeat"] = "all"
+        fake.send(report)
+        #expect(player.snapshot.shuffle == true && player.snapshot.repeatMode == .all)
+        await player.teardown()
+    }
+    @Test func nothingIsSentBeforeAnythingPlays() async {
+        let (player, page) = makePlayer()
+        await player.setShuffle(true); await player.setRepeat(.all); await player.playQueueItem(otherVideo)
+        #expect(page() == nil, "the controls cannot create the page")
+    }
+    @Test func theCommandsCarryOnlyValidatedArguments() throws {
+        let item = try WebMusicCommand.playQueueItem(otherVideo).invocation()
+        #expect(item.body == WebMusicScripts.playQueueItem && !item.body.contains(otherVideo) && item.arguments["videoId"] as? String == otherVideo)
+        for bad in ["short", "x');alert(1)//", "", "SYNTHvid00 "] { #expect(throws: WebMusicCommandError.invalidArgument) { try WebMusicCommand.playQueueItem(bad).invocation() } }
+        #expect(try WebMusicCommand.shuffle(false).invocation().arguments["on"] as? Bool == false)
+        #expect(try WebMusicCommand.repeatMode(.one).invocation().arguments["mode"] as? String == "one")
+    }
+}
+
+/// The shipped observer and command scripts, run in JavaScriptCore against a stub page whose queue items carry the SERVICE'S OWN renderer shape: the
+/// real anonymous public `next` response in `Fixtures/W18-real/next-song.json` (hash-checked against its manifest), plus synthetic items cloned from it.
+@MainActor private final class QueuePageHarness {
+    let context = JSContext()!
+    private final class IssueBox: @unchecked Sendable { var items: [String] = [] }
+    private let box = IssueBox()
+    var issues: [String] { box.items }
+    /// `nodes` are the `ytmusic-player-queue-item` `.data` values; `shuffle`/`repeatMode` are the player bar's state (nil = the page shows none).
+    init(nodes: [[String: Any]], playing: String, ad: Bool = false, shuffle: String? = "false", repeatMode: String? = "NONE", clicksWork: Bool = true, markSelectedAttribute: Int? = nil) {
+        let box = box
+        context.exceptionHandler = { _, exception in box.items.append(exception?.toString() ?? "?") }
+        let data = try! JSONSerialization.data(withJSONObject: nodes)
+        context.evaluateScript("""
+        var __nodes = \(String(decoding: data, as: UTF8.self)).map(function (d, i) {
+          return { data: d, hasAttribute: function (name) { return name === "selected" && \(markSelectedAttribute.map { "i === \($0)" } ?? "false"); } };
+        });
+        var __playing = \(JSONLiteral.string(playing)), __ad = \(ad), __clicks = [], __posted = [], __intervals = [], __listeners = {}, __clock = 1000;
+        var __shuffle = \(shuffle.map(JSONLiteral.string) ?? "null"), __repeat = \(repeatMode.map(JSONLiteral.string) ?? "null"), __works = \(clicksWork);
+        var __routed = null, __router = true;
+        var Date = { now: function () { return __clock; } };
+        var setTimeout = function (fn) { Promise.resolve().then(fn); };
+        var setInterval = function (fn) { __intervals.push(fn); };
+        var __shuffleButton = { click: function () { __clicks.push("shuffle"); if (__works && __shuffle !== null) { __shuffle = __shuffle === "true" ? "false" : "true"; } },
+          getAttribute: function (name) { return name === "aria-pressed" ? __shuffle : null; } };
+        var __repeatButton = { click: function () { __clicks.push("repeat"); if (__works && __repeat !== null) { __repeat = __repeat === "NONE" ? "ALL" : (__repeat === "ALL" ? "ONE" : "NONE"); } } };
+        var __bar = { getAttribute: function (name) { return name === "repeat-mode_" ? __repeat : null; } };
+        var __api = { getVideoData: function () { return { video_id: __playing }; } };
+        var __video = { paused: false, ended: false, readyState: 4, currentTime: 10, duration: 200, addEventListener: function () {} };
+        var __app = { resolveCommand: function (command) { if (!__router) { throw new Error("no"); } __routed = command; } };
+        var __movie = { classList: { contains: function (name) { return __ad && name === "ad-showing"; } } };
+        var document = {
+          querySelector: function (selector) {
+            switch (selector) {
+            case "video": return __video;
+            case "ytmusic-player": return { playerApi: __api };
+            case "ytmusic-app": return __app;
+            case "ytmusic-player-bar .shuffle": return __shuffle === null ? null : __shuffleButton;
+            case "ytmusic-player-bar .repeat": return __repeat === null ? null : __repeatButton;
+            case "ytmusic-player-bar": return __bar;
+            default: return null; }
+          },
+          querySelectorAll: function (selector) { return selector === "ytmusic-player-queue-item" ? __nodes : []; },
+          getElementById: function (id) { return id === "movie_player" ? __movie : null; }, body: { innerText: "" }, addEventListener: function () {}
+        };
+        var window = { location: { hostname: "music.youtube.com", href: "https://music.youtube.com/watch?v=" + __playing },
+          __ytmuseState: { doc: 1, load: 1, intent: false, meta: null, observing: false },
+          webkit: { messageHandlers: { \(WebMusicBridge.handlerName): { postMessage: function (m) { __posted.push(JSON.stringify(m)); } } } } };
+        window.top = window;
+        """)
+    }
+    func installObserver() { context.evaluateScript(WebMusicScripts.observer) }
+    func tick() { context.evaluateScript("__clock += 1000; __intervals.forEach(function (fn) { fn(); });") }
+    func posts(_ type: String) -> [[String: Any]] {
+        let raw = context.evaluateScript("__posted")!.toArray() as? [String] ?? []
+        return raw.compactMap { try? JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any] }.filter { $0["type"] as? String == type }
+    }
+    /// The newest queue post, through the real bridge.
+    func lastQueue() -> Result<WebMusicMessage, WebMusicRejection>? {
+        posts("queue").last.map { WebMusicBridge.validate($0, frame: music, document: 1, load: 1) }
+    }
+    /// Runs a command body as the page would: an async function over typed arguments; the promise is settled before this returns.
+    func run(_ body: String, _ arguments: [String: Any]) -> String {
+        let names = arguments.keys.sorted()
+        let literals = names.map { name -> String in
+            if let flag = arguments[name] as? Bool { return flag ? "true" : "false" }
+            return JSONLiteral.string(arguments[name] as? String ?? "")
+        }
+        context.evaluateScript("var __result = 'pending'; (async function (\(names.joined(separator: ", "))) { \(body) })(\(literals.joined(separator: ", "))).then(function (v) { __result = v; });")
+        return context.evaluateScript("__result")?.toString() ?? "?"
+    }
+    var clicks: [String] { (context.evaluateScript("__clicks")?.toArray() as? [String]) ?? [] }
+    var routed: [String: Any]? { context.evaluateScript("__routed")?.toDictionary() as? [String: Any] }
+    func set(_ script: String) { context.evaluateScript(script) }
+}
+
+private enum RealQueue {
+    static let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+    /// The two `playlistPanelVideoRenderer`s of the real `next` capture, as the page's queue items hold them (`{ playlistPanelVideoRenderer: … }`).
+    static func items() throws -> [[String: Any]] {
+        let file = root.appendingPathComponent("Fixtures/W18-real/next-song.json")
+        let data = try Data(contentsOf: file)
+        let manifest = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: root.appendingPathComponent("Fixtures/W18-real/manifest.json"))) as? [String: Any])
+        let entries = try #require(manifest["files"] as? [[String: Any]])
+        let expected = try #require(entries.first { $0["path"] as? String == "next-song.json" }?["sha256"] as? String)
+        #expect(SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined() == expected, "the fixture is the byte-for-byte capture")
+        let json = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let panel = try #require(((((((json["contents"] as? [String: Any])?["singleColumnMusicWatchNextResultsRenderer"] as? [String: Any])?["tabbedRenderer"] as? [String: Any])?["watchNextTabbedResultsRenderer"] as? [String: Any])?["tabs"] as? [[String: Any]])?.first?["tabRenderer"] as? [String: Any])?["content"] as? [String: Any])
+        let queue = try #require(((panel["musicQueueRenderer"] as? [String: Any])?["content"] as? [String: Any])?["playlistPanelRenderer"] as? [String: Any])
+        return try #require(queue["contents"] as? [[String: Any]])
+    }
+    /// A synthetic item in the real renderer's shape: the capture's first renderer with another video, title and artist.
+    static func clone(_ real: [String: Any], id: String, title: String, selected: Bool = false) throws -> [String: Any] {
+        var renderer = try #require(real["playlistPanelVideoRenderer"] as? [String: Any])
+        renderer["videoId"] = id
+        renderer["title"] = ["runs": [["text": title]]]
+        renderer["selected"] = selected
+        var endpoint = try #require(renderer["navigationEndpoint"] as? [String: Any])
+        var watch = try #require(endpoint["watchEndpoint"] as? [String: Any]); watch["videoId"] = id; endpoint["watchEndpoint"] = watch
+        renderer["navigationEndpoint"] = endpoint
+        return ["playlistPanelVideoRenderer": renderer]
+    }
+}
+
+@Suite @MainActor struct WebMusicQueueObserverScriptTests {
+    private func page(extra: Int = 3, playing: String = "khnokW3Mw24", ad: Bool = false) throws -> QueuePageHarness {
+        let real = try RealQueue.items()
+        var nodes = real
+        for n in 0..<extra { nodes.append(try RealQueue.clone(real[0], id: String(format: "SYNTHq%05d", n), title: "Synthetic Track \(n)")) }
+        let harness = QueuePageHarness(nodes: nodes, playing: playing, ad: ad)
+        harness.installObserver()
+        return harness
+    }
+    @Test func theRealCapturesRendererIsReadIntoTheItemsTheBridgeAccepts() throws {
+        let real = try RealQueue.items()
+        #expect(real.count == 2 && real[0]["playlistPanelVideoRenderer"] != nil && real[1]["automixPreviewVideoRenderer"] != nil,
+                "the capture lists the playing song and the page's automix preview, which is not a queue item")
+        let harness = try page(extra: 3)
+        let message = try #require(harness.lastQueue(), "a queue was posted: \(harness.issues)")
+        guard case .queue(let queue) = try message.get().event else { Issue.record("not a queue"); return }
+        #expect(queue.videoID == "khnokW3Mw24" && queue.upcoming.count == 3 && queue.more == 0, "the automix preview is skipped, not listed and not an error")
+        #expect(queue.upcoming.map(\.title) == ["Synthetic Track 0", "Synthetic Track 1", "Synthetic Track 2"])
+        let first = try #require(queue.upcoming.first)
+        #expect(first.artist == "Daft Punk & Julian Casablancas" && first.artworkURL?.host?.hasSuffix("googleusercontent.com") == true, "artist and artwork come from the renderer: \(first)")
+        #expect(harness.issues.isEmpty)
+    }
+    @Test func theArtistIsTheBylineUpToItsFirstBulletAndArtworkIsAMidSizeThumbnail() throws {
+        let harness = try page(extra: 0)
+        let queue = try #require(harness.posts("queue").last)
+        let items = try #require((try? JSONSerialization.jsonObject(with: Data((queue["items"] as? String ?? "").utf8))) as? [[String: Any]])
+        let playing = try #require(items.first)
+        #expect(playing["c"] as? Bool == true)
+        #expect(playing["a"] as? String == "Daft Punk & Julian Casablancas", "the byline's artists, up to its first bullet")
+        let url = try #require(playing["u"] as? String)
+        #expect(url.contains("w120-h120"), "the first thumbnail at least 100 px wide is the one used")
+    }
+    @Test func aQueueThatStillMarksAnotherItemSelectedIsNotAttributedToTheNewOne() throws {
+        // The page moved on to SYNTHq00001 but its DOM still marks the old item selected: the old marker names another video, so only the video match counts.
+        let real = try RealQueue.items()
+        let nodes = [real[0], try RealQueue.clone(real[0], id: "SYNTHq00000", title: "A"), try RealQueue.clone(real[0], id: "SYNTHq00001", title: "B")]
+        let harness = QueuePageHarness(nodes: nodes, playing: "SYNTHq00001"); harness.installObserver()
+        guard case .queue(let queue)? = try harness.lastQueue()?.get().event else { Issue.record("no queue"); return }
+        #expect(queue.videoID == "SYNTHq00001" && queue.upcoming.isEmpty, "B is the only entry with that video, and nothing follows it")
+    }
+    @Test func aVideoListedTwiceWithNoMarkerClaimsNothingAfterIt() throws {
+        let real = try RealQueue.items()
+        let nodes = [try RealQueue.clone(real[0], id: "SYNTHq00000", title: "A"), try RealQueue.clone(real[0], id: "SYNTHq00001", title: "B"), try RealQueue.clone(real[0], id: "SYNTHq00000", title: "A again")]
+        let harness = QueuePageHarness(nodes: nodes, playing: "SYNTHq00000"); harness.installObserver()
+        #expect(harness.posts("queue").isEmpty, "ambiguous and never listed before: nothing is posted")
+        let marked = QueuePageHarness(nodes: nodes, playing: "SYNTHq00000", markSelectedAttribute: 2); marked.installObserver()
+        guard case .queue(let queue)? = try marked.lastQueue()?.get().event else { Issue.record("no queue"); return }
+        #expect(queue.upcoming.isEmpty, "the page's own selected attribute says it is the last one")
+    }
+    @Test func anUnknownPageShapeProducesNoListAndNoError() throws {
+        let harness = QueuePageHarness(nodes: [["somethingElse": ["videoId": "SYNTHq00000"]], ["playlistPanelVideoRenderer": ["videoId": 5]], [:]], playing: "SYNTHq00000")
+        harness.installObserver(); harness.tick(); harness.tick()
+        #expect(harness.posts("queue").isEmpty && harness.issues.isEmpty, "hidden, with no crash: \(harness.issues)")
+        #expect(!harness.posts("state").isEmpty, "the rest of the observer still works")
+    }
+    @Test func aListThatBecomesUnreadableIsClearedOnce() throws {
+        let harness = try page(extra: 1)
+        #expect(harness.posts("queue").count == 1)
+        harness.set("__nodes = [];")
+        harness.tick()
+        let clearing = try #require(harness.posts("queue").last)
+        #expect(harness.posts("queue").count == 2 && clearing["videoId"] as? String == "", "an empty videoId says the queue is unreadable")
+        harness.tick(); harness.tick()
+        #expect(harness.posts("queue").count == 2, "the clearing is posted once")
+    }
+    @Test func theQueueIsPostedOnceAndAgainOnlyWhenItChanges() throws {
+        let harness = try page(extra: 2)
+        for _ in 0..<5 { harness.tick() }
+        #expect(harness.posts("queue").count == 1, "an unchanged queue posts nothing more")
+        harness.set("__nodes.shift();")   // the playing item leaves the list
+        harness.set("__playing = __nodes[0].data.playlistPanelVideoRenderer.videoId; window.location.href = 'https://music.youtube.com/watch?v=' + __playing; __nodes[0].data.playlistPanelVideoRenderer.selected = true;")
+        harness.tick()
+        #expect(harness.posts("queue").count == 2)
+    }
+    @Test func nothingIsPostedWhileAnAdvertisementPlays() throws {
+        let harness = try page(extra: 2)
+        let before = harness.posts("queue").count
+        harness.set("__ad = true; __nodes.pop();")
+        harness.tick(); harness.tick()
+        #expect(harness.posts("queue").count == before, "the list stays what it was before the ad")
+        harness.set("__ad = false;")
+        harness.tick()
+        #expect(harness.posts("queue").count == before + 1, "and is read again when the ad is over")
+    }
+    @Test func aLongQueueIsCutToThirtyUpcomingItemsAndSaysHowManyMore() throws {
+        let real = try RealQueue.items()
+        var nodes = [try RealQueue.clone(real[0], id: "SYNTHq00000", title: "Now", selected: true)]
+        for n in 1...100 { nodes.append(try RealQueue.clone(real[0], id: String(format: "SYNTHq%05d", n), title: "T\(n)")) }
+        let harness = QueuePageHarness(nodes: nodes, playing: "SYNTHq00000"); harness.installObserver()
+        guard case .queue(let queue)? = try harness.lastQueue()?.get().event else { Issue.record("no queue \(harness.issues)"); return }
+        #expect(queue.upcoming.count == 30 && queue.more == 70 && queue.upcoming.first?.title == "T1" && queue.upcoming.last?.title == "T30")
+    }
+    @Test func shuffleAndRepeatAreReadFromThePlayerBarAndOmittedWhenItSaysNothing() throws {
+        let real = try RealQueue.items()
+        let known = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: "true", repeatMode: "ALL"); known.installObserver()
+        let first = try #require(known.posts("state").last)
+        #expect(first["shuffle"] as? Bool == true && first["repeat"] as? String == "all")
+        for (raw, name) in [("NONE", "off"), ("ONE", "one")] {
+            let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", repeatMode: raw); harness.installObserver()
+            #expect(harness.posts("state").last?["repeat"] as? String == name)
+        }
+        let silent = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: nil, repeatMode: nil); silent.installObserver()
+        let message = try #require(silent.posts("state").last)
+        #expect(message["shuffle"] == nil && message["repeat"] == nil, "no guess when the page shows nothing")
+        let odd = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", repeatMode: "SOMETHING"); odd.installObserver()
+        #expect(odd.posts("state").last?["repeat"] == nil, "an unknown mode is not reported")
+    }
+}
+
+@Suite @MainActor struct WebMusicQueueCommandScriptTests {
+    private func page(ad: Bool = false, shuffle: String? = "false", repeatMode: String? = "NONE", clicksWork: Bool = true, extra: Int = 3) throws -> QueuePageHarness {
+        let real = try RealQueue.items()
+        var nodes = real
+        for n in 0..<extra { nodes.append(try RealQueue.clone(real[0], id: String(format: "SYNTHq%05d", n), title: "Synthetic Track \(n)")) }
+        return QueuePageHarness(nodes: nodes, playing: "khnokW3Mw24", ad: ad, shuffle: shuffle, repeatMode: repeatMode, clicksWork: clicksWork)
+    }
+    @Test func playingAQueueItemHandsTheRouterThePagesOwnEndpointForThatItem() throws {
+        let harness = try page()
+        #expect(harness.run(WebMusicScripts.playQueueItem, ["videoId": "SYNTHq00001"]) == "ok")
+        let routed = try #require(harness.routed)
+        let watch = try #require(routed["watchEndpoint"] as? [String: Any])
+        #expect(watch["videoId"] as? String == "SYNTHq00001", "the item's own published endpoint, not one built here")
+        #expect(harness.context.evaluateScript("window.__ytmuseState.intent").toBool(), "the page is allowed to start it")
+        #expect(harness.issues.isEmpty)
+    }
+    @Test func anAdvertisementRefusesSelectionBeforeAnythingIsRouted() throws {
+        let harness = try page(ad: true)
+        #expect(harness.run(WebMusicScripts.playQueueItem, ["videoId": "SYNTHq00001"]) == "ad" && harness.routed == nil)
+        #expect(!harness.context.evaluateScript("window.__ytmuseState.intent").toBool(), "and no intent to play was recorded")
+    }
+    @Test func onlyAnItemAfterThePlayingOneCanBeChosen() throws {
+        let harness = try page()
+        #expect(harness.run(WebMusicScripts.playQueueItem, ["videoId": "khnokW3Mw24"]) == "rejected", "the playing item itself is not 'next'")
+        #expect(harness.run(WebMusicScripts.playQueueItem, ["videoId": "SYNTHzzzzzz"]) == "rejected", "an item the page does not list")
+        #expect(harness.routed == nil)
+        harness.set("__playing = 'SYNTHq00001'; window.location.href = 'x';")
+        #expect(harness.run(WebMusicScripts.playQueueItem, ["videoId": "SYNTHq00000"]) == "rejected", "an earlier item is not offered")
+    }
+    @Test func aPageWithoutARouterOrEndpointDoesNothing() throws {
+        let harness = try page()
+        harness.set("__app.resolveCommand = undefined;")
+        #expect(harness.run(WebMusicScripts.playQueueItem, ["videoId": "SYNTHq00001"]) == "unsupported")
+        harness.set("__app.resolveCommand = function () { throw new Error('x'); };")
+        #expect(harness.run(WebMusicScripts.playQueueItem, ["videoId": "SYNTHq00001"]) == "rejected")
+        #expect(!harness.context.evaluateScript("window.__ytmuseState.intent").toBool(), "a failed request leaves the play intent as it was")
+        let noEndpoint = QueuePageHarness(nodes: [["playlistPanelVideoRenderer": ["videoId": "khnokW3Mw24", "selected": true]], ["playlistPanelVideoRenderer": ["videoId": "SYNTHq00001"]]], playing: "khnokW3Mw24")
+        #expect(noEndpoint.run(WebMusicScripts.playQueueItem, ["videoId": "SYNTHq00001"]) == "rejected", "an item that publishes no watch endpoint is not played")
+    }
+    @Test func shuffleClicksOnlyWhenTheStateDiffersAndAnswersOkOnlyWhenThePageShowsIt() throws {
+        let harness = try page()
+        #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ok" && harness.clicks == ["shuffle"])
+        #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ok" && harness.clicks == ["shuffle"], "already on: no second click")
+        #expect(harness.run(WebMusicScripts.setShuffle, ["on": false]) == "ok" && harness.clicks == ["shuffle", "shuffle"])
+        let stuck = try page(clicksWork: false)
+        #expect(stuck.run(WebMusicScripts.setShuffle, ["on": true]) == "rejected" && stuck.clicks == ["shuffle"], "a click the page ignored is not reported as done")
+    }
+    @Test func shuffleAndRepeatNeverClickAControlWhoseStateTheyCannotRead() throws {
+        let blind = try page(shuffle: nil, repeatMode: nil)
+        #expect(blind.run(WebMusicScripts.setShuffle, ["on": true]) == "unsupported" && blind.run(WebMusicScripts.setRepeat, ["mode": "all"]) == "unsupported" && blind.clicks.isEmpty)
+        let unreadable = try page(shuffle: "mixed", repeatMode: "WEIRD")
+        #expect(unreadable.run(WebMusicScripts.setShuffle, ["on": true]) == "unsupported" && unreadable.run(WebMusicScripts.setRepeat, ["mode": "all"]) == "unsupported" && unreadable.clicks.isEmpty)
+    }
+    @Test func repeatStepsThePagesOwnButtonUntilThePageShowsTheRequestedMode() throws {
+        let harness = try page()
+        #expect(harness.run(WebMusicScripts.setRepeat, ["mode": "one"]) == "ok" && harness.clicks == ["repeat", "repeat"], "off -> all -> one")
+        #expect(harness.run(WebMusicScripts.setRepeat, ["mode": "one"]) == "ok" && harness.clicks.count == 2, "already there: no click")
+        #expect(harness.run(WebMusicScripts.setRepeat, ["mode": "all"]) == "ok" && harness.clicks.count == 4, "one -> off -> all")
+        let stuck = try page(clicksWork: false)
+        #expect(stuck.run(WebMusicScripts.setRepeat, ["mode": "all"]) == "rejected" && stuck.clicks == ["repeat"], "it gives up after a click that changed nothing")
+    }
+    @Test func anAdvertisementRefusesShuffleAndRepeatWithoutAClick() throws {
+        let harness = try page(ad: true)
+        #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ad" && harness.run(WebMusicScripts.setRepeat, ["mode": "all"]) == "ad" && harness.clicks.isEmpty)
+    }
+    @Test func theNewScriptsAreHeldToTheAdvertisingRulesAndTouchNothingElse() {
+        for body in [WebMusicScripts.playQueueItem, WebMusicScripts.setShuffle, WebMusicScripts.setRepeat] {
+            #expect(body.contains("if (ytmuseAdShowing()) { return \"ad\"; }"))
+            for forbidden in ["skipAd", "ytp-ad-skip", "muted", "display", "visibility", "remove()", "evaluateJavaScript", "document.cookie", "skip-button", "playbackRate", "volume", "eval(", "fetch(", "XMLHttpRequest"] {
+                #expect(!body.contains(forbidden), "\(forbidden)")
+            }
+        }
+        #expect(!WebMusicScripts.playQueueItem.contains(".click(") && WebMusicScripts.setShuffle.contains("ytmusic-player-bar .shuffle") && WebMusicScripts.setRepeat.contains("ytmusic-player-bar .repeat"))
+        #expect(!WebMusicScripts.queueDetection.contains(".click(") && !WebMusicScripts.queueDetection.contains("resolveCommand"), "the reader of the queue acts on nothing")
+        // Arguments only: the typed values never appear in the constant bodies.
+        #expect((try? WebMusicCommand.playQueueItem("SYNTHvid001").invocation())?.body.contains("SYNTHvid001") == false)
     }
 }

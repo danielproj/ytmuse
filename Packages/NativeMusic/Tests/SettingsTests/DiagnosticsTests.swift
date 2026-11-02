@@ -6,6 +6,7 @@ import Playback
 @testable import Diagnostics
 @testable import Features
 @testable import AppShell
+import TestSupport
 
 /// Strings that stand for things a diagnostic must never carry. Every one contains "canary" so a single lowercase search finds any survivor.
 enum Canary {
@@ -95,8 +96,8 @@ struct LeakyError: Error, CustomStringConvertible {
                                     library: MusicLibraryPlaylists(playlists: [MusicLibraryPlaylist(id: "PLcanary", title: Canary.playlist, countText: "12 songs", itemCount: 12)], complete: true), avatar: nil))
     }
     func center(storage: @escaping @MainActor () async throws -> DiagnosticsReport.Storage = { .init(artworkCacheBytes: 100, pinnedDownloadBytes: 200, automaticDownloadBytes: 0, unlistedDownloadBytes: 0) },
-                scratch: Scratch) throws -> (DiagnosticsCenter, UserDefaults, String) {
-        let suite = "ytmuse-diag-test-" + UUID().uuidString, defaults = UserDefaults(suiteName: suite)!
+                scratch: Scratch) throws -> (DiagnosticsCenter, UserDefaults, ScratchDefaults) {
+        let suite = ScratchDefaults(), defaults = suite.defaults
         // The real search recents record the term; the real collector turns the live objects into the context.
         SearchRecents(defaults: defaults, scope: { "x" }).record(query: Canary.search)
         let identities = [LocalIdentity(account: try syntheticAccount(name: Canary.accountName))]
@@ -115,7 +116,7 @@ struct LeakyError: Error, CustomStringConvertible {
 
     @Test func thePreviewAndTheExportCarryNoSecretEmailPrivateNameSearchOrSignedURL() async throws {
         let scratch = try Scratch(); defer { scratch.cleanup() }
-        let (center, defaults, suite) = try center(scratch: scratch); defer { defaults.removePersistentDomain(forName: suite) }
+        let (center, defaults, suite) = try center(scratch: scratch); defer { suite.clean() }
         center.log.record(.sourceOutage, component: "adapter", detail: String(describing: LeakyError()))
         center.log.record(.playbackFailure, component: "player", detail: LeakyError().description)
         let bundle = await center.bundle()
@@ -134,7 +135,7 @@ struct LeakyError: Error, CustomStringConvertible {
 
     @Test func theErrorPathRedactsToo() async throws {
         let scratch = try Scratch(); defer { scratch.cleanup() }
-        let (center, defaults, suite) = try center(storage: { throw LeakyError() }, scratch: scratch); defer { defaults.removePersistentDomain(forName: suite) }
+        let (center, defaults, suite) = try center(storage: { throw LeakyError() }, scratch: scratch); defer { suite.clean() }
         let bundle = await center.bundle()
         #expect(bundle.sections == ["failure"] && bundle.text.contains("internalError") && bundle.text.contains("could not be built"))
         #expect(Canary.survivors(in: bundle.text).isEmpty, Comment(rawValue: bundle.text))
@@ -162,7 +163,7 @@ struct LeakyError: Error, CustomStringConvertible {
         // 6 MB of "downloaded media" and a cookie jar beside the diagnostics directory.
         try Data(repeating: 0x41, count: 6 << 20).write(to: scratch.url.appendingPathComponent("kept-song-CANARYmedia.m4a"))
         try Data("Cookie: SAPISID=CANARYjar".utf8).write(to: scratch.url.appendingPathComponent("cookies.txt"))
-        let (center, defaults, suite) = try center(scratch: scratch); defer { defaults.removePersistentDomain(forName: suite) }
+        let (center, defaults, suite) = try center(scratch: scratch); defer { suite.clean() }
         for index in 0..<400 { center.log.record(.sourceOutage, component: "adapter", detail: String(repeating: "word \(index) ", count: 80)) }
         let bundle = await center.bundle()
         #expect(bundle.byteCount <= SupportBundle.maxBytes && !bundle.text.contains("CANARYmedia") && !bundle.text.contains("CANARYjar"))

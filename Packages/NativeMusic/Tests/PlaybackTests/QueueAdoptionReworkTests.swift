@@ -23,6 +23,17 @@ private actor AdoptionStore: QueuePersistence {
         saved = value
     }
 }
+/// TH3: holds the save that commits the exhaustion (the first save whose queue has no current item) once armed; every other save passes.
+private actor ExhaustionHoldStore: QueuePersistence {
+    var saved: QueueSnapshot?
+    var hold: HeldPoint?
+    func arm(_ hold: HeldPoint) { self.hold = hold }
+    func load(context: RequestContext) -> QueueSnapshot? { saved }
+    func save(_ value: QueueSnapshot, context: RequestContext) async throws {
+        if value.current == nil, let hold { self.hold = nil; await hold.hold() }
+        saved = value
+    }
+}
 private actor AdoptionReadPermission {
     var error: DomainError?
     func deny(_ error: DomainError) { self.error = error }
@@ -162,7 +173,9 @@ final class QueueAdoptionReworkTests: XCTestCase, @unchecked Sendable {
             if !state.queue.upcoming.isEmpty { try await ready(session) }
             let position = await session.nativePosition()
             let remaining = max(1, Int(((1-position)*48000).rounded()))
-            let block = try await session.renderSelected(UInt32(min(1024,remaining)), throughPump: pump)
+            // TH3: between the end of the last occurrence and the queue clearing, the engine has retired its backend and refuses to render. The state read above can
+            // be older than that, so the entry says "ended" (nil) instead of throwing; `testTheRenderEntryReadsTheWindowBetweenTheEndAndTheQueueClearingAsAnEnd` holds the window.
+            guard let block = try await session.renderSelectedUnlessEnded(UInt32(min(1024,remaining)), throughPump: pump) else { await Task.yield(); continue }
             XCTAssertGreaterThan(block.frameLength,0)
             let after = try await session.snapshot()
             if let next = after.queue.current?.id, next != current.id {
@@ -296,6 +309,127 @@ final class QueueAdoptionReworkTests: XCTestCase, @unchecked Sendable {
         let final = try await session.snapshot()
         XCTAssertNil(final.queue.current, "the end then commits as before"); XCTAssertEqual(final.playback.state, .ended)
         await session.close()
+    }
+    /// TH3: the exact window behind the `staleContext` that `testHeldCommitControlsAndContinuation` threw at random under load. After the last occurrence has ended, the
+    /// session retires the decoded backend and only then does the queue commit the exhaustion. A loop that decided to render a moment earlier reaches the engine in that
+    /// window; the engine refuses (no backend) while the context has not changed and no adoption or control is running. The held save keeps the window open.
+    func testTheRenderEntryReadsTheWindowBetweenTheEndAndTheQueueClearingAsAnEnd() async throws {
+        let a = try tone(317)
+        defer { try? FileManager.default.removeItem(at: a) }
+        let store = ExhaustionHoldStore(), hold = HeldPoint()
+        let provider = SequenceAssets(files: [a], kinds: [.music])
+        let session = try await PlaybackSession.open(context: ownedContext(), persistence: store, assets: provider, resolver: provider, capabilities: provider, clock: ManualMonotonic(), automaticTick: false, initialGain: 1, manualDecodedRendering: true)
+        try await session.startOwnedMedia([OwnedMedia.items[0]])
+        // Control: while the item plays, the entry renders.
+        guard let early = try await session.renderSelectedUnlessEnded(1024) else { return XCTFail("an ordinary render returns its block") }
+        XCTAssertEqual(early.frameLength, 1024)
+        var count = Int(early.frameLength)
+        await store.arm(hold)
+        while count < 48000 { count += Int(try await session.renderSelected(UInt32(min(1024, 48000 - count))).frameLength) }
+        await hold.wait()
+        // The window is really open: ended, the queue has not cleared, and the engine has retired its backend (without these the test would prove nothing).
+        var window = try await session.snapshot()
+        let deadline = ContinuousClock.now.advanced(by: .seconds(5))
+        while await session.engine.hasDecodedBackendForMeasurement(), ContinuousClock.now < deadline { await Task.yield(); window = try await session.snapshot() }
+        let backend = await session.engine.hasDecodedBackendForMeasurement()
+        XCTAssertEqual(window.playback.state, .ended, "the window is open: the player has ended")
+        XCTAssertNotNil(window.queue.current, "the window is open: the queue has not cleared its current item")
+        XCTAssertFalse(backend, "the window is open: the engine has retired its backend")
+        // The plain entry refuses, as the loop saw it (a refusal with no adoption, no control and an unchanged context).
+        do { _ = try await session.renderSelected(1024); XCTFail("the engine has nothing to render in this window") } catch DomainError.staleContext {}
+        // The entry for a loop reads it as the end.
+        if let block = try await session.renderSelectedUnlessEnded(1024) { XCTFail("the end renders nothing (got \(block.frameLength) frames)") }
+        await hold.release()
+        let settleBy = ContinuousClock.now.advanced(by: .seconds(5))
+        while try await session.snapshot().queue.current != nil, ContinuousClock.now < settleBy { await Task.yield() }
+        let final = try await session.snapshot()
+        XCTAssertNil(final.queue.current, "the end then commits as before")
+        await session.close()
+        // Control: a refusal from a state that is NOT the end still throws (a closed session is paused/stopped, not ended).
+        let b = try tone(701)
+        defer { try? FileManager.default.removeItem(at: b) }
+        let other = SequenceAssets(files: [b], kinds: [.music])
+        let second = try await PlaybackSession.open(context: ownedContext(), persistence: MemoryPersistence(), assets: other, resolver: other, capabilities: other, clock: ManualMonotonic(), automaticTick: false, initialGain: 1, manualDecodedRendering: true)
+        try await second.startOwnedMedia([OwnedMedia.items[0]])
+        _ = try await second.renderSelected(1024)
+        await second.close()
+        let stateAfterClose = try await second.snapshot().playback.state
+        XCTAssertNotEqual(stateAfterClose, .ended, "precondition of the control")
+        do { _ = try await second.renderSelectedUnlessEnded(1024); XCTFail("a refusal outside the end must still throw") } catch DomainError.staleContext {}
+    }
+    /// TH5 (TH3 critic L1): what a control leaves behind when it arrives at the very end of the queue. `insideCheckpoint` holds the end's checkpoint save (the
+    /// first save after the end), so the control lands in the window between the player's `.ended` and the queue committing the exhaustion; otherwise the control
+    /// arrives after the end has fully committed (a normal end). Both finish the same way: the queue has cleared, nothing is current, and the control's own effect
+    /// (paused for a reason) is applied.
+    private struct EndOutcome: Equatable, CustomStringConvertible {
+        var state: PlaybackState, intent: PlaybackIntent, queueCleared: Bool, recent: Int, failures: [String]
+        var description: String { "state=\(state) intent=\(intent) cleared=\(queueCleared) recent=\(recent) failures=\(failures)" }
+    }
+    private func endOutcome(control: String, insideCheckpoint: Bool, replay: Bool = false) async throws -> (outcome: EndOutcome, windowWasOpen: Bool, framesAfterPlay: Int) {
+        let a = try tone(317)
+        defer { try? FileManager.default.removeItem(at: a) }
+        let store = HeldQueueStore(), hold = HeldPoint()
+        let provider = SequenceAssets(files: [a], kinds: [.music])
+        let session = try await PlaybackSession.open(context: ownedContext(), persistence: store, assets: provider, resolver: provider, capabilities: provider, clock: ManualMonotonic(), automaticTick: false, initialGain: 1, manualDecodedRendering: true)
+        try await session.startOwnedMedia([OwnedMedia.items[0]])
+        var count = 0
+        while count < 48000 - 1024 { count += Int(try await session.renderSelected(1024).frameLength) }
+        if insideCheckpoint { await store.arm(hold) }                 // the first save from here on is the checkpoint the end writes
+        while count < 48000 { count += Int(try await session.renderSelected(UInt32(min(1024, 48000 - count))).frameLength) }
+        var windowWasOpen = false
+        if insideCheckpoint {
+            await hold.wait()
+            let during = try await session.snapshot()
+            windowWasOpen = during.playback.state == .ended && during.queue.current != nil
+        } else {
+            let deadline = ContinuousClock.now.advanced(by: .seconds(5))
+            while try await session.snapshot().queue.current != nil, ContinuousClock.now < deadline { await Task.yield() }
+        }
+        let issued = Task { () -> Void in
+            switch control {
+            case "pause": try? await session.pause(.user)
+            case "playPause": try? await session.playPause()
+            case "sleep": await session.sleep()
+            case "queuePause": try? await session.sendQueue(.pause(.user))   // the media-key / remote-command route
+            default: XCTFail("unknown control \(control)")
+            }
+        }
+        // Whatever the control did while the checkpoint was held, the end then commits.
+        try await Task.sleep(for: .milliseconds(200))
+        if insideCheckpoint { await hold.release() }
+        _ = await issued.value
+        let settleBy = ContinuousClock.now.advanced(by: .seconds(5))
+        while try await session.snapshot().queue.current != nil, ContinuousClock.now < settleBy { await Task.yield() }
+        let final = try await session.snapshot()
+        var frames = 0
+        if replay {
+            // A later Play must not replay the finished item: with nothing current there is nothing to render.
+            if control == "sleep" { await session.wake(safeRoute: true, resumeEnabled: true) } else { try? await session.resume() }
+            try await Task.sleep(for: .milliseconds(100))
+            for _ in 0..<5 {
+                guard try await session.snapshot().playback.state == .playing else { break }
+                if let block = try? await session.renderSelectedUnlessEnded(1024) { frames += Int(block.frameLength) }
+            }
+        }
+        let outcome = EndOutcome(state: final.playback.state, intent: final.playback.intent, queueCleared: final.queue.current == nil, recent: final.queue.metadata.recent.count, failures: final.failures)
+        await session.close()
+        return (outcome, windowWasOpen, frames)
+    }
+    /// TH5 (TH3 critic L1): a pause, play/pause or sleep that arrives inside the end's checkpoint save used to bump the session's sequence and so cancel the
+    /// advance that commits the exhaustion: the finished last item stayed current, paused, and the next Play replayed about 19 ms of it. TH1 rework 2 fixed the
+    /// same window for seek. Now each leaves exactly the state a normal end followed by the same control leaves.
+    func testAPauseOrSleepInsideTheEndsCheckpointBehavesLikeANormalEnd() async throws {
+        for control in ["pause", "playPause", "sleep", "queuePause"] {
+            let normal = try await endOutcome(control: control, insideCheckpoint: false, replay: true)
+            XCTAssertFalse(normal.windowWasOpen, "\(control): the normal end is not inside the window")
+            XCTAssertTrue(normal.outcome.queueCleared, "\(control): control run clears the queue")
+            let held = try await endOutcome(control: control, insideCheckpoint: true, replay: true)
+            XCTAssertTrue(held.windowWasOpen, "\(control): the window was really open when the control arrived (ended, queue not yet cleared)")
+            XCTAssertEqual(held.outcome, normal.outcome, "\(control): the same final state as a normal end")
+            XCTAssertTrue(held.outcome.queueCleared, "\(control): the finished item is not left current")
+            XCTAssertEqual(held.framesAfterPlay, 0, "\(control): a later Play replays nothing of the finished item")
+            XCTAssertEqual(normal.framesAfterPlay, 0)
+        }
     }
     func testHeldCommitControlsAndContinuation() async throws {
         for action in ["none","seek","scrub","pause","sleep","next","previous","select","remove","quit"] { try await scenario(action) }

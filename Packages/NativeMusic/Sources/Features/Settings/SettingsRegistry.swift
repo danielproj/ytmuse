@@ -133,7 +133,7 @@ public enum SettingsRegistry {
 
     // The words of the reasons are kept here so the Settings screen, the Diagnostics bundle and the tests read the same sentences.
     static var youTubeMusicOwnsQuality: String { String(localized: "Not offered yet. Choosing the audio quality arrives with the native stream integration (planned as W34). Until then YouTube Music's own player decides, and Diagnostics shows what it reported.") }
-    static var youTubeMusicOwnsRadio: String { String(localized: "Not built yet. A radio that continues playback needs a recommendation source, which belongs to the queue and discovery work (W05 and W38). Nothing in this app starts a radio by itself.") }
+    static var youTubeMusicOwnsRadio: String { String(localized: "YouTube Music’s own player decides what plays after the queue ends; this app has no switch for it. To start a radio yourself, choose Start Radio where it is offered.") }
     static var noExplicitQueue: String { String(localized: "YouTube Music keeps its own queue, so this choice applies to music from files on this Mac.") }
     static var updatesNeedAFeed: String { String(localized: "Works in a signed release build that has an update feed. A source build has none: it checks nothing and installs nothing, and says so on this page.") }
 

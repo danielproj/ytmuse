@@ -234,7 +234,17 @@ public struct GoogleAuthorizationSetup: Sendable {
         if let musicReader, artworkSource is UnconnectedArtworkSource {
             let source = CatalogArtworkSource { try await musicReader.artwork($0) }
             self.artworkSource = source; catalogArtworkSource = source
-        } else { self.artworkSource = artworkSource; catalogArtworkSource = nil }
+        } else {
+            #if DEBUG
+            // W44-prep: the synthetic performance launch gets a catalog artwork source whose "fetch" generates its own images (no network, six source sizes).
+            if artworkSource is UnconnectedArtworkSource, DevelopmentPerformance.isEnabled(environment) {
+                let source = CatalogArtworkSource { try await DevelopmentPerformance.artwork(for: $0) }
+                self.artworkSource = source; catalogArtworkSource = source
+            } else { self.artworkSource = artworkSource; catalogArtworkSource = nil }
+            #else
+            self.artworkSource = artworkSource; catalogArtworkSource = nil
+            #endif
+        }
         catalogArtwork = CatalogArtwork(pipeline: nil, authority: artworkAuthority, source: catalogArtworkSource)
         self.musicReader = musicReader
         #if DEBUG
@@ -291,6 +301,7 @@ public struct GoogleAuthorizationSetup: Sendable {
     func load() async {
         if let task { await task.value; return }
         let launchStart = DispatchTime.now().uptimeNanoseconds
+        let launchSignpost = PerformanceSignposts.begin(.launch, label: "loadStores")
         // The track being played is the first thing the Downloads engine finishes (OFF05).
         playback.currentItemChanged = { [lateDownloads] media in Task { await lateDownloads.setCurrentPlayback(media) } }
         // Play on a kept item starts the native session from the encrypted store (nothing is offered until this is set).
@@ -313,9 +324,10 @@ public struct GoogleAuthorizationSetup: Sendable {
                 #if DEBUG
                 if nativeDesignTesting, let isolated {
                     let root = isolated.root
+                    DevelopmentPerformance.startRecording(environment: launchEnvironment)
                     let account = try AccountContext(accountID: UUID(), channelID: ID("original-design-test"), region: "US")
                     let context = RequestContext(account: account, accountGeneration: 1, requestGeneration: 1)
-                    let pipeline = ArtworkPipeline(source: DevelopmentDesignSource(), diskDirectory: root.appendingPathComponent("artwork"))
+                    let pipeline = ArtworkPipeline(source: catalogArtworkSource.map { DevelopmentPerformanceArtworkSource(catalog: $0) } ?? DevelopmentDesignSource(), diskDirectory: root.appendingPathComponent("artwork"))
                     try await pipeline.setAccountGeneration(owner: ArtworkOwner(account: account), generation: 1)
                     artwork = pipeline; artworkAuthority.bind(context)
                     artworkRequest = ArtworkRequest(resource: try ArtworkResource(namespace: "original-development-art", identifier: "resonance", revision: "1"), size: try ArtworkSize(pointsWidth: 1, pointsHeight: 1, scale: 1), policy: .memory(until: .distantFuture), context: context)
@@ -463,6 +475,7 @@ public struct GoogleAuthorizationSetup: Sendable {
             }
         }
         self.task = task; await task.value
+        PerformanceSignposts.end(launchSignpost, failed: failure)
         profiler?.record(.launchToAccountReady, milliseconds: Double(DispatchTime.now().uptimeNanoseconds - launchStart) / 1_000_000)
     }
     private static func productionDirectory() async throws -> URL {

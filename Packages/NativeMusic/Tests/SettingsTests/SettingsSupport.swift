@@ -5,6 +5,7 @@ import Domain
 import AccountSession
 @testable import Features
 @testable import AppShell
+import TestSupport
 
 // W27 test support. Everything here is synthetic and lives in memory or in a fresh temporary folder created by the test that needs it. No test in this target
 // names a real path, a real Keychain namespace, the standard preferences domain, the real Spotlight index or an App Group.
@@ -63,7 +64,7 @@ func isolatedVault() throws -> (KeychainVault, URL, String) {
 /// A guarded defaults store over a private suite named by an absolute path in a scratch folder (never the standard domain, never a name in the runner's shared
 /// domain space). TH2: whether a store is real is derived from that domain, so a test that wants a throwaway store must name a file inside the temporary folder.
 func privateDefaults(_ path: String) -> (GuardedDefaults, UserDefaults, String) {
-    let store = UserDefaults(suiteName: path)!
+    let store = ScratchDefaults.open(path: path)
     return (GuardedDefaults(store: store, domain: path), store, path)
 }
 

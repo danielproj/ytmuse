@@ -9,6 +9,7 @@ import Testing
 @testable import Playback
 @testable import SystemIntegration
 @testable import AppShell
+import TestSupport
 
 /// W23 rework 1 (critic W23-opus-01). Each test here fails on the code that was reviewed; `artifacts/harness/nodes/W23/mutation` re-plants the old
 /// behaviour to prove it.
@@ -220,7 +221,7 @@ import Testing
     @Test func aLikeMadeInAnotherSurfaceUpdatesTheSystemsLikeButton() async throws {
         let rig = try await MediaRig.make()
         let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         var liked = false
         shell.libraryControlsProvider = { _ in [FakeRemoteLibrary.control(.like, on: liked)] }
         shell.likePress = { _ in liked = true }

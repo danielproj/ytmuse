@@ -206,6 +206,71 @@ public enum WebMusicScripts {
       }
     """
 
+    /// CORE-A: read-only access to the page's own queue (`ytmusic-player-queue-item` elements, whose `data` is the service's own
+    /// `playlistPanelVideoRenderer`, bare or inside a `playlistPanelVideoWrapperRenderer`). An element in any other shape is skipped, so an unknown
+    /// layout yields an empty list (hidden in the app) and never an error or an invented item. The renderer fields read by the observer
+    /// (`title.runs`, `longBylineText.runs`, `thumbnail.thumbnails`, `videoId`, `selected`, `navigationEndpoint.watchEndpoint`) are the ones in the
+    /// anonymous public `next` capture `Fixtures/W18-real/next-song.json`; that the DOM `data` carries them in this exact form is a live check.
+    static let queueDetection = """
+      function ytmuseQueueEntries() {
+        var result = [];
+        try {
+          var nodes = document.querySelectorAll("ytmusic-player-queue-item");
+          for (var i = 0; i < nodes.length && i < 300; i += 1) {
+            var data = nodes[i].data, renderer = null;
+            if (data && data.playlistPanelVideoWrapperRenderer) {
+              var wrapper = data.playlistPanelVideoWrapperRenderer;
+              renderer = wrapper.primaryRenderer && wrapper.primaryRenderer.playlistPanelVideoRenderer;
+            } else if (data && data.playlistPanelVideoRenderer) { renderer = data.playlistPanelVideoRenderer; }
+            if (!renderer || typeof renderer.videoId !== "string" || !/^[A-Za-z0-9_-]{11}$/.test(renderer.videoId)) { continue; }
+            var marked = renderer.selected === true;
+            try { if (!marked && typeof nodes[i].hasAttribute === "function" && nodes[i].hasAttribute("selected")) { marked = true; } } catch (e) {}
+            result.push({ renderer: renderer, selected: marked });
+          }
+        } catch (e) {}
+        return result;
+      }
+      // The index of the item that is playing: the entry the page marks selected AND whose video is the playing one; failing that, the only entry
+      // with that video. A video listed twice with no marker is ambiguous, so it is -1 (nothing is claimed to follow it).
+      function ytmuseQueueCurrent(entries, playing) {
+        var matches = [];
+        for (var i = 0; i < entries.length; i += 1) {
+          if (entries[i].renderer.videoId !== playing) { continue; }
+          if (entries[i].selected) { return i; }
+          matches.push(i);
+        }
+        return matches.length === 1 ? matches[0] : -1;
+      }
+    """
+
+    /// CORE-A: the player bar's own shuffle and repeat controls, read back from the page. A state the page does not show is `undefined`, never
+    /// a guess; the commands never click a control whose state they cannot read. `repeat-mode_` (NONE/ALL/ONE) is the page's own attribute
+    /// of the player bar; that it is present in this form is a live check.
+    static let playerBarDetection = """
+      function ytmuseShuffleState() {
+        try {
+          var button = document.querySelector("ytmusic-player-bar .shuffle");
+          if (!button) { return undefined; }
+          var pressed = button.getAttribute("aria-pressed");
+          if (pressed === "true") { return true; }
+          if (pressed === "false") { return false; }
+        } catch (e) {}
+        return undefined;
+      }
+      function ytmuseRepeatState() {
+        try {
+          var bar = document.querySelector("ytmusic-player-bar");
+          if (!bar) { return undefined; }
+          var raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode_") : null;
+          if (typeof raw !== "string" || raw === "") { raw = bar.repeatMode_; }
+          if (raw === "NONE") { return "off"; }
+          if (raw === "ALL") { return "all"; }
+          if (raw === "ONE") { return "one"; }
+        } catch (e) {}
+        return undefined;
+      }
+    """
+
     /// Document end, main frame only. Reports bounded state from the `<video>`
     /// element and the player to the native bridge; it never acts on the page.
     public static let observer = """
@@ -220,6 +285,8 @@ public enum WebMusicScripts {
       state.observing = true;
     \(adDetection)
     \(mediaDetection)
+    \(queueDetection)
+    \(playerBarDetection)
       function bounded(value, limit) {
         if (typeof value !== "string") { return ""; }
         value = value.trim();
@@ -255,17 +322,8 @@ public enum WebMusicScripts {
           return typeof value === "boolean" ? value : undefined;
         } catch (e) { return undefined; }
       }
-      // Best effort: the player bar's shuffle toggle as the page shows it. Undefined when the page does not say.
-      function shuffleOn() {
-        try {
-          var button = document.querySelector("ytmusic-player-bar .shuffle");
-          if (!button) { return undefined; }
-          var pressed = button.getAttribute("aria-pressed");
-          if (pressed === "true") { return true; }
-          if (pressed === "false") { return false; }
-          return undefined;
-        } catch (e) { return undefined; }
-      }
+      // The player bar's shuffle toggle and repeat mode as the page shows them. Undefined when the page does not say.
+      function shuffleOn() { return ytmuseShuffleState(); }
       function metadata() {
         var meta = state.meta, title = "", artist = "", artwork = "";
         try {
@@ -306,6 +364,8 @@ public enum WebMusicScripts {
         if (typeof logged === "boolean") { message.signedIn = logged; }
         var shuffled = shuffleOn();
         if (typeof shuffled === "boolean") { message.shuffle = shuffled; }
+        var repeating = ytmuseRepeatState();
+        if (typeof repeating === "string") { message.repeat = repeating; }
         // P5-1: a periodic or throttled report that says nothing new is not posted, so a
         // paused or idle page wakes the app for nothing. Events (force) and a new native
         // load generation always post.
@@ -314,6 +374,69 @@ public enum WebMusicScripts {
         lastSignature = signature;
         post(message);
         reportMedia();
+        if (force) { reportQueue(); }
+      }
+      // CORE-A: the page's own queue after the playing item, read only. Posted when it changes and never during an advertisement (the list stays what
+      // it was before the ad). The playing item leads the list; an empty list is posted once, to clear a list that was shown.
+      var lastQueue = "", queuePosted = false;
+      function queueText(value, limit) {
+        if (typeof value !== "string") { return ""; }
+        value = value.replace(/[\\u0000-\\u001f]+/g, " ").trim();
+        return value.length > limit ? value.slice(0, limit) : value;
+      }
+      function runsText(runs, stopAtDot) {
+        var out = "";
+        if (!Array.isArray(runs)) { return ""; }
+        for (var i = 0; i < runs.length; i += 1) {
+          var text = runs[i] && typeof runs[i].text === "string" ? runs[i].text : "";
+          if (stopAtDot && text.trim() === "\\u2022") { break; }
+          out += text;
+        }
+        return out;
+      }
+      function queueItem(renderer, current) {
+        var item = { i: renderer.videoId };
+        var title = queueText(runsText(renderer.title && renderer.title.runs, false), 200);
+        var artist = queueText(runsText(renderer.longBylineText && renderer.longBylineText.runs, true) || runsText(renderer.shortBylineText && renderer.shortBylineText.runs, false), 150);
+        var url = "";
+        try {
+          var thumbs = renderer.thumbnail && renderer.thumbnail.thumbnails;
+          if (Array.isArray(thumbs) && thumbs.length > 0) {
+            var chosen = thumbs[thumbs.length - 1];
+            for (var k = 0; k < thumbs.length; k += 1) { if (thumbs[k] && thumbs[k].width >= 100) { chosen = thumbs[k]; break; } }
+            if (chosen && typeof chosen.url === "string" && chosen.url.indexOf("https://") === 0 && chosen.url.length <= 400) { url = chosen.url; }
+          }
+        } catch (e) {}
+        if (title) { item.t = title; }
+        if (artist) { item.a = artist; }
+        if (url) { item.u = url; }
+        if (current) { item.c = true; }
+        return item;
+      }
+      function reportQueue() {
+        try {
+          if (ytmuseAdShowing()) { return; }
+          var playing = videoID();
+          var entries = playing ? ytmuseQueueEntries() : [];
+          var index = playing ? ytmuseQueueCurrent(entries, playing) : -1;
+          var items = [], more = 0;
+          if (index >= 0) {
+            var end = Math.min(entries.length, index + 31);
+            for (var i = index; i < end; i += 1) { items.push(queueItem(entries[i].renderer, i === index)); }
+            more = entries.length - end;
+          }
+          var text = JSON.stringify(items);
+          // 11500 UTF-16 units stay inside the native 36000-byte bound even at three bytes a unit.
+          while (items.length > 1 && text.length > 11500) { items.pop(); more += 1; text = JSON.stringify(items); }
+          // An unreadable queue is said with no video id (the app then shows no list); a readable one that ends with the playing item has the
+          // playing item alone ("nothing after this").
+          var message = { type: "queue", videoId: index >= 0 ? playing : "", items: text, more: more };
+          if (index < 0 && !queuePosted) { return; }
+          var signature = JSON.stringify(message) + "|" + state.doc + "|" + state.load;
+          if (signature === lastQueue) { return; }
+          lastQueue = signature; queuePosted = true;
+          post(message);
+        } catch (e) {}
       }
       // W17: the picture, the live window and the presentation of the playing item. Posted only when it changes (frames advance while a
       // picture decodes, so a decoding video posts about as often as its position does; an audio item posts once).
@@ -386,7 +509,15 @@ public enum WebMusicScripts {
         classObserved = movie;
         new MutationObserver(function () { report(true); }).observe(movie, { attributes: true, attributeFilter: ["class"] });
       }
-      function refresh() { bind(); hookErrors(); observeClasses(); }
+      // CORE-A: a change of the player bar's shuffle or repeat state is reported at once, not at the next one-second look.
+      var barObserved = null;
+      function observeBar() {
+        var bar = document.querySelector("ytmusic-player-bar");
+        if (!bar || bar === barObserved || typeof MutationObserver !== "function") { return; }
+        barObserved = bar;
+        try { new MutationObserver(function () { report(true); }).observe(bar, { attributes: true, subtree: true, attributeFilter: ["aria-pressed", "repeat-mode_"] }); } catch (e) {}
+      }
+      function refresh() { bind(); hookErrors(); observeClasses(); observeBar(); }
       refresh();
       // PL1: say at once whether this document is the YouTube Music app. YouTube's
       // "not optimized for your browser" page (and any other non-app document) has
@@ -408,7 +539,7 @@ public enum WebMusicScripts {
       setTimeout(function () { checkPage(false); }, 2000);
       setTimeout(function () { checkPage(true); }, 8000);
       // Hidden pages throttle timers; media events above carry the timely updates.
-      setInterval(function () { refresh(); report(false); }, 1000);
+      setInterval(function () { refresh(); report(false); reportQueue(); }, 1000);
     })();
     """
 
@@ -628,6 +759,75 @@ public enum WebMusicScripts {
              hidden: document.querySelectorAll("[data-ytmuse-hidden]").length, styleInstalled: !!document.getElementById("ytmuse-video-presentation"),
              adOverlayCount: adNodes.length, adOverlaysOnTop: adNodes.length === 0 ? true : adNodes.every(function (node) { return onTop(node); }),
              origin: performance.timeOrigin, digest: (function () { var text = document.documentElement.outerHTML, hash = 5381; for (var i = 0; i < text.length; i += 1) { hash = ((hash << 5) + hash + text.charCodeAt(i)) | 0; } return hash; })() };
+    """
+    /// CORE-A: plays an item of the page's own queue. The item must come AFTER the one that is playing (a later entry with that video), and the page's
+    /// router is handed the item's own published endpoint, exactly what a click on its row dispatches. Nothing is built or altered here: no
+    /// stream, signature or parameter of ours. Refused while an advertisement shows, because it would end the ad early.
+    static let playQueueItem = """
+    var state = window.__ytmuseState;
+    if (!state || state.doc < 0) { return "unavailable"; }
+    \(adDetection)
+    \(queueDetection)
+    if (ytmuseAdShowing()) { return "ad"; }
+    var playing = ytmusePlayingVideoID();
+    var entries = ytmuseQueueEntries();
+    var index = playing ? ytmuseQueueCurrent(entries, playing) : -1;
+    if (index < 0) { return "rejected"; }
+    var target = null;
+    for (var i = index + 1; i < entries.length; i += 1) { if (entries[i].renderer.videoId === videoId) { target = entries[i]; break; } }
+    if (!target) { return "rejected"; }
+    var endpoint = target.renderer.navigationEndpoint;
+    if (!endpoint || typeof endpoint !== "object" || !endpoint.watchEndpoint) { return "rejected"; }
+    var app = document.querySelector("ytmusic-app");
+    if (!app || typeof app.resolveCommand !== "function") { return "unsupported"; }
+    var before = state.intent;
+    state.intent = true;
+    try { app.resolveCommand(endpoint); return "ok"; } catch (e) { state.intent = before; return "rejected"; }
+    """
+    /// CORE-A: the player bar's own shuffle toggle. Clicks only a control whose state it can read, and answers `ok` only once the page shows the
+    /// requested state. Refused while an advertisement shows (a shuffle may restart the track).
+    static let setShuffle = """
+    var state = window.__ytmuseState;
+    if (!state || state.doc < 0) { return "unavailable"; }
+    \(adDetection)
+    \(playerBarDetection)
+    if (ytmuseAdShowing()) { return "ad"; }
+    var current = ytmuseShuffleState();
+    if (current === undefined) { return "unsupported"; }
+    if (current === on) { return "ok"; }
+    var button = document.querySelector("ytmusic-player-bar .shuffle");
+    if (!button || typeof button.click !== "function") { return "unsupported"; }
+    button.click();
+    for (var wait = 0; wait < 10; wait += 1) {
+      await new Promise(function (resolve) { setTimeout(resolve, 100); });
+      if (ytmuseShuffleState() === on) { return "ok"; }
+    }
+    return "rejected";
+    """
+    /// CORE-A: the player bar's own repeat button, which steps off -> all -> one -> off. Each click is read back; a click that changes nothing ends
+    /// the command (`rejected`), and a mode the page does not show is `unsupported` without a click.
+    static let setRepeat = """
+    var state = window.__ytmuseState;
+    if (!state || state.doc < 0) { return "unavailable"; }
+    \(adDetection)
+    \(playerBarDetection)
+    if (ytmuseAdShowing()) { return "ad"; }
+    var current = ytmuseRepeatState();
+    if (current === undefined) { return "unsupported"; }
+    var button = document.querySelector("ytmusic-player-bar .repeat");
+    if (!button || typeof button.click !== "function") { return "unsupported"; }
+    for (var step = 0; step < 3 && current !== mode; step += 1) {
+      button.click();
+      var next = current;
+      for (var wait = 0; wait < 10; wait += 1) {
+        await new Promise(function (resolve) { setTimeout(resolve, 100); });
+        next = ytmuseRepeatState();
+        if (next !== current) { break; }
+      }
+      if (next === undefined || next === current) { return "rejected"; }
+      current = next;
+    }
+    return current === mode ? "ok" : "rejected";
     """
     static let skip = """
     var state = window.__ytmuseState;

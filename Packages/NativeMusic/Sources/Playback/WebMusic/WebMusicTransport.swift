@@ -82,6 +82,11 @@ public struct WebMusicSnapshot: Sendable, Equatable {
     /// W18: the speed the page's `<video>` element is playing at, as the page reports it (and as a speed command's read-back confirmed it). Nil until
     /// it is known for this item; the app then treats the speed as normal.
     public var elementRate: Double?
+    /// CORE-A: the page's own queue after the playing item (nil until the page lists one for THIS item, or when it lists nothing the app can read).
+    public var queue: WebMusicQueue?
+    /// CORE-A: the page player bar's shuffle and repeat state as the page reports it (nil when it does not say). Never set by a command: only by a report.
+    public var shuffle: Bool?
+    public var repeatMode: WebMusicRepeatMode?
     public init() {}
     public var isLive: Bool { representation == .live }
     public var hasPicture: Bool { pictureSize != nil }
@@ -101,11 +106,19 @@ public struct WebMusicSnapshot: Sendable, Equatable {
     }
     public var canGoLive: Bool { !isAd && isLive && !atLiveEdge && (phase == .playing || phase == .paused || phase == .buffering) }
     public var canSkip: Bool { !restored && !isAd && playlistID != nil && phase != .idle && phase != .loading }
+    /// CORE-A: the queue, shuffle and repeat controls are offered under the same conditions as skipping: an item playing from a playlist, no ad.
+    public var canControlQueue: Bool { canSkip && !isFailed }
     public var isFailed: Bool { if case .failed = phase { true } else { false } }
 }
 
 public enum WebMusicRefusal: Error, Sendable, Equatable {
     case advertisement, nothingLoaded, invalidTarget
+    /// CORE-A: the queue, shuffle and repeat controls during an ad (selecting an item or shuffling could end the ad early).
+    case queueAdvertisement
+    /// CORE-A: the chosen item is not (or no longer) one the page lists after the playing item.
+    case queueItemGone
+    /// CORE-A: the page did not take a shuffle, repeat or queue request, or does not show the control.
+    case pageDidNotTake
     /// A live stream whose player offers no rewindable window.
     case liveNotSeekable
     case notLive, alreadyLive
@@ -114,6 +127,9 @@ public enum WebMusicRefusal: Error, Sendable, Equatable {
         case .advertisement: String(localized: "Seeking and skipping are unavailable while an ad plays.")
         case .nothingLoaded: String(localized: "Nothing is playing.")
         case .invalidTarget: String(localized: "That position is not valid.")
+        case .queueAdvertisement: String(localized: "The queue can’t be changed while an ad plays.")
+        case .queueItemGone: String(localized: "That item is no longer in the queue.")
+        case .pageDidNotTake: String(localized: "YouTube Music did not take that change.")
         case .liveNotSeekable: String(localized: "This live stream offers no earlier part to seek to. Go live is the only way to move.")
         case .notLive: String(localized: "This is not a live stream.")
         case .alreadyLive: String(localized: "Already at the live edge.")
@@ -150,11 +166,13 @@ public struct WebMusicTransport: Sendable {
     public private(set) var media: WebMusicMediaSample?
     /// Media facts that arrived before the load was confirmed (same report as the first state sample); applied once it is.
     private var pendingMedia: WebMusicMediaSample?
+    /// A queue report that arrived before the item it belongs to was the playing one (or before the load was confirmed); applied if that item shows.
+    private var pendingQueue: WebMusicQueue?
     public init() {}
 
     /// A new explicit playback request. Older loads can no longer publish.
     public mutating func begin(playlistID: String, title: String?) -> UInt64 {
-        load += 1; confirmed = false; lastEnded = nil; adVideo = nil; requiresShuffle = false; live = nil; media = nil; pendingMedia = nil
+        load += 1; confirmed = false; lastEnded = nil; adVideo = nil; requiresShuffle = false; live = nil; media = nil; pendingMedia = nil; pendingQueue = nil
         outgoingVideo = snapshot.videoID; outgoingPlaylist = snapshot.playlistID; requiresEvidence = false
         var next = WebMusicSnapshot()
         next.phase = .loading; next.playlistID = playlistID; next.playlistTitle = title; next.intent = true; next.volume = snapshot.volume
@@ -178,7 +196,7 @@ public struct WebMusicTransport: Sendable {
     public mutating func reset() {
         let volume = snapshot.volume
         load += 1; document += 1; confirmed = false; lastEnded = nil; adVideo = nil; outgoingVideo = nil; requiresEvidence = false; requiresShuffle = false
-        live = nil; media = nil; pendingMedia = nil; catalog.removeAll()
+        live = nil; media = nil; pendingMedia = nil; pendingQueue = nil; catalog.removeAll()
         snapshot = WebMusicSnapshot(); snapshot.volume = volume
     }
     public mutating func setIntent(_ play: Bool) { snapshot.intent = play }
@@ -212,6 +230,8 @@ public struct WebMusicTransport: Sendable {
             fail(unsupported ? .unsupportedBrowser : .notMusicApp)
         case .media(let sample):
             apply(sample)
+        case .queue(let queue):
+            apply(queue)
         case .playerError(let code):
             // YouTube's own queue may advance past an unplayable track: keep tracking
             // what the page does instead of freezing the transport.
@@ -258,10 +278,16 @@ public struct WebMusicTransport: Sendable {
             // A new track: never carry the previous track's text into it.
             snapshot.title = nil; snapshot.artist = nil; snapshot.artworkURL = nil
             clearMediaFacts()
+            // The previous item's upcoming list is not this item's: it is dropped, and a report already held for this item takes its place.
+            snapshot.queue = nil
+            if let held = pendingQueue, held.videoID == id { snapshot.queue = held }
+            pendingQueue = nil
         }
         if let title = sample.title { snapshot.title = title }
         if let artist = sample.artist { snapshot.artist = artist }
         if let artwork = sample.artworkURL { snapshot.artworkURL = artwork }
+        // Shuffle and repeat are what the page's player bar shows now; a report that does not say clears them (a stale value would be a guess).
+        snapshot.shuffle = sample.shuffle; snapshot.repeatMode = sample.repeatMode
         snapshot.duration = sample.duration
         snapshot.position = min(sample.position, sample.duration > 0 ? sample.duration : sample.position)
         refreshLive()
@@ -276,6 +302,13 @@ public struct WebMusicTransport: Sendable {
         snapshot.counterpartVideoID = nil; snapshot.counterpartRepresentation = nil; snapshot.restart = nil
         snapshot.quality = nil; snapshot.qualities = []; snapshot.captions = .unavailable
         snapshot.elementRate = nil
+    }
+    /// The page's queue after the playing item. Taken only for the item that is playing: a list for another item waits (it may be the one about to start).
+    private mutating func apply(_ queue: WebMusicQueue) {
+        // No video id means the page lists no queue the app can read: whatever list was shown is no longer something the page says.
+        if confirmed, queue.videoID == nil { snapshot.queue = nil; pendingQueue = nil; return }
+        guard confirmed, let current = snapshot.videoID, queue.videoID == current else { pendingQueue = queue; return }
+        snapshot.queue = queue; pendingQueue = nil
     }
     /// A speed command's read-back confirmed this element speed.
     public mutating func noteElementRate(_ rate: Double) { snapshot.elementRate = rate }
@@ -360,6 +393,20 @@ public struct WebMusicTransport: Sendable {
     public func admitSkip() -> Result<Void, WebMusicRefusal> {
         if snapshot.isAd { return .failure(.advertisement) }
         guard snapshot.canSkip else { return .failure(.nothingLoaded) }
+        return .success(())
+    }
+    /// CORE-A: choosing an upcoming item ends the current one, so it is refused during an ad, when nothing is playing from a playlist, and for an item the
+    /// page does not list after the playing one.
+    public func admitQueueSelection(_ videoID: String) -> Result<Void, WebMusicRefusal> {
+        if snapshot.isAd { return .failure(.queueAdvertisement) }
+        guard snapshot.canControlQueue else { return .failure(.nothingLoaded) }
+        guard snapshot.queue?.upcoming.contains(where: { $0.videoID == videoID }) == true else { return .failure(.queueItemGone) }
+        return .success(())
+    }
+    /// CORE-A: shuffle and repeat are refused during an ad (a shuffle may restart the track) and when nothing is playing from a playlist.
+    public func admitQueueSetting() -> Result<Void, WebMusicRefusal> {
+        if snapshot.isAd { return .failure(.queueAdvertisement) }
+        guard snapshot.canControlQueue else { return .failure(.nothingLoaded) }
         return .success(())
     }
     /// PLAY11: Previous restarts after three seconds of playback.

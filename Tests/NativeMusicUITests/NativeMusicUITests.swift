@@ -504,7 +504,11 @@ final class NativeMusicUITests: XCTestCase {
         waitForExpectations(timeout: 10)
         XCTAssertEqual(app.staticTexts["nativeStartGain"].value as? String, "0.001000", "Native gain must be established before the first play")
         XCTAssertTrue(((app.staticTexts["ownedMediaLabel"].value as? String) ?? app.staticTexts["ownedMediaLabel"].label).contains("Not YouTube Music"))
-        XCTAssertTrue(((app.staticTexts["playbackQuality"].value as? String) ?? app.staticTexts["playbackQuality"].label).contains("48000 Hz"))
+        // PLAYER-1: the quality line no longer sits under the bar; it is the first item of the capsule's ⋯ menu.
+        app.menuButtons["sleepTimerMenu"].click()
+        let quality = app.menuItems.matching(NSPredicate(format: "title CONTAINS '48000 Hz' OR label CONTAINS '48000 Hz'")).firstMatch
+        XCTAssertTrue(quality.waitForExistence(timeout: 5), "The ⋯ menu names the source quality")
+        app.typeKey(.escape, modifierFlags: [])
         app.buttons["transportPlayPause"].click()
         expectation(for: NSPredicate(format: "label == 'paused' OR value == 'paused'"), evaluatedWith: state)
         waitForExpectations(timeout: 5)
@@ -527,7 +531,9 @@ final class NativeMusicUITests: XCTestCase {
         expectation(for: NSPredicate(format: "label == 'Unmute'"), evaluatedWith: app.buttons["transportMute"])
         waitForExpectations(timeout: 5)
         XCTAssertEqual(app.buttons["transportMute"].label, "Unmute")
+        // PLAYER-1: the sleep timer items are in a "Sleep Timer" submenu of the ⋯ menu.
         app.menuButtons["sleepTimerMenu"].click()
+        app.menuItems["Sleep Timer"].click()
         app.menuItems["5 minutes"].click()
         XCTAssertTrue(app.staticTexts["sleepRemaining"].waitForExistence(timeout: 5))
         let capture = XCTAttachment(screenshot: app.windows["YTMuse"].screenshot())
@@ -608,6 +614,123 @@ final class NativeMusicUITests: XCTestCase {
     /// W17 (T17.2/T17.4): the owned synthetic video (video-only, silent) through the native AVKit path: one picture owner across the
     /// inline preview, the video window and full screen; audio only STOPS the decoder (frames stop, playback goes on); closing the window
     /// gives the picture back without a second session. Isolated launch only; the owned media make no sound (no audio track, gain 0.001).
+    /// PLAYER-1: starts the isolated app on owned test audio with the floating capsule, in the given appearance (a launch argument; nothing is written to defaults).
+    @MainActor private func capsuleApplication(appearance: String?, sizes: String? = nil) throws -> XCUIApplication {
+        var directory = Bundle(for: Self.self).bundleURL
+        var product: URL?
+        for _ in 0..<8 {
+            let candidate = directory.appendingPathComponent("YTMuse.app")
+            if FileManager.default.fileExists(atPath: candidate.path) { product = candidate; break }
+            directory.deleteLastPathComponent()
+        }
+        let app = isolated(XCUIApplication(url: try XCTUnwrap(product)))
+        app.launchArguments = ["-ApplePersistenceIgnoreState", "YES"] + (appearance.map { ["-appearance", $0] } ?? [])   // the app's own appearance key, from the launch-argument domain (never persisted)
+        app.launchEnvironment["YTMUSE_OWNED_AUDIO_TEST_GAIN"] = "0.001"
+        if let sizes { app.launchEnvironment["YTMUSE_UI_TEST_WINDOW_SIZES_NEXT"] = sizes }
+        return app
+    }
+    @MainActor private func startCapsuleAudio(_ app: XCUIApplication) {
+        XCTAssertTrue(app.buttons["startOwnedAudio"].waitForExistence(timeout: 10))
+        app.buttons["startOwnedAudio"].click()
+        let state = app.staticTexts["playbackState"]
+        XCTAssertTrue(state.waitForExistence(timeout: 10))
+        expectation(for: NSPredicate(format: "label == 'playing' OR value == 'playing'"), evaluatedWith: state)
+        waitForExpectations(timeout: 10)
+    }
+    /// PLAYER-1: the floating capsule in the isolated app, on the owned test audio: its place and size, the identifiers it keeps, the hover seek with its times
+    /// beside the transport, the slim volume slider, the ⋯ menu, the expanded player it opens, the compact window and light mode. The screenshots are
+    /// attachments of this test (exported to the node's screens).
+    @MainActor func testPlayer1FloatingCapsule() throws {
+        let app = try capsuleApplication(appearance: nil, sizes: "800x520")
+        app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+        startCapsuleAudio(app)
+        func shot(_ name: String, _ element: XCUIElement? = nil) {
+            let picture = XCTAttachment(screenshot: (element ?? window).screenshot()); picture.name = "PLAYER-1 " + name; picture.lifetime = .keepAlways; add(picture)
+        }
+        // The capsule floats over the bottom of the detail column: inside the window, the margin above its bottom, below the panels, with the sidebar beside it.
+        let play = app.buttons["transportPlayPause"], timeline = app.sliders["transportTimeline"]
+        XCTAssertTrue(play.waitForExistence(timeout: 5) && timeline.exists)
+        XCTAssertTrue(app.buttons["transportPrevious"].exists && app.buttons["transportNext"].exists && app.buttons["transportMute"].exists && app.buttons["transportQueue"].exists)
+        XCTAssertTrue(app.sliders["appVolume"].exists, "the regular layout shows the slim volume slider")
+        let playFrame = play.frame, windowFrame = window.frame
+        XCTAssertGreaterThan(playFrame.minY, windowFrame.midY, "the transport sits in the lower half")
+        XCTAssertLessThan(playFrame.maxY, windowFrame.maxY - 16, "and above the window's bottom margin")
+        shot("01 wide window, playing")
+        // At rest the times are invisible but in the accessibility tree: found by identifier, with their slots beside Previous and Next.
+        let elapsed = app.staticTexts["transportElapsed"], remaining = app.staticTexts["transportDuration"]
+        XCTAssertTrue(elapsed.exists && remaining.exists, "the times stay in the accessibility tree at rest")
+        XCTAssertNotNil(timeline.value, "and the slider's own value says where it is")
+        let previous = app.buttons["transportPrevious"], next = app.buttons["transportNext"]
+        let restFrames = [previous.frame, play.frame, next.frame]
+        // Hover: the track grows in place, the times appear beside the transport at the buttons' height, and nothing else moves.
+        timeline.hover()
+        Thread.sleep(forTimeInterval: 0.6)
+        XCTAssertEqual([previous.frame, play.frame, next.frame], restFrames, "the buttons do not move when the times appear")
+        XCTAssertLessThanOrEqual(elapsed.frame.maxX, previous.frame.minX + 1, "elapsed sits left of Previous")
+        XCTAssertGreaterThanOrEqual(remaining.frame.minX, next.frame.maxX - 1, "remaining sits right of Next")
+        XCTAssertEqual(elapsed.frame.midY, previous.frame.midY, accuracy: 4, "at the buttons' centre height")
+        shot("02 hover, seek and times")
+        // The volume slider: slim, its knob only under the pointer.
+        app.sliders["appVolume"].hover()
+        Thread.sleep(forTimeInterval: 0.5)
+        shot("09 volume slider hover")
+        // The ⋯ menu: the source quality, shuffle, repeat (with checkmarks) and the Sleep Timer submenu.
+        app.menuButtons["sleepTimerMenu"].click()
+        XCTAssertTrue(app.menuItems.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.menuItems["Sleep Timer"].exists, "the sleep timer is a submenu")
+        shot("05 more menu, window")
+        // The open menu is a separate window the window shot does not include; the screen is cropped to the menus' own items before anything is attached,
+        // so nothing else on the desktop is stored.
+        func menuShot(_ name: String) {
+            let items = app.menuItems.allElementsBoundByIndex.map(\.frame).filter { $0.width > 0 && $0.height > 0 }
+            guard let first = items.first, let screen = NSScreen.main else { return }
+            let area = items.dropFirst().reduce(first) { $0.union($1) }
+            let full = XCUIScreen.main.screenshot().image
+            guard let cg = full.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
+            let scale = CGFloat(cg.width) / screen.frame.width
+            if let cropped = cg.cropping(to: CGRect(x: area.minX * scale, y: area.minY * scale, width: area.width * scale, height: area.height * scale)) {
+                let picture = XCTAttachment(image: NSImage(cgImage: cropped, size: area.size)); picture.name = "PLAYER-1 " + name; picture.lifetime = .keepAlways; add(picture)
+            }
+        }
+        menuShot("05 more menu")
+        // The Sleep Timer submenu, open beside it.
+        app.menuItems["Sleep Timer"].click()
+        XCTAssertTrue(app.menuItems["5 minutes"].waitForExistence(timeout: 5), "the submenu holds the timer items")
+        menuShot("05 more menu, sleep timer submenu open")
+        app.typeKey(.escape, modifierFlags: [])
+        // The expanded player opens from the capsule's cover and closes back (the owned test tone lasts ~12 s, so it is started again first).
+        startCapsuleAudio(app)
+        window.buttons["Show Now Playing"].click()
+        XCTAssertTrue(window.buttons["collapseNowPlaying"].waitForExistence(timeout: 5))
+        Thread.sleep(forTimeInterval: 0.8)
+        XCTAssertTrue(window.buttons["transportMute"].exists && window.sliders["appVolume"].exists && window.buttons["transportPlayPause"].exists, "the expanded player keeps its identifiers")
+        shot("06 expanded player")
+        window.buttons["collapseNowPlaying"].click()
+        XCTAssertTrue(play.waitForExistence(timeout: 5))
+        // The compact window: the volume is a glyph with a popover, the capsule is 48 pt tall, the times have no room (and stay in the accessibility tree).
+        applyNextTestSize(app, window, "800x520 requested")
+        XCTAssertTrue(play.waitForExistence(timeout: 5))
+        startCapsuleAudio(app)
+        Thread.sleep(forTimeInterval: 1.0)
+        XCTAssertFalse(app.sliders["appVolume"].exists, "the compact layout keeps the volume behind its glyph")
+        XCTAssertTrue(app.staticTexts["transportElapsed"].exists, "compact: the times are not drawn but still readable")
+        shot("03 compact window, rest")
+        app.sliders["transportTimeline"].hover()
+        Thread.sleep(forTimeInterval: 0.6)
+        shot("04 compact window, hover")
+    }
+    @MainActor func testPlayer1CapsuleInLightMode() throws {
+        let app = try capsuleApplication(appearance: "light")
+        app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+        startCapsuleAudio(app)
+        app.sliders["transportTimeline"].hover()
+        Thread.sleep(forTimeInterval: 0.6)
+        let picture = XCTAttachment(screenshot: window.screenshot()); picture.name = "PLAYER-1 07 light mode, hover"; picture.lifetime = .keepAlways; add(picture)
+    }
     @MainActor func testW17OwnedNativeVideoDecoderAndSingleSurfaceOwner() throws {
         // The labelled Debug-only development shell (no account, no service, no network) hosts the Now Playing destination.
         let app = designApplication()
@@ -2609,6 +2732,7 @@ final class NativeMusicUITests: XCTestCase {
         func text(_ element: XCUIElement) -> String { (element.value as? String).flatMap { $0.isEmpty ? nil : $0 } ?? element.label }
         func isTimerLine(_ element: XCUIElement) -> Bool { let value = text(element); return value.hasPrefix("Sleep timer:") && value.hasSuffix("left") }
         app.menuButtons["sleepTimerMenu"].firstMatch.click()
+        app.menuItems["Sleep Timer"].firstMatch.click()      // PLAYER-1: the items are in a submenu
         app.menuItems["15 minutes"].firstMatch.click()
         XCTAssertTrue(app.staticTexts["sleepRemaining"].firstMatch.waitForExistence(timeout: 5), "the bar's own line")
         // The popover first (it reads the same owner), then the mini-player from the popover's own button: a menu click leaves focus where the keyboard shortcut
@@ -2634,8 +2758,11 @@ final class NativeMusicUITests: XCTestCase {
         capture(main, "P17 Now Playing with the sleep timer")
         // Cancelling removes it everywhere.
         main.menuButtons["sleepTimerMenu"].firstMatch.click()
+        app.menuItems["Sleep Timer"].firstMatch.click()
         app.menuItems["Cancel timer"].firstMatch.click()
-        XCTAssertTrue(waitUntil { !nowPlayingLine.exists && !miniLine.exists }, "no timer line is left after Cancel timer")
+        let cleared = waitUntil { !nowPlayingLine.exists && !miniLine.exists }
+        if !cleared { capture(main, "P17 after Cancel timer (timer line still there)") }
+        XCTAssertTrue(cleared, "no timer line is left after Cancel timer (now playing: \(nowPlayingLine.exists), mini: \(miniLine.exists))")
         XCTAssertEqual(lifecycleText(app, "playbackState"), "playing", "setting and cancelling a timer never touched playback")
         app.typeKey("q", modifierFlags: .command)
         XCTAssertTrue(app.wait(for: .notRunning, timeout: 10), "Command-Q quits")
@@ -3330,5 +3457,179 @@ final class NativeMusicUITests: XCTestCase {
         capture(app.windows.firstMatch, "W39 cast Play here confirmation")
         app.buttons["outputPromptCancel"].firstMatch.click()
         XCTAssertEqual(playbackState(app), "paused")
+    }
+}
+
+// MARK: W44-prep — indicative performance (optimized Debug, isolated, SYNTHETIC data; never W44 results)
+//
+// These tests run only through `scripts/perf-run.sh ui` (it sets TEST_RUNNER_YTMUSE_PERF_DIR, takes the UI lock and both real-state snapshots and samples CPU and
+// footprint). Without that directory they skip. The app they launch is the ordinary isolated Debug app with the Debug-only synthetic PERF04 dataset
+// (50,000 library songs, 1,000 playlists, a 10,000-entry playlist, a 5,000-item queue, mixed artwork sizes). Nothing here touches a real store or the network.
+extension NativeMusicUITests {
+    @MainActor private func perfApplication(_ test: String = #function) throws -> XCUIApplication {
+        guard let directory = ProcessInfo.processInfo.environment["YTMUSE_PERF_DIR"], !directory.isEmpty else { throw XCTSkip("Performance UI tests run only through scripts/perf-run.sh") }
+        let app = libraryApplication()
+        app.launchEnvironment["YTMUSE_UI_DEVELOPMENT_PLAYLISTS"] = "1"
+        app.launchEnvironment["YTMUSE_UI_DEVELOPMENT_PERF"] = "1"
+        app.launchEnvironment["YTMUSE_PERF_RECORD"] = "1"
+        app.launchEnvironment["YTMUSE_PERF_DIR"] = directory
+        app.launchEnvironment["YTMUSE_PERF_TEST"] = test.replacingOccurrences(of: "()", with: "")
+        return app
+    }
+    /// A scripted scroll trace: `steps` scroll events down, then the same up, through XCTest's own `XCUIElement.scroll`, which activates and addresses the app
+    /// under test (no event can reach another application, and no accessibility or event-posting permission is needed: an earlier version posted raw HID wheel
+    /// events and may have raised the system's "control this computer using accessibility features" prompt, so that path is gone). The target is the WINDOW,
+    /// which resolves cheaply and delivers each event at its centre, over the detail pane: scrolling the 50,000-row table element itself makes XCTest walk every
+    /// row through the accessibility tree for every event, which measured the test tool. The trace stops at `budget` seconds and fails the test if it had to.
+    @MainActor private func perfScroll(_ window: XCUIElement, steps: Int, delta: Double, budget: TimeInterval = 90) {
+        let began = Date()
+        for direction in [-1.0, 1.0] {      // negative scrolls towards later rows, as the other scrolling tests in this file use it
+            for _ in 0..<steps {
+                guard Date().timeIntervalSince(began) < budget else { XCTFail("the scroll trace did not finish within \(Int(budget)) s"); return }
+                window.scroll(byDeltaX: 0, deltaY: direction * delta)
+            }
+        }
+    }
+    @MainActor private func perfOptions(_ key: String, default value: Int) -> XCTMeasureOptions {
+        let options = XCTMeasureOptions()
+        options.iterationCount = max(1, Int(ProcessInfo.processInfo.environment[key] ?? "") ?? value)
+        return options
+    }
+    @MainActor private func perfWait(_ element: XCUIElement, _ what: String, timeout: Double = 60) {
+        XCTAssertTrue(element.waitForExistence(timeout: timeout), what)
+    }
+
+    /// PERF01: repeated cold launches of the isolated app with the dataset flags set (the dataset is built lazily, so this is the cached-shell launch).
+    @MainActor func testW44PLaunch() throws {
+        let app = try perfApplication()
+        let metrics: [XCTMetric] = [XCTApplicationLaunchMetric(), XCTOSSignpostMetric(subsystem: "local.native-music.performance", category: "interval", name: "launch")]
+        measure(metrics: metrics, options: perfOptions("YTMUSE_PERF_LAUNCHES", default: 10)) {
+            app.launch()
+            XCTAssertTrue(app.windows["YTMuse"].firstMatch.waitForExistence(timeout: 30))
+            app.terminate()
+        }
+    }
+
+    /// Navigation between destinations (cached after the first visit), measured by the app's own `navigation` signposts.
+    @MainActor func testW44PNavigation() throws {
+        let app = try perfApplication(); app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        perfWait(window, "window", timeout: 30)
+        let metrics: [XCTMetric] = [XCTOSSignpostMetric(subsystem: "local.native-music.performance", category: "interval", name: "navigation"), XCTClockMetric(), XCTCPUMetric(application: app), XCTMemoryMetric(application: app)]
+        measure(metrics: metrics, options: perfOptions("YTMUSE_PERF_ITERATIONS", default: 5)) {
+            for _ in 0..<6 { for destination in ["library", "home", "explore", "downloads", "history"] { w10(window, "nav-" + destination).click() } }
+        }
+    }
+
+    /// The 50,000-song library: load, scroll (hitches, clock, CPU, memory), then a search and a sort over the loaded rows.
+    @MainActor func testW44PLibraryScroll() throws {
+        let app = try perfApplication(); app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        perfWait(window, "window", timeout: 30)
+        w10(window, "nav-library").click()
+        perfWait(w10(window, "libraryList"), "library list", timeout: 60)
+        // Load every page. The wait is a fixed pause, not a query loop: asking the accessibility tree whether a button still exists while 50,000 rows are
+        // arriving would measure the query, not the app. The app's own `listPage` intervals say how long the paging really took.
+        let loadAll = w10(window, "libraryLoadAll")
+        if loadAll.waitForExistence(timeout: 10) { loadAll.click() }
+        Thread.sleep(forTimeInterval: Double(ProcessInfo.processInfo.environment["YTMUSE_PERF_LOAD_SECONDS"] ?? "") ?? 90)
+        let list = w10(window, "libraryList")
+        let metrics: [XCTMetric] = [XCTHitchMetric(application: app), XCTClockMetric(), XCTCPUMetric(application: app), XCTMemoryMetric(application: app)]
+        measure(metrics: metrics, options: perfOptions("YTMUSE_PERF_ITERATIONS", default: 5)) {
+            perfScroll(window, steps: 12, delta: 900)
+        }
+        // A local query and a re-sort, as a person would: type, wait for the list to settle, clear, switch the sort.
+        let query = w10(window, "libraryQuery")
+        query.click(); query.typeText("cafe"); Thread.sleep(forTimeInterval: 1)
+        query.typeKey("a", modifierFlags: .command); query.typeKey(.delete, modifierFlags: []); Thread.sleep(forTimeInterval: 1)
+    }
+
+    /// 1,000 playlists (grid), scrolled.
+    @MainActor func testW44PPlaylistGrid() throws {
+        let app = try perfApplication(); app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        perfWait(window, "window", timeout: 30)
+        w10(window, "nav-library").click()
+        perfWait(w10(window, "libraryKind-playlists"), "playlists chip", timeout: 60)
+        w10(window, "libraryKind-playlists").click()
+        let grid = w10(window, "libraryGrid")
+        perfWait(grid, "playlist grid", timeout: 60)
+        let metrics: [XCTMetric] = [XCTHitchMetric(application: app), XCTClockMetric(), XCTCPUMetric(application: app), XCTMemoryMetric(application: app)]
+        measure(metrics: metrics, options: perfOptions("YTMUSE_PERF_ITERATIONS", default: 5)) {
+            perfScroll(window, steps: 8, delta: 900)
+        }
+    }
+    /// The 10,000-entry playlist's page (the first playlist of the dataset), opened and scrolled.
+    @MainActor func testW44PBigPlaylist() throws {
+        let app = try perfApplication(); app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        perfWait(window, "window", timeout: 30)
+        w10(window, "nav-library").click()
+        perfWait(w10(window, "libraryKind-playlists"), "playlists chip", timeout: 60)
+        w10(window, "libraryKind-playlists").click()
+        let big = w10(window, "libraryRow-playlist:VLPLperfbig10000000001")
+        perfWait(big, "the 10,000-entry playlist card", timeout: 60)
+        big.click()
+        let scroll = window.scrollViews["catalogScroll"]
+        perfWait(scroll, "playlist page", timeout: 120)
+        let metrics: [XCTMetric] = [XCTHitchMetric(application: app), XCTClockMetric(), XCTCPUMetric(application: app), XCTMemoryMetric(application: app)]
+        measure(metrics: metrics, options: perfOptions("YTMUSE_PERF_ITERATIONS", default: 5)) {
+            perfScroll(window, steps: 12, delta: 900)
+        }
+    }
+
+    /// The 5,000-item queue, page by page (the queue panel shows 80 rows at a time).
+    @MainActor func testW44PQueue() throws {
+        let app = try perfApplication(); app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        perfWait(window, "window", timeout: 30)
+        w10(window, "browserQueue").click()
+        let list = w10(window, "queueList")
+        perfWait(list, "queue list", timeout: 60)
+        let metrics: [XCTMetric] = [XCTHitchMetric(application: app), XCTClockMetric(), XCTCPUMetric(application: app), XCTMemoryMetric(application: app)]
+        measure(metrics: metrics, options: perfOptions("YTMUSE_PERF_ITERATIONS", default: 5)) {
+            for _ in 0..<10 { list.scroll(byDeltaX: 0, deltaY: -600) }
+            let next = window.buttons["Next page"].firstMatch
+            for _ in 0..<5 { if next.exists && next.isEnabled { next.click() } }
+            for _ in 0..<5 { let previous = window.buttons["Previous page"].firstMatch; if previous.exists && previous.isEnabled { previous.click() } }
+        }
+    }
+}
+
+// W44-prep critic round 1 (L1): Clear Selection / Select All must reach the equatable library list's highlight (T12).
+extension NativeMusicUITests {
+    @MainActor private func w12SelectionRow(_ window: XCUIElement, _ id: String) -> XCUIElement {
+        let types = [XCUIElement.ElementType.outlineRow.rawValue, XCUIElement.ElementType.tableRow.rawValue]
+        return window.descendants(matching: .any).matching(NSPredicate(format: "elementType IN %@", types)).containing(.any, identifier: id).firstMatch
+    }
+    @MainActor private func w12RowIsSelected(_ window: XCUIElement, _ id: String, _ expected: Bool, timeout: Double = 5) -> Bool {
+        let row = w12SelectionRow(window, id)
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline { if row.exists && row.isSelected == expected { return true }; RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1)) }
+        return row.exists && row.isSelected == expected
+    }
+    @MainActor func testW12ProgrammaticSelectionReachesTheEquatableList() throws {
+        let app = libraryApplication(); app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+        w10(window, "nav-library").click()
+        w12Wait(window, "libraryRow-song:devsong0001"); w12Wait(window, "libraryRow-song:devsong0005", timeout: 15)
+        // Control: a click selects the row in the List, and the row reports it.
+        w10(window, "libraryRow-song:devsong0001").click()
+        XCTAssertTrue(w10Text(w12Wait(window, "librarySelectionCount")).contains("1 selected"))
+        XCTAssertTrue(try XCTUnwrap(Optional(w12SelectionRow(window, "libraryRow-song:devsong0001"))).waitForExistence(timeout: 5), "the row element is found")
+        XCTAssertTrue(w12RowIsSelected(window, "libraryRow-song:devsong0001", true), "control: a clicked row reads as selected")
+        // Programmatic clear (the model changes, the list's own inputs do not): the List must drop the highlight.
+        w12Wait(window, "libraryClearSelection").click()
+        XCTAssertTrue(w12Gone(w10(window, "librarySelectionCount")))
+        XCTAssertTrue(w12RowIsSelected(window, "libraryRow-song:devsong0001", false), "Clear Selection must reach the List")
+        // Programmatic select-all.
+        w10(window, "libraryRow-song:devsong0001").click()
+        w12Wait(window, "librarySelectionCount")
+        window.buttons["Select All"].firstMatch.click()
+        XCTAssertTrue(w10Text(w12Wait(window, "librarySelectionCount")).contains("selected"))
+        XCTAssertFalse(w10Text(w10(window, "librarySelectionCount")).contains("1 selected"), "select all selects more than one row")
+        XCTAssertTrue(w12RowIsSelected(window, "libraryRow-song:devsong0003", true), "Select All must reach the List")
+        XCTAssertTrue(w12RowIsSelected(window, "libraryRow-song:devsong0005", true), "Select All must reach the List")
     }
 }

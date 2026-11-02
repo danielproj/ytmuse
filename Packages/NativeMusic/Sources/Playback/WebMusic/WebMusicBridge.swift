@@ -34,12 +34,44 @@ public struct WebMusicSample: Sendable, Equatable {
     public let contentID: String?
     /// Whether the page's player bar shows shuffle on, when the page said so (best effort; nil = not reported).
     public let shuffle: Bool?
+    /// CORE-A: the page player bar's repeat mode as the page reports it; nil = not reported (never a guess).
+    public let repeatMode: WebMusicRepeatMode?
     public init(playing: Bool, buffering: Bool, position: Double, duration: Double, videoID: String?, title: String?, artist: String?, artworkURL: URL?, ad: Bool,
-                playlistID: String? = nil, signedIn: Bool? = nil, contentID: String? = nil, shuffle: Bool? = nil) {
+                playlistID: String? = nil, signedIn: Bool? = nil, contentID: String? = nil, shuffle: Bool? = nil, repeatMode: WebMusicRepeatMode? = nil) {
         self.playing = playing; self.buffering = buffering; self.position = position; self.duration = duration
         self.videoID = videoID; self.title = title; self.artist = artist; self.artworkURL = artworkURL; self.ad = ad
-        self.playlistID = playlistID; self.signedIn = signedIn; self.contentID = contentID; self.shuffle = shuffle
+        self.playlistID = playlistID; self.signedIn = signedIn; self.contentID = contentID; self.shuffle = shuffle; self.repeatMode = repeatMode
     }
+}
+
+/// CORE-A: the repeat mode of YouTube Music's own player bar. The raw values are what the observer script posts.
+public enum WebMusicRepeatMode: String, Sendable, Equatable, CaseIterable {
+    case off, all, one
+    /// The order the page's own repeat button steps through.
+    public var next: WebMusicRepeatMode { switch self { case .off: .all; case .all: .one; case .one: .off } }
+}
+
+/// CORE-A: one entry of the page's own queue, exactly as the page lists it (text bounded, artwork on YouTube image hosts only).
+public struct WebMusicQueueItem: Sendable, Equatable, Identifiable {
+    /// Unique within a queue even when the page lists the same video twice (`<video id>#<occurrence>`), so a row keeps its identity as the queue advances.
+    public let id: String
+    public let videoID: String
+    public let title: String?
+    public let artist: String?
+    public let artworkURL: URL?
+    public init(id: String, videoID: String, title: String?, artist: String?, artworkURL: URL?) {
+        self.id = id; self.videoID = videoID; self.title = title; self.artist = artist; self.artworkURL = artworkURL
+    }
+}
+
+/// CORE-A: what the page's queue holds after the item that is playing. Read-only: the app never reorders, removes or invents an item.
+public struct WebMusicQueue: Sendable, Equatable {
+    /// The playing video the list is relative to (the page's `getVideoData()`); it must equal the transport's current video to be shown.
+    public let videoID: String?
+    public let upcoming: [WebMusicQueueItem]
+    /// How many further items the page lists beyond the bounded window reported here.
+    public let more: Int
+    public init(videoID: String?, upcoming: [WebMusicQueueItem], more: Int) { self.videoID = videoID; self.upcoming = upcoming; self.more = more }
 }
 
 /// W17: what the page's `<video>` element and player say about the picture, live window and counterpart of the playing item.
@@ -82,6 +114,7 @@ public struct WebMusicMediaSample: Sendable, Equatable {
 public enum WebMusicEvent: Sendable, Equatable {
     case state(WebMusicSample)
     case media(WebMusicMediaSample)
+    case queue(WebMusicQueue)
     case ended(videoID: String?)
     /// YouTube player error code (for example 150: not playable here). Never page text.
     case playerError(code: Int)
@@ -106,18 +139,25 @@ public enum WebMusicRejection: Error, Sendable, Equatable {
 public enum WebMusicBridge {
     public static let handlerName = "ytmusePlayer"
     public static let host = "music.youtube.com"
-    static let maximumKeys = 16
+    static let maximumKeys = 18
     /// Displayed text is truncated to this many UTF-8 bytes on a character boundary.
     static let maximumTextBytes = 512
     /// Raw text above this is malformed (the page script bounds text to 300 UTF-16 units).
     static let maximumRawTextBytes = 1536
     static let maximumURLBytes = 2048
     static let maximumPayloadBytes = 6144
+    /// CORE-A: the queue message carries a bounded list as one JSON string; it has its own, larger bound and everything else keeps the small one.
+    static let maximumQueuePayloadBytes = 40_000
+    static let maximumQueueTextBytes = 36_000
+    static let maximumQueueItems = 31   // the playing item and up to thirty after it
+    static let maximumQueueMore = 100_000
     static let maximumSeconds = 86_400.0
-    static let stateKeys: Set<String> = ["type", "doc", "load", "playing", "buffering", "position", "duration", "videoId", "title", "artist", "artwork", "ad", "playlistId", "signedIn", "contentId", "shuffle"]
+    static let stateKeys: Set<String> = ["type", "doc", "load", "playing", "buffering", "position", "duration", "videoId", "title", "artist", "artwork", "ad", "playlistId", "signedIn", "contentId", "shuffle", "repeat"]
     static let endedKeys: Set<String> = ["type", "doc", "load", "videoId"]
     static let errorKeys: Set<String> = ["type", "doc", "load", "code"]
     static let pageKeys: Set<String> = ["type", "doc", "load", "app", "unsupported"]
+    static let queueKeys: Set<String> = ["type", "doc", "load", "videoId", "items", "more"]
+    static let queueItemKeys: Set<String> = ["i", "t", "a", "u", "c"]
     static let mediaKeys: Set<String> = ["type", "doc", "load", "videoId", "kind", "seekStart", "seekEnd", "counterpart", "width", "height", "frames", "pip", "isolated", "quality", "qualities", "captions", "rate"]
     /// A live stream's relative window is bounded like any position; pictures are bounded by what a decoder can hold.
     static let maximumPictureEdge = 16_384
@@ -133,7 +173,8 @@ public enum WebMusicBridge {
         guard frame.isMainFrame else { return .failure(.subframe) }
         guard acceptsOrigin(frame) else { return .failure(.origin) }
         guard let object = body as? [String: Any] else { return .failure(.notDictionary) }
-        guard object.count <= maximumKeys, payloadBytes(object) <= maximumPayloadBytes else { return .failure(.oversized) }
+        let isQueue = (object["type"] as? String) == "queue"
+        guard object.count <= maximumKeys, payloadBytes(object) <= (isQueue ? maximumQueuePayloadBytes : maximumPayloadBytes) else { return .failure(.oversized) }
         guard let type = object["type"] as? String else { return .failure(.malformed) }
         let keys: Set<String>
         switch type {
@@ -142,6 +183,7 @@ public enum WebMusicBridge {
         case "error": keys = errorKeys
         case "page": keys = pageKeys
         case "media": keys = mediaKeys
+        case "queue": keys = queueKeys
         default: return .failure(.unknownType)
         }
         guard Set(object.keys).isSubset(of: keys) else { return .failure(.malformed) }
@@ -162,15 +204,20 @@ public enum WebMusicBridge {
             if let raw = object["signedIn"] { guard let value = bool(raw) else { return .failure(.malformed) }; signedIn = value } else { signedIn = nil }
             let shuffle: Bool?
             if let raw = object["shuffle"] { guard let value = bool(raw) else { return .failure(.malformed) }; shuffle = value } else { shuffle = nil }
+            let repeatMode: WebMusicRepeatMode?
+            if let raw = object["repeat"] { guard let name = raw as? String, let value = WebMusicRepeatMode(rawValue: name) else { return .failure(.malformed) }; repeatMode = value } else { repeatMode = nil }
             event = .state(.init(playing: playing, buffering: buffering, position: position, duration: duration,
                                  videoID: videoID.value, title: title.value, artist: artist.value, artworkURL: artwork.value, ad: ad,
-                                 playlistID: playlist.value, signedIn: signedIn, contentID: content.value, shuffle: shuffle))
+                                 playlistID: playlist.value, signedIn: signedIn, contentID: content.value, shuffle: shuffle, repeatMode: repeatMode))
         case "ended":
             guard let videoID = optionalVideoID(object["videoId"]) else { return .failure(.malformed) }
             event = .ended(videoID: videoID.value)
         case "page":
             guard let app = bool(object["app"]), let unsupported = bool(object["unsupported"]) else { return .failure(.malformed) }
             event = .page(app: app, unsupportedBrowser: unsupported)
+        case "queue":
+            guard let queue = queue(object) else { return .failure(.malformed) }
+            event = .queue(queue)
         case "media":
             guard let videoID = optionalVideoID(object["videoId"]), let counterpart = optionalVideoID(object["counterpart"]),
                   let width = count(object["width"], limit: maximumPictureEdge), let height = count(object["height"], limit: maximumPictureEdge),
@@ -211,6 +258,32 @@ public enum WebMusicBridge {
             event = .playerError(code: code)
         }
         return .success(.init(document: doc, load: messageLoad, event: event))
+    }
+
+    /// CORE-A: the queue message. `items` is a JSON array (as a string) of at most `maximumQueueItems` objects, each with only the keys
+    /// `i` (video id, required), `t` (title), `a` (artist), `u` (artwork) and `c` (the playing item). When any item is listed the first one is the
+    /// playing item, and it is the only one marked. Anything else is malformed; nothing is clamped or repaired.
+    private static func queue(_ object: [String: Any]) -> WebMusicQueue? {
+        guard let playing = optionalVideoID(object["videoId"]), let raw = object["items"] as? String, raw.utf8.count <= maximumQueueTextBytes,
+              let more = count(object["more"], limit: maximumQueueMore),
+              let list = (try? JSONSerialization.jsonObject(with: Data(raw.utf8))) as? [Any], list.count <= maximumQueueItems else { return nil }
+        var upcoming: [WebMusicQueueItem] = []
+        var seen: [String: Int] = [:]
+        for (position, element) in list.enumerated() {
+            guard let entry = element as? [String: Any], Set(entry.keys).isSubset(of: queueItemKeys),
+                  let id = entry["i"] as? String, WebMusicIdentifier.isVideoID(id),
+                  let title = optionalText(entry["t"]), let artist = optionalText(entry["a"]), let artwork = optionalArtwork(entry["u"]) else { return nil }
+            var marked = false
+            if let flag = entry["c"] { guard let value = bool(flag) else { return nil }; marked = value }
+            // The playing item leads the list and is the only one marked; a list without that shape is not one the app can say is "after" anything.
+            guard marked == (position == 0) else { return nil }
+            guard position > 0 else { continue }
+            let occurrence = seen[id, default: 0]; seen[id] = occurrence + 1
+            upcoming.append(.init(id: "\(id)#\(occurrence)", videoID: id, title: title.value, artist: artist.value, artworkURL: artwork.value))
+        }
+        // The playing item must be the page's own `videoId`, so a list is never matched to another track.
+        if !list.isEmpty { guard let first = list.first as? [String: Any], let id = first["i"] as? String, id == playing.value else { return nil } }
+        return .init(videoID: playing.value, upcoming: upcoming, more: more)
     }
 
     // MARK: Field validators (a nil result means malformed; `.value == nil` means absent/empty)

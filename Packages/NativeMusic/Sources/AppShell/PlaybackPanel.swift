@@ -332,8 +332,10 @@ enum PlaybackUIAction: Equatable, Sendable {
         pendingReplacement = nil; replacementOverride = choice
         Task { await pending.resume(choice) }
     }
-    /// Test seam: sets the question as a native start would.
+    /// Test seam: sets the question as a native start would. TH5: Debug only, like every test hook (it is not in a Release binary).
+    #if DEBUG
     func setPendingReplacementForTest(count: Int, resume: @escaping @MainActor (ReplacementPreference) -> Void) { pendingReplacement = PendingReplacement(count: count, resume: { resume($0) }) }
+    #endif
     func cancelReplacement() { guard pendingReplacement != nil else { return }; pendingReplacement = nil; replacementOverride = nil }
     @ObservationIgnored private var lastReportedNotice: WebMusicFailure?
     var session: PlaybackSession? {
@@ -419,6 +421,8 @@ enum PlaybackUIAction: Equatable, Sendable {
         let replacement = await settleReplacement(retry: { [weak self] _ in await self?.startOwned(request: request) })
         guard replacement.proceed else { return }
         guard !starting else { return }; error = nil; failedAction = nil; retryOperation = nil; failedSession = nil; starting = true; defer { starting = false }
+        let startSignpost = PerformanceSignposts.begin(.firstItemStart, label: "owned")
+        defer { PerformanceSignposts.end(startSignpost, failed: error != nil) }
         let carried = sleepTimerToCarry(leavingYouTubeMusic: true)   // P17-WEB: one timer for the session; read before the hidden player is closed
         if let outputs, await outputs.coordinator.beginHandoff(to: .localMedia) == .refused { self.error = String(localized: "The other player could not be stopped. Try Play again."); return }
         do {
@@ -535,6 +539,34 @@ enum PlaybackUIAction: Equatable, Sendable {
             }
         }
     }
+    /// TH4 (rework of M1): what the volume slider shows and drives. WHILE an owned or local item is cast it is the receiver's own reported level, separate from the
+    /// Mac's app gain (`requestedGain`), which is neither read nor changed then: ending the cast leaves the Mac's volume exactly as it was.
+    struct VolumeSlider: Equatable {
+        var level: Double
+        var range: ClosedRange<Double>
+        var isReceiver: Bool
+        var isEnabled: Bool
+        /// Why the slider is disabled, when it is a receiver that cannot take a level.
+        var disabledReason: String?
+    }
+    var volumeSlider: VolumeSlider {
+        if let cast = outputs?.castVolume {
+            let reason: String? = switch cast.unavailable {
+            case nil: nil
+            case .notReported?: String(localized: "Waiting for the receiver's volume.")
+            case .fixed?: String(localized: "This receiver's volume is fixed.")
+            case .unsupported?: String(localized: "This receiver can't change its volume from here.")
+            }
+            return VolumeSlider(level: cast.level, range: 0...1, isReceiver: true, isEnabled: cast.isAdjustable, disabledReason: reason)
+        }
+        return VolumeSlider(level: requestedGain, range: gainRange, isReceiver: false, isEnabled: true, disabledReason: nil)
+    }
+    /// Every surface that moves the volume (bottom player, mini-player, status item, scripting) comes through here for the native session.
+    func setSliderVolume(_ value: Double) {
+        guard value.isFinite else { return }
+        if outputs?.castVolume != nil { outputs?.requestCastVolume(value); return }
+        changeGain(min(max(value, gainRange.lowerBound), gainRange.upperBound))
+    }
     func changeGain(_ value: Double) {
         requestedGain = value; gainRevision += 1; let ticket = gainRevision; applyingGain = ticket
         Task {
@@ -589,6 +621,8 @@ enum PlaybackUIAction: Equatable, Sendable {
     @discardableResult func playMusic(playlistID: String, title: String, videoID: String? = nil, params: String? = nil, request: OwnedStartRequest) async -> SearchPlayOutcome {
         guard !starting else { return .busy }; starting = true; defer { starting = false }
         let profileStart = DispatchTime.now().uptimeNanoseconds
+        let startSignpost = PerformanceSignposts.begin(.firstItemStart, label: "youTubeMusic")
+        defer { PerformanceSignposts.end(startSignpost, failed: error != nil) }
         defer { profileSink?(.playbackStart, Double(DispatchTime.now().uptimeNanoseconds - profileStart) / 1_000_000) }
         playRequestCount += 1
         // ROUTE09: after a route loss a new item on the speakers needs Play here first; the held start runs after the confirmation.

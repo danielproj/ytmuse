@@ -359,9 +359,66 @@ final class RelayClock: @unchecked Sendable {
         #expect(closed, "the listener was closed at the end of the lifetime")
     }
     @Test func theRelayRefusesEveryAddressThatIsNotAPrivateOrLoopbackIPv4() async throws {
-        for address in ["0.0.0.0", "8.8.8.8", "1.1.1.1", "172.32.0.1", "172.15.0.1", "100.64.0.1", "::", "::1", "fe80::1", "localhost", "example.com", "", "192.168.1", "192.168.1.1.1", "256.1.1.1", "192.168.01.1", "-1.0.0.1"] {
+        for address in ["0.0.0.0", "8.8.8.8", "1.1.1.1", "172.32.0.1", "172.15.0.1", "100.64.0.1", "::", "fe80::1", "2001:db8::1", "ff02::1", "::ffff:10.0.0.1", "localhost", "example.com", "", "192.168.1", "192.168.1.1.1", "256.1.1.1", "192.168.01.1", "-1.0.0.1"] {
             #expect(throws: CastRelayError.self) { _ = try CastRelayServer(bindAddress: address, receiverAddress: nil) }
         }
+    }
+    // MARK: IPv6 (TH4): served on the same terms as IPv4, loopback only here
+
+    @Test func anIPv6RelayServesItsReceiverAndNobodyElseAtTheDecisionLayer() throws {
+        let rig = try CastRelayCoreTests.Rig(bound: "fd00::20", receiver: "fd00::50"); defer { rig.cleanup() }
+        #expect(rig.status(peer: "fd00::50") == 200 && rig.status(peer: "FD00:0:0:0:0:0:0:50") == 200)
+        for stranger in ["fd00::51", "fd00::20", "::1", "fe80::50", "192.168.1.50", "::ffff:192.168.1.50", "fd00::50::", "2001:db8::50", ""] {
+            #expect(rig.ask(peer: stranger) == .drop, "\(stranger) must be dropped without a word")
+        }
+        // The relay's other scope is unchanged on IPv6: GET only, the token path only, ranges as before.
+        #expect(rig.status(method: "POST", peer: "fd00::50") == 405 && rig.status("/c/WRONG/x.wav", peer: "fd00::50") == 404)
+        #expect(rig.status(headers: ["Range": "bytes=0-99"], peer: "fd00::50") == 206)
+    }
+    @Test func aLinkLocalReceiverIsServedWhateverInterfaceItSpokeOn() throws {
+        let rig = try CastRelayCoreTests.Rig(bound: "fe80::20%en0", receiver: "fe80::50%en0"); defer { rig.cleanup() }
+        #expect(rig.status(peer: "fe80::50") == 200 && rig.status(peer: "fe80::50%en0") == 200)
+        #expect(rig.ask(peer: "fe80::51") == .drop && rig.ask(peer: "fd00::50") == .drop)
+    }
+    @Test func anIPv6LoopbackBindServesIPv6LoopbackOnlyAndALANBindNeverDoes() throws {
+        let loopback = try CastRelayCoreTests.Rig(bound: "::1", receiver: nil); defer { loopback.cleanup() }
+        #expect(loopback.status(peer: "::1") == 200 && loopback.ask(peer: "fd00::1") == .drop && loopback.ask(peer: "192.168.1.50") == .drop)
+        let lan = try CastRelayCoreTests.Rig(bound: "fd00::20", receiver: nil); defer { lan.cleanup() }
+        #expect(lan.ask(peer: "::1") == .drop && lan.ask(peer: "fd00::50") == .drop, "no receiver address: nobody, and loopback only for a loopback bind")
+    }
+    @Test func theUrlOfAnIPv6RelayBracketsTheAddress() async throws {
+        let server = try CastRelayServer(bindAddress: "::1", receiverAddress: "::1")
+        let file = try CastFixtures.audioFile(bytes: 5_000)
+        defer { server.stop(); CastFixtures.remove(file) }
+        let port = try await server.start()
+        let url = try server.url(serving: file)
+        #expect(url.absoluteString.hasPrefix("http://[0:0:0:0:0:0:0:1]:\(port)/c/\(server.core.token)/") && url.query == nil && url.user == nil)
+        #expect(!url.absoluteString.contains(file.lastPathComponent))
+    }
+    @Test func aReceiverFetchesTheFileOverIPv6LoopbackAndTheScopeHolds() async throws {
+        let server = try CastRelayServer(bindAddress: "::1", receiverAddress: nil)
+        let file = try CastFixtures.audioFile(bytes: 200_000)
+        let contents = try Data(contentsOf: file)
+        defer { server.stop(); CastFixtures.remove(file) }
+        let port = try await server.start()
+        let path = try server.url(serving: file).path
+        let full = try #require(try LoopbackHTTP.get(port: port, path: path, host: "::1"))
+        #expect(full.status == 200 && full.body == contents && full.headers["content-type"] == "audio/wav")
+        let part = try #require(try LoopbackHTTP.get(port: port, path: path, headers: ["Range": "bytes=10-19"], host: "::1"))
+        #expect(part.status == 206 && part.body == contents[10...19])
+        #expect(try LoopbackHTTP.get(port: port, path: path + "/..", host: "::1")?.status == 404)
+        #expect(try LoopbackHTTP.get(port: port, path: "/c/WRONG/x.wav", host: "::1")?.status == 404)
+        #expect(try LoopbackHTTP.get(port: port, path: path, method: "POST", host: "::1")?.status == 405)
+        server.stop(); await server.stopped()
+        let closed = await waitUntil(3) { !LoopbackHTTP.isListening(port: port, host: "::1") }
+        #expect(closed, "stopping closes the IPv6 port")
+        #expect(throws: (any Error).self) { _ = try server.url(serving: file) }
+    }
+    @Test func anIPv6RelayHasTheSameRefusalsAsAnIPv4One() async throws {
+        for address in ["::", "fd00::20", "fc00::5", "fe80::1%en0", "fe80::1", "2001:db8::1", "ff02::1", "::1%lo0", "::ffff:127.0.0.1"] {
+            #expect(throws: CastRelayError.self) { _ = try CastRelayServer(bindAddress: address, receiverAddress: nil) }
+        }
+        #expect(throws: Never.self) { _ = try CastRelayServer(bindAddress: "::1", receiverAddress: nil) }
     }
     @Test func evenAPrivateLANAddressIsRefusedInsideATestProcess() async throws {
         // The real network switch cannot be turned on here, so a LAN address (which would open a port other devices can reach) is refused.

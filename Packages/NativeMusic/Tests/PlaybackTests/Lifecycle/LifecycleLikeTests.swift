@@ -5,6 +5,7 @@ import AccountSession
 @testable import Features
 @testable import Playback
 @testable import AppShell
+import TestSupport
 
 /// F5 / WIN05: the mini-player's Like. Never during an advertisement, only on an explicit press, only through the social surface and the W12 ledger
 /// (`LibraryControlPress`), and a disabled Like says why it is disabled.
@@ -12,7 +13,7 @@ import AccountSession
     private func rig() async throws -> (LifecycleRig, ShellCoordinator, FakeMusicPage) {
         let rig = try await LifecycleRig.make()
         let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         let (_, page) = try await rig.play()
         return (rig, shell, page)
     }
@@ -43,7 +44,7 @@ import AccountSession
         #expect(shell.likeAvailability() == .unavailable(.advertisement))
         let idle = try await LifecycleRig.make()
         let quiet = ShellCoordinator(playback: idle.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         #expect(quiet.likeAvailability() == .unavailable(.nothingPlaying))
         let messages = [ShellCoordinator.LikeUnavailable.nothingPlaying, .advertisement, .ownedMedia, .pageNotRead].map(\.message)
         #expect(Set(messages).count == 4 && messages.allSatisfy { !$0.isEmpty }, "four causes, four different sentences: \(messages)")
@@ -57,7 +58,7 @@ import AccountSession
         rig.model.session = session
         await rig.model.refresh()
         let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         shell.likeControlProvider = { _ in self.control() }
         #expect(rig.model.shellState.source == .owned && shell.likeAvailability() == .unavailable(.ownedMedia))
         await session.close()

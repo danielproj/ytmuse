@@ -3,6 +3,7 @@ import Testing
 @testable import Playback
 @testable import SystemIntegration
 @testable import AppShell
+import TestSupport
 
 /// The real-API guard (addendum 5): the system's notification center, authorization request and hot-key registration are named in exactly one file, in the
 /// app target. The sweep strips comments and string literals first, so a sentence naming an API is not a use.

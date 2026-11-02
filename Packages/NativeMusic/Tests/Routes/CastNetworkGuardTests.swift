@@ -38,7 +38,7 @@ import Testing
             for match in text.matches(of: /CastRelayServer\(bindAddress:\s*"([^"]+)"/) {
                 literals += 1
                 let address = String(match.output.1)
-                let ok = address == "127.0.0.1" || file.lastPathComponent == "CastRelayTests.swift" && ["192.168.1.20", "10.1.2.3", "172.16.5.5", "169.254.9.9"].contains(address)
+                let ok = address == "127.0.0.1" || address == "::1" || file.lastPathComponent == "CastRelayTests.swift" && ["192.168.1.20", "10.1.2.3", "172.16.5.5", "169.254.9.9"].contains(address)
                 #expect(ok, "\(file.lastPathComponent) binds \(address)")
             }
         }
@@ -53,10 +53,13 @@ import Testing
             let literals = text.matches(of: /inet_addr\(\s*"([^"]*)"/).map { String($0.output.1) }
             if !literals.isEmpty { addressFiles.insert(file.lastPathComponent) }
             #expect(literals.allSatisfy { $0 == "127.0.0.1" }, "\(file.lastPathComponent) names an address other than 127.0.0.1: \(literals)")
+            // TH4: an IPv6 client or listener names the loopback literal and nothing else (`inet_pton` is how a literal reaches a socket address).
+            let v6 = text.matches(of: /inet_pton\(\s*AF_INET6?\s*,\s*"([^"]*)"/).map { String($0.output.1) }
+            #expect(v6.allSatisfy { $0 == "::1" || $0 == "127.0.0.1" }, "\(file.lastPathComponent) names an address other than the loopback: \(v6)")
             #expect(!text.contains("INADDR_ANY") && !text.contains("INADDR_BROADCAST"), "\(file.lastPathComponent)")
             if text.range(of: Self.socketListening, options: .regularExpression) != nil {
                 listeningFiles.insert(file.lastPathComponent)
-                #expect(literals == ["127.0.0.1"], "\(file.lastPathComponent) listens but does not bind exactly the loopback literal: \(literals)")
+                #expect(literals == ["127.0.0.1"] || v6 == ["::1"], "\(file.lastPathComponent) listens but does not bind exactly the loopback literal: \(literals) \(v6)")
             }
         }
         #expect(["CastTestSupport.swift", "CastAppSupport.swift"].allSatisfy(addressFiles.contains), "the Cast support clients were read: \(addressFiles)")
@@ -137,10 +140,44 @@ import Testing
         #expect(throws: CastNetworkGate.Refusal.testProcess) { try CastNetworkGate.requireLive() }
         #expect(!CastNetworkGate.isLive)
         for address in ["0.0.0.0", "8.8.8.8", "100.64.0.1", "172.32.0.1", "224.0.0.251", "255.255.255.255"] { #expect(throws: CastNetworkGate.Refusal.self) { try CastNetworkGate.requireBindable(address) }; _ = address }
-        for address in ["::", "::1", "fe80::1", "", "localhost", "host.local"] { #expect(throws: CastNetworkGate.Refusal.self) { try CastNetworkGate.requireBindable(address) } }
-        for loopback in ["127.0.0.1", "127.1.2.3"] { #expect(throws: Never.self) { try CastNetworkGate.requireBindable(loopback) } }
+        // IPv6 (TH4): the wildcard, a link-local address with no interface, a public, a multicast and an IPv4-mapped address are refused; "::1" is loopback and allowed.
+        for address in ["::", "fe80::1", "", "localhost", "host.local", "2001:db8::1", "2606:4700:4700::1111", "ff02::1", "::ffff:192.168.1.5", "::ffff:127.0.0.1", "fd00::1%en0", "::1%lo0", "[::1]", "::1::", "1:2:3:4:5:6:7:8:9"] {
+            #expect(throws: CastNetworkGate.Refusal.self) { try CastNetworkGate.requireBindable(address) }
+        }
+        #expect(throws: CastNetworkGate.Refusal.wildcardAddress) { try CastNetworkGate.requireBindable("::") }
+        // The reason matters (the real-network switch must not be what refuses these): a link-local address with no interface, and a unique-local one that names one.
+        for address in ["fe80::1", "fd00::1%en0", "2001:db8::1", "ff02::1"] {
+            #expect(throws: CastNetworkGate.Refusal.notLocalAddress("not a private network address")) { try CastNetworkGate.requireBindable(address) }
+        }
+        for loopback in ["127.0.0.1", "127.1.2.3", "::1", "0:0:0:0:0:0:0:1"] { #expect(throws: Never.self) { try CastNetworkGate.requireBindable(loopback) } }
+        // A real IPv6 LAN address needs the switch, which is off here: refused for that reason and no other.
+        for lan in ["fd12:3456::1", "fc00::5", "fe80::1%en0", "FE80::ABCD%en0"] { #expect(throws: CastNetworkGate.Refusal.testProcess) { try CastNetworkGate.requireBindable(lan) } }
         // A real LAN address needs the switch, which is off here: refused for that reason and no other.
         for lan in ["192.168.0.5", "10.0.0.5", "172.16.0.5", "169.254.1.1"] { #expect(throws: CastNetworkGate.Refusal.testProcess) { try CastNetworkGate.requireBindable(lan) } }
+    }
+    @Test func ipv6AddressesAreParsedStrictlyAndClassified() {
+        for bad in ["", ":", ":::", "1::2::3", "1:2:3:4:5:6:7", "1:2:3:4:5:6:7:8:9", "12345::1", "g::1", "::1.2.3.4", " ::1", "::1 ", "::1\n", "1:2:3:4:5:6:7:8::", "[::1]", "fe80::1%", "fe80::1%en 0", "fe80::1%way-too-long-interface-name", "1.2.3.4"] {
+            #expect(CastNetworkGate.IPv6(bad) == nil, "\(bad.debugDescription)")
+        }
+        #expect(CastNetworkGate.IPv6("::")?.isUnspecified == true && CastNetworkGate.IPv6("::1")?.isLoopback == true && CastNetworkGate.IPv6("0::0:1")?.isLoopback == true)
+        #expect(CastNetworkGate.IPv6("1:2:3:4:5:6:7::")?.groups == [1, 2, 3, 4, 5, 6, 7, 0] && CastNetworkGate.IPv6("::2:3")?.groups == [0, 0, 0, 0, 0, 0, 2, 3])
+        #expect(CastNetworkGate.IPv6("fd00::1")?.isPrivateLAN == true && CastNetworkGate.IPv6("fc00::1")?.isUniqueLocal == true && CastNetworkGate.IPv6("fe00::1")?.isPrivateLAN == false)
+        #expect(CastNetworkGate.IPv6("fe80::1%en0")?.isLinkLocal == true && CastNetworkGate.IPv6("febf::1%en0")?.isLinkLocal == true && CastNetworkGate.IPv6("fec0::1")?.isPrivateLAN == false)
+        #expect(CastNetworkGate.IPv6("2001:db8::1")?.isPrivateLAN == false && CastNetworkGate.IPv6("::1")?.isPrivateLAN == false, "loopback is its own class, not a LAN address")
+        #expect(CastNetworkGate.IPv6("fe80::1%en0")?.sameAddress(as: CastNetworkGate.IPv6("FE80:0:0:0:0:0:0:1%en1")!) == true, "the zone is not part of who the peer is")
+        #expect(CastNetworkGate.urlHost(for: "::1") == "[0:0:0:0:0:0:0:1]" && CastNetworkGate.urlHost(for: "fe80::1%en0") == "[fe80:0:0:0:0:0:0:1%25en0]" && CastNetworkGate.urlHost(for: "127.0.0.1") == "127.0.0.1")
+    }
+    @Test func ipv6PeersAreMatchedByExactAddressAndFamily() {
+        #expect(CastNetworkGate.peerAllowed("fd00::50", receiver: "fd00::50", boundTo: "fd00::20") && CastNetworkGate.peerAllowed("FD00:0:0:0:0:0:0:50", receiver: "fd00::50", boundTo: "fd00::20"))
+        #expect(CastNetworkGate.peerAllowed("fe80::50", receiver: "fe80::50%en0", boundTo: "fe80::20%en0"), "a link-local receiver is matched without its zone")
+        for peer in ["fd00::51", "fd00::5", "::1", "127.0.0.1", "192.168.1.50", "::ffff:192.168.1.50", "", "fd00::50::", "fd00::50 "] {
+            #expect(!CastNetworkGate.peerAllowed(peer, receiver: "fd00::50", boundTo: "fd00::20"), "\(peer)")
+        }
+        #expect(!CastNetworkGate.peerAllowed("fd00::50", receiver: "192.168.1.50", boundTo: "192.168.1.20"), "the families are never mixed")
+        #expect(!CastNetworkGate.peerAllowed("192.168.1.50", receiver: "::ffff:192.168.1.50", boundTo: "fd00::20"))
+        #expect(CastNetworkGate.peerAllowed("::1", receiver: nil, boundTo: "::1") && !CastNetworkGate.peerAllowed("fd00::1", receiver: nil, boundTo: "::1"))
+        #expect(!CastNetworkGate.peerAllowed("::1", receiver: nil, boundTo: "fd00::20"), "loopback is served only by a loopback bind")
+        #expect(!CastNetworkGate.peerAllowed("fd00::50", receiver: nil, boundTo: "fd00::20"), "no receiver address: nobody")
     }
     @Test func peersAreMatchedByExactAddress() {
         #expect(CastNetworkGate.peerAllowed("192.168.1.50", receiver: "192.168.1.50", boundTo: "192.168.1.20"))

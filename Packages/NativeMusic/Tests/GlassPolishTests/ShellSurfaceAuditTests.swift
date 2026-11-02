@@ -5,6 +5,7 @@ import Foundation
 import DesignSystem
 @testable import AppShell
 @testable import Features
+import TestSupport
 
 /// W21 rework 2 (T52): the shell's own player surfaces, composed from V02's views, through V02's layout audit and render harness: the mini-player at about
 /// 360 x 160 compact and expanded, the full-screen Now Playing window (with and without its queue panel), and the status popover. No overlaps, one grid,
@@ -54,7 +55,7 @@ import DesignSystem
         accounts.installShell()
         let shell = accounts.shell
         if let track = surface.track { accounts.playback.music = await SyntheticPlayback.player(track) }
-        let store = UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!
+        let store = InMemoryDefaults()
         var preferences = MiniPlayerPreferences(); preferences.expanded = surface.rawValue.hasPrefix("miniExpanded")
         preferences.save(to: store)
         let controller = MiniPlayerController(preferences: store) { _ in AnyView(EmptyView()) }

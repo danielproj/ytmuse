@@ -835,6 +835,8 @@ public actor NativePlayer: PlaybackEngine {
         try await handler(item.id, old, item.context, item.variant, position)
         guard backendRevision == revision, context == item.context, decoded === backend else { throw DomainError.staleContext }
     }
+    /// TH3: whether the decoded graph is still alive (it is retired when the last occurrence has ended and the queue is exhausting).
+    func hasDecodedBackendForMeasurement() -> Bool { decoded != nil }
     func hasStagedHandoffForMeasurement() -> Bool { decoded?.framesUntilTransition != nil && nextItem != nil }
     func pendingHandoffPosition(_ id: UUID) -> Double? {
         guard let (item, position) = decoded?.pendingTransition, item.id == id else { return nil }

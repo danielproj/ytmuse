@@ -109,31 +109,75 @@ struct SleepTimerLine: View {
     }
 }
 
-/// The sleep-timer menu of the YouTube Music transport: the presets, End of track / End of episode, a custom length and Cancel. Every choice goes through
-/// the playback owner (`setMusicSleepTimer`), the same call the App Intent makes.
-struct MusicSleepTimerMenu: View {
+/// The sleep-timer choices of the YouTube Music transport: the presets, End of track / End of episode, a custom length and Cancel. Every choice goes through
+/// the playback owner (`setMusicSleepTimer`), the same call the App Intent makes. Used by the menu below and by the capsule's ⋯ menu.
+struct MusicSleepTimerItems: View {
     let model: PlaybackModel
     var episode = false
+    /// The engine's reason when it refused (nil when the last choice was accepted).
+    var refused: (String?) -> Void = { _ in }
     @State private var customMinutes = 10.0
-    @State private var refusal: String?
     var body: some View {
         let running = model.sleepTimerDisplay != nil
-        Menu {
-            ForEach([5, 15, 30, 60], id: \.self) { minutes in
-                Button("\(minutes) minutes") { set(.minutes(minutes)) }
-            }
-            Button(LocalizedStringKey(episode ? "End of episode" : "End of track")) { set(.endOfItem) }
-            Button("Custom: \(Int(customMinutes)) minutes") { set(.custom(customMinutes * 60)) }
-            ControlGroup { Stepper("Custom minutes", value: $customMinutes, in: 1...1440) }
-            Divider()
-            Button("Cancel timer") { set(nil) }.disabled(!running)
-        } label: { Label("Sleep timer", systemImage: running ? "moon.zzz.fill" : "moon.zzz") }
-            .labelStyle(.iconOnly).help(Text(refusal ?? String(localized: "Sleep timer"))).accessibilityIdentifier("musicSleepTimerMenu")
+        ForEach([5, 15, 30, 60], id: \.self) { minutes in
+            Button("\(minutes) minutes") { set(.minutes(minutes)) }
+        }
+        Button(LocalizedStringKey(episode ? "End of episode" : "End of track")) { set(.endOfItem) }
+        Button("Custom: \(Int(customMinutes)) minutes") { set(.custom(customMinutes * 60)) }
+        ControlGroup { Stepper("Custom minutes", value: $customMinutes, in: 1...1440) }
+        Divider()
+        Button("Cancel timer") { set(nil) }.disabled(!running)
     }
     private func set(_ timer: SleepTimer?) {
         Task {
             let result = await model.setMusicSleepTimer(timer)
-            if case .refused(let reason) = result { refusal = reason.message } else { refusal = nil }
+            if case .refused(let reason) = result { refused(reason.message) } else { refused(nil) }
         }
+    }
+}
+
+/// The sleep-timer menu of the YouTube Music transport (the expanded player's accessories).
+struct MusicSleepTimerMenu: View {
+    let model: PlaybackModel
+    var episode = false
+    @State private var refusal: String?
+    var body: some View {
+        let running = model.sleepTimerDisplay != nil
+        Menu {
+            MusicSleepTimerItems(model: model, episode: episode) { refusal = $0 }
+        } label: { Label("Sleep timer", systemImage: running ? "moon.zzz.fill" : "moon.zzz") }
+            .labelStyle(.iconOnly).help(Text(refusal ?? String(localized: "Sleep timer"))).accessibilityIdentifier("musicSleepTimerMenu")
+    }
+}
+
+/// The capsule's chip: a moon and the time left (or what the timer waits for), beside the ⋯ menu. It says the same sentence as `SleepTimerLine` to
+/// VoiceOver and keeps that line's identifier. Nothing when there is no timer.
+struct SleepTimerChip: View {
+    let model: PlaybackModel
+    var episode = false
+    var identifier = "sleepTimerLine"
+    @State private var now = Date()
+    var body: some View {
+        if let display = model.sleepTimerDisplay {
+            let at = display.ticks ? now : Date()
+            HStack(spacing: MusicSpace.xxs) {
+                Image(systemName: "moon.zzz.fill")
+                Text(verbatim: Self.short(display, at: at))
+            }.musicCapsuleChip()
+                .accessibilityElement(children: .ignore).accessibilityAddTraits(.isStaticText)
+                .accessibilityLabel(Text(display.text(at: at, episode: episode)))
+                .accessibilityIdentifier(identifier)
+                .help(Text(display.text(at: at, episode: episode)))
+                .task(id: display.ticks) {
+                    guard display.ticks else { return }
+                    while !Task.isCancelled { now = Date(); try? await Task.sleep(for: .seconds(1)) }
+                }
+        }
+    }
+    /// What the chip prints after the moon: the clock, or a word for fading and End of item.
+    static func short(_ display: SleepTimerDisplay, at now: Date) -> String {
+        if display.fading { return String(localized: "Fading") }
+        if display.endOfItem { return String(localized: "End") }
+        return SleepTimerDisplay.clock(display.remaining(at: now) ?? 0)
     }
 }

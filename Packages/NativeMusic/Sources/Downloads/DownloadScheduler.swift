@@ -514,8 +514,10 @@ public actor DownloadScheduler: DownloadsControlling, AccountLifecycleParticipan
         return PlayableDownload(media: media, variant: variant, title: job.title, subtitle: job.subtitle, contentType: job.contentType, seekable: job.grantRights.contains("seek"), context: context)
     }
     public func jobID(for media: ServiceID) -> UUID? { file?.jobs.first { $0.media == media.rawValue }?.id }
-    /// The store identifier of a job's bound variant (diagnostics and tests).
+    #if DEBUG
+    /// The store identifier of a job's bound variant (tests; Debug only, TH3).
     public func variantForTesting(_ media: ServiceID) -> String? { file?.jobs.first { $0.media == media.rawValue }?.variant }
+    #endif
 
     // MARK: Scheduling
 

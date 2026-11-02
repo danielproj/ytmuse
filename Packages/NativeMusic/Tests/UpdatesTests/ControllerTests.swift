@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import Updates
+import TestSupport
 
 /// T30.3 and T30.2 through the controller: update checks are off until the person says otherwise, ask once, run at most daily after opt-in, never
 /// install without the explicit restart, and never swap while playing.
@@ -70,14 +71,12 @@ import Testing
         let first = try rig(); first.controller.answerAskOnce(checkDaily: true)
         let second = try rig(state: first.store.load())
         #expect(second.controller.state.mode == .daily && !second.controller.shouldAskOnce)
-        let suite = "ytmuse-w30-" + UUID().uuidString
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = InMemoryDefaults()
         let persisted = UserDefaultsUpdateStateStore(defaults: defaults)
         var state = UpdateState(); state.mode = .daily; state.automaticInstallation = true; state.lastAcceptedSequence = 7
         persisted.save(state)
         #expect(UserDefaultsUpdateStateStore(defaults: defaults).load() == state)
         #expect(UpdateState().mode == .undecided && UpdateState().automaticInstallation == false)   // the defaults
-        defaults.removePersistentDomain(forName: suite)
     }
     @Test func aBuildWithoutAFeedNeverAsksAndNeverContactsAnything() async throws {
         defer { scratch.remove() }

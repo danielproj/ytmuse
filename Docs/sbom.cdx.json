@@ -1157,6 +1157,28 @@
       "type": "framework"
     },
     {
+      "bom-ref": "system-os",
+      "licenses": [
+        {
+          "license": {
+            "name": "Part of macOS; provided by the operating system and not redistributed"
+          }
+        }
+      ],
+      "name": "os",
+      "properties": [
+        {
+          "name": "ytmuse:distribution",
+          "value": "operating-system"
+        }
+      ],
+      "scope": "required",
+      "supplier": {
+        "name": "Apple Inc."
+      },
+      "type": "framework"
+    },
+    {
       "bom-ref": "third-party-kaset",
       "copyright": "Copyright (c) 2025 sozercan",
       "externalReferences": [
@@ -1250,7 +1272,8 @@
         "system-UniformTypeIdentifiers",
         "system-UserNotifications",
         "system-WebKit",
-        "system-WidgetKit"
+        "system-WidgetKit",
+        "system-os"
       ],
       "ref": "ytmuse-app"
     },
@@ -1282,6 +1305,7 @@
     },
     {
       "dependsOn": [
+        "module-Diagnostics",
         "module-Domain"
       ],
       "ref": "module-Artwork"
@@ -1426,7 +1450,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:7412d2b2-0fe5-bfb1-d49f-deb4107a1af1",
+  "serialNumber": "urn:uuid:80251084-9c6f-0fd6-fc62-e1cfd871dcad",
   "specVersion": "1.5",
   "version": 1
 }

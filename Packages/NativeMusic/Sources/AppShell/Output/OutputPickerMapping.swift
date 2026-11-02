@@ -29,7 +29,7 @@ enum OutputPickerMapping {
     static func volumeSentence(_ capabilities: RouteCapabilities) -> String {
         switch capabilities.volume {
         case .appLevel: String(localized: "App volume applies. The output's own volume is the Mac's.")
-        case .receiver: String(localized: "The receiver sets the volume.")
+        case .receiver: String(localized: "While you cast, the volume slider sets the receiver's volume. The Mac's volume stays as it was.")
         }
     }
     static func sentence(_ limit: RouteCapabilities.Limit, engine: OutputEngineKind) -> String {

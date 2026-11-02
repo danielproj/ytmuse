@@ -2,6 +2,7 @@ import Foundation
 import Synchronization
 import Testing
 @testable import OutputRoutes
+import TestSupport
 
 /// T39.1 (against a simulated receiver), T39.2 and T39.3: the route driver joins the native session to a receiver inside the W22 route model. The receiver is
 /// `SimulatedCastReceiver`; the media goes through the REAL relay on loopback; the native session is a recorder. Real devices are on the live list.
@@ -90,6 +91,125 @@ import Testing
         rig.receiver.inject(namespace: CastNamespace.receiver, json: #"{"type":"RECEIVER_STATUS","status":{"applications":[{"appId":"CC1AD845","sessionId":"sim-session-1","transportId":"sim-transport-1","namespaces":[{"name":"urn:x-cast:com.google.cast.media"}]}],"volume":{"level":0.3,"muted":true}}}"#)
         #expect(await waitUntil { rig.coordinator.remote?.volume == ReceiverVolume(level: 0.3, muted: true) })
         #expect(rig.coordinator.capabilities(for: .localMedia).volume == .receiver, "the receiver sets the level")
+    }
+    // MARK: The volume slider shows and drives the RECEIVER's level while an owned or local item is cast (TH4, rework of M1)
+
+    func setVolumeCount(_ rig: CastRig) -> Int { rig.receiver.receivedTypes().filter { $0 == "SET_VOLUME" }.count }
+    func adjustable(_ rig: CastRig) async -> Bool { await waitUntil { rig.driver.volumeControl?.isAdjustable == true } }
+    @Test func theSliderStartsAtTheReceiversOwnLevelAndConnectingSetsNothing() async throws {
+        let rig = try await CastRig.make(receiverLevel: 0.4); defer { rig.cleanup() }
+        #expect(rig.driver.volumeControl == nil, "not casting: the slider is the Mac's")
+        _ = await connect(rig)
+        #expect(await adjustable(rig))
+        #expect(rig.driver.volumeControl?.level == 0.4, "the receiver's level, as it reports it")
+        #expect(setVolumeCount(rig) == 0 && rig.receiver.volume == 0.4, "connecting does not touch the receiver's volume")
+    }
+    @Test func aSmallSliderMoveSendsAboutTheReceiversLevelNeverTheMacsOrFull() async throws {
+        let rig = try await CastRig.make(receiverLevel: 0.4); defer { rig.cleanup() }
+        _ = await connect(rig)
+        #expect(await adjustable(rig))
+        rig.driver.requestVolume(0.43); await rig.driver.volumeSettled()
+        #expect(await waitUntil { abs(rig.receiver.volume - 0.43) < 1e-9 }, "\(rig.receiver.volume)")
+        #expect(setVolumeCount(rig) == 1 && !rig.receiver.muted)
+        #expect(rig.driver.volumeControl?.level == 0.43)
+        rig.driver.requestVolume(0.40); await rig.driver.volumeSettled()
+        #expect(await waitUntil { abs(rig.receiver.volume - 0.40) < 1e-9 })
+    }
+    @Test func theLevelIsClampedAndANonNumberIsIgnored() async throws {
+        let rig = try await CastRig.make(receiverLevel: 0.5); defer { rig.cleanup() }
+        _ = await connect(rig); #expect(await adjustable(rig))
+        rig.driver.requestVolume(7); await rig.driver.volumeSettled(); #expect(await waitUntil { rig.receiver.volume == 1 })
+        rig.driver.requestVolume(-2); await rig.driver.volumeSettled(); #expect(await waitUntil { rig.receiver.volume == 0 })
+        let before = setVolumeCount(rig)
+        rig.driver.requestVolume(.nan); rig.driver.requestVolume(.infinity); await rig.driver.volumeSettled()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(setVolumeCount(rig) == before, "NaN and infinity send nothing")
+    }
+    @Test func aBurstSendsOnlyTheNewestLevelWhateverTheTaskOrder() async throws {
+        let rig = try await CastRig.make(receiverLevel: 0.5); defer { rig.cleanup() }
+        _ = await connect(rig); #expect(await adjustable(rig))
+        for step in 1...9 { rig.driver.requestVolume(Double(step) / 10) }
+        await rig.driver.volumeSettled()
+        #expect(await waitUntil { abs(rig.receiver.volume - 0.9) < 1e-9 }, "the newest level: \(rig.receiver.volume)")
+        #expect(setVolumeCount(rig) == 1, "handed over synchronously: one send, of the newest")
+        #expect(rig.driver.volumeControl?.level == 0.9)
+    }
+    @Test func aFixedVolumeReceiverIsNeverSentALevelAndTheSliderSaysWhy() async throws {
+        var options = SimulatedCastReceiver.Options(); options.volumeControlType = "fixed"
+        let rig = try await CastRig.make(receiverOptions: options, receiverLevel: 0.5); defer { rig.cleanup() }
+        _ = await connect(rig)
+        #expect(await waitUntil { rig.driver.volumeControl?.unavailable == .fixed })
+        rig.driver.requestVolume(0.2); await rig.driver.volumeSettled()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(setVolumeCount(rig) == 0 && rig.receiver.volume == 0.5 && rig.driver.volumeControl?.level == 0.5 && rig.driver.volumeControl?.isAdjustable == false)
+    }
+    /// TH5 (TH4 critic L-a, mutation R2): the abilities arrive (MEDIA_STATUS says the stream volume can be set) but the receiver has never said where its level is.
+    /// The slider must not show 0 as if it knew, and must not send anything: a drag would otherwise set a level relative to a guess.
+    @Test func aReceiverThatHasNotReportedItsLevelIsNeverSentOneEvenOnceItAllowsTheStreamVolume() async throws {
+        var options = SimulatedCastReceiver.Options(); options.reportsVolumeLevel = false
+        let rig = try await CastRig.make(receiverOptions: options, receiverLevel: 0.5); defer { rig.cleanup() }
+        _ = await connect(rig)
+        #expect(await waitUntil { rig.receiver.playerState == "PLAYING" }, "the item is loaded, so the receiver's MEDIA_STATUS (stream volume allowed) has been sent")
+        try await Task.sleep(for: .milliseconds(200))
+        #expect(rig.driver.volumeControl?.unavailable == .notReported && rig.driver.volumeControl?.isAdjustable == false, "no level reported: not adjustable, whatever the abilities say")
+        rig.driver.requestVolume(0.2); await rig.driver.volumeSettled()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(setVolumeCount(rig) == 0 && rig.receiver.volume == 0.5, "nothing was sent")
+        #expect(rig.driver.volumeControl?.unavailable == .notReported && rig.driver.volumeControl?.level == 0, "a request that was refused is not shown as the level")
+    }
+    @Test func aReceiverWithoutStreamVolumeSupportIsNeverSentALevel() async throws {
+        var options = SimulatedCastReceiver.Options(); options.supportedMediaCommands = 15 & ~4
+        let rig = try await CastRig.make(receiverOptions: options, receiverLevel: 0.5); defer { rig.cleanup() }
+        _ = await connect(rig)
+        #expect(await waitUntil { rig.driver.volumeControl?.unavailable == .unsupported })
+        rig.driver.requestVolume(0.2); await rig.driver.volumeSettled()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(setVolumeCount(rig) == 0 && rig.receiver.volume == 0.5)
+    }
+    @Test func theSliderIsTheReceiversOnlyForOwnedOrLocalMedia() async throws {
+        // A source the receiver fetches itself is not owned or local media: the slider is not the receiver's and nothing is sent.
+        let direct = CastLocalItem(key: "d", source: .direct(URL(string: "https://media.example.org/public/episode.mp3")!), title: "Public episode")
+        let rig = try await CastRig.make(item: { _ in direct }); defer { rig.cleanup() }
+        #expect(await connect(rig) == .selected)
+        #expect(rig.driver.volumeControl == nil)
+        rig.driver.requestVolume(0.2); await rig.driver.volumeSettled()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(setVolumeCount(rig) == 0 && rig.receiver.volume == 1.0)
+        // Control: an owned item (the relay serves it) is adjustable.
+        let owned = try await CastRig.make(); defer { owned.cleanup() }
+        _ = await connect(owned)
+        #expect(await adjustable(owned))
+    }
+    @Test func nothingIsSentBeforeAnItemIsLoadedAfterTheRouteEndsOrWithNoSession() async throws {
+        let none = try await CastRig.make(); defer { none.cleanup() }
+        none.driver.requestVolume(0.4)   // no session at all
+        #expect(setVolumeCount(none) == 0 && none.receiver.openCount == 0 && none.driver.volumeControl == nil)
+        let empty = try await CastRig.make(); defer { empty.cleanup() }
+        empty.local.moveTo(nil)   // nothing queued yet
+        #expect(await connect(empty) == .selected)
+        #expect(empty.driver.volumeControl == nil, "connected with nothing queued: no media loaded, so the slider is the Mac's")
+        empty.driver.requestVolume(0.4); await empty.driver.volumeSettled()
+        #expect(setVolumeCount(empty) == 0)
+        let ended = try await CastRig.make(); defer { ended.cleanup() }
+        _ = await connect(ended); #expect(await adjustable(ended))
+        await ended.coordinator.leaveCast()
+        #expect(ended.driver.volumeControl == nil, "after leaving, the slider is the Mac's again")
+        let count = setVolumeCount(ended)
+        ended.driver.requestVolume(0.4); await ended.driver.volumeSettled()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(setVolumeCount(ended) == count)
+    }
+    @Test func theSliderFollowsALevelTheReceiverChangesItself() async throws {
+        let rig = try await CastRig.make(receiverLevel: 0.4); defer { rig.cleanup() }
+        _ = await connect(rig); #expect(await adjustable(rig))
+        rig.receiver.inject(namespace: CastNamespace.receiver, json: #"{"type":"RECEIVER_STATUS","status":{"applications":[{"appId":"CC1AD845","sessionId":"sim-session-1","transportId":"sim-transport-1","namespaces":[{"name":"urn:x-cast:com.google.cast.media"}]}],"volume":{"level":0.7,"muted":false,"controlType":"attenuation"}}}"#)
+        #expect(await waitUntil { rig.driver.volumeControl?.level == 0.7 }, "a remote or the speaker's own dial moved it: the slider follows")
+        #expect(setVolumeCount(rig) == 0)
+        // After the person has moved it themselves, the receiver's later word still wins once nothing is left to send.
+        rig.driver.requestVolume(0.55); await rig.driver.volumeSettled()
+        #expect(await waitUntil { abs(rig.receiver.volume - 0.55) < 1e-9 && rig.driver.volumeControl?.level == 0.55 })
+        rig.receiver.inject(namespace: CastNamespace.receiver, json: #"{"type":"RECEIVER_STATUS","status":{"applications":[{"appId":"CC1AD845","sessionId":"sim-session-1","transportId":"sim-transport-1","namespaces":[{"name":"urn:x-cast:com.google.cast.media"}]}],"volume":{"level":0.2,"muted":false,"controlType":"attenuation"}}}"#)
+        #expect(await waitUntil { rig.driver.volumeControl?.level == 0.2 }, "the speaker's own dial moved it after the slider did")
     }
     @Test func theReceiversStateFollowsWhatItReports() async throws {
         let rig = try await CastRig.make(); defer { rig.cleanup() }
@@ -453,12 +573,11 @@ import Testing
         #expect(store.load() == nil, "default Stop: nothing remembered")
         store.save(.leave); #expect(store.load() == .leave)
         store.save(nil); #expect(store.load() == nil)
-        let suite = UserDefaults(suiteName: "ytmuse-w39-quit-\(UUID().uuidString)")!
+        let suite = InMemoryDefaults()
         let defaults = DefaultsCastQuitChoice(suite)
         #expect(defaults.load() == nil)
         defaults.save(.stop); #expect(defaults.load() == .stop)
         suite.set("garbage", forKey: DefaultsCastQuitChoice.key); #expect(defaults.load() == nil, "an unknown value is not a choice")
-        suite.removePersistentDomain(forName: suite.volatileDomainNames.first ?? "")
     }
     @Test func quittingWhileCastingStopsTheReceiverAndTheRelay() async throws {
         let rig = try await CastRig.make(); defer { rig.cleanup() }

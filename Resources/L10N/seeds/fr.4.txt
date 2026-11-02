@@ -124,7 +124,7 @@
 1124|Commandes de l’historique de YouTube Music
 1125|YouTube Music demande une pause. Réessayez Samples dans un instant.
 1126|YouTube Music traite encore ce fichier. Vérifiez à nouveau plus tard.
-1127|YouTube Music gère les éléments à venir de cette playlist ; ils ne sont donc ni listés ni modifiables ici.
+1127|YouTube Music gère les éléments à venir ; ils ne peuvent donc être ni réorganisés ni supprimés ici.
 1128|YouTube Music gère les éléments à venir pendant la lecture ; cette app ne peut donc pas en ajouter.
 1129|Playlist YouTube Music
 1130|Les playlists YouTube Music sont diffusées en streaming, pas conservées sur ce Mac. Les fichiers audio que vous ajoutez dans Téléchargements apparaissent ici.

@@ -279,7 +279,11 @@ import Observation
         case .play:
             guard let target = CatalogActionPlan.target(for: item) else { feedback[item.id] = .failed(String(localized: "This item didn’t include anything to play.")); return }
             await start(target: target, title: item.title, feedbackKey: item.id)
-        case .shuffle, .radio:
+        case .radio:
+            // The row's own published radio, nothing derived; an item without one never had the offer, so this is only a stale tap.
+            guard let target = CatalogActionPlan.radioTarget(for: item) else { feedback[item.id] = .failed(String(localized: "This action isn’t available for this item.")); return }
+            await start(target: target, title: item.title, feedbackKey: item.id)
+        case .shuffle:
             feedback[item.id] = .failed(String(localized: "This action isn’t available for this item."))
         }
     }
@@ -306,7 +310,8 @@ import Observation
         guard accountScope() == scopeAtStart else { feedback[feedbackKey] = nil; return }
         switch outcome {
         case .started: feedback[feedbackKey] = .started
-        case .busy: feedback[feedbackKey] = nil
+        // Another start (a shuffle still being set up, a Play a moment ago) is under way; this one was not sent. Said, never silent.
+        case .busy: feedback[feedbackKey] = .failed(String(localized: "Another start is still in progress. Try again in a moment."))
         case .stale: feedback[feedbackKey] = .failed(String(localized: "Your account changed before this started. Try again."))
         case .failed: feedback[feedbackKey] = .failed(String(localized: "YouTube Music couldn’t start this. Try again."))
         }

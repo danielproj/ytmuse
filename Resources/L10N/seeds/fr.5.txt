@@ -72,7 +72,8 @@
 1245|Aucun chemin réseau vers le service.
 1246|Aucune n’est définie tant que vous n’en enregistrez pas.
 1247|Normaliser le volume
-1248|Pas encore disponible. Une radio qui poursuit la lecture a besoin d’une source de recommandations, qui relève du travail sur la file d’attente et la découverte (W05 et W38). Rien dans cette app ne démarre une radio de lui-même.
+1248|Le lecteur de YouTube Music décide de ce qui se lit à la fin de la file d’attente ; cette app n’a pas de réglage pour cela. Pour lancer vous-même une radio, choisissez « Démarrer la radio » là où elle est proposée.
+2001|Un autre démarrage est encore en cours. Réessayez dans un instant.
 1249|Pas encore disponible. La recherche et l’installation des mises à jour arrivent avec la distribution signée (prévue sous W30 et W46), avec leur propre activation. Cette version ne recherche ni n’installe rien.
 1250|Désactivé pendant la lecture
 1251|Désactivé pendant la lecture ; un redémarrage est toujours explicite.

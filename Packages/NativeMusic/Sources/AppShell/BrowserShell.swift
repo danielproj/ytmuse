@@ -16,8 +16,6 @@ struct BrowserShell: View {
     @State private var tint = WindowArtworkTint()
     /// One namespace for the whole player: the glass surface, artwork, title, artist and controls keep their identity between the bar and the expanded player.
     @Namespace private var artworkNamespace
-    /// The bar's measured height: the slot the split view leaves for it while the bar floats in the player layer (and keeps while it is expanded).
-    @State private var barHeight: CGFloat = 112
     /// The YouTube Music cover's light, published by whichever cover is on screen (the bar's, or the expanded player's) and held here across the morph.
     @State private var webAccent: MusicTint?
     @State private var navigationMotion = MusicMotion.navigation
@@ -57,7 +55,6 @@ struct BrowserShell: View {
     var body: some View {
         GeometryReader { geometry in
             let layout = BrowserLayout(width: geometry.size.width)
-            VStack(spacing: 0) {
             NavigationSplitView {
                 sidebar
                     .navigationSplitViewColumnWidth(min: 200, ideal: 224, max: 280)
@@ -68,25 +65,26 @@ struct BrowserShell: View {
                     .fixedSize(horizontal: false, vertical: true)
                 #if DEBUG
                 if showsQAReadouts { debugQARow.fixedSize(horizontal: false, vertical: true) }
+                debugPlayerRow.fixedSize(horizontal: false, vertical: true)
                 #endif
                 HStack(spacing: MusicSpace.sm) {
-                    destination.musicContentZoom().id(navigation.session.current.id).musicTransition(.reveal).musicAnimation(navigationMotion, value: navigation.session.current.id, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background).frame(maxWidth: .infinity, maxHeight: .infinity).musicSurface().audit("detailPanel", group: "panels", kind: .region)
-                        .anchorPreference(key: ShellPanelAnchor.self, value: .bounds) { $0 }
+                    destination.musicContentZoom().id(navigation.session.current.id).musicTransition(.reveal).musicAnimation(navigationMotion, value: navigation.session.current.id, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background).frame(maxWidth: .infinity, maxHeight: .infinity).scrollEdgeEffectStyle(.soft, for: .bottom).musicSurface().audit("detailPanel", group: "panels", kind: .region)
+                        .transformAnchorPreference(key: ShellPanelAnchor.self, value: .bounds) { $0.panel = $1 }
                         .opacity(expanded ? 0 : 1).allowsHitTesting(!expanded).accessibilityHidden(expanded)
                     if let trailing = panels.selection, panels.allowsInline, !expanded {
-                        trailingPanel(trailing).musicContentZoom().frame(minWidth: 300, idealWidth: 320, maxWidth: 420).musicSurface().audit("trailingPanel", group: "panels", kind: .region).browserRegion("panel").accessibilityElement(children: .contain).accessibilityIdentifier("inlineTrailingPanel")
+                        trailingPanel(trailing).musicContentZoom().frame(minWidth: 300, idealWidth: 320, maxWidth: 420).scrollEdgeEffectStyle(.soft, for: .bottom).musicSurface().audit("trailingPanel", group: "panels", kind: .region).browserRegion("panel").accessibilityElement(children: .contain).accessibilityIdentifier("inlineTrailingPanel")
                             .musicTransition(.slideFromTrailing)
                     }
+                // The capsule floats over the bottom of this column (in the player layer, so it can become the expanded player). The panels end above it,
+                // with a gap, and nothing scrolls behind it: this padding is that room.
                 }.padding(MusicSpace.sm).frame(maxWidth: .infinity, maxHeight: .infinity).browserRegion("detail")
-                }.frame(width: available.size.width, height: available.size.height)
+                    .padding(.bottom, PlayerCapsule.occupiedHeight(compact: layout.compactPlayer))
+                }.frame(width: available.size.width, height: available.size.height).audit("detailColumn", group: "column", kind: .layer)
+                    .transformAnchorPreference(key: ShellPanelAnchor.self, value: .bounds) { $0.column = $1 }
                 }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
-                // The bar floats in the player layer below (so it can become the expanded player); this slot keeps its room.
-                Color.clear.frame(height: expanded ? 0 : barHeight)
-                    .musicAnimation(.playerMorph, value: expanded, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background)
-            }
-            .overlayPreferenceValue(ShellPanelAnchor.self) { anchor in
-                GeometryReader { overlay in playerLayer(panel: anchor.map { overlay[$0] }, size: overlay.size, layout: layout) }
+            .overlayPreferenceValue(ShellPanelAnchor.self) { anchors in
+                GeometryReader { overlay in playerLayer(panel: anchors.panel.map { overlay[$0] }, column: anchors.column.map { overlay[$0] }, size: overlay.size, layout: layout) }
             }
             .onChange(of: layout.showsTrailing, initial: true) { _, value in panels.allowsInline = value }
             .sheet(isPresented: Binding(get: { panels.presentsSheet }, set: { panels.sheetChanged($0) })) {
@@ -264,6 +262,37 @@ struct BrowserShell: View {
                     }.fixedSize(horizontal: true, vertical: false).font(.caption).padding(MusicSpace.xs).accessibilityElement(children: .contain) }
                     .scrollIndicators(.hidden).fixedSize(horizontal: false, vertical: true).browserRegion("debugRow")
     }
+    /// The Debug-only controls of the isolated launch that used to sit in the bar: the owned test audio and video, the scripted output and receiver, and the
+    /// readouts of the owned media and the player gate. They are test seams; the capsule carries none of them.
+    private var debugPlayerRow: some View {
+        let model = accounts.playback
+        return ScrollView(.horizontal) { HStack {
+            // The buttons come first so they stay in view whatever the window's width; the readouts follow.
+            Button(LocalizedStringKey(model.session == nil ? "Play owned test audio" : "Restart owned test queue")) {
+                let request = model.authority.requestOwnedStart(); Task { await model.startOwned(request: request) }
+            }.disabled(model.starting).accessibilityIdentifier("startOwnedAudio").musicButtons()
+            // W17: the owned synthetic video (video-only, silent) through the native AVKit path; Debug-only like the audio button.
+            Button("Play owned test video") {
+                let request = model.authority.requestOwnedStart(); Task { await model.startOwnedVideo(request: request) }
+            }.disabled(model.starting).accessibilityIdentifier("startOwnedVideo").musicButtons()
+            // W22: the scripted outputs of an isolated launch (never a real device): the headphones leave, or come back.
+            if let scripted = model.outputs?.scripted {
+                Button("Simulate output loss") { scripted.setHeadphones(present: false) }.accessibilityIdentifier("simulateOutputLoss").musicButtons()
+                Button("Restore scripted output") { scripted.setHeadphones(present: true) }.accessibilityIdentifier("restoreScriptedOutput").musicButtons()
+            }
+            // W39: the simulated Cast receiver of an isolated launch drops its connection (the receiver leaves the network).
+            if let receiver = model.outputs?.scriptedCastReceiver {
+                Button("Simulate receiver loss") { receiver.dropConnection() }.accessibilityIdentifier("simulateCastLoss").musicButtons()
+            }
+            Text(OwnedMedia.label).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("ownedMediaLabel")
+            Text("Player gate: window \(windowVisible ? "visible" : "hidden"), scene \(String(describing: phase))").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("designPlayerGate")
+            if model.music == nil, model.controlledAudioTest, let state = model.state {
+                Text(state.nativeStartGain.map { String(format: "%.6f", $0) } ?? "No native start").font(.caption).accessibilityIdentifier("nativeStartGain")
+                Text(String(format: "%.6f", state.appliedGain)).font(.caption).accessibilityIdentifier("nativeAppliedGain")
+            }
+        }.fixedSize(horizontal: true, vertical: false).padding(MusicSpace.xs).accessibilityElement(children: .contain) }
+            .scrollIndicators(.hidden).fixedSize(horizontal: false, vertical: true).browserRegion("debugPlayerRow")
+    }
     #endif
     /// Now Playing is open: the bar has grown into the expanded player.
     private var expanded: Bool { navigation.session.current.destination == .nowPlaying }
@@ -278,20 +307,23 @@ struct BrowserShell: View {
     }
     /// The player layer: the bar and the expanded player share ONE glass container and one namespace, so switching between them (an animated state
     /// change) morphs the glass shape and carries the artwork, title, artist and controls across. Both are the same playback owner's presentation.
-    @ViewBuilder private func playerLayer(panel: CGRect?, size: CGSize, layout: BrowserLayout) -> some View {
-        // The layer occupies only what it draws: the bar's strip while collapsed, the detail panel's corner-to-corner area while expanded. The glass
+    @ViewBuilder private func playerLayer(panel: CGRect?, column: CGRect?, size: CGSize, layout: BrowserLayout) -> some View {
+        // The layer occupies only what it draws: the capsule while collapsed, the detail panel's corner-to-corner area while expanded. The glass
         // container is a hit-testable view of its own, so a full-window layer would swallow every click meant for the sidebar and the pages beneath.
         let open = expanded && panel != nil
         // W28 (L10N04): `panel` is measured from the window's physical left edge, so the layer is placed in physical terms too. Left-to-right, the expanded
         // player runs from the detail panel's left edge to the window's right edge; right-to-left (sidebar on the right) it runs from the window's left edge
         // to the detail panel's right edge. The content inside keeps the layout direction, so its own leading/trailing padding still mirrors.
+        // PLAYER-1: collapsed, the capsule floats in the detail column (`PlayerCapsule.frame`), also in physical terms.
         let rtl = layoutDirection == .rightToLeft
-        let width = open ? (rtl ? (panel?.maxX ?? size.width) : size.width - (panel?.minX ?? 0)) : size.width
-        let height = open ? size.height - (panel?.minY ?? 0) : barHeight
+        let capsule = PlayerCapsule.frame(column: column ?? CGRect(origin: .zero, size: size), windowHeight: size.height, compact: layout.compactPlayer)
+        let width = open ? (rtl ? (panel?.maxX ?? size.width) : size.width - (panel?.minX ?? 0)) : capsule.width
+        let height = open ? size.height - (panel?.minY ?? 0) : capsule.height
+        let leading = open ? (rtl ? 0 : size.width - width) : capsule.minX
+        let bottom = open ? 0 : size.height - capsule.maxY
         VStack(spacing: 0) {
             Spacer(minLength: 0)
             HStack(spacing: 0) {
-                if !(open && rtl) { Spacer(minLength: 0) }
                 MusicGlassGroup(spacing: MusicSpace.xs) {
                     ZStack(alignment: .bottom) {
                         if open {
@@ -313,16 +345,16 @@ struct BrowserShell: View {
                                           paletteChanged: { tint.receive($0, source: $1, current: accounts.artworkRequest.map(ArtworkTintIdentity.init), authority: accounts.artworkAuthority) },
                                           artworkExpanded: false, artworkNamespace: artworkNamespace, showNowPlaying: openNowPlaying, compact: layout.compactPlayer, showQueue: { toggle(.queue) },
                                           accent: playerAccent, accentChanged: { webAccent = $0 })
-                                .fixedSize(horizontal: false, vertical: true).browserRegion("player")
-                                .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { barHeight = $0 }
+                                .browserRegion("player")
                                 // No fade: a view at opacity 0 takes no clicks, and the bar must take the click that follows Back (the glass morph carries the motion).
                                 .musicTransition(.morphSwap).zIndex(1)
                         }
                     }.frame(width: width, height: height, alignment: .bottom)
                 }
                 .environment(\.layoutDirection, layoutDirection)
-                if open && rtl { Spacer(minLength: 0) }
-            }
+                .padding(.leading, leading)
+                Spacer(minLength: 0)
+            }.padding(.bottom, bottom)
         }
         .environment(\.layoutDirection, .leftToRight)
         .frame(width: size.width, height: size.height)
@@ -332,11 +364,14 @@ struct BrowserShell: View {
     private func toggle(_ panel: TrailingPanel) {
         musicWithAnimation(.navigation, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background) { panels.toggle(panel) }
     }
+    /// Added above the sidebar's first row (POL-A). The list's own top inset is about 4 pt (the audit measures the first label 6 pt below the panel top); with this the first row's highlight is about 16 pt from the panel's top edge, as from its sides.
+    static let sidebarTopInset = MusicSpace.sm
     private var sidebar: some View {
         List(selection: Binding<BrowserDestination?>(get: { navigation.session.current.destination }, set: { if let value = $0 { navigationMotion = .navigation; navigation.open(value) } })) {
             Section {
                 ForEach([BrowserDestination.home, .explore, .search, .library, .downloads], id: \.self) { destination in
                     Label(LocalizedStringKey(destination.title), systemImage: destination.symbol).tag(destination).accessibilityIdentifier("nav-\(destination.rawValue)")
+                        .sidebarFirstRowAudit(destination == .home)
                 }
             }
             Section("Your music") {
@@ -345,6 +380,12 @@ struct BrowserShell: View {
                 }
             }
         }.listStyle(.sidebar).scrollContentBackground(.hidden)
+            // POL-A: the first row's highlight sat ~4 pt under the panel's rounded top edge but ~16-20 pt from its sides. A top inset gives the
+            // selection the same breathing room on every side; the soft top edge effect lets rows scrolled up fade out instead of cutting against the corner.
+            // `contentMargins(.top, ..., for: .scrollContent)` was tried first and has no effect on this sidebar-style List (the audit measured the row
+            // 6 pt below the panel top with 12 and with 40); `safeAreaPadding` moves it (SurfaceAuditTests, "sidebarFirstRow").
+            .safeAreaPadding(.top, Self.sidebarTopInset)
+            .scrollEdgeEffectStyle(.soft, for: .top)
             .safeAreaBar(edge: .bottom) {
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
                     Text("Independent. Native. Yours.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
@@ -503,6 +544,21 @@ struct WindowHistoryBanner: View {
 
 /// The detail panel's bounds, reported to the root so the expanded player can take exactly its place (and extend over the trailing panel's).
 struct ShellPanelAnchor: PreferenceKey {
-    static let defaultValue: Anchor<CGRect>? = nil
-    static func reduce(value: inout Anchor<CGRect>?, nextValue: () -> Anchor<CGRect>?) { value = value ?? nextValue() }
+    static let defaultValue = ShellPlayerAnchors()
+    static func reduce(value: inout ShellPlayerAnchors, nextValue: () -> ShellPlayerAnchors) {
+        let next = nextValue()
+        value = ShellPlayerAnchors(panel: value.panel ?? next.panel, column: value.column ?? next.column)
+    }
+}
+/// What the player layer places itself by: the detail panel (the expanded player takes its place) and the detail column (the capsule floats in it).
+struct ShellPlayerAnchors {
+    var panel: Anchor<CGRect>? = nil
+    var column: Anchor<CGRect>? = nil
+}
+
+private extension View {
+    /// Layout metadata for the first sidebar row only (the audit proves the top margin), identity in Release.
+    @ViewBuilder func sidebarFirstRowAudit(_ first: Bool) -> some View {
+        if first { self.browserRegion("sidebarFirstRow") } else { self }
+    }
 }

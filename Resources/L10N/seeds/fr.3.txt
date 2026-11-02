@@ -259,7 +259,7 @@
 959|La file d’attente n’a pas pu accepter ce titre.
 960|La file d’attente s’affiche dans la fenêtre principale.
 961|La radio n’a pas pu démarrer. Ce qui était en cours de lecture n’a pas changé.
-962|Le récepteur règle le volume.
+962|Pendant la diffusion, le curseur de volume règle le volume du récepteur. Le volume du Mac reste inchangé.
 963|L’élément sélectionné de la file d’attente n’a pas pu s’ouvrir. Essayez de le sélectionner à nouveau.
 964|La session de %@ est terminée. Reconnectez-vous.
 965|Le minuteur de veille n’a pas pu changer. Essayez de le régler à nouveau.

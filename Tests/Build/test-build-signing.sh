@@ -77,7 +77,9 @@ X
   cat > "$work/bin/codesign" <<'X'
 #!/bin/bash
 echo "codesign $*" >> "$SHIM_LOG"
-if [[ " $* " == *" -dvv "* ]]; then echo "Authority=${SHIM_AUTHORITY}" >&2; echo "TeamIdentifier=SYNTH12345" >&2; fi
+# TH4: SHIM_FAIL_PROBE=1 makes the throwaway probe signature fail; SHIM_TEAM="" makes the identity carry no Team ID.
+if [[ "${SHIM_FAIL_PROBE:-0}" == 1 && " $* " == *" --sign "* && "$*" == *probe.appex* ]]; then exit 1; fi
+if [[ " $* " == *" -dvv "* ]]; then echo "Authority=${SHIM_AUTHORITY}" >&2; echo "TeamIdentifier=${SHIM_TEAM-SYNTH12345}" >&2; fi
 exit 0
 X
   chmod +x "$work/bin/"*
@@ -124,4 +126,22 @@ grep -q "embed=NO" "$SHIM_LOG.xcodebuild" && ! grep -q "embed=YES" "$SHIM_LOG.xc
 ! grep -q -- "--sign" "$SHIM_LOG" || fail "an unsigned build must sign nothing itself"
 [[ ! -e "$work/derived/Build/Products/Release/YTMuse.app/Contents/PlugIns" ]] || fail "an unsigned build embedded a plug-in"
 echo "ok no identity: the extension is not embedded and nothing is signed here"
+
+# 7. TH4 (W25 R3-1): a failure BEFORE the bundle changes (the probe signature, or an identity with no Team ID) still restores the ad-hoc, extension-free bundle. Control: case 5 above passes clean.
+setup; export SHIM_AUTHORITY="Apple Development: Synthetic Person (SYNTH12345)" SHIM_FAIL_PROBE=1; set +e; run 1111111111111111111111111111111111111111; status=$?; set -e
+unset SHIM_FAIL_PROBE
+[[ $status != 0 ]] || fail "a failed probe signature must fail the build"
+[[ ! -e "$work/derived/Build/Products/Release/YTMuse.app/Contents/PlugIns/NativeMusicWidget.appex" ]] || fail "a failed probe left the ad-hoc widget extension embedded"
+tail -n 1 "$SHIM_LOG" | grep -q -- "--sign - " || fail "ad-hoc not restored after a failed probe: $(cat "$SHIM_LOG")"
+# TH4 (L3): the restore also puts the app's group key back to the build variable (the shim's build wrote the plain id), and re-signs ad hoc.
+group_of() { /usr/libexec/PlistBuddy -c "Print :YTMuseAppGroup" "$work/derived/Build/Products/Release/YTMuse.app/Contents/Info.plist" 2>/dev/null; }
+[[ "$(group_of)" == '$(TeamIdentifierPrefix)local.native-music.development' ]] || fail "a failed probe left the app group key as: $(group_of)"
+echo "ok a failed probe signature restores the ad-hoc, extension-free bundle"
+setup; export SHIM_AUTHORITY="Apple Development: Synthetic Person (SYNTH12345)" SHIM_TEAM=""; set +e; run 1111111111111111111111111111111111111111; status=$?; set -e
+unset SHIM_TEAM
+[[ $status != 0 ]] || fail "an identity with no Team ID must fail the build"
+[[ ! -e "$work/derived/Build/Products/Release/YTMuse.app/Contents/PlugIns/NativeMusicWidget.appex" ]] || fail "no-Team-ID failure left the extension embedded"
+tail -n 1 "$SHIM_LOG" | grep -q -- "--sign - " || fail "ad-hoc not re-signed after an identity with no Team ID: $(cat "$SHIM_LOG")"
+[[ "$(group_of)" == '$(TeamIdentifierPrefix)local.native-music.development' ]] || fail "no-Team-ID failure left the app group key as: $(group_of)"
+echo "ok an identity with no Team ID restores the ad-hoc, extension-free bundle"
 echo PASS

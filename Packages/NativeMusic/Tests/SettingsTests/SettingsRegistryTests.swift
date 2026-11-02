@@ -3,6 +3,7 @@ import Testing
 @testable import Features
 @testable import AppShell
 @testable import Domain
+import TestSupport
 
 /// T27.1. Every row of section 16, read from the specification itself, against the registry.
 @Suite @MainActor struct SettingsRegistryTests {
@@ -81,13 +82,14 @@ import Testing
     }
 
     /// T27.2: the capabilities the app cannot honour are stated, not pretended. This is the set that fails release coverage until the capability exists.
-    @Test func theRowsThatCannotBeHonouredAreExactlyTheKnownOnesAndEachSaysWhy() {
+    @Test func theRowsThatCannotBeHonouredAreExactlyTheKnownOnesAndEachSaysWhy() throws {
         let unavailable = Set(SettingsRegistry.definitions.filter { !$0.availability.isControllable }.map(\.id))
         #expect(unavailable == ["audioQuality", "autoplayRadio"], "the rows that could be built now (system notifications, replacing the explicit queue, the updater) are built")
         // Each says where it is planned, not that it is impossible.
-        for (id, owner) in [("audioQuality", "W34"), ("autoplayRadio", "W05")] {
-            #expect(SettingsRegistry.definition(id)?.availability.note?.contains(owner) == true, "\(id) names \(owner)")
-        }
+        #expect(SettingsRegistry.definition("audioQuality")?.availability.note?.contains("W34") == true, "audioQuality names W34")
+        // CORE-B C5: autoplay is not a feature that is missing. YouTube Music's own player continues playback, and the row must not say "Not built yet".
+        let autoplay = try #require(SettingsRegistry.definition("autoplayRadio")?.availability.note)
+        #expect(autoplay.contains("YouTube Music") && autoplay.contains("Start Radio") && !autoplay.contains("Not built yet") && !autoplay.contains("W05"))
         // Scoped rows work in a named situation only.
         let scoped = Set(SettingsRegistry.definitions.filter { if case .scoped = $0.availability { true } else { false } }.map(\.id))
         #expect(scoped == ["crossfade", "equalizer", "normalization", "replaceExplicitQueue", "downloadStorage", "smartDownloads", "updateChecking", "automaticInstallation"])
@@ -258,8 +260,7 @@ import Testing
         // A private suite NAME (not a file in the temporary folder) is a real domain by derivation; no flag can say otherwise. The suite itself is private, so a broken
         // guard could only write this throwaway name, never the product's domain.
         let name = "ytmuse-th2-real-domain-" + UUID().uuidString
-        let raw = try #require(UserDefaults(suiteName: name))
-        defer { raw.removePersistentDomain(forName: name) }
+        let raw = InMemoryDefaults()
         let real = GuardedDefaults(store: raw, domain: name)
         try #require(real.isRealDomain, "a domain that is not a scratch file is real")
         #expect(throws: GuardRefusal.self) { try real.set("dark", forKey: "appearance") }
@@ -288,14 +289,14 @@ import Testing
         // writes `outside/x.plist`. `outside` is inside this test's own scratch folder, so a broken guard could only ever write there.
         #expect(!throwaway(temp.path + "/link/../x.plist"), "a symlink followed by .. is real")
         #expect(!throwaway(temp.path + "/./x.plist") && !throwaway(temp.path + "/sub/../x.plist"), "no dot components at all")
-        let probe = try #require(UserDefaults(suiteName: "ytmuse-th2-link-dotdot-" + UUID().uuidString))
+        let probe = InMemoryDefaults()
         let combined = GuardedDefaults(store: probe, domain: temp.path + "/link/../x.plist")
         #expect(combined.isRealDomain, "through the wrapper too")
         #expect(throws: GuardRefusal.self) { try combined.set("v", forKey: "k") }   // isolated process: refused before anything is written
         #expect(!FileManager.default.fileExists(atPath: outside.appendingPathComponent("x.plist").path) && !FileManager.default.fileExists(atPath: temp.appendingPathComponent("x.plist").path))
         #expect(!throwaway(""), "the empty name is real")
         // The same through the wrapper: no argument can make a path outside the folder a throwaway, and the product name is refused at the call.
-        let store = try #require(UserDefaults(suiteName: "ytmuse-th2-derive-" + UUID().uuidString))
+        let store = InMemoryDefaults()
         #expect(GuardedDefaults(store: store, domain: "local.native-music.development").isRealDomain)
         #expect(!GuardedDefaults(store: store, domain: FileManager.default.temporaryDirectory.appendingPathComponent("x-" + UUID().uuidString + ".plist").path).isRealDomain)
     }
@@ -319,7 +320,7 @@ import Testing
     @Test func restoreDefaultsClearsAValueKeptInAPathNamedSuite() async throws {
         let scratch = try Scratch(); defer { scratch.cleanup() }
         let path = scratch.url.appendingPathComponent("prefs.plist").path
-        let defaults = GuardedDefaults(store: try #require(UserDefaults(suiteName: path)), domain: path)
+        let defaults = GuardedDefaults(store: ScratchDefaults.open(path: path), domain: path)
         let store = try SettingsStore(backing: defaults)
         try await store.set("appearance", .text("dark"))
         #expect((defaults.value(forKey: "appearance") as? String) == "dark" && store.text("appearance") == "dark")
@@ -334,7 +335,7 @@ import Testing
         let scratch = try Scratch(); defer { scratch.cleanup() }
         let path = scratch.url.appendingPathComponent("earlier.plist").path
         try PropertyListSerialization.data(fromPropertyList: ["appearance": "dark", SettingsRegistry.schemaVersionKey: 1], format: .binary, options: 0).write(to: URL(fileURLWithPath: path))
-        let defaults = GuardedDefaults(store: try #require(UserDefaults(suiteName: path)), domain: path)
+        let defaults = GuardedDefaults(store: ScratchDefaults.open(path: path), domain: path)
         let store = try SettingsStore(backing: defaults)
         #expect(store.text("appearance") == "dark")
         _ = try await store.reset(.appearance)

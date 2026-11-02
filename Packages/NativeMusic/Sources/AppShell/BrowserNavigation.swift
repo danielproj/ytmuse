@@ -1,3 +1,4 @@
+import Diagnostics
 import Foundation
 import Observation
 import SystemIntegration
@@ -92,7 +93,15 @@ public struct BrowserSession: Equatable, Codable, Sendable {
     public init(session: BrowserSession = .init()) { self.session = session }
     public private(set) var revision: UInt64 = 0
     public func reset(owner: WindowOwner?) { let id = session.windowID; session = BrowserSession(); session.windowID = id; session.owner = owner }
-    public func open(_ destination: BrowserDestination, item: NativeItemRoute? = nil) { session.open(destination, item: item) }
+    public func open(_ destination: BrowserDestination, item: NativeItemRoute? = nil) {
+        // PERF05: a navigation interval runs from the request to the new content having been laid out. SwiftUI commits the change at the end of the
+        // current run-loop turn, so the interval ends two main-queue turns later (indicative; the label is the fixed destination name, never an item).
+        let before = session.current.id
+        let signpost = PerformanceSignposts.begin(.navigation, label: destination.rawValue)
+        session.open(destination, item: item)
+        if session.current.id == before { PerformanceSignposts.end(signpost); return }
+        DispatchQueue.main.async { DispatchQueue.main.async { PerformanceSignposts.end(signpost) } }
+    }
     public func back() { session.back() }
     public func forward() { session.forward() }
 }

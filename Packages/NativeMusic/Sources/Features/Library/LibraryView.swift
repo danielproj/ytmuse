@@ -344,29 +344,9 @@ struct LibraryCollectionView: View {
                     footer
                 }.restoresScroll().accessibilityIdentifier("libraryGrid")
             } else {
-                ScrollViewReader { proxy in
-                let _ = identity.setItems(entries.map(\.id))
-                List(selection: $model.selection) {
-                    ForEach(entries) { entry in
-                        LibraryRow(surface: surface, entry: entry, source: model.source, navigator: navigator).tag(entry.id)
-                            .identityItem(entry.id)
-                    }
-                    footer.listRowSeparator(.hidden)
-                }
-                .contextMenu(forSelectionType: String.self) { ids in
-                    if ids.count == 1, let id = ids.first, let entry = entries.first(where: { $0.id == id }) {
-                        if entry.item.opensPage { Button("Open") { navigator.openItem(entry.item) } }
-                        ForEach(surface.offers(for: entry.item)) { offer in Button(offer.action.title) { Task { await surface.perform(offer.action, on: entry.item, key: entry.id) } } }
-                    } else if !ids.isEmpty {
-                        Button("Copy Links") { _ = surface.copyLinks(of: entries.filter { ids.contains($0.id) }) }
-                    }
-                } primaryAction: { ids in
-                    if let id = ids.first, let entry = entries.first(where: { $0.id == id }), entry.item.opensPage { navigator.openItem(entry.item) }
-                }
-                .scrollContentBackground(.hidden)
-                .restoresByIdentity(identity, proxy: proxy)
-                .accessibilityIdentifier("libraryList")
-                }
+                // W44-prep (PERF): the list is its own view with an equality check on the list it shows. SwiftUI re-lists every row of a `List` whenever the
+                // view that builds it re-evaluates, and this view re-evaluates for every paging flag; at 50,000 rows that was ~1 s per flip.
+                LibraryEntryList(surface: surface, model: model, navigator: navigator, identity: identity, entries: entries, generation: model.visibleGeneration).equatable()
             }
         }
     }
@@ -380,23 +360,7 @@ struct LibraryCollectionView: View {
             Text("Library changes are made one item at a time. Adding songs to a playlist asks first.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
         }
     }
-    @ViewBuilder private var footer: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.xs) {
-            if model.hasMore {
-                HStack {
-                    if model.loadingMore { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading more")) }
-                    else if let failure = model.moreFailure {
-                        Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText)
-                        Button("Retry") { Task { await model.loadMore() } }.musicButtons()
-                    } else {
-                        Color.clear.frame(width: 1, height: 1).onAppear { Task { await model.loadMore() } }
-                        Button("Load more") { Task { await model.loadMore() } }.musicButtons().accessibilityIdentifier("libraryLoadMore")
-                    }
-                }
-            }
-            LibraryStatusLine(model: model)
-        }.padding(.vertical, MusicSpace.xs)
-    }
+    private var footer: some View { LibraryListFooter(model: model) }
 }
 
 /// The Library destination: its nine collections, and the one on screen.
@@ -490,5 +454,71 @@ public extension EnvironmentValues {
     var libraryLedger: LibraryWriteLedger? {
         get { self[LibraryLedgerKey.self] }
         set { self[LibraryLedgerKey.self] = newValue }
+    }
+}
+
+/// The list layout of a collection, equal to its previous self while the list it shows (and the model it belongs to) is the same.
+struct LibraryEntryList: View, Equatable {
+    let surface: LibrarySurface
+    @Bindable var model: LibraryCollectionModel
+    let navigator: CatalogNavigator
+    let identity: IdentityRestorer
+    let entries: [LibraryEntry]
+    let generation: Int
+    private let identityStamp: [ObjectIdentifier]      // the model and surface this list belongs to
+    init(surface: LibrarySurface, model: LibraryCollectionModel, navigator: CatalogNavigator, identity: IdentityRestorer, entries: [LibraryEntry], generation: Int) {
+        self.surface = surface; self.model = model; self.navigator = navigator; self.identity = identity; self.entries = entries; self.generation = generation
+        identityStamp = [ObjectIdentifier(model), ObjectIdentifier(surface)]
+    }
+    /// Equal while the list generation and the model and surface it belongs to are the same. `navigator` and `identity` are deliberately not compared: the
+    /// identity restorer is the page's own `@State` and the navigator is stable for the page's life, so neither can differ between two evaluations of one page.
+    nonisolated static func == (a: LibraryEntryList, b: LibraryEntryList) -> Bool { a.generation == b.generation && a.identityStamp == b.identityStamp }
+    var body: some View {
+        ScrollViewReader { proxy in
+        let _ = identity.setItems(owner: ObjectIdentifier(model), generation: generation) { entries.map(\.id) }
+        List(selection: $model.selection) {
+            ForEach(entries) { entry in
+                LibraryRow(surface: surface, entry: entry, source: model.source, navigator: navigator).tag(entry.id)
+                    .identityItem(entry.id)
+            }
+            LibraryListFooter(model: model).listRowSeparator(.hidden)
+        }
+        .contextMenu(forSelectionType: String.self) { ids in
+            if ids.count == 1, let id = ids.first, let entry = entries.first(where: { $0.id == id }) {
+                if entry.item.opensPage { Button("Open") { navigator.openItem(entry.item) } }
+                ForEach(surface.offers(for: entry.item)) { offer in Button(offer.action.title) { Task { await surface.perform(offer.action, on: entry.item, key: entry.id) } } }
+            } else if !ids.isEmpty {
+                Button("Copy Links") { _ = surface.copyLinks(of: entries.filter { ids.contains($0.id) }) }
+            }
+        } primaryAction: { ids in
+            if let id = ids.first, let entry = entries.first(where: { $0.id == id }), entry.item.opensPage { navigator.openItem(entry.item) }
+        }
+        .scrollContentBackground(.hidden)
+        .restoresByIdentity(identity, proxy: proxy)
+        .accessibilityIdentifier("libraryList")
+        }
+    }
+}
+
+/// The end of a long list: the load-more trigger, its progress and failure, and the status line. Its own view, so that the paging flags it reads
+/// invalidate only this row, never the list above it.
+struct LibraryListFooter: View {
+    @Bindable var model: LibraryCollectionModel
+    var body: some View {
+        VStack(alignment: .leading, spacing: MusicSpace.xs) {
+            if model.hasMore {
+                HStack {
+                    if model.loadingMore { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading more")) }
+                    else if let failure = model.moreFailure {
+                        Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText)
+                        Button("Retry") { Task { await model.loadMore() } }.musicButtons()
+                    } else {
+                        Color.clear.frame(width: 1, height: 1).onAppear { Task { await model.loadMore() } }
+                        Button("Load more") { Task { await model.loadMore() } }.musicButtons().accessibilityIdentifier("libraryLoadMore")
+                    }
+                }
+            }
+            LibraryStatusLine(model: model)
+        }.padding(.vertical, MusicSpace.xs)
     }
 }

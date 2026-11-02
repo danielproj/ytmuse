@@ -6,13 +6,14 @@ import Testing
 @testable import Playback
 @testable import SystemIntegration
 @testable import AppShell
+import TestSupport
 
 /// T23.2 (MAC01, WIN04): however many windows, mini-players and popovers are open there is ONE Now Playing owner and ONE set of remote-command
 /// registrations; the owner holds the keys only while an item is active and lets go when it is not, so another media application can take them.
 @Suite @MainActor struct RemoteOwnershipTests {
     private func shell(_ rig: MediaRig) -> ShellCoordinator {
         ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                         preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                         preferences: InMemoryDefaults(), installsStatusItem: false)
     }
 
     @Test func nothingIsRegisteredBeforeThereIsAnItem() async throws {

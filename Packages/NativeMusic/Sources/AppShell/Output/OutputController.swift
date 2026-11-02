@@ -131,6 +131,10 @@ import SystemIntegration
     }
     /// Quit (ROUTE10, WIN03): the receiver is stopped (or left, where a remembered choice allows it), bounded, before the session closes.
     func prepareForQuit() async { await cast?.prepareForQuit() }
+    /// TH4: while an owned or local item is cast, the volume slider shows and drives the RECEIVER's level (nil: it is the Mac's).
+    var castVolume: CastVolumeControl? { cast?.volumeControl }
+    /// The slider moved while casting: handed to the driver synchronously (it decides whether anything is sent).
+    func requestCastVolume(_ level: Double) { cast?.requestVolume(level) }
 
     /// The engine the picker speaks for: the hidden player while it is the owner, otherwise the native one.
     var subject: OutputEngineKind { model?.music.map { !$0.isClosed } == true ? .youTubeMusic : .localMedia }

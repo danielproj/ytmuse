@@ -158,7 +158,7 @@ struct MiniPlayerView: View {
                         likeButton
                         Button { shell.showQueue() } label: { Label("Queue", systemImage: "list.bullet") }.labelStyle(.iconOnly).help(Text("Queue")).accessibilityIdentifier("miniQueue")
                         Slider(value: Binding(get: { state.volume }, set: { shell.setVolume($0) }), in: 0...1) { Text("Volume") }.labelsHidden().tint(MusicStyle.accent)
-                            .frame(width: Self.volumeWidth).disabled(!state.hasItem).accessibilityIdentifier("miniVolume")
+                            .frame(width: Self.volumeWidth).disabled(!state.hasItem || !state.volumeEnabled).help(state.volumeHelp ?? "").accessibilityIdentifier("miniVolume")
                     }.musicButtons().audit("miniAccessories", group: "miniControlRow", within: "miniPlayer")
                 }
                 ShellTimeline(shell: shell).audit("miniTimeline", group: "miniRows", within: "miniPlayer")

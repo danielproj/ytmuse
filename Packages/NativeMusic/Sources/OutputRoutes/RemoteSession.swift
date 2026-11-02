@@ -10,7 +10,9 @@ public enum RemoteKind: Sendable, Equatable { case airPlay, cast(CastDeviceID) }
 /// A receiver's own reported level (Cast). nil fields were not reported.
 public struct ReceiverVolume: Equatable, Sendable {
     public let level: Double?, muted: Bool?
-    public init(level: Double?, muted: Bool?) { self.level = level; self.muted = muted }
+    /// The receiver says its volume is fixed (it ignores a level it is sent).
+    public let fixed: Bool
+    public init(level: Double?, muted: Bool?, fixed: Bool = false) { self.level = level; self.muted = muted; self.fixed = fixed }
 }
 public enum RemoteEnd: Sendable, Equatable {
     /// A person chose another route (or turned AirPlay off) in the system picker.

@@ -4,6 +4,7 @@ import Foundation
 import Testing
 @testable import Features
 @testable import AppShell
+import TestSupport
 
 /// Rework 1: IME seam, per-query retry guard, recents (SEARCH02), development catalog gate, separators.
 @Suite @MainActor struct SearchComposingSeamTests {
@@ -58,7 +59,7 @@ import Testing
     private func defaults() throws -> (UserDefaults, URL) {
         // An absolute-path suite writes only this temporary plist (never the standard domain or ~/Library/Preferences/<name>).
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("ytmuse-w10-recents-" + UUID().uuidString + ".plist")
-        return (try #require(UserDefaults(suiteName: url.path)), url)
+        return (ScratchDefaults.open(path: url.path), url)
     }
     private func result(_ title: String, _ id: String = "aaaaaaaaaa1") -> SearchResult {
         SearchResult(MusicSearchItem(kind: .song, title: title, subtitle: "Synthetic Artist • 3:45", videoID: id), top: false)

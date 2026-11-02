@@ -7,6 +7,7 @@ import Observation
 import Domain
 import Queue
 import Artwork
+import Features
 
 /// Original local image bytes for the explicitly labelled, opt-in native design test mode.
 actor DevelopmentDesignSource: ArtworkSource {
@@ -23,6 +24,17 @@ actor DevelopmentDesignSource: ArtworkSource {
         }
         guard let data, data.count <= maximumBytes else { throw ArtworkError.inputTooLarge }
         return ArtworkSourceData(bytes: data, policy: .memory(until: .distantFuture))
+    }
+}
+/// W44-prep: the design pipeline's source on a synthetic performance launch: catalog thumbnails come from the generated-image source, everything else
+/// (the brand art the shell asks for) from the ordinary development source. Neither reaches a network.
+struct DevelopmentPerformanceArtworkSource: ArtworkSource {
+    let catalog: CatalogArtworkSource
+    private let design = DevelopmentDesignSource()
+    func load(resource: ArtworkResource, owner: ArtworkOwner, generation: UInt64, maximumBytes: Int) async throws -> ArtworkSourceData {
+        resource.namespace == CatalogArtworkSource.namespace
+            ? try await catalog.load(resource: resource, owner: owner, generation: generation, maximumBytes: maximumBytes)
+            : try await design.load(resource: resource, owner: owner, generation: generation, maximumBytes: maximumBytes)
     }
 }
 private actor DevelopmentQueueStorage: QueuePersistence {
@@ -44,11 +56,12 @@ private struct DevelopmentSilentBoundary: QueuePlaybackBoundary {
     private init(commands: QueueCommands, context: RequestContext, titles: [ServiceID: String], tracked: ServiceID) { self.commands = commands; self.context = context; self.titles = titles; self.tracked = tracked }
     static func prepare(context: RequestContext) async throws -> DevelopmentDesignQueue {
         guard let account = context.account else { throw DomainError.staleContext }
-        let media = try (0..<240).map { try ServiceID("development-queue-\($0)") }
+        let queueCount = DevelopmentPerformance.enabled ? DevelopmentPerformance.Scale.standard.queueItems : 240
+        let media = try (0..<queueCount).map { try ServiceID("development-queue-\($0)") }
         var machine = QueueMachine(account: account, supportsAutoplay: false)
         try machine.replaceContext(media, source: ServiceID("original-development-queue"))
         let commands = try QueueCommands(machine: machine, context: context, persistence: DevelopmentQueueStorage(), playback: DevelopmentSilentBoundary(), repeatSupported: true)
-        let model = DevelopmentDesignQueue(commands: commands, context: context, titles: Dictionary(uniqueKeysWithValues: media.enumerated().map { ($0.element, String(localized: "Development queue item \($0.offset + 1)")) }), tracked: media[10])
+        let model = DevelopmentDesignQueue(commands: commands, context: context, titles: Dictionary(uniqueKeysWithValues: media.enumerated().map { ($0.element, (DevelopmentPerformance.enabled ? DevelopmentPerformance.queueTitle($0.offset) : String(localized: "Development queue item \($0.offset + 1)"))) }), tracked: media[10])
         model.snapshot = try await commands.snapshot(); return model
     }
     func send(_ command: QueueCommand) async {

@@ -1,0 +1,9 @@
+1396|Siguen más elementos; YouTube Music solo muestra los próximos.
+1397|No hay nada más en la cola después de este elemento.
+1398|Repetir
+1399|Este elemento ya no está en la cola.
+1400|No se puede cambiar la cola mientras suena un anuncio.
+1401|YouTube Music no aplicó ese cambio.
+1402|Atenuando
+1403|Fin
+1404|Temporizador de reposo

@@ -128,7 +128,7 @@ struct StatusPopoverView: View {
                 HStack(spacing: MusicSpace.xs) {
                     Image(systemName: "speaker.fill").foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
                     Slider(value: Binding(get: { state.volume }, set: { shell.setVolume($0) }), in: 0...1) { Text("Volume") }.labelsHidden().tint(MusicStyle.accent)
-                        .disabled(!state.hasItem).accessibilityIdentifier("statusVolume")
+                        .disabled(!state.hasItem || !state.volumeEnabled).help(state.volumeHelp ?? "").accessibilityIdentifier("statusVolume")
                     Image(systemName: "speaker.wave.3.fill").foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
                 }.audit("statusVolumeRow", group: "statusColumn", within: "statusPopover")
                 HStack {

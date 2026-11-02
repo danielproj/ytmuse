@@ -8,11 +8,12 @@ export PATH="$PWD/scripts/bin:$PATH"
 # and UI app launch); the launch-argument form is refused outright.
 unset YTMUSE_USE_REAL_STORES
 for argument in "$@"; do [[ $argument != -YTMuseUseRealStores ]] || { echo 'refusing -YTMuseUseRealStores: tests never use the real stores' >&2; exit 64; }; done
-if [[ $# != 2 || "$1" != --suite || ( "$2" != T01 && "$2" != T02 && "$2" != T03 && "$2" != T04 && "$2" != T05 && "$2" != T06 && "$2" != T07 && "$2" != T08 && "$2" != T09 && "$2" != T10 && "$2" != T11 && "$2" != T12 && "$2" != T13 && "$2" != T19 && "$2" != T20 && "$2" != T50 && "$2" != T51 && "$2" != T52 && "$2" != T21 && "$2" != T22 && "$2" != T23 && "$2" != T24 && "$2" != T25 && "$2" != T26 && "$2" != T27 && "$2" != T28 && "$2" != T29 && "$2" != T30 && "$2" != T39 && "$2" != T14 && "$2" != T15 && "$2" != T16 && "$2" != T17 && "$2" != T18 ) ]]; then
-  echo 'Usage: scripts/test.sh --suite T01|T02|T03|T04|T05|T06|T07|T08|T09|T10|T11|T12|T13|T14|T15|T16|T17|T18|T19|T20|T21|T22|T23|T24|T25|T26|T27|T28|T29|T30|T39|T50|T51|T52 (other suites are not implemented)' >&2
+if [[ $# != 2 || "$1" != --suite || ( "$2" != T01 && "$2" != T02 && "$2" != T03 && "$2" != T04 && "$2" != T05 && "$2" != T06 && "$2" != T07 && "$2" != T08 && "$2" != T09 && "$2" != T10 && "$2" != T11 && "$2" != T12 && "$2" != T13 && "$2" != T19 && "$2" != T20 && "$2" != T50 && "$2" != T51 && "$2" != T52 && "$2" != T44P && "$2" != T21 && "$2" != T22 && "$2" != T23 && "$2" != T24 && "$2" != T25 && "$2" != T26 && "$2" != T27 && "$2" != T28 && "$2" != T29 && "$2" != T30 && "$2" != T39 && "$2" != T14 && "$2" != T15 && "$2" != T16 && "$2" != T17 && "$2" != T18 ) ]]; then
+  echo 'Usage: scripts/test.sh --suite T01|T02|T03|T04|T05|T06|T07|T08|T09|T10|T11|T12|T13|T14|T15|T16|T17|T18|T19|T20|T21|T22|T23|T24|T25|T26|T27|T28|T29|T30|T39|T50|T51|T52|T44P (other suites are not implemented)' >&2
   exit 64
 fi
 ./scripts/check-toolchain.sh
+python3 scripts/check-boundaries.py --self-test
 python3 scripts/check-boundaries.py
 python3 scripts/check-test-preferences.py --self-test
 python3 scripts/check-test-preferences.py
@@ -176,9 +177,9 @@ if [[ "$2" == T09 ]]; then
     echo 'T09 UI ENVIRONMENT BLOCKED: console locked' >&2
     exit 75
   fi
-  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/xcode}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testW09NavigationAndAdaptiveShell -only-testing:NativeMusicUITests/NativeMusicUITests/testW09ExpandedVariantAndIndependentWindowTint -only-testing:NativeMusicUITests/NativeMusicUITests/testW09ScrollSelectionQueryFilterHistoryAndKeyboard -only-testing:NativeMusicUITests/NativeMusicUITests/testW09QueuePageContextActionsKeepGlobalOccurrenceOrder -only-testing:NativeMusicUITests/NativeMusicUITests/testW09AdaptivePanelResizeKeepsLyricsSelection -only-testing:NativeMusicUITests/NativeMusicUITests/testW09LaunchSizesDefaultMinimumAndClamp -only-testing:NativeMusicUITests/NativeMusicUITests/testW09NativeEdgeResizeGestureManualOnly -only-testing:NativeMusicUITests/NativeMusicUITests/testW09UnavailableWindowStateRequiresExplicitConfirmedReset -only-testing:NativeMusicUITests/NativeMusicUITests/testW06OwnedNativeBottomTransport test)
+  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/xcode}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testW09NavigationAndAdaptiveShell -only-testing:NativeMusicUITests/NativeMusicUITests/testW09ExpandedVariantAndIndependentWindowTint -only-testing:NativeMusicUITests/NativeMusicUITests/testW09ScrollSelectionQueryFilterHistoryAndKeyboard -only-testing:NativeMusicUITests/NativeMusicUITests/testW09QueuePageContextActionsKeepGlobalOccurrenceOrder -only-testing:NativeMusicUITests/NativeMusicUITests/testW09AdaptivePanelResizeKeepsLyricsSelection -only-testing:NativeMusicUITests/NativeMusicUITests/testW09LaunchSizesDefaultMinimumAndClamp -only-testing:NativeMusicUITests/NativeMusicUITests/testW09NativeEdgeResizeGestureManualOnly -only-testing:NativeMusicUITests/NativeMusicUITests/testW09UnavailableWindowStateRequiresExplicitConfirmedReset -only-testing:NativeMusicUITests/NativeMusicUITests/testW06OwnedNativeBottomTransport -only-testing:NativeMusicUITests/NativeMusicUITests/testPlayer1FloatingCapsule -only-testing:NativeMusicUITests/NativeMusicUITests/testPlayer1CapsuleInLightMode test)
   if [[ -n "${TEST_RESULT_PATH:-}" ]]; then args+=(-resultBundlePath "$TEST_RESULT_PATH"); fi
-  counted_ui_test testW09NavigationAndAdaptiveShell testW09ExpandedVariantAndIndependentWindowTint testW09ScrollSelectionQueryFilterHistoryAndKeyboard testW09QueuePageContextActionsKeepGlobalOccurrenceOrder testW09AdaptivePanelResizeKeepsLyricsSelection testW09LaunchSizesDefaultMinimumAndClamp testW09NativeEdgeResizeGestureManualOnly testW09UnavailableWindowStateRequiresExplicitConfirmedReset testW06OwnedNativeBottomTransport -- xcodebuild "${args[@]}"
+  counted_ui_test testW09NavigationAndAdaptiveShell testW09ExpandedVariantAndIndependentWindowTint testW09ScrollSelectionQueryFilterHistoryAndKeyboard testW09QueuePageContextActionsKeepGlobalOccurrenceOrder testW09AdaptivePanelResizeKeepsLyricsSelection testW09LaunchSizesDefaultMinimumAndClamp testW09NativeEdgeResizeGestureManualOnly testW09UnavailableWindowStateRequiresExplicitConfirmedReset testW06OwnedNativeBottomTransport testPlayer1FloatingCapsule testPlayer1CapsuleInLightMode -- xcodebuild "${args[@]}"
   exit 0
 fi
 if [[ "$2" == T10 ]]; then
@@ -231,9 +232,9 @@ if [[ "$2" == T12 ]]; then
     exit 75
   fi
   # Typed text needs an ASCII-capable input source (restored afterwards); every launch is isolated and uses labelled development data only.
-  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/xcode}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testW12LibraryKindsStatesPagingSearchSortAndSelection -only-testing:NativeMusicUITests/NativeMusicUITests/testW12OptimisticChangesRollBackRetryAndNeverClaimWhatTheServiceDidNotConfirm -only-testing:NativeMusicUITests/NativeMusicUITests/testW12HistoryKeepsTheServicesRecordAndThisMacsApartAndNeverImitatesRemoteControls -only-testing:NativeMusicUITests/NativeMusicUITests/testW09F2LibraryRestoresSearchOrderSelectionScrollKindAndKeptOnlyPerEntry -only-testing:NativeMusicUITests/NativeMusicUITests/testW09F2HistoryRestoresItsScrollOffsetPerEntry test)
+  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/xcode}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testW12ProgrammaticSelectionReachesTheEquatableList -only-testing:NativeMusicUITests/NativeMusicUITests/testW12LibraryKindsStatesPagingSearchSortAndSelection -only-testing:NativeMusicUITests/NativeMusicUITests/testW12OptimisticChangesRollBackRetryAndNeverClaimWhatTheServiceDidNotConfirm -only-testing:NativeMusicUITests/NativeMusicUITests/testW12HistoryKeepsTheServicesRecordAndThisMacsApartAndNeverImitatesRemoteControls -only-testing:NativeMusicUITests/NativeMusicUITests/testW09F2LibraryRestoresSearchOrderSelectionScrollKindAndKeptOnlyPerEntry -only-testing:NativeMusicUITests/NativeMusicUITests/testW09F2HistoryRestoresItsScrollOffsetPerEntry test)
   if [[ -n "${TEST_RESULT_PATH:-}" ]]; then args+=(-resultBundlePath "$TEST_RESULT_PATH"); fi
-  counted_ui_test testW12LibraryKindsStatesPagingSearchSortAndSelection testW12OptimisticChangesRollBackRetryAndNeverClaimWhatTheServiceDidNotConfirm testW12HistoryKeepsTheServicesRecordAndThisMacsApartAndNeverImitatesRemoteControls testW09F2LibraryRestoresSearchOrderSelectionScrollKindAndKeptOnlyPerEntry testW09F2HistoryRestoresItsScrollOffsetPerEntry -- python3 scripts/test-native-latin.py xcodebuild "${args[@]}"
+  counted_ui_test testW12ProgrammaticSelectionReachesTheEquatableList testW12LibraryKindsStatesPagingSearchSortAndSelection testW12OptimisticChangesRollBackRetryAndNeverClaimWhatTheServiceDidNotConfirm testW12HistoryKeepsTheServicesRecordAndThisMacsApartAndNeverImitatesRemoteControls testW09F2LibraryRestoresSearchOrderSelectionScrollKindAndKeptOnlyPerEntry testW09F2HistoryRestoresItsScrollOffsetPerEntry -- python3 scripts/test-native-latin.py xcodebuild "${args[@]}"
   exit 0
 fi
 if [[ "$2" == T19 ]]; then
@@ -733,11 +734,44 @@ if [[ "$2" == T52 ]]; then
   counted_swift_test 'DesignTokenTests|CornerCapTests|AccentOrderTests|StackedWashTests|LayoutAuditRuleTests|SourceGuardTests'
   # Isolated synthetic content only (the app's own development catalog, library and uploads); QA isolation is decided before any store opens.
   export YTMUSE_NATIVE_DESIGN_TEST=1 YTMUSE_UI_DEVELOPMENT_DATA=1 YTMUSE_UI_DEVELOPMENT_LIBRARY=1 YTMUSE_UI_DEVELOPMENT_PLAYLISTS=1 YTMUSE_UI_DEVELOPMENT_UPLOADS=1
-  counted_swift_test 'SurfaceAuditTests|SheetAuditTests|PolicyAuditTests|PlayerMorphStageTests|RootRegionLayoutTests|SettleHelperTests|ShutdownIsolationTests'
+  counted_swift_test 'SurfaceAuditTests|SheetAuditTests|PolicyAuditTests|PlayerMorphStageTests|CapsuleHoverAuditTests|RootRegionLayoutTests|SettleHelperTests|ShutdownIsolationTests'
   # The window-root layout contract and scroll restoration also run against the generic collection page (development data, no development
   # Library), which is the page ScrollViewIntegrationTests measures; W12's Library replaced it when the library flag is set.
   unset YTMUSE_UI_DEVELOPMENT_LIBRARY YTMUSE_UI_DEVELOPMENT_PLAYLISTS YTMUSE_UI_DEVELOPMENT_UPLOADS
   counted_swift_test 'RootRegionLayoutTests|ScrollViewIntegrationTests'
+  exit 0
+fi
+if [[ "$2" == T44P ]]; then
+  # W44-prep: the synthetic PERF04 dataset (shape, determinism, gating), the library-model equivalence tests, the indicative headless model measurements on an
+  # OPTIMIZED Debug build (its own scratch path, so the ordinary Debug build is not disturbed), and (below) the isolated native performance UI tests.
+  # These are indicative numbers, never W44 results (W44 needs Release builds, which lanes never make). Use scripts/perf-run.sh for the full gated run.
+  # The harness's own self-tests (report, sampler, and the real-state-snapshot verdict that plants a changed snapshot plus a failing test step).
+  python3 scripts/perf-report.py --self-test && python3 scripts/perf-sample.py --self-test && bash scripts/perf-run.sh --self-test && python3 scripts/check-no-event-posting.py --self-test && python3 scripts/check-no-event-posting.py || { echo 'T44P harness self-test or the no-event-posting sweep failed' >&2; exit 1; }
+  discovery=$(swift test --package-path Packages/NativeMusic list)
+  for required in DatasetTests ModelBenchmarkTests LibraryModelEquivalenceTests StagedLoadAllAdversarialTests SearchKeyAndIdentityTests; do
+    [[ "$discovery" == *"$required"* ]] || { echo "T44P missing active class: $required" >&2; exit 1; }
+  done
+  # perf-run.sh ui runs the headless part separately (outside the UI lock) and sets T44P_UI_ONLY=1 for the gated UI job.
+  [[ "${T44P_UI_ONLY:-0}" == 1 ]] || counted_swift_test 'PerformanceTests\.' --scratch-path "$PWD/.build/perf-o" -Xswiftc -O
+  if [[ "${T44P_HEADLESS:-0}" == 1 ]]; then
+    echo 'T44P headless only; native UI explicitly not run'
+    exit 0
+  fi
+  [[ -n "${YTMUSE_PERF_DIR:-}" ]] || { echo 'T44P UI part runs only through scripts/perf-run.sh ui (it makes YTMUSE_PERF_DIR); set T44P_HEADLESS=1 for the headless part alone' >&2; exit 64; }
+  if ioreg -n Root -d1 | python3 -c 'import sys; sys.exit(0 if chr(34)+"CGSSessionScreenIsLocked"+chr(34)+"=Yes" in sys.stdin.read() else 1)'; then
+    echo 'T44P UI ENVIRONMENT BLOCKED: console locked' >&2
+    exit 75
+  fi
+  export TEST_RUNNER_YTMUSE_PERF_DIR="$YTMUSE_PERF_DIR"
+  [[ -z "${YTMUSE_PERF_LAUNCHES:-}" ]] || export TEST_RUNNER_YTMUSE_PERF_LAUNCHES="$YTMUSE_PERF_LAUNCHES"
+  [[ -z "${YTMUSE_PERF_ITERATIONS:-}" ]] || export TEST_RUNNER_YTMUSE_PERF_ITERATIONS="$YTMUSE_PERF_ITERATIONS"
+  perf_tests=(testW44PLaunch testW44PNavigation testW44PLibraryScroll testW44PPlaylistGrid testW44PBigPlaylist testW44PQueue)
+  [[ -z "${T44P_ONLY:-}" ]] || perf_tests=($T44P_ONLY)     # optional subset of the scripted UI tests (perf-run.sh ui runs them all in one gated job)
+  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/perf-xcode}" -disableAutomaticPackageResolution)
+  for name in "${perf_tests[@]}"; do args+=(-only-testing:NativeMusicUITests/NativeMusicUITests/$name); done
+  args+=(SWIFT_OPTIMIZATION_LEVEL=-O test)
+  if [[ -n "${TEST_RESULT_PATH:-}" ]]; then args+=(-resultBundlePath "$TEST_RESULT_PATH"); fi
+  counted_ui_test "${perf_tests[@]}" -- python3 scripts/test-native-latin.py xcodebuild "${args[@]}"
   exit 0
 fi
 if [[ "$2" == T50 ]]; then

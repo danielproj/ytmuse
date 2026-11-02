@@ -99,9 +99,11 @@ private struct MusicSurface: ViewModifier {
   var tint: Color?
   var interactive: Bool
   var morph: MusicMorph?
+  /// A radius of the surface's own (the player capsule: half its height); nil takes the corner role's.
+  var radius: CGFloat?
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   private var glass = MusicGlassEnvironment()
-  init(corner: MusicCorner, tint: Color?, interactive: Bool, morph: MusicMorph?) { self.corner = corner; self.tint = tint; self.interactive = interactive; self.morph = morph }
+  init(corner: MusicCorner, tint: Color?, interactive: Bool, morph: MusicMorph?, radius: CGFloat? = nil) { self.corner = corner; self.tint = tint; self.interactive = interactive; self.morph = morph; self.radius = radius }
   func body(content: Content) -> some View {
     Group {
       if glass.policy.opaque {
@@ -126,7 +128,7 @@ private struct MusicSurface: ViewModifier {
     if let tint { value = value.tint(tint) }
     return interactive ? value.interactive() : value
   }
-  private var shape: RoundedRectangle { corner.shape }
+  private var shape: RoundedRectangle { radius.map { RoundedRectangle(cornerRadius: $0, style: .continuous) } ?? corner.shape }
   @ViewBuilder private func matched<S: View>(_ backing: S) -> some View {
     if let morph, !reduceMotion { backing.matchedGeometryEffect(id: morph.id, in: morph.namespace) } else { backing }
   }
@@ -278,6 +280,10 @@ extension View {
   public func musicWindowEnvironment(visible: Bool) -> some View { modifier(MusicWindowEnvironment(visible: visible)) }
   public func musicSurface(_ corner: MusicCorner = .panel, tint: Color? = nil, interactive: Bool = false, morph: MusicMorph? = nil) -> some View {
     modifier(MusicSurface(corner: corner, tint: tint, interactive: interactive, morph: morph))
+  }
+  /// The floating player capsule: the player surface with a corner radius of half its `height`, so it keeps `musicSurface`'s glass, fallbacks and morph.
+  public func musicCapsuleSurface(height: CGFloat, tint: Color? = nil, morph: MusicMorph? = nil) -> some View {
+    modifier(MusicSurface(corner: .player, tint: tint, interactive: false, morph: morph, radius: height / 2))
   }
   /// A matched-geometry identity that stands down under Reduce Motion (the swap is then a plain crossfade).
   public func musicMatched(_ id: String, in namespace: Namespace.ID, properties: MatchedGeometryProperties = .frame) -> some View {

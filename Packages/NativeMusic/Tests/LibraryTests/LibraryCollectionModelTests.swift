@@ -400,6 +400,38 @@ func continuationOf(_ items: [MusicCatalogItem], token: String? = nil) -> MusicC
         await script.release(); await task.value
         #expect(model.entries.isEmpty && model.phase == .idle, "nothing read for the old account stays")
     }
+    /// TH5 (W44-prep critic L-c): the saved copy is keyed by the scope the page was READ under, not the scope when it is written. The scope moves while a page is in
+    /// flight and the shell has not (yet) called `accountChanged()`: the late reply is dropped, nothing is added to what is shown, and when the scope comes back to the
+    /// one the rows were read under, a new session reads from the first page rather than serving rows that were never read for it. (The staged `loadAll` of the W44-prep
+    /// branch keeps rows between pages, which is why its flush has to remember the scope too; see the node report.)
+    @Test func aScopeThatMovesWhileAPageIsInFlightNeverSavesItsRowsUnderTheWrongScope() async throws {
+        let script = LibraryScript()
+        let scope = Box("scope-1")
+        await script.setPage(songs.browseID, pageOf([item("A")], token: "t1"))
+        await script.setToken("t1", continuationOf([item("B")], token: "t2"))
+        await script.setToken("t2", continuationOf([item("C")]))
+        await script.hold(true)
+        let model = makeCollection(songs, script: script, scope: scope)
+        await model.load()
+        #expect(model.entries.count == 1)
+        let task = Task { await model.loadAll() }
+        await settle()
+        scope.value = "scope-2"          // no accountChanged(): the shell has not been told yet
+        await script.release(); await task.value
+        #expect(model.entries.map(\.item.title) == ["A"], "the page read for scope-1 is not added once the scope is scope-2: \(model.entries.map(\.item.title))")
+        // Nothing read after the move is filed under scope-2 either: a read for scope-2 starts from the first page.
+        await script.hold(false)
+        model.accountChanged()
+        await model.load()
+        #expect(model.entries.map(\.item.title) == ["A"] && model.hasMore, "a new session reads again from the first page, with its own tokens")
+        let reads = await script.pageCalls.count
+        #expect(reads == 2, "scope-2 had no saved copy to serve: \(reads)")
+        // Control: with no move the same loadAll completes and saves its rows.
+        let steady = makeCollection(songs, script: script, scope: Box("scope-9"))
+        await steady.load()
+        let complete = await steady.loadAll()
+        #expect(complete && steady.entries.map(\.item.title) == ["A", "B", "C"], "control: without a move all pages are read")
+    }
     @Test func accountChangedClearsEverythingIncludingTheSavedCopy() async throws {
         let script = LibraryScript()
         let scope = Box("scope-1")

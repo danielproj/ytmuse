@@ -4,6 +4,7 @@ import SwiftUI
 import Testing
 @testable import Playback
 @testable import AppShell
+import TestSupport
 
 /// T21.2 / WIN04 / PLAY01: Command-N windows navigate independently and share exactly one account, one player and one Now Playing owner.
 @Suite @MainActor struct LifecycleOwnershipTests {
@@ -31,7 +32,7 @@ import Testing
     @Test func everyWindowOfOneBootstrapSharesTheOneShellAndTheOnePlaybackOwner() async throws {
         let rig = try await LifecycleRig.make()
         let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         var opened = 0
         shell.openMainWindowAction = { opened += 1 }
         shell.openAnotherWindow(); shell.openAnotherWindow(); shell.showMainWindow()
@@ -102,7 +103,7 @@ import Testing
         let rig = try await LifecycleRig.make()
         let (player, page) = try await rig.play()
         let shell = ShellCoordinator(playback: rig.model, loginItem: InMemoryLoginItemService(), application: FakeApplication(),
-                                     preferences: UserDefaults(suiteName: "local.native-music.test-" + UUID().uuidString)!, installsStatusItem: false)
+                                     preferences: InMemoryDefaults(), installsStatusItem: false)
         shell.start()
         shell.showMiniPlayer()
         let panel = try #require(shell.miniPlayer?.panel); panel.alphaValue = 0

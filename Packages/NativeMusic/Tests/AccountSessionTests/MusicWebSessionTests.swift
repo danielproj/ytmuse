@@ -3,6 +3,7 @@ import Testing
 import Domain
 import Features
 @testable import AccountSession
+import TestSupport
 
 /// In-memory SessionVault with KeychainVault's generation semantics: reads and
 /// in-place replacement require the exact bound active context.
@@ -618,9 +619,8 @@ private func signIn(_ h: Harness, for account: AccountContext? = nil) async thro
     }
     @Test func passkeySuppressionIsOnByDefaultAndCanBeDisabled() throws {
         #expect(MusicWebSignInOptions().suppressPasskeys)
-        let suite = "ytmuse.tests." + UUID().uuidString
-        let defaults = try #require(UserDefaults(suiteName: suite))
-        defer { defaults.removePersistentDomain(forName: suite) }
+        let scratch = ScratchDefaults(); defer { scratch.clean() }
+        let defaults = scratch.defaults
         #expect(MusicWebSignInOptions(defaults: defaults).suppressPasskeys)
         defaults.set(false, forKey: MusicWebSignInOptions.suppressPasskeysKey)
         #expect(!MusicWebSignInOptions(defaults: defaults).suppressPasskeys)
