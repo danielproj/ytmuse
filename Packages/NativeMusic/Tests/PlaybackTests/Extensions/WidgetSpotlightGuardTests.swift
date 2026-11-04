@@ -186,6 +186,25 @@ import WidgetShared
         }
         #expect(WidgetIdentity.appGroup(in: nil) == nil && WidgetIdentity.appGroup(in: [:]) == nil && WidgetIdentity.appGroup(in: [key: 5]) == nil)
     }
+    @Test func productionGroupsAreBoundToTheAppAndItsWidget() {
+        let key = WidgetIdentity.appGroupInfoKey, suffixKey = WidgetIdentity.appGroupSuffixInfoKey
+        let suffix = "com.example.ytmuse", group = "ABCDE12345.com.example.ytmuse"
+        for bundle in [suffix, suffix + ".widget"] {
+            #expect(WidgetIdentity.appGroup(in: [key: group, suffixKey: suffix, "CFBundleIdentifier": bundle]) == group)
+        }
+        let base: [String: Any] = [key: group, suffixKey: suffix, "CFBundleIdentifier": suffix]
+        for (field, value) in [(key, "ABCDE12345.com.example.other" as Any),
+                               (key, "com.example.ytmuse"),
+                               (key, group + "\n"),
+                               (suffixKey, "com.example.ytmuse\n"),
+                               (suffixKey, "local.native-music.development"),
+                               (suffixKey, 5),
+                               ("CFBundleIdentifier", "com.example.other")] {
+            var info = base; info[field] = value
+            #expect(WidgetIdentity.appGroup(in: info) == nil, "mismatched production metadata is refused")
+        }
+        #expect(WidgetIdentity.appGroup(in: [key: group, suffixKey: suffix]) == nil)
+    }
     @Test func theSharedModuleIsTheWidgetsOnlyAppGroupWriterContractNoOtherFileNameIsUsed() {
         let identity = WidgetSources.text(WidgetSources.root.appendingPathComponent("Packages/NativeMusic/Sources/WidgetShared/WidgetIdentity.swift"))
         #expect(identity.contains("snapshotFileName = \"now-playing-snapshot.json\""))

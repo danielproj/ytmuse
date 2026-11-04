@@ -2,6 +2,8 @@
 
 The cleaned source repository is public. Its owner/name is selected by the maintainer and supplied to the packaging configuration; the source remains portable across repositories. No installer release has been published. The local installed app uses Apple Development signing; it is not a notarized distribution build.
 
+Release packaging uses a dedicated production app/widget identity, derived by default as `com.github.<owner>.<repository>` with a `.widget` companion. `YTMUSE_RELEASE_BUNDLE_ID` can override it with a valid reverse-DNS identifier. The app group uses the signing Team ID followed by that production identifier, separating releases from local development stores. Ordinary source builds retain the development identifiers.
+
 The current build targets Apple Silicon and macOS 27 or later. Building requires the exact Xcode/Swift versions in `toolchain.json`. Intel Macs and earlier macOS versions are not supported by this build.
 
 ## Source synchronization
@@ -14,7 +16,7 @@ The existing `.github/workflows/release.yml` creates a **draft** release from a 
 
 The following prerequisites remain:
 
-- A Developer ID Application certificate and private key, plus a working notarization profile. They must be available on the packaging Mac; an identity name stored in GitHub Secrets does not install a certificate into a runner's keychain.
+- A Developer ID Application identity has been installed on the maintainer Mac and an actual signing/timestamp check passed. Notarization credentials were validated and stored in its local Keychain. No private material was uploaded to GitHub. An identity/profile name stored in GitHub Secrets alone would not install those credentials on a runner.
 - A production bundle/application-group identity and the required entitlements/provisioning, verified before first distribution. The current development identity is not distribution acceptance.
 - A local Ed25519 update-feed key pair has been prepared outside Git with owner-only permissions. Its private key has not been uploaded. The distribution package still needs to pin the matching public key, release repository and feed URL; source builds leave update networking disabled.
 - A compatible clean packaging runner. GitHub currently has no repository runner or `YTMUSE_RUNNER` variable configured for this project. The workflows' exact toolchain check will refuse an incompatible hosted image. Local packaging on an appropriately configured Mac is also possible.

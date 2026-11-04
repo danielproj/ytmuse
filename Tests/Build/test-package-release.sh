@@ -31,17 +31,35 @@ cat > "$base/bin/xcodebuild" <<'X'
 #!/bin/bash
 echo "xcodebuild $*" >> "$SHIM_LOG"
 for ((i=1;i<=$#;i++)); do [[ "${!i}" == -derivedDataPath ]] && { j=$((i+1)); d="${!j}"; }; done
-app="$d/Build/Products/Release/YTMuse.app"; mkdir -p "$app/Contents/MacOS" "$app/Contents/PlugIns/NativeMusicWidget.appex/Contents"
-plist='<?xml version="1.0"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleIdentifier</key><string>test.package</string><key>CFBundleShortVersionString</key><string>1.2.0</string><key>YTMuseAppGroup</key><string>x</string></dict></plist>'
-echo "$plist" > "$app/Contents/Info.plist"; echo "$plist" > "$app/Contents/PlugIns/NativeMusicWidget.appex/Contents/Info.plist"
+app_id=unset.app; widget_id=unset.widget
+for arg in "$@"; do
+  case "$arg" in
+    YTMUSE_APP_BUNDLE_IDENTIFIER=*) app_id="${arg#*=}";;
+    YTMUSE_WIDGET_BUNDLE_IDENTIFIER=*) widget_id="${arg#*=}";;
+  esac
+done
+app="$d/Build/Products/Release/YTMuse.app"; mkdir -p "$app/Contents/MacOS" "$app/Contents/PlugIns/NativeMusicWidget.appex/Contents/MacOS"
+plist='<?xml version="1.0"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleIdentifier</key><string>%s</string><key>CFBundleShortVersionString</key><string>1.2.0</string><key>YTMuseAppGroup</key><string>x</string></dict></plist>'
+printf "$plist" "${SHIM_BAD_APP_ID:-$app_id}" > "$app/Contents/Info.plist"; printf "$plist" "${SHIM_BAD_WIDGET_ID:-$widget_id}" > "$app/Contents/PlugIns/NativeMusicWidget.appex/Contents/Info.plist"
 printf '#!/bin/bash\nexit 0\n' > "$app/Contents/MacOS/YTMuse"
+printf '#!/bin/bash\nexit 0\n' > "$app/Contents/PlugIns/NativeMusicWidget.appex/Contents/MacOS/NativeMusicWidget"
+if [[ -n "${SHIM_LEAK_BUILD_PATH:-}" ]]; then printf '# %s\n' "$HOME" >> "$app/Contents/MacOS/YTMuse"; fi
 echo "** BUILD SUCCEEDED **"
+X
+cat > "$base/bin/strip" <<'X'
+#!/bin/bash
+echo "strip $*" >> "$SHIM_LOG"
 X
 cat > "$base/bin/codesign" <<'X'
 #!/bin/bash
 echo "codesign $*" >> "$SHIM_LOG"
 if [[ " $* " == *" -dvv "* ]]; then echo "Authority=${SHIM_AUTHORITY:-Developer ID Application: Synthetic Org (SYNTH67890)}" >&2; echo "TeamIdentifier=SYNTH67890" >&2; fi
-if [[ " $* " == *" --entitlements "* && "${*: -1}" == *YTMuse.app ]]; then cp "${*: -1}/Contents/Info.plist" "$SHIM_LOG.app-info.plist"; fi
+if [[ " $* " == *" --entitlements "* ]]; then
+  for ((i=1;i<=$#;i++)); do [[ "${!i}" == --entitlements ]] && { j=$((i+1)); entitlements="${!j}"; }; done
+  kind=widget; [[ "${*: -1}" == *YTMuse.app ]] && kind=app
+  cp "${*: -1}/Contents/Info.plist" "$SHIM_LOG.$kind-info.plist"
+  cp "$entitlements" "$SHIM_LOG.$kind.entitlements"
+fi
 exit 0
 X
 cat > "$base/bin/xcrun" <<'X'
@@ -83,6 +101,10 @@ set +e; (cd "$repo" && PATH="$base/bin:$PATH" bash scripts/package-release.sh --
 (unset YTMUSE_FEED_KEY; expect_status 66 "$base/release" --version 1.2.0 --build 120 --dry-run); echo "ok missing credentials refused (exit 66)"
 (export YTMUSE_DEVELOPER_ID="Apple Development: Synthetic Person (SYNTH12345)"; expect_status 65 "$base/release" --version 1.2.0 --build 120 --dry-run); echo "ok a development identity cannot make a release"
 (export YTMUSE_DEVELOPER_ID=1111111111111111111111111111111111111111; expect_status 65 "$base/release" --version 1.2.0 --build 120 --dry-run); echo "ok a development SHA-1 refused"
+for bad in local.native-music.development 'not a bundle' 'com..example' 'com.example/bad'; do
+  (export YTMUSE_RELEASE_BUNDLE_ID="$bad"; expect_status 65 "$base/release" --version 1.2.0 --build 120 --dry-run)
+done
+echo "ok development and malformed release bundle identifiers refused"
 chmod 644 "$base/keys/feed.key"; expect_status 66 "$base/release" --version 1.2.0 --build 120 --dry-run; chmod 600 "$base/keys/feed.key"; echo "ok a group-readable feed key refused"
 mkdir -p "$base/gitkey" && (cd "$base/gitkey" && /usr/bin/git init -q) && cp "$base/keys/feed.key" "$base/gitkey/feed.key"; chmod 600 "$base/gitkey/feed.key"
 (export YTMUSE_FEED_KEY="$base/gitkey/feed.key"; expect_status 65 "$base/release" --version 1.2.0 --build 120 --dry-run); echo "ok a feed key inside a git work tree refused"
@@ -117,11 +139,22 @@ grep -q "MARKETING_VERSION=1.2.0" "$SHIM_LOG" && grep -q "CURRENT_PROJECT_VERSIO
 grep -q -- "-configuration Release" "$SHIM_LOG" && grep -q "arch=arm64" "$SHIM_LOG" || fail "not a Release arm64 build"
 ext=$(grep -n -- "--entitlements" "$SHIM_LOG" | grep "appex$" | head -1 | cut -d: -f1); app=$(grep -n -- "--entitlements" "$SHIM_LOG" | grep "YTMuse.app$" | head -1 | cut -d: -f1)
 [[ -n "$ext" && -n "$app" && "$ext" -lt "$app" ]] || fail "the extension was not signed before the app"
+stripped=$(grep -n '^strip -S ' "$SHIM_LOG" | head -1 | cut -d: -f1)
+[[ -n "$stripped" && "$stripped" -lt "$ext" ]] || fail "debug information must be stripped before signing"
 grep -- "--entitlements" "$SHIM_LOG" | grep -q -- "--options runtime" && grep -- "--entitlements" "$SHIM_LOG" | grep -q -- "--timestamp " || fail "hardened runtime and a secure timestamp are required"
 ! grep -q -- "--timestamp=none" <(grep -v "probe.appex" "$SHIM_LOG") || fail "a release signature without a secure timestamp"
 [[ "$(grep -c '^xcrun notarytool submit' "$SHIM_LOG")" == 2 && "$(grep -c '^xcrun stapler staple' "$SHIM_LOG")" == 2 ]] || fail "app and DMG must each be notarized and stapled"
 grep '^xcrun notarytool' "$SHIM_LOG" | grep -q -- "--keychain-profile synthetic-profile --wait" || fail "notarytool must use the keychain profile and wait"
 grep -q '^spctl -a -t open' "$SHIM_LOG" || fail "the DMG was not assessed by Gatekeeper"
+grep -q 'YTMUSE_APP_BUNDLE_IDENTIFIER=com.github.example-owner.example-repo' "$SHIM_LOG" || fail "production app id not passed"
+grep -q 'YTMUSE_WIDGET_BUNDLE_IDENTIFIER=com.github.example-owner.example-repo.widget' "$SHIM_LOG" || fail "production widget id not passed"
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$SHIM_LOG.app-info.plist")" == com.github.example-owner.example-repo ]] || fail "wrong app id"
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$SHIM_LOG.widget-info.plist")" == com.github.example-owner.example-repo.widget ]] || fail "wrong widget id"
+for kind in app widget; do
+  [[ "$(/usr/libexec/PlistBuddy -c 'Print :YTMuseAppGroupSuffix' "$SHIM_LOG.$kind-info.plist")" == com.github.example-owner.example-repo ]] || fail "production suffix not pinned"
+  [[ "$(/usr/libexec/PlistBuddy -c 'Print :YTMuseAppGroup' "$SHIM_LOG.$kind-info.plist")" == SYNTH67890.com.github.example-owner.example-repo ]] || fail "wrong production group"
+  [[ "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.security.application-groups:0' "$SHIM_LOG.$kind.entitlements")" == SYNTH67890.com.github.example-owner.example-repo ]] || fail "wrong group entitlement"
+done
 # the pinned update configuration reached the app's Info.plist before signing
 info="$SHIM_LOG.app-info.plist"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :YTMuseUpdateRepository' "$info")" == example-owner/example-repo ]] || fail "repository not pinned"
@@ -149,4 +182,12 @@ echo "ok whole flow: Release arm64, extension before app, hardened runtime, secu
 fresh; (export SHIM_AUTHORITY="Apple Development: Synthetic Person (SYNTH12345)"; expect_status 65 "$base/release" --version 1.2.0 --build 120)
 ! grep -q '^hdiutil' "$SHIM_LOG" && [[ ! -e "$base/release/YTMuse-1.2.0.dmg" ]] || fail "a DMG was made from a wrongly signed app"
 echo "ok a wrongly signed app stops before the DMG"
+fresh; (export SHIM_BAD_APP_ID=local.native-music.development; expect_status 65 "$base/release" --version 1.2.0 --build 120)
+! grep -q '^hdiutil\|^xcrun notarytool' "$SHIM_LOG" || fail "a mismatched app identity reached distribution"
+fresh; (export SHIM_BAD_WIDGET_ID=local.native-music.development.widget; expect_status 65 "$base/release" --version 1.2.0 --build 120)
+! grep -q '^hdiutil\|^xcrun notarytool' "$SHIM_LOG" || fail "a mismatched widget identity reached distribution"
+echo "ok mismatched production app/widget identities stop before signing and notarization"
+fresh; (export SHIM_LEAK_BUILD_PATH=1; expect_status 65 "$base/release" --version 1.2.0 --build 120)
+! grep -q '^hdiutil\|^xcrun notarytool' "$SHIM_LOG" || fail "private build paths reached distribution"
+echo "ok private build paths stop before notarization and packaging"
 echo PASS

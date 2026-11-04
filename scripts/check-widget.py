@@ -104,9 +104,16 @@ def check_bundle(appex: Path, run=tool):
         if hits: problems.append(f'{binary.name} references {", ".join(hits)}')
     for path in appex.rglob('*'):
         if path.is_file() and FORBIDDEN_FILES.search(path.name): problems.append(f'the extension carries {path.relative_to(appex)}')
-    try: key = plistlib.loads((appex / 'Contents/Info.plist').read_bytes()).get('YTMuseAppGroup', '')
-    except Exception as error: key = f'unreadable ({error})'
-    if not str(key).endswith('local.native-music.development'): problems.append(f'the extension Info.plist does not name the group the code reads: {key!r}')
+    try: info = plistlib.loads((appex / 'Contents/Info.plist').read_bytes()); key = info.get('YTMuseAppGroup', '')
+    except Exception as error: info = {}; key = f'unreadable ({error})'
+    if 'YTMuseAppGroupSuffix' in info:
+        suffix = info['YTMuseAppGroupSuffix']
+        valid = (isinstance(suffix, str) and not suffix.startswith('local.')
+                 and re.fullmatch(r'[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+){2,}', suffix)
+                 and info.get('CFBundleIdentifier') == suffix + '.widget'
+                 and isinstance(key, str) and re.fullmatch(r'[A-Z0-9]{10}\.' + re.escape(suffix), key))
+    else: valid = isinstance(key, str) and key.endswith('local.native-music.development')
+    if not valid: problems.append('the extension Info.plist does not name the group the code reads for its bundle')
     return problems
 
 
@@ -182,6 +189,13 @@ def self_test():
         (appex / 'Contents/Resources/session.cookies').unlink()
         (appex / 'Contents/Info.plist').write_bytes(plistlib.dumps({'YTMuseAppGroup': 'group.something.else'}))
         assert any('does not name the group' in p for p in check_bundle(appex, runner())), 'an extension that reads another group must be reported'
+        production = {'CFBundleIdentifier': 'com.example.ytmuse.widget', 'YTMuseAppGroupSuffix': 'com.example.ytmuse', 'YTMuseAppGroup': 'ABCDE12345.com.example.ytmuse'}
+        (appex / 'Contents/Info.plist').write_bytes(plistlib.dumps(production))
+        assert check_bundle(appex, runner()) == [], 'the production group is bound to its widget bundle'
+        for field, value in [('CFBundleIdentifier', 'com.example.other.widget'), ('YTMuseAppGroup', 'ABCDE12345.com.example.other'), ('YTMuseAppGroupSuffix', 'local.native-music.development')]:
+            malformed = dict(production); malformed[field] = value
+            (appex / 'Contents/Info.plist').write_bytes(plistlib.dumps(malformed))
+            assert any('does not name the group' in p for p in check_bundle(appex, runner())), 'mismatched production metadata is refused'
         assert any('no widget extension' in p for p in check_bundle(root / 'Empty.appex', runner())), 'a missing extension must be reported'
         assert any('could not read' in p for p in check_bundle(appex, lambda args, *_: (1, ''))), 'a tool failure must be reported, not read as clean'
         # Source layer: the signing-related rules.

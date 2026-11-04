@@ -10,7 +10,8 @@
 #   YTMUSE_FEED_KEY            path of the feed signing key file (ytmuse-feed keygen), mode 0600, outside any git work tree
 #   YTMUSE_FEED_PUBLIC_KEY     the matching public key (base64), pinned into the app's Info.plist
 #   YTMUSE_UPDATE_REPOSITORY   "owner/name" of the GitHub repository the releases are published to
-# Operator rule: lanes and critics never run this script for real (it builds Release, which shares the development bundle identifier). --dry-run validates the
+#   YTMUSE_RELEASE_BUNDLE_ID   optional production id; defaults to com.github.<owner>.<repository> (lowercase, underscores become hyphens)
+# Operator rule: lanes and critics never run this script for real (it accesses real signing/notarization credentials). --dry-run validates the
 # arguments and the environment and prints the plan without building, signing or writing anything; Tests/Build/test-package-release.sh runs the whole flow over
 # shimmed tools. Nothing here publishes, uploads or contacts a service other than Apple's notary service, and only when run for real by the account holder.
 set -euo pipefail
@@ -35,6 +36,13 @@ identity="${YTMUSE_DEVELOPER_ID:-}"; profile="${YTMUSE_NOTARY_PROFILE:-}"; feed_
 [[ -n "$identity" && -n "$profile" && -n "$feed_key" && -n "$public_key" && -n "$repo" ]] || die 'YTMUSE_DEVELOPER_ID, YTMUSE_NOTARY_PROFILE, YTMUSE_FEED_KEY, YTMUSE_FEED_PUBLIC_KEY and YTMUSE_UPDATE_REPOSITORY must all be set' 66
 [[ "$identity" =~ ^Developer\ ID\ Application:\ .+$ || "$identity" =~ ^[0-9A-Fa-f]{40}$ ]] || die 'YTMUSE_DEVELOPER_ID must be a "Developer ID Application: …" identity or its SHA-1 (a development identity cannot make a release)' 65
 [[ "$repo" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || die 'YTMUSE_UPDATE_REPOSITORY must look like owner/name'
+bundle_id="${YTMUSE_RELEASE_BUNDLE_ID:-}"
+if [[ -z "$bundle_id" ]]; then
+  bundle_id="com.github.$(printf '%s' "$repo" | tr '[:upper:]' '[:lower:]' | tr '/_' '.-')"
+fi
+[[ "$bundle_id" =~ ^[A-Za-z0-9-]+(\.[A-Za-z0-9-]+){2,}$ ]] || die 'YTMUSE_RELEASE_BUNDLE_ID must be a reverse-DNS bundle identifier' 65
+[[ "$bundle_id" != local.* ]] || die 'release packaging refuses a local development bundle identifier' 65
+widget_id="$bundle_id.widget"
 [[ "$public_key" =~ ^[A-Za-z0-9+/]{43}=$ ]] || die 'YTMUSE_FEED_PUBLIC_KEY must be a base64 Ed25519 public key'
 [[ -f "$feed_key" && ! -L "$feed_key" ]] || die 'YTMUSE_FEED_KEY must name a regular file' 66
 [[ "$(stat -f '%Lp' "$feed_key")" =~ ^(400|600)$ ]] || die 'YTMUSE_FEED_KEY must not be readable by group or others (chmod 600)' 66
@@ -49,7 +57,7 @@ else
   grep -qF "\"$identity\"" <<<"$identities" || die 'the identity is not in the keychain' 65
 fi
 tag="v$version"
-steps=("check the toolchain pin" "check the tree is clean and HEAD is tagged $tag" "build Release arm64 (version $version, build $build)" "pin the update repository and public key into the app's Info.plist"
+steps=("check the toolchain pin" "check the tree is clean and HEAD is tagged $tag" "build Release arm64 (version $version, build $build) with production app/widget identifiers" "pin the update repository and public key into the app's Info.plist"
        "sign the widget extension then the app: Developer ID, hardened runtime, secure timestamp" "inspect the bundle: no browser, Python or Node runtime" "notarize and staple the app"
        "make, sign, notarize and staple the DMG" "write the checksum, the SBOM and the release notes" "write and sign the update feed, then verify it as the app does")
 if [[ $dry == 1 ]]; then
@@ -68,10 +76,15 @@ cleanup() { local s=$?; rm -rf "$work"; [[ -n "$scratch_ok" || $s -eq 0 ]] || ec
 trap cleanup EXIT
 derived="$work/derived"
 YTMUSE_EMBED_WIDGET=YES xcodebuild -project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Release -destination 'platform=macOS,arch=arm64' -derivedDataPath "$derived" \
-  -disableAutomaticPackageResolution MARKETING_VERSION="$version" CURRENT_PROJECT_VERSION="$build" YTMUSE_EMBED_WIDGET=YES build
+  -disableAutomaticPackageResolution MARKETING_VERSION="$version" CURRENT_PROJECT_VERSION="$build" YTMUSE_EMBED_WIDGET=YES \
+  YTMUSE_APP_BUNDLE_IDENTIFIER="$bundle_id" YTMUSE_WIDGET_BUNDLE_IDENTIFIER="$widget_id" build
 app="$derived/Build/Products/Release/YTMuse.app"; appex="$app/Contents/PlugIns/NativeMusicWidget.appex"
 [[ -d "$app" && -d "$appex" ]] || die 'the build did not produce the app with its widget extension' 65
 plist="$app/Contents/Info.plist"
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")" == "$bundle_id" ]] || die 'the app build did not use the production bundle identifier' 65
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$appex/Contents/Info.plist")" == "$widget_id" ]] || die 'the widget build did not use the production bundle identifier' 65
+# Debug sections contain the packaging Mac's source paths and do not belong in a download.
+strip -S "$app/Contents/MacOS/YTMuse" "$appex/Contents/MacOS/NativeMusicWidget"
 for key in YTMuseUpdateFeedURL YTMuseUpdatePublicKeys YTMuseUpdateRepository; do /usr/libexec/PlistBuddy -c "Delete :$key" "$plist" 2>/dev/null || true; done
 /usr/libexec/PlistBuddy -c "Add :YTMuseUpdateFeedURL string https://github.com/$repo/releases/latest/download/feed.json" "$plist"
 /usr/libexec/PlistBuddy -c "Add :YTMuseUpdateRepository string $repo" "$plist"
@@ -82,10 +95,25 @@ cp -R "$appex" "$work/probe.appex"
 codesign --force --options runtime --timestamp=none --sign "$identity" "$work/probe.appex" >/dev/null 2>&1 || die 'the identity could not sign' 65
 team="$(codesign -dvv "$work/probe.appex" 2>&1 | sed -n 's/^TeamIdentifier=//p' | head -1)"
 [[ "$team" =~ ^[A-Z0-9]{10}$ ]] || die 'the identity carries no Team ID' 65
-expand() { sed "s/\$(TeamIdentifierPrefix)/$team./g" "$1" > "$2"; }
+group="$team.$bundle_id"
+expand() { sed "s/\$(TeamIdentifierPrefix)local.native-music.development/$group/g" "$1" > "$2"; }
 expand App/NativeMusic.entitlements "$work/app.entitlements"; expand Extensions/NativeMusicWidget.entitlements "$work/widget.entitlements"
-group="$team.local.native-music.development"
-for p in "$plist" "$appex/Contents/Info.plist"; do /usr/libexec/PlistBuddy -c "Set :YTMuseAppGroup $group" "$p" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :YTMuseAppGroup string $group" "$p"; done
+for p in "$plist" "$appex/Contents/Info.plist"; do
+  /usr/libexec/PlistBuddy -c "Set :YTMuseAppGroup $group" "$p" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :YTMuseAppGroup string $group" "$p"
+  /usr/libexec/PlistBuddy -c "Set :YTMuseAppGroupSuffix $bundle_id" "$p" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :YTMuseAppGroupSuffix string $bundle_id" "$p"
+done
+python3 - "$app" "$HOME" "$PWD" <<'PRIVACY'
+from pathlib import Path
+import sys
+root = Path(sys.argv[1])
+prefixes = [value.encode() for value in sys.argv[2:] if value and value != '/']
+for path in root.rglob('*'):
+    if path.is_file() and not path.is_symlink():
+        data = path.read_bytes()
+        if any(prefix in data for prefix in prefixes):
+            print('package-release: private build path remains in the app bundle', file=sys.stderr)
+            raise SystemExit(65)
+PRIVACY
 codesign --force --options runtime --timestamp --entitlements "$work/widget.entitlements" --sign "$identity" "$appex"
 codesign --force --options runtime --timestamp --entitlements "$work/app.entitlements" --sign "$identity" "$app"
 codesign --verify --deep --strict "$app"
