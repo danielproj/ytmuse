@@ -9,7 +9,7 @@ Rules:
   * required documents exist; every relative link resolves to a file (and a heading, for #anchors);
   * a fenced `sh run` block is EXECUTED (bash -euo pipefail, repository root, no YTMUSE_/GOOGLE_/signing variables, a timeout) and must exit 0;
   * every other `sh`/`bash` block is syntax-checked (bash -n) and every script or package path it names must exist;
-  * the README says there is no release and names the open gates, and no document markets unfinished work: no "production-ready", "feature complete",
+  * the README explicitly says there is no release or links a versioned development preview, and names the open gates; no document markets unfinished work: no "production-ready", "feature complete",
     "available now", "official" (except "not official / unofficial / not endorsed"); a capability-matrix row uses only the documented status words, and
     never "complete" or "done".
 """
@@ -18,8 +18,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = ["README.md", "CONTRIBUTING.md", "SECURITY.md", "PRIVACY.md", "LICENSE", "THIRD_PARTY_NOTICES.md", "Docs/Distribution.md", "Docs/Capability-Matrix.md",
-            "Docs/Publishing-Checklist.md", "Docs/Build.md", "Docs/sbom.cdx.json"]
-CHECKED = ["README.md", "CONTRIBUTING.md", "SECURITY.md", "PRIVACY.md", "Docs/Distribution.md", "Docs/Capability-Matrix.md", "Docs/Publishing-Checklist.md", "Docs/Build.md", "Docs/Screenshots/README.md"]
+            "Docs/GitHub-Releases.md", "Docs/Publishing-Checklist.md", "Docs/Build.md", "Docs/sbom.cdx.json"]
+CHECKED = ["README.md", "CONTRIBUTING.md", "SECURITY.md", "PRIVACY.md", "Docs/Distribution.md", "Docs/Capability-Matrix.md", "Docs/GitHub-Releases.md", "Docs/Publishing-Checklist.md", "Docs/Build.md", "Docs/Screenshots/README.md"]
 STATUSES = ["Built, fixtures only", "Built, live unverified", "In progress", "Not started", "Not available"]
 MARKETING = re.compile(r"(?i)\b(production[- ]ready|feature[- ]complete|fully[- ](?:functional|featured|implemented)|stable release|now available|available now|download (?:it )?now|battle[- ]tested)\b")
 OFFICIAL = re.compile(r"(?i)(?<!not an )(?<!not )(?<!un)\bofficial\b")
@@ -112,8 +112,9 @@ def check(root: Path, files, required, run_examples):
                     problems.append(f"{where}: names a path that does not exist: {token}")
     readme = (root / "README.md").read_text() if (root / "README.md").exists() else ""
     if readme:
-        if not re.search(r"(?i)no release", readme):
-            problems.append("README.md: must say there is no release")
+        preview = re.search(r"(?i)\[([^\]]*\bdevelopment preview\b[^\]]*)\]\(https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/releases/tag/v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?\)", readme)
+        if not re.search(r"(?i)no release", readme) and not preview:
+            problems.append("README.md: must state no release or link a versioned development preview")
         if not re.search(r"G01", readme) or not re.search(r"(?i)\*\*open\*\*", readme):
             problems.append("README.md: must name the open gates (G01 and **open**)")
         if "Docs/Capability-Matrix.md" not in readme:
@@ -151,6 +152,17 @@ def self_test():
             return check(root, ["README.md"], ["README.md"], run_examples=True)[0]
         if build():
             failures.append(f"clean control flagged: {build()}")
+        preview_readme = good_readme.replace("There is no release.", "[0.1.0 development preview](https://github.com/example/app/releases/tag/v0.1.0).")
+        if build(readme=preview_readme):
+            failures.append("versioned development-preview control flagged")
+        for bad_preview in (
+            preview_readme.replace("development preview", "release"),
+            preview_readme.replace("/releases/tag/v0.1.0", "/releases/latest"),
+            preview_readme.replace("v0.1.0", "vbanana"),
+            preview_readme.replace("G01 **open**", "G01 closed"),
+        ):
+            if not build(readme=bad_preview):
+                failures.append("missed: invalid preview status or closed gates")
         cases = {
             "dead link": ("", "\n[x](Docs/missing.md)\n", matrix),
             "dead heading": ("", "\n[x](Docs/Capability-Matrix.md#nope)\n", matrix),
@@ -166,7 +178,7 @@ def self_test():
             if not build(extra=extra, mx=mx):
                 failures.append(f"missed: {label}")
         if not build(readme="# X\n\nHello.\n"):
-            failures.append("missed: README without the no-release statement")
+            failures.append("missed: README without an explicit release status")
         if build(extra="\nThis is not an official app and an unofficial client.\n"):
             failures.append("negated 'official' flagged")
         # the example gets no secrets
@@ -177,7 +189,7 @@ def self_test():
         del os.environ["YTMUSE_FEED_KEY"]
     if failures:
         print("SELF-TEST FAILED:\n  " + "\n  ".join(failures)); return 1
-    print(f"check-docs self-test: ok ({len(cases) + 1} violations caught, clean control passed, examples run without secrets)")
+    print(f"check-docs self-test: ok ({len(cases) + 5} violations caught, unreleased/preview controls passed, examples run without secrets)")
     return 0
 
 

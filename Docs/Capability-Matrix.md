@@ -25,7 +25,7 @@ Status vocabulary (checked by `scripts/check-docs.py`):
 | Links, scripting, sharing, Handoff, notifications, global shortcuts | Built, live unverified | Strict link policy; permission prompts only after an explicit choice. |
 | Settings, storage controls, local diagnostics | In progress | Complete Settings is under review. |
 | Accessibility and the complete locale catalog | In progress | Human translation review is a separate, unstarted gate (G08). |
-| Update checks and install | Built, fixtures only | In-repository updater with a signed feed ([Distribution.md](Distribution.md)); there is **no feed, no key and no release** yet, so a source build checks nothing. Real install and restart on a signed build is gate G09. |
+| Update checks and install | Built, fixtures only | In-repository updater with a signed feed ([Distribution.md](Distribution.md)); the local signing key is prepared, but no installer or feed has been published. Source builds have no pinned key/feed and check nothing. Real install and restart on a signed build is gate G09. |
 | Signed, notarized DMG and release | Not started | Scripts exist (`scripts/package-release.sh`) and are tested with stub tools; no Developer ID identity or notarization has been used (G09). |
 | Mac App Store build | Not started | Optional; see [Distribution.md](Distribution.md#app-store-feasibility-a-short-note-not-a-commitment). |
 

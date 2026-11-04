@@ -1,6 +1,6 @@
 # Publishing checklist
 
-The cleaned-source repository is public; no installer release is published. The source tree and screenshots were scanned, and commit metadata was reviewed to confirm that it contains only the public maintainer identity and GitHub noreply addresses. Internal development history remains local. Local development signing exists, but Developer ID/notarization acceptance remains open. [GitHub-Releases.md](GitHub-Releases.md) records current configuration. Historical findings below explain why the internal development history is not synchronized to the release repository. BUILD08: changing public visibility, publishing a release or submitting to the App Store remains a separate account-holder decision.
+The cleaned-source repository is public; no installer release is published. The source tree and screenshots were scanned, and commit metadata was reviewed to confirm that it contains only the public maintainer identity and GitHub noreply addresses. Internal development history remains local. Developer ID signing and the tagged production build passed; Apple is processing the app's notarization submission. [GitHub-Releases.md](GitHub-Releases.md) records current configuration. Historical findings below explain why the internal development history is not synchronized to the release repository. BUILD08: the account holder selected public source and downloads; App Store submission is outside that decision.
 
 ## 1. Decide what is published (account holder)
 
@@ -29,10 +29,10 @@ If the account holder prefers to publish the full history instead, every item ab
 3. Create a GitHub **environment** named `release` with required reviewers and these secrets: `YTMUSE_DEVELOPER_ID` (identity name), `YTMUSE_NOTARY_PROFILE` (notarytool keychain profile name or its credentials), `YTMUSE_FEED_KEY` (the feed signing key file contents), `YTMUSE_FEED_PUBLIC_KEY`. Pull-request workflows never see them.
 4. Replace the first-party action tags in `.github/workflows` with commit SHAs (`scripts/check-workflows.py` lists which are tag-pinned), set the runner label variable `YTMUSE_RUNNER` to a macOS 27 runner that has Xcode 27.2 (27B52), and run the CI workflow on a pull request. **The workflows have never run**; they are checked only by `scripts/check-workflows.py` and by running their steps locally.
 
-## 3. Keys and identities (account holder; not done)
+## 3. Keys and identities (local packaging configured)
 
-* Create the feed key **once**, offline: `ytmuse-feed keygen --private-out <path outside any repository> --public-out <path>` (see [Distribution.md](Distribution.md)). Back it up. Keep a second pinned key ready for rotation. The private key is never committed, never logged and never placed in a pull-request workflow.
-* The Developer ID Application identity, its Team ID and the notarization credentials belong to the account holder's Apple Developer account. None is in the repository; the packaging script reads them from the environment.
+* The feed key was created **once**, outside Git with owner-only permissions, using `ytmuse-feed keygen --private-out <path outside any repository> --public-out <path>` (see [Distribution.md](Distribution.md)). Its backup and rotation rehearsal remain maintainer responsibilities. The private key is never committed, never logged and never placed in a pull-request workflow.
+* A usable Developer ID Application identity is installed on the packaging Mac and passed actual hardened-runtime signing with a secure timestamp. The notarization credential was validated and stored in its Keychain. None is in the repository; the packaging script receives only the identity selector, profile name and feed-key path. No private signing material was uploaded to GitHub.
 
 ## 4. Before the first release
 

@@ -1,6 +1,6 @@
 # GitHub source and installable releases
 
-The cleaned source repository is public. Its owner/name is selected by the maintainer and supplied to the packaging configuration; the source remains portable across repositories. No installer release has been published. The local installed app uses Apple Development signing; it is not a notarized distribution build.
+The cleaned source repository is public. Its owner/name is selected by the maintainer and supplied to the packaging configuration; the source remains portable across repositories. No installer release has been published. Version 0.1.0 is tagged, and its production app has built, signed with Developer ID and been submitted to Apple for notarization. That submission is still processing. The local installed app remains the earlier Apple Development build.
 
 Release packaging uses a dedicated production app/widget identity, derived by default as `com.github.<owner>.<repository>` with a `.widget` companion. `YTMUSE_RELEASE_BUNDLE_ID` can override it with a valid reverse-DNS identifier. The app group uses the signing Team ID followed by that production identifier, separating releases from local development stores. Ordinary source builds retain the development identifiers.
 
@@ -17,8 +17,8 @@ The existing `.github/workflows/release.yml` creates a **draft** release from a 
 The following prerequisites remain:
 
 - A Developer ID Application identity has been installed on the maintainer Mac and an actual signing/timestamp check passed. Notarization credentials were validated and stored in its local Keychain. No private material was uploaded to GitHub. An identity/profile name stored in GitHub Secrets alone would not install those credentials on a runner.
-- A production bundle/application-group identity and the required entitlements/provisioning, verified before first distribution. The current development identity is not distribution acceptance.
-- A local Ed25519 update-feed key pair has been prepared outside Git with owner-only permissions. Its private key has not been uploaded. The distribution package still needs to pin the matching public key, release repository and feed URL; source builds leave update networking disabled.
+- The production app/widget identifiers and application group are configured independently of development stores. The tagged production build and signing passed. Final packaged-bundle and entitlement verification remain pending; this is not distribution acceptance.
+- A local Ed25519 update-feed key pair has been prepared outside Git with owner-only permissions. Its private key has not been uploaded. The package pins the matching public key, release repository and feed URL; publication and final feed verification remain pending. Source builds leave update networking disabled.
 - A compatible clean packaging runner. GitHub currently has no repository runner or `YTMUSE_RUNNER` variable configured for this project. The workflows' exact toolchain check will refuse an incompatible hosted image. Local packaging on an appropriately configured Mac is also possible.
 - If GitHub Actions is used, a protected `release` environment and its documented secrets, and a successful verification run. Checkout actions are pinned to an immutable revision, and release jobs select the pinned Xcode. The `release` environment now requires maintainer review. No private signing secrets have been uploaded. Repository Actions are currently disabled; local packaging remains possible without uploading keys to GitHub.
 - A clean-Mac install/Gatekeeper check and an update/rollback rehearsal. Passing a local development build does not replace these checks.
