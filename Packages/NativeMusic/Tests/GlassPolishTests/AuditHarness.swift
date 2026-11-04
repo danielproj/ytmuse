@@ -57,10 +57,10 @@ enum AuditScheme: String, CaseIterable, Sendable { case light, dark
     let controller: NSHostingController<AnyView>
     let box = FrameBox()
     let phase = AuditPhase()
-    let size: AuditSize
+    var size: AuditSize
     /// `shell` hosts the surface the way the app's window does (unified toolbar, scene-bridged title, the main-window contract), so the minimum size
     /// is the real minimum and a layout that needs more room than the window has overflows here exactly as it would in the app.
-    init<Content: View>(_ content: Content, size: AuditSize, scheme: AuditScheme, title: Bool = true, mode: AuditPolicyMode = .standard, shell: Bool = false, localeMode: AuditLocaleMode = .standard) {
+    init<Content: View>(_ content: Content, size: AuditSize, scheme: AuditScheme, title: Bool = true, mode: AuditPolicyMode = .standard, shell: Bool = false, localeMode: AuditLocaleMode = .standard, intrinsicHeight: Bool = false) {
         self.size = size
         let box = self.box
         let hosted = shell ? AnyView(content.modifier(MainWindowContract(state: MainWindowContractState()))) : AnyView(content)
@@ -68,14 +68,21 @@ enum AuditScheme: String, CaseIterable, Sendable { case light, dark
         controller = NSHostingController(rootView: AnyView(PhasedRoot(phase: phase, mode: mode, localeMode: localeMode, content: hosted.auditRoot { box.frames = mirrored ? AuditHost.mirrorHorizontally($0) : $0 })))
         controller.sizingOptions = shell ? [.minSize] : []
         if shell { controller.sceneBridgingOptions = [.toolbars, .title] }
-        window = OffscreenAuditWindow(contentRect: CGRect(x: -20000, y: -20000, width: size.width, height: size.height),
+        // NSPopover receives no fixed height in production. Measure the same single
+        // hosting controller instead of auditing unused space in an invented window.
+        if intrinsicHeight {
+            let fitted = controller.sizeThatFits(in: CGSize(width: size.width, height: CGFloat.greatestFiniteMagnitude))
+            self.size = AuditSize(name: size.name, width: size.width, height: ceil(fitted.height))
+        }
+        let hostSize = self.size
+        window = OffscreenAuditWindow(contentRect: CGRect(x: -20000, y: -20000, width: hostSize.width, height: hostSize.height),
                                       styleMask: title ? [.titled, .resizable, .closable, .miniaturizable, .fullSizeContentView] : [.borderless], backing: .buffered, defer: false)
         window.appearance = scheme.appearance
         if shell { window.title = "YTMuse"; window.toolbarStyle = .unified }
         window.contentViewController = controller
         window.ignoresMouseEvents = true; window.alphaValue = 0
         window.orderFrontRegardless()
-        window.setFrame(CGRect(x: -20000, y: -20000, width: size.width, height: size.height), display: true)
+        window.setFrame(CGRect(x: -20000, y: -20000, width: hostSize.width, height: hostSize.height), display: true)
     }
     /// W28: the audit rules are stated in leading/trailing terms but measured from the left edge. In a right-to-left layout every frame is reflected about
     /// the window's vertical axis first, so "the sidebar is on the leading side" and "offsets from the container's origin" keep their meaning.

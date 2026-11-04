@@ -52,7 +52,6 @@
 52|Prebačeno na %@.
 53|Pusti %@
 54|Trenutni izlaz: %@
-55|Ukloniti „%@“ iz vaših otpremanja?
 56|Pušta se reklama
 57|Reklama je završena
 58|Trenutno svira „%@“ – %@.

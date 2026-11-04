@@ -52,7 +52,6 @@
 52|Lülitus kontole %@.
 53|Esita %@
 54|Praegune väljund: %@
-55|Kas eemaldada „%@” oma üleslaadimistest?
 56|Mängib reklaam
 57|Reklaam lõppes
 58|Praegu mängib „%@” – %@.

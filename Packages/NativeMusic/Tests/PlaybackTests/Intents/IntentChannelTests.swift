@@ -171,7 +171,7 @@ extension IntentCommand { static func like() -> IntentCommand { .rate(.like, of:
     @Test func anItemTheRowDidNotGiveAnythingToStartIsNeverOffered() async throws {
         let rig = try await IntentRig.make()
         rig.surface.rows[.artists] = [IntentFixtures.artist("No Radio", id: "none", radio: nil)]
-        rig.surface.rows[.songs] = [MusicCatalogItem(kind: .song, title: "Uploaded", details: ["Me"], videoID: "SYNTHuploa1", isUpload: true)]
+        rig.surface.rows[.songs] = [MusicCatalogItem(kind: .song, title: "Uploaded", details: ["Me"], videoID: "SYNTHuploa1", isPrivatelyOwned: true)]
         #expect(await rig.channel.candidates(kind: nil, matching: nil, limit: 10).isEmpty)
         let handmade = IntentMedia(scope: rig.scope, kind: .artist, title: "No Radio", target: IntentMediaTarget(browseID: "UCnone"))
         let outcome = await rig.run(.play(handmade))

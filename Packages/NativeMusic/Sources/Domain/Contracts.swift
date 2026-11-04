@@ -5,7 +5,7 @@ public struct CatalogSection: Sendable {
     public let id: ServiceID; public let title: String; public let items: Page<CatalogEntity>
     public init(id: ServiceID, title: String, items: Page<CatalogEntity>) { self.id = id; self.title = title; self.items = items }
 }
-public enum SearchScope: String, Sendable { case all, songs, albums, artists, playlists, videos, podcasts, episodes, library, uploads }
+public enum SearchScope: String, Sendable { case all, songs, albums, artists, playlists, videos, podcasts, episodes, library }
 public struct SearchQuery: Sendable {
     public let text: String; public let scope: SearchScope
     public init(text: String, scope: SearchScope = .all) { self.text = text; self.scope = scope }
@@ -205,3 +205,6 @@ public struct MusicServices: Sendable {
 public extension PlaybackEngine {
     func validatesObservation(_ event: ScopedEngineEvent) async -> Bool { true }
 }
+
+/// Endpoint parameters are opaque; only an explicit Shuffle action requests shuffle confirmation.
+public enum MusicPlaybackIntent: Sendable, Equatable { case endpoint, shuffle }

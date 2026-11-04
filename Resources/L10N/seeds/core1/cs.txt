@@ -52,7 +52,6 @@
 52|Přepnuto na účet %@.
 53|Přehrát %@
 54|Aktuální výstup: %@
-55|Odebrat „%@“ z vašich nahrávek?
 56|Přehrává se reklama
 57|Reklama skončila
 58|Právě hraje „%@“ od interpreta %@.

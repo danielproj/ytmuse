@@ -259,6 +259,10 @@ public actor MusicSessionCoordinator: AccountLifecycleParticipant {
     }
     /// A song's lyrics under the same account-scope rules: signed when a connected account is active (a signed answer may carry timing),
     /// anonymous otherwise. An answer for another scope is dropped (`stale`).
+    /// Explicit tuner metadata read under the same credential rotation and account fences as browse.
+    public func radioQueue(action: MusicRadioAction) async throws -> MusicBrowseReply<MusicRadioQueue> {
+        try await scoped(signed: { try await $0.radioQueue(action: action, session: $1) }, anonymous: { try await $0.radioQueue(action: action, session: nil).value })
+    }
     public func lyrics(videoID: String) async throws -> MusicBrowseReply<MusicLyricsResult> {
         try await scoped(signed: { try await $0.lyrics(videoID: videoID, session: $1) }, anonymous: { try await $0.lyrics(videoID: videoID, session: nil).value })
     }

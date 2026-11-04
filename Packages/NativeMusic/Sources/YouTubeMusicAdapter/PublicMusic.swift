@@ -216,6 +216,14 @@ public actor PublicMusicClient {
         guard page.data.count <= 4_000_000 else { throw ConnectionError.oversized }
         do { return try MusicLyricsParser.parseLyrics(try SignedMusicClient.json(page.data)) } catch { throw ConnectionError.shape }
     }
+    /// A bounded anonymous radio queue read; never asks for media or starts playback.
+    public func radioQueue(action: MusicRadioAction) async throws -> MusicRadioQueue {
+        let body = try MusicRadioQueueParser.queueBody(action)
+        let response = try await browsePost(body, path: "next")
+        guard response.status == 200 else { throw ConnectionError.http(response.status) }
+        guard response.data.count <= 4_000_000 else { throw ConnectionError.oversized }
+        return try MusicRadioQueueParser.parse(try SignedMusicClient.json(response.data))
+    }
     private func browsePost(_ fields: [String: Any], path: String = "browse") async throws -> PublicHTTPResponse {
         if config.map({ clock.now() >= $0.validUntil }) ?? true { _ = try await bootstrap() }
         guard let config, clock.now() < config.validUntil else { throw ConnectionError.expired }

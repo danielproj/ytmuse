@@ -148,6 +148,8 @@ public struct WebMusicTransport: Sendable {
     public private(set) var load: UInt64 = 0
     /// Whether the current load has been confirmed by evidence of the new request.
     public private(set) var confirmed = false
+    /// Advances only when the applicable snapshot queue changes or is freshly reported.
+    public private(set) var queueRevision: UInt64 = 0
     /// On the in-page router path the outgoing track keeps reporting under the new
     /// load until the router acts, so confirmation needs evidence of the request:
     /// the requested playlist ID, or (when the page reports none) a different video.
@@ -156,6 +158,10 @@ public struct WebMusicTransport: Sendable {
     public private(set) var requiresShuffle = false
     private var outgoingVideo: String?
     private var outgoingPlaylist: String?
+    private var outgoingQueue: WebMusicQueue?
+    private var endpointVideo: String?
+    private var endpointAccepted = false
+    private var pendingEndpointSample: WebMusicSample?
     /// Ad creative being played, kept until the content video returns (ad pods).
     private var adVideo: String?
     private var lastEnded: String?
@@ -172,14 +178,26 @@ public struct WebMusicTransport: Sendable {
 
     /// A new explicit playback request. Older loads can no longer publish.
     public mutating func begin(playlistID: String, title: String?) -> UInt64 {
-        load += 1; confirmed = false; lastEnded = nil; adVideo = nil; requiresShuffle = false; live = nil; media = nil; pendingMedia = nil; pendingQueue = nil
-        outgoingVideo = snapshot.videoID; outgoingPlaylist = snapshot.playlistID; requiresEvidence = false
+        load += 1; confirmed = false; lastEnded = nil; adVideo = nil; requiresShuffle = false; requiresEndpoint = false; live = nil; media = nil; pendingMedia = nil; pendingQueue = nil
+        outgoingVideo = snapshot.videoID; outgoingPlaylist = snapshot.playlistID; outgoingQueue = snapshot.queue
+        endpointVideo = nil; endpointAccepted = false; pendingEndpointSample = nil; requiresEvidence = false
         var next = WebMusicSnapshot()
         next.phase = .loading; next.playlistID = playlistID; next.playlistTitle = title; next.intent = true; next.volume = snapshot.volume
         snapshot = next
         return load
     }
     /// The request goes through the in-page router of the existing document.
+    public private(set) var requiresEndpoint = false
+    public mutating func expectEndpoint(videoID: String? = nil) {
+        requiresEvidence = true; requiresEndpoint = true; endpointVideo = videoID
+    }
+    /// Armed only after the exact command returns router acceptance. Reports from
+    /// attempts that returned fallback cannot be carried across this boundary.
+    public mutating func acceptEndpoint(load acceptedLoad: UInt64) {
+        guard acceptedLoad == load, requiresEndpoint || requiresShuffle else { return }
+        endpointAccepted = true; confirmed = false
+        pendingMedia = nil; pendingQueue = nil; pendingEndpointSample = nil
+    }
     public mutating func expectRouter() { requiresEvidence = true }
     /// The request is a shuffle: nothing the page does in order may confirm it.
     public mutating func expectShuffle() { requiresEvidence = true; requiresShuffle = true }
@@ -195,8 +213,9 @@ public struct WebMusicTransport: Sendable {
     }
     public mutating func reset() {
         let volume = snapshot.volume
-        load += 1; document += 1; confirmed = false; lastEnded = nil; adVideo = nil; outgoingVideo = nil; requiresEvidence = false; requiresShuffle = false
+        load += 1; document += 1; confirmed = false; lastEnded = nil; adVideo = nil; outgoingVideo = nil; requiresEvidence = false; requiresShuffle = false; requiresEndpoint = false
         live = nil; media = nil; pendingMedia = nil; pendingQueue = nil; catalog.removeAll()
+        outgoingQueue = nil; endpointVideo = nil; endpointAccepted = false; pendingEndpointSample = nil
         snapshot = WebMusicSnapshot(); snapshot.volume = volume
     }
     public mutating func setIntent(_ play: Bool) { snapshot.intent = play }
@@ -217,6 +236,16 @@ public struct WebMusicTransport: Sendable {
     public mutating func apply(_ message: WebMusicMessage) -> Bool {
         guard message.document == document, message.load == load, load > 0 else { return false }
         if snapshot.isFailed { return false }
+        // Ignore all media/queue evidence before router acceptance. Sign-out and
+        // document failures remain actionable even while routing is pending.
+        if (requiresEndpoint || requiresShuffle), !endpointAccepted {
+            switch message.event {
+            case .state(let sample) where sample.signedIn == false: fail(.signInRequired)
+            case .page(let app, let unsupported) where !app: fail(unsupported ? .unsupportedBrowser : .notMusicApp)
+            default: break
+            }
+            return true
+        }
         switch message.event {
         case .state(let sample):
             apply(sample)
@@ -269,7 +298,11 @@ public struct WebMusicTransport: Sendable {
             return
         }
         if !confirmed {
-            guard isEvidence(sample) else { snapshot.phase = .loading; return }
+            guard isEvidence(sample) else {
+                if requiresEndpoint { pendingEndpointSample = sample }
+                snapshot.phase = .loading; return
+            }
+            pendingEndpointSample = nil
             confirmed = true
         }
         defer { if confirmed, let held = pendingMedia { pendingMedia = nil; apply(held) } }
@@ -280,7 +313,7 @@ public struct WebMusicTransport: Sendable {
             clearMediaFacts()
             // The previous item's upcoming list is not this item's: it is dropped, and a report already held for this item takes its place.
             snapshot.queue = nil
-            if let held = pendingQueue, held.videoID == id { snapshot.queue = held }
+            if let held = pendingQueue, held.videoID == id { snapshot.queue = held; queueRevision &+= 1 }
             pendingQueue = nil
         }
         if let title = sample.title { snapshot.title = title }
@@ -305,10 +338,17 @@ public struct WebMusicTransport: Sendable {
     }
     /// The page's queue after the playing item. Taken only for the item that is playing: a list for another item waits (it may be the one about to start).
     private mutating func apply(_ queue: WebMusicQueue) {
+        if requiresEndpoint, !confirmed {
+            pendingQueue = queue
+            // State and queue are independent established bridge messages. Either
+            // ordering can confirm, but both must belong to the same content item.
+            if let sample = pendingEndpointSample { apply(sample) }
+            return
+        }
         // No video id means the page lists no queue the app can read: whatever list was shown is no longer something the page says.
-        if confirmed, queue.videoID == nil { snapshot.queue = nil; pendingQueue = nil; return }
+        if confirmed, queue.videoID == nil { snapshot.queue = nil; pendingQueue = nil; queueRevision &+= 1; return }
         guard confirmed, let current = snapshot.videoID, queue.videoID == current else { pendingQueue = queue; return }
-        snapshot.queue = queue; pendingQueue = nil
+        snapshot.queue = queue; pendingQueue = nil; queueRevision &+= 1
     }
     /// A speed command's read-back confirmed this element speed.
     public mutating func noteElementRate(_ rate: Double) { snapshot.elementRate = rate }
@@ -362,6 +402,18 @@ public struct WebMusicTransport: Sendable {
             // explicit "shuffle on" from the page counts as the new start.
             if playlist == outgoingPlaylist { return sample.shuffle == true }
             return true
+        }
+        if requiresEndpoint {
+            guard endpointAccepted, sample.playlistID == snapshot.playlistID,
+                  let video = sample.videoID,
+                  endpointVideo == nil || endpointVideo == video else { return false }
+            if sample.playlistID != outgoingPlaylist || video != outgoingVideo { return true }
+            // Same playlist/content: params themselves are opaque. Only an
+            // observable ordered queue change can establish a new target here.
+            // Missing/cleared queues and title/artwork changes prove nothing.
+            guard let before = outgoingQueue, before.videoID == video,
+                  let after = pendingQueue, after.videoID == video else { return false }
+            return before.upcoming.map(\.videoID) != after.upcoming.map(\.videoID)
         }
         guard requiresEvidence else { return true }
         if let playlist = sample.playlistID { return playlist == snapshot.playlistID }

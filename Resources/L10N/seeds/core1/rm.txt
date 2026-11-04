@@ -52,7 +52,6 @@
 52|Midà a %@.
 53|Reproducir %@
 54|Sortida actuala: %@
-55|Allontanar «%@» da tes upload?
 56|Ina reclama vegn reproducida
 57|La reclama è finida
 58|Uss en reproducziun: «%@» da %@.

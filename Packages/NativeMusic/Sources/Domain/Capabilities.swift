@@ -1,7 +1,7 @@
 import Foundation
 
 public enum Feature: String, CaseIterable, Sendable {
-    case playback, backgroundPlayback, audioOnly, offline, qualitySelection, libraryMutation, playlistMutation, historyMutation, collaboration, lyrics, radio, casting, uploads, samples, recap, badges
+    case playback, backgroundPlayback, audioOnly, offline, qualitySelection, libraryMutation, playlistMutation, historyMutation, collaboration, lyrics, radio, casting, samples, recap, badges
 }
 public enum CapabilityState: Equatable, Sendable {
     case supported

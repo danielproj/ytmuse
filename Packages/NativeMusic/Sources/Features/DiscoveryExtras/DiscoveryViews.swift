@@ -28,7 +28,7 @@ struct DiscoveryTitle: View {
     let development: Bool
     var body: some View {
         HStack {
-            Text(title).font(.largeTitle.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle")
+            Text(title).font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle")
             Spacer()
             if development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("developmentDataLabel") }
         }
@@ -40,15 +40,14 @@ public struct DiscoveryEntryRow: View {
     let open: (DiscoveryEntry) -> Void
     public init(open: @escaping (DiscoveryEntry) -> Void) { self.open = open }
     public var body: some View {
-        MusicGlassGroup {
-            HStack(spacing: MusicSpace.xs) {
+        ScrollView(.horizontal) {
+            HStack(spacing: MusicSpace.lg) {
                 ForEach(DiscoveryEntry.allCases, id: \.self) { entry in
                     Button { open(entry) } label: { Label(entry.title, systemImage: entry.symbol) }
-                        .musicButtons().accessibilityIdentifier("discoveryEntry-" + entry.rawValue)
+                        .musicPageAction().accessibilityIdentifier("discoveryEntry-" + entry.rawValue)
                 }
-                Spacer()
-            }
-        }
+            }.padding(.vertical, MusicSpace.xs)
+        }.scrollIndicators(.hidden)
         .accessibilityElement(children: .contain).accessibilityLabel(Text("Discovery"))
     }
 }
@@ -85,13 +84,13 @@ struct SampleClipRow: View {
                 HStack(spacing: MusicSpace.xs) {
                     if previewing {
                         Button { Task { await model.stopPreview() } } label: { Label("Stop Preview", systemImage: "stop.fill") }
-                            .musicButtons().accessibilityIdentifier("sampleStop-" + clip.id)
+                            .musicPageAction().accessibilityIdentifier("sampleStop-" + clip.id)
                     } else {
                         Button { Task { await model.preview(clip.id) } } label: { Label("Preview", systemImage: "play.circle") }
-                            .musicButtons().accessibilityIdentifier("samplePreview-" + clip.id)
+                            .musicPageAction().accessibilityIdentifier("samplePreview-" + clip.id)
                     }
                     Button { Task { await model.play(clip.id) } } label: { Label("Play", systemImage: "play.fill") }
-                        .musicButtons(prominent: true).accessibilityIdentifier("samplePlay-" + clip.id)
+                        .musicPageAction(prominent: true).accessibilityIdentifier("samplePlay-" + clip.id)
                 }
             }
         }
@@ -118,7 +117,7 @@ public struct SamplesView: View {
             content
             if let handoff = model.handoff { handoffLine(handoff) }
         }
-        .padding(MusicSpace.lg).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .musicPageContent().frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .task { await model.load() }
         .onDisappear { Task { await model.leaveScreen() } }
         .accessibilityElement(children: .contain).accessibilityIdentifier("samplesScreen")
@@ -184,11 +183,11 @@ public struct TunerView: View {
                     .font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("tunerIntro")
                 if let failure = model.failure {
                     HStack { Label(failure.message, systemImage: "exclamationmark.circle").foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("tunerFailure")
-                        Button("Dismiss") { model.dismissFailure() }.musicButtons() }
+                        Button("Dismiss") { model.dismissFailure() }.musicPageAction() }
                 }
-                radioNow
-                seeds
-            }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+                radioNow.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
+                seeds.padding(.top, MusicSpace.sm)
+            }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }
         .accessibilityElement(children: .contain).accessibilityIdentifier("tunerScreen")
     }
@@ -200,16 +199,30 @@ public struct TunerView: View {
                 switch model.capability {
                 case .controlsSupplied:
                     ForEach(model.controls) { control in
+                        let identity = model.controlsIdentity
                         HStack {
                             Text(control.title).accessibilityIdentifier("tunerControlTitle-" + control.id)
-                            Picker(control.title, selection: Binding(get: { control.selectedOption?.id ?? "" }, set: { id in Task { await model.choose(option: id, in: control.id) } })) {
+                            Picker(control.title, selection: Binding(get: { control.selectedOption?.id ?? "" }, set: { id in Task { await model.choose(option: id, in: control.id, suppliedBy: identity) } })) {
                                 if control.selectedOption == nil { Text("Not chosen").tag("") }
-                                ForEach(control.options) { Text($0.title).tag($0.id) }
-                            }.pickerStyle(.segmented).disabled(model.busy).accessibilityIdentifier("tunerControl-" + control.id)
+                                ForEach(control.options) { Text($0.title).tag($0.id).disabled(!model.canApply($0)) }
+                            }.pickerStyle(.menu).disabled(model.busy).accessibilityIdentifier("tunerControl-" + control.id)
                         }
+                    }
+                    if model.selectionUnconfirmed {
+                        Text("YouTube Music hasn’t confirmed the requested filter. The selection shown comes from its queue.")
+                            .font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("tunerSelectionUnconfirmed")
+                    }
+                    if model.controls.contains(where: { $0.options.contains(where: { !model.canApply($0) }) }) {
+                        Text("Filters require this radio’s active player, readable queue and supported playback options. Restart the radio to reload its controls.").font(.callout).foregroundStyle(MusicStyle.secondaryText)
                     }
                 case .unresolved(let reason):
                     Label(reason, systemImage: "clock.arrow.circlepath").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("tunerControlsUnresolved")
+                case .loadingControls:
+                    ProgressView("Loading radio filters…").accessibilityIdentifier("tunerFiltersLoading")
+                case .controlsFailed:
+                    Text("Radio filters couldn’t load. The radio has started.").foregroundStyle(MusicStyle.secondaryText)
+                    Button("Retry radio filters") { Task { await model.retryControls() } }.disabled(model.busy)
+                        .accessibilityIdentifier("tunerFiltersRetry")
                 case .noControlsSupplied:
                     Label("This radio’s queue was read and carried no tuning controls.", systemImage: "slider.horizontal.3")
                         .font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("tunerNoControls")
@@ -237,7 +250,7 @@ public struct TunerView: View {
                         }
                         Spacer()
                         Button { Task { await model.start(seed) } } label: { Label("Start Radio", systemImage: "play.fill") }
-                            .musicButtons(prominent: model.context?.seed == seed).disabled(model.busy).accessibilityLabel(Text("Start radio from \(seed.title)"))
+                            .musicPageAction(prominent: model.context?.seed == seed).disabled(model.busy).accessibilityLabel(Text("Start radio from \(seed.title)"))
                             .accessibilityIdentifier("tunerSeed-" + seed.id)
                     }
                     .accessibilityElement(children: .contain)
@@ -297,6 +310,7 @@ struct LocalListeningSection: View {
                 Text("Nothing has been played in YTMuse on this Mac yet.").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("localListeningNone")
             }
         }
+        .padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
         .accessibilityElement(children: .contain).accessibilityIdentifier("localListening")
     }
 }
@@ -311,18 +325,18 @@ public struct RecapView: View {
                 DiscoveryTitle(title: "Recap", development: development)
                 SummaryStateView(state: model.recap, kind: "recap", retry: { Task { await model.loadRecap() } }) { payload in
                     VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                        Text(payload.title).font(.title2.bold()).accessibilityAddTraits(.isHeader)
+                        Text(payload.title).font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
                         if let period = payload.period { Text(period).foregroundStyle(MusicStyle.secondaryText) }
                         ForEach(payload.entries) { entry in
                             VStack(alignment: .leading, spacing: MusicSpace.hairline) {
                                 Text(entry.title).font(.body.weight(.semibold))
                                 if let value = entry.value { Text(value).font(.title3) }
                                 if let caption = entry.caption { Text(caption).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-                            }.accessibilityElement(children: .combine).accessibilityIdentifier("recapEntry-" + entry.id)
+                            }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface().accessibilityElement(children: .combine).accessibilityIdentifier("recapEntry-" + entry.id)
                         }
                     }.accessibilityElement(children: .contain).accessibilityIdentifier("recapLoaded")
                 }
-            }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+            }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }
         .task { await model.loadRecap() }
         .accessibilityElement(children: .contain).accessibilityIdentifier("recapScreen")
@@ -339,7 +353,7 @@ public struct LocalListeningView: View {
             VStack(alignment: .leading, spacing: MusicSpace.md) {
                 DiscoveryTitle(title: "On this Mac", development: false)
                 LocalListeningSection(model: model)
-            }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+            }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }
         .task { await model.refreshLocal() }
         .accessibilityElement(children: .contain).accessibilityIdentifier("localListeningScreen")
@@ -361,11 +375,11 @@ public struct BadgesView: View {
                                 Label(badge.title, systemImage: "rosette").font(.body.weight(.semibold))
                                 if let detail = badge.detail { Text(detail).font(.callout).foregroundStyle(MusicStyle.secondaryText) }
                                 if let earned = badge.earned { Text(earned).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-                            }.accessibilityElement(children: .combine).accessibilityIdentifier("badge-" + badge.id)
+                            }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface().accessibilityElement(children: .combine).accessibilityIdentifier("badge-" + badge.id)
                         }
                     }.accessibilityElement(children: .contain).accessibilityIdentifier("badgesLoaded")
                 }
-            }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+            }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }
         .task { await model.loadBadges() }
         .accessibilityElement(children: .contain).accessibilityIdentifier("badgesScreen")

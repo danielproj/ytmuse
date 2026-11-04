@@ -12,7 +12,7 @@ Persistent search lives in `Features/Search`, the palette in `Features/CommandPa
 
 ## What is promised, and what is not
 
-- **No completeness claim.** The service answer is one page (`complete == false`); the UI says so. Library and Uploads scopes are local only and say so. Uploads has no adapter yet and shows nothing.
+- **No completeness claim.** The service answer is one page (`complete == false`); the UI says so. The Library scope is local only and says so.
 - **Original query preserved.** `FoldedQuery` never rewrites what was typed. A respelling (the service's "did you mean", or a word from the library's own titles) is only offered; `applyCorrection()` is the one action that changes the query, and `revertCorrection()` restores the original exactly. A service that already ran the corrected query is labelled as such.
 - **Tolerant local matching.** Text is folded (canonical composition, lowercase, then diacritics/width; `ß`, `ø`, `ł`, `æ`, `ı`… mapped) so accents, decomposed accents, case and full-width forms match. Alphabetic words of four or more letters tolerate 1 edit (2 from eight letters, a transposition counts as one); ideographs are exact and keep their order; such matches carry the *Approximate match* badge. This is local only; it makes no statement about the service.
 - **Typing never acts.** Starting playback needs Return on a selected result, a Play button, or a menu item.

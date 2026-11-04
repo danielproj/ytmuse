@@ -52,7 +52,6 @@
 52|Átváltás erre: %@.
 53|%@ lejátszása
 54|Jelenlegi kimenet: %@
-55|Eltávolítja a(z) „%@” elemet a feltöltései közül?
 56|Hirdetés szól
 57|A hirdetés véget ért
 58|Most szól: „%@” – %@.

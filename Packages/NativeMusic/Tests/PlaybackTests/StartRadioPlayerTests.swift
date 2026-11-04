@@ -7,7 +7,8 @@ import Features
 // Synthetic, sanitized values only: no real session, cookie, page or network. The ids have the shape of a real album track and its published radio.
 
 /// CORE-B rework 1 (F1): a Start Radio from a row is driven through the real `WebMusicPlayer` over a fake page, with the target the production plan produces.
-/// The service's radio flag (`wAEB`) must never reach the player as parameters: the player treats any parameters as a shuffle that has to show in the page.
+/// Row radio actions currently use their published playlist/video target. A parameterized endpoint is independently confirmed by its
+/// requested playlist/video, while Shuffle requires explicit shuffle intent and evidence.
 @Suite @MainActor struct StartRadioPlayerTests {
     private static let album = "OLAK5uy_albumList0001"
     private static let video = "radioSeed01"
@@ -78,8 +79,8 @@ import Features
         }
         #expect(fake.tornDown == 0, "pressing Start Radio twice does not stop playback")
     }
-    /// The reason the flag is never sent: as parameters it is a shuffle, which a radio never confirms. This is the failure the fix avoids.
-    @Test func theRadioFlagAsParametersWouldHaveFailedTheStartAndDroppedThePage() async throws {
+    /// A routed parameterized radio that reports a different seed must time out; shuffle state cannot certify the requested video.
+    @Test func parameterizedRadioRefusesADifferentReportedSeedWithoutRequiringShuffle() async throws {
         let (player, page) = makePlayer(timeout: .milliseconds(300))
         await player.play(playlistID: Self.radioList, title: nil)
         let fake = try #require(page()); fake.commitLast(); fake.send(sample(load: 1, playlist: Self.radioList))
@@ -91,6 +92,8 @@ import Features
             return nil
         }
         await player.play(playlistID: Self.radioList, title: nil, videoID: Self.video, params: "wAEB")
-        #expect(player.snapshot.phase == .failed(.shuffleFailed), "\(player.snapshot.phase)")
+        #expect(player.snapshot.phase == .failed(.timedOut), "\(player.snapshot.phase)")
+        #expect(fake.commands.contains { $0.body == WebMusicScripts.loadTarget && $0.arguments["params"] as? String == "wAEB" })
+        #expect(fake.loads.count == 1, "no plain playlist fallback")
     }
 }

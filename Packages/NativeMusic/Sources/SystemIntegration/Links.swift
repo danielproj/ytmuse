@@ -23,7 +23,7 @@ public struct LinkItem: Equatable, Hashable, Sendable {
     }
 }
 /// A top-level screen the app's own scheme can open (`ytmuse://library`).
-public enum LinkScreen: String, Sendable, CaseIterable { case home, explore, search, library, downloads, history, uploads, podcasts, queue }
+public enum LinkScreen: String, Sendable, CaseIterable { case home, explore, search, library, downloads, history, podcasts, queue }
 public enum LinkDestination: Equatable, Sendable {
     case item(LinkItem)
     case screen(LinkScreen)
@@ -41,7 +41,7 @@ enum LinkShapes {
     static func allURLSafe(_ text: String) -> Bool { allURLSafe(Substring(text)) }
     /// A YouTube video id: 11 URL-safe characters.
     static func isVideoID(_ text: String) -> Bool { text.utf8.count == 11 && allURLSafe(text) }
-    /// Playlist ids start with a prefix YouTube uses for playlists, albums-as-playlists, mixes and uploads; `LM` (Liked Music) and other special
+    /// Playlist ids start with a prefix YouTube uses for playlists, albums-as-playlists, and mixes; `LM` (Liked Music) and other special
     /// ids are never accepted from a link.
     static let playlistPrefixes = ["PL", "OLAK5uy_", "RDCLAK5uy_", "RDAMPL", "RDAMVM", "RDEM", "RDGMEM", "RDMM", "RD", "UU", "FL"]
     static func isPlaylistID(_ text: String) -> Bool {

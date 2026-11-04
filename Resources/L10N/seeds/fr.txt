@@ -1,12 +1,10 @@
 64|L’éligibilité du compte n’a pas été vérifiée. Réessayez après vous être reconnecté.
-65|Un import interrompu ne peut pas être repris ; il recommence depuis le début.
 66|Demande envoyée à YouTube Music pour retirer « Je n’aime pas ».
 67|Demande envoyée à YouTube Music pour retirer « J’aime ».
 68|La qualité audio est choisie par le lecteur propre à YouTube Music. YTMuse ne la mesure ni ne la sélectionne.
 69|Autorisation annulée.
 70|Annuler l’autorisation
 71|Annulé. YouTube Music avait déjà ce fichier et peut encore l’ajouter.
-72|Annulé. Votre fichier n’a pas été modifié.
 73|Effacer l’historique local…
 74|Effacer la sélection
 75|Effacer toutes les lectures de ce Mac ?
@@ -54,13 +52,11 @@
 117|Rien n’a été envoyé.
 118|Les notifications sont désactivées pour YTMuse. Activez-les dans Réglages Système > Notifications, puis réessayez.
 119|Désactivé par défaut. L’activer demande à macOS l’autorisation d’afficher des notifications. Elles n’indiquent que le titre et l’artiste.
-120|Désactivé tant que vous ne l’activez pas. Les playlists, les imports et l’historique sont privés : ils ne s’affichent que si vous le choisissez, et sont retirés de Spotlight quand vous vous déconnectez, supprimez le compte ou désactivez cette option.
+120|Désactivé tant que vous ne l’activez pas. Les playlists et l’historique sont privés : ils ne s’affichent que si vous le choisissez, et sont retirés de Spotlight quand vous vous déconnectez, supprimez le compte ou désactivez cette option.
 121|Seule une partie de cette modification a été appliquée. « Réessayer » n’envoie que le reste.
-122|Importez uniquement de la musique dont vous détenez les droits. YouTube Music vérifie chaque fichier après son import et décide de ce qu’il accepte. Vos fichiers sur ce Mac sont seulement lus, jamais modifiés ni supprimés.
 123|Ouverture de la connexion Google…
 124|L’ouverture de ce type de résultat n’est pas encore disponible.
 125|Les personnes qui ont rejoint la playlist ne peuvent plus y ajouter de titres. Cette app ne peut pas la rouvrir ; faites-le dans YouTube Music.
-126|La lecture des imports n’est pas disponible dans cette version.
 127|Playlists conservées hors ligne
 128|Lecture de votre compte YouTube Music…
 129|Lecture du nom de votre compte. Rien n’est modifié dans votre bibliothèque.
@@ -72,8 +68,6 @@
 135|Supprimer les téléchargements automatiques
 136|Supprimer les téléchargements dont vous n’avez plus besoin
 137|Supprimer de la bibliothèque
-138|Supprimer des imports
-139|Supprimer des imports…
 140|Impossible de charger Samples
 141|Session enregistrée indisponible sur ce Mac
 142|Enregistrer dans votre bibliothèque nécessite un compte YouTube Music connecté.
@@ -96,8 +90,6 @@
 159|Connectez-vous à YouTube Music pour voir Samples.
 160|Connectez-vous à YouTube Music pour voir ce qu’il propose pour votre compte.
 161|Connectez-vous à YouTube Music pour démarrer une radio.
-162|Connectez-vous à YouTube Music pour importer.
-163|Connectez-vous à YouTube Music pour importer. Rien n’a été ajouté.
 164|Connectez-vous pour enregistrer cet épisode pour plus tard.
 165|Connectez-vous pour voir ceci
 166|Connexion annulée.
@@ -121,7 +113,6 @@
 184|La réponse de Google n’a pas pu être vérifiée. Aucune connexion à Music n’a été vérifiée.
 185|L’action sur le compte n’a pas pu se terminer. Relancez l’action.
 186|L’action sur le compte a échoué. Réessayez.
-187|Le compte a changé, cet import a donc été arrêté.
 188|Le relevé propre à l’app de ce qu’elle a lu ici. Ce n’est pas l’historique de YouTube Music et il n’est jamais envoyé à YouTube Music.
 189|Le fournisseur du compte connecté ne peut pas effectuer cette action.
 190|Les paroles n’ont pas pu se charger pour le moment.
@@ -135,8 +126,6 @@
 198|La playlist n’a pas été lue en entier ; la réorganisation est donc désactivée jusqu’à ce qu’elle le soit.
 199|La file d’attente n’a pas pu être réorganisée. Vérifiez les éléments modifiables et réessayez.
 200|La copie enregistrée était endommagée et a été supprimée
-201|La liste des imports n’a pas pu être lue. Les tâches précédentes ne sont pas affichées.
-202|La liste des imports n’a pas pu être enregistrée. Elle ne survivra pas à un redémarrage.
 203|La vidéo n’a pas pu être changée. Réessayez.
 204|Ces mots n’ont pas été recherchés : aucune fenêtre YTMuse n’a pu les recevoir, ou une recherche plus récente les a remplacés. Ouvrez YTMuse et réessayez.
 205|L’enregistrement de ce Mac n’a pas pu être lu ni sauvegardé.
@@ -144,22 +133,16 @@
 207|Cette action est indisponible dans la région de cette identité.
 208|Cette action n’est pas disponible pour cet élément.
 209|Cette action n’est pas disponible pour cette page.
-210|Cette app ne peut plus lire le fichier. Choisissez-le à nouveau.
 211|Cette app ne peut pas encore lire cela depuis YouTube Music. Aucune réponse qu’elle sait lire ne le contient ; rien n’est donc affiché et rien n’est inventé.
-212|Cette app n’a pas pu lire ce fichier ; il n’a donc pas été ajouté.
 213|Cette app ne lit pas encore la file d’attente d’une radio depuis YouTube Music ; elle ne peut donc pas savoir si la radio propose des réglages. Aucun n’est affiché et aucun n’est inventé.
 214|Cette modification n’est pas valide. Rien n’a été modifié.
 215|Cette modification nécessite d’abord votre confirmation. Rien n’a été modifié.
 216|Cette collection n’a pas pu être chargée
 217|Cela n’a pas pu être chargé
 218|Cela supprime la navigation, les recherches, les filtres et les sélections de fenêtres enregistrés par cette app pour tous les comptes. Cela ne supprime ni l’historique d’écoute, ni les comptes, ni la musique, ni les données distantes.
-219|Cela ne ressemble pas à un fichier audio ; il n’a donc pas été ajouté.
 220|Cet épisode n’indique pas de quelle émission le lire ; « Lire » n’est donc pas proposé ici. Ouvrez l’émission pour le lire.
-221|Ce fichier est protégé contre la copie ; il ne peut donc pas être importé.
-222|Ce fichier est vide ; il n’a donc pas été ajouté.
 223|Cette identité n’a pas l’autorisation d’effectuer cette action.
 224|Cette identité ou ce contenu est indisponible. Choisissez un autre compte ou un autre élément.
-225|Ce n’est pas un fichier ordinaire ; il n’a donc pas été ajouté.
 226|Cet élément appartient à un autre compte ou à une session précédente. Choisissez-le à nouveau.
 227|Cet élément ne contenait rien à lire.
 228|Cette page ne contenait pas ce qu’il faut pour suivre ou enregistrer à partir d’ici.
@@ -170,11 +153,8 @@
 233|Ce résultat ne contenait rien à lire.
 234|Ce titre n’a aucune note à retirer.
 235|Ce titre n’est pas disponible pour vous.
-236|Cet import a échoué.
 237|Mise à jour de l’autorisation Google…
 238|Mise à jour du compte…
-239|Importé. YouTube Music traite ce fichier ; il n’est pas encore dans votre bibliothèque.
-240|L’import arrivera dans une prochaine mise à jour ; rien n’a donc été ajouté.
 241|Vérification de votre compte YouTube Music…
 242|YTMuse ne peut pas encore lancer quelque chose en répétition depuis l’extérieur de l’app.
 243|YTMuse ne peut pas encore lancer quelque chose en lecture aléatoire depuis l’extérieur de l’app.
@@ -183,25 +163,16 @@
 246|YTMuse n’a pas pu lire ni mettre à jour la session enregistrée de ce compte dans le Keychain de ce Mac. Votre compte n’a pas été déconnecté. Réessayez ou reconnectez-vous.
 247|YTMuse est déjà en train de lancer quelque chose. Réessayez dans un instant.
 248|YTMuse est encore en cours de démarrage. Réessayez dans un instant.
-249|Vous pouvez parcourir la musique que vous avez déjà importée et la supprimer ici. L’ajout de musique depuis ce Mac n’est pas encore disponible.
-250|Vous avez annulé cet import.
 251|YouTube Music a répondu d’une façon que YTMuse ne reconnaît pas encore ; aucun compte n’a donc été ajouté.
 252|YouTube Music a répondu d’une façon que YTMuse ne reconnaît pas encore. Ce n’est pas une bibliothèque vide.
 253|YouTube Music a répondu, mais n’a rien envoyé pour votre compte ici. Rien n’est estimé à la place.
-254|YouTube Music ne peut pas poursuivre cet import.
-255|YouTube Music ne peut pas reprendre un import interrompu ; il doit donc recommencer.
 256|YouTube Music n’a pas pu répondre à cette demande. Réessayez.
-257|YouTube Music n’a pas pu être sollicité à l’instant. Nouvelle tentative.
 258|YouTube Music n’a pas pu être joint, et il n’existe pas encore de copie enregistrée de cette collection.
-259|YouTube Music n’a pas pu être joint. Vérifiez à nouveau plus tard.
-260|YouTube Music n’a pas pu traiter ce fichier.
 261|YouTube Music n’a pas pu le dire non plus. Réessayer rétablit le même état et ne peut rien dupliquer.
 262|YouTube Music n’a pas pu démarrer cet épisode. Réessayez.
 263|YouTube Music n’a pas pu démarrer cela. Essayez de lire à nouveau.
 264|YouTube Music n’a pas pu démarrer cela. Réessayez.
-265|YouTube Music n’a pas pu prendre en charge cet import pour le moment.
 266|YouTube Music n’a pas accepté cette modification. Rien n’a été modifié.
-267|YouTube Music n’a pas accepté ce fichier.
 268|YouTube Music n’a pas accepté cela. Rien n’a été modifié.
 269|YouTube Music n’a pas appliqué cette modification. Elle a été annulée.
 270|YouTube Music n’a pas confirmé la suppression.
@@ -219,7 +190,6 @@
 282|YouTube Music ne vous permet pas de modifier cette playlist. Rien n’a été modifié.
 283|YouTube Music ne propose pas de téléchargements sur Mac.
 284|YouTube Music ne propose pas cette collection pour ce compte ou cette version.
-285|YouTube Music a terminé le traitement de ce fichier, mais votre liste d’imports n’a pas pu être mise à jour. Actualisez-la pour voir le fichier.
 286|YouTube Music demande une pause ; les paroles n’ont donc pas pu se charger.
 287|YouTube Music demande une pause. Rien n’a été modifié.
 288|YouTube Music demande une pause. Réessayez dans un instant.
@@ -246,18 +216,14 @@
 309|Votre compte a changé pendant le chargement. Réessayez.
 310|Vos réglages de podcasts n’ont pas pu être enregistrés sur ce Mac. Ils s’appliquent jusqu’à ce que vous quittiez l’app.
 311|Votre session est terminée ; rien n’a donc été modifié. Reconnectez-vous.
-312|Votre session est terminée. Reconnectez-vous pour importer.
 313|Votre session est terminée. Reconnectez-vous.
-314|Votre liste d’imports n’a pas pu le dire non plus. Supprimer à nouveau ne peut rien supprimer d’autre.
 315|Vous êtes hors ligne ; Samples n’a donc pas pu être chargé.
 316|Vous êtes hors ligne ; rien n’a donc été envoyé ni chargé.
 317|Vous êtes hors ligne ; les paroles n’ont donc pas pu se charger.
-318|Vous êtes hors ligne. L’import s’est arrêté et rien n’a été mis en file d’attente.
 319|Vous êtes sur la page de connexion propre à Google. YTMuse ne voit ni n’enregistre jamais votre mot de passe.
 320|Taille du texte
 321|Redimensionne le texte des listes, des détails et des paroles.
 322|Les menus et les messages vocaux changent après le redémarrage de YTMuse.
-323|%@ par son nom
 324|Un espace de %@ reste toujours libre sur ce Mac.
 325|%@ sur %@
 326|%@ de téléchargements antérieurs ne sont plus listés mais comptent toujours dans la limite.
@@ -305,11 +271,10 @@
 368|Déjà au direct.
 369|Déjà présents : %@. « Conserver les doublons » les ajoute à nouveau ; « Ignorer les existants » les exclut.
 370|Déjà le cas : %@
-371|Afficher aussi mes playlists, mes imports et mon historique d’écoute
+371|Afficher aussi mes playlists et mon historique d’écoute
 372|Une publicité est en cours de lecture. Elle ne peut pas être passée ni parcourue.
 373|Une publicité est en cours de lecture. « J’aime » reviendra avec le titre suivant.
 374|Un client YouTube Music natif et indépendant pour Mac
-375|Un import interrompu peut être repris.
 376|Un lien d’invitation permet aux personnes à qui vous l’envoyez de rejoindre la playlist et d’ajouter des titres. Cette app n’envoie rien à personne.
 377|Une autre requête pour cela est encore en cours.
 378|Toute personne disposant du lien peut ouvrir cette playlist.
@@ -335,3 +300,9 @@
 398|Les téléchargements automatiques sont désactivés. Activez d’abord les téléchargements intelligents.
 399|Les téléchargements automatiques ont atteint leur limite
 400|Lecture automatique
+1405|Chargement des filtres radio…
+1406|Les filtres radio n’ont pas pu être chargés. La radio a démarré.
+1407|Réessayer les filtres radio
+1408|Ce filtre nécessite des options de lecture que l’app ne peut pas encore appliquer.
+1409|Les filtres nécessitent le lecteur actif de cette radio, une file lisible et des options de lecture prises en charge. Redémarrez la radio pour recharger ses commandes.
+1410|YouTube Music n’a pas encore confirmé le filtre demandé. La sélection affichée provient de sa file d’attente.

@@ -86,8 +86,6 @@ public enum LibraryControls {
     public let history: HistoryModel
     public let ledger: LibraryWriteLedger
     public var selectedKind: MusicLibraryKind = .songs
-    /// The Uploads destination's state (W19), set by the composition; the account-change hook below reaches it.
-    public var uploads: UploadsSurface?
     /// Playlist editing (W13), set by the shell; nil: no playlist control is offered anywhere.
     public var playlists: PlaylistSurface?
     /// The kept (downloaded) items, set by the composition (W15). With it the Library offers a Downloaded-only section; without it, none.
@@ -109,17 +107,13 @@ public enum LibraryControls {
     public var model: LibraryCollectionModel { models[selectedKind]! }
     public var playback: SearchPlayback { playbackState() }
     public func offers(for item: MusicCatalogItem) -> [CatalogActionOffer] {
-        // An uploaded track plays from the Uploads library; the catalog's radio does not exist for it.
-        if item.isUpload {
-            return [CatalogActionOffer(action: .play, unavailable: String(localized: "Playing uploads isn’t available in this version.")), ]
-        }
+        guard !item.isPrivatelyOwned else { return [] }
         return CatalogActionPlan.offers(for: item, playback: playbackState())
     }
     /// The shell calls this when the active account (or whether its session is live) changes.
     public func accountChanged() {
         for model in models.values { model.accountChanged() }
         history.accountChanged(); ledger.accountChanged(); playlists?.accountChanged(); feedback = [:]
-        uploads?.accountChanged()
     }
     public func perform(_ action: CatalogAction, on item: MusicCatalogItem, key: String) async {
         guard let offer = offers(for: item).first(where: { $0.action == action }) else { feedback[key] = .failed(String(localized: "This action isn’t available for this item.")); return }

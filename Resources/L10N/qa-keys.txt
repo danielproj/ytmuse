@@ -30,7 +30,6 @@ Selected: %lld
 Simulate output loss
 Simulate receiver loss
 Stored scroll (pt): %@
-Test mode only accepts the app’s own synthetic audio files.
 The development queue action failed. Try the action again.
 This development collection contains no retained media.
 This is owned test audio, not a YouTube Music song, so it has no like.

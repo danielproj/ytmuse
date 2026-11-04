@@ -1225,7 +1225,7 @@
       "properties": [
         {
           "name": "ytmuse:use",
-          "value": "A pinned reference copy of two upstream files (artifacts/harness/nodes/W19/reference), read only by a test that compares wire shapes. Nothing is linked, shipped or copied into product code."
+          "value": "A pinned reference copy of two upstream files (artifacts/harness/nodes/W19/reference), retained only as historical review evidence after removal of the upload feature. Nothing is linked, shipped or copied into product code."
         }
       ],
       "scope": "excluded",
@@ -1450,7 +1450,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:80251084-9c6f-0fd6-fc62-e1cfd871dcad",
+  "serialNumber": "urn:uuid:56caad5d-9261-1da7-dbba-afa004234c81",
   "specVersion": "1.5",
   "version": 1
 }

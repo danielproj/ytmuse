@@ -76,7 +76,7 @@ public struct SearchResultRow: View {
                 HStack(spacing: MusicSpace.sm) {
                     Image(systemName: result.kind.symbol).frame(width: 24).foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                        Text(result.title).font(.body).lineLimit(2)
+                        Text(result.title).font(.body.weight(.medium)).lineLimit(2)
                         Text(detail).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(2)
                         if !result.badges.isEmpty {
                             HStack(spacing: MusicSpace.xs) { ForEach(result.badges.sorted(), id: \.self) { BadgeLabel(badge: $0) } }
@@ -96,12 +96,12 @@ public struct SearchResultRow: View {
                 if let open {
                     Button { open() } label: { Label("Open", systemImage: "chevron.right") }
                         .labelStyle(.iconOnly).help(Text("Open \(result.title)")).accessibilityLabel(Text("Open \(result.title)"))
-                        .accessibilityIdentifier("searchOpen-" + result.id).musicButtons()
+                        .accessibilityIdentifier("searchOpen-" + result.id).musicPageAction()
                 }
                 if offers.contains(where: { $0.action == .play }) {
                     Button { perform(.play) } label: { Label("Play", systemImage: "play.fill") }
                         .labelStyle(.iconOnly).help(Text("Play \(result.title)")).accessibilityLabel(Text("Play \(result.title)"))
-                        .accessibilityIdentifier("searchPlay-" + result.id).musicButtons()
+                        .accessibilityIdentifier("searchPlay-" + result.id).musicPageAction()
                 }
             }
             if let feedback { feedbackLine(feedback) }
@@ -111,7 +111,7 @@ public struct SearchResultRow: View {
         .musicAnimation(.selection, value: selected)
         .contentShape(Rectangle())
         .onTapGesture(perform: select)
-        .contextMenu {
+        .directPlaylistMenu(addition: DirectPlaylistAddition.candidate(result), identifier: "searchAddToPlaylist-" + result.id) {
             if let open { Button("Open") { open() } }
             ForEach(offers) { offer in
                 Button { perform(offer.action) } label: { Label(offer.action.title, systemImage: offer.action.symbol) }.disabled(!offer.isAvailable)
@@ -161,7 +161,7 @@ struct SearchStatusView: View {
         case .failed(let failure):
             HStack(alignment: .firstTextBaseline) {
                 Label(message(failure), systemImage: "exclamationmark.triangle").font(.callout).accessibilityIdentifier("searchRemoteError")
-                Button("Retry") { model.retryRemote() }.musicButtons().accessibilityIdentifier("searchRetry")
+                Button("Retry") { model.retryRemote() }.musicPageAction().accessibilityIdentifier("searchRetry")
             }
         case .loaded(let info):
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
@@ -184,13 +184,13 @@ struct SearchStatusView: View {
     private func correctionBanner(_ correction: SearchCorrectionOffer) -> some View {
         HStack(alignment: .firstTextBaseline) {
             Text("Did you mean “\(correction.text)”?").font(.callout)
-            Button("Search for “\(correction.text)”") { model.applyCorrection() }.musicButtons().accessibilityIdentifier("applyCorrection")
+            Button("Search for “\(correction.text)”") { model.applyCorrection() }.musicPageAction().accessibilityIdentifier("applyCorrection")
         }.accessibilityElement(children: .contain).accessibilityIdentifier("searchCorrection")
     }
     private var revertBanner: some View {
         HStack(alignment: .firstTextBaseline) {
             Text("Showing results for “\(model.query)”.").font(.callout)
-            Button("Search for “\(model.originalQuery)” instead") { model.revertCorrection() }.musicButtons().accessibilityIdentifier("revertCorrection")
+            Button("Search for “\(model.originalQuery)” instead") { model.revertCorrection() }.musicPageAction().accessibilityIdentifier("revertCorrection")
         }.accessibilityElement(children: .contain).accessibilityIdentifier("searchCorrectionApplied")
     }
 }
@@ -236,7 +236,7 @@ public struct SearchView: View {
     public init(model: SearchModel, focusToken: Int = 0) { self.model = model; self.focusToken = focusToken }
     public var body: some View {
         MusicGlassGroup(spacing: MusicSpace.xs) {
-        VStack(alignment: .leading, spacing: MusicSpace.sm) {
+        VStack(alignment: .leading, spacing: MusicSpace.lg) {
             SearchField(model: model, focus: $focused)
             Picker("Where to search", selection: $model.scope) {
                 ForEach(SearchPlace.allCases) { Text($0.title).tag($0) }
@@ -271,7 +271,7 @@ struct SearchEmptyState: View {
                     HStack {
                         Text("Recent searches").font(.title3.bold()).accessibilityAddTraits(.isHeader)
                         Spacer()
-                        Button("Clear") { recents.clearQueries() }.musicButtons().accessibilityIdentifier("clearRecentQueries")
+                        Button("Clear") { recents.clearQueries() }.musicPageAction().accessibilityIdentifier("clearRecentQueries")
                     }
                     ForEach(recents.queries, id: \.self) { text in
                         Button { model.query = text } label: { Label(text, systemImage: "clock.arrow.circlepath").frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle()) }
@@ -282,7 +282,7 @@ struct SearchEmptyState: View {
                     HStack {
                         Text("Recent items").font(.title3.bold()).accessibilityAddTraits(.isHeader)
                         Spacer()
-                        Button("Clear") { recents.clearItems() }.musicButtons().accessibilityIdentifier("clearRecentItems")
+                        Button("Clear") { recents.clearItems() }.musicPageAction().accessibilityIdentifier("clearRecentItems")
                     }
                     ForEach(recents.items) { item in
                         let result = item.result

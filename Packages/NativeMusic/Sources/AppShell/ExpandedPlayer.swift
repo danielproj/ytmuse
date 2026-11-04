@@ -29,6 +29,7 @@ struct ExpandedPlayer<Trailing: View>: View {
     let compact: Bool
     /// The widest a video picture may be in the hero (W21: the full-screen window gives it more room).
     var pictureWidth: CGFloat = 560
+    var headerActions: () -> AnyView = { AnyView(EmptyView()) }
     @ViewBuilder var trailing: () -> Trailing
     @Environment(\.colorScheme) private var scheme
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -64,7 +65,7 @@ struct ExpandedPlayer<Trailing: View>: View {
                     ScrollView { hero(edge: Self.artworkEdge(forHeight: room.size.height)).frame(maxWidth: .infinity) }
                 }
             }
-            controls
+            controls.frame(maxWidth: pictureWidth > 560 ? 640 : 480).frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -76,9 +77,10 @@ struct ExpandedPlayer<Trailing: View>: View {
     private var header: some View {
         HStack {
             Button(action: collapse) { Label("Collapse Now Playing", systemImage: "chevron.down") }
-                .labelStyle(.iconOnly).musicButtons().help(Text("Collapse Now Playing")).accessibilityIdentifier("collapseNowPlaying")
+                .labelStyle(.iconOnly).buttonStyle(.musicGlyph).help(Text("Collapse Now Playing")).accessibilityIdentifier("collapseNowPlaying")
                 .keyboardShortcut(.cancelAction)
             Spacer()
+            headerActions()
             // The owned session's state, as the bar says it (one `playbackState` element exists at a time: the bar's, or this one).
             if model.music == nil, let state = model.state {
                 Text(LocalizedStringKey(model.pending ? "Working…" : state.playback.state.rawValue)).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playbackState")
@@ -102,8 +104,7 @@ struct ExpandedPlayer<Trailing: View>: View {
                     .musicElevation(.hero, tint: accent?.color)
                     .accessibilityElement(children: .ignore).accessibilityLabel(Text("Now Playing artwork")).accessibilityHidden(false).accessibilityIdentifier("expandedArtwork")
                     .audit("nowPlayingArtwork", group: "expandedColumn", within: "playerExpanded")
-                Text(model.currentTitle).font(.title).accessibilityIdentifier("currentMediaTitle").playerMatched("player-title", namespace, .position)
-                Text("Playback is shared across every window.").foregroundStyle(MusicStyle.secondaryText)
+                Text(model.currentTitle).font(.title2.weight(.semibold)).multilineTextAlignment(.center).lineLimit(2).accessibilityIdentifier("currentMediaTitle").playerMatched("player-title", namespace, .position)
             }.padding(.vertical, MusicSpace.md).audit("nowPlayingHero", group: "expandedColumn", kind: .layer)
         }
     }
@@ -125,7 +126,7 @@ struct ExpandedPlayer<Trailing: View>: View {
                 PlaybackTimeline(model: model.timeline, seek: { target in Task { await model.act(action: .seek) { try await $0.seek(target) } } }, plain: true)
                     .audit("nowPlayingTimeline", group: "expandedColumn", within: "playerExpanded")
                 transportRow {
-                    OwnedControlsView(model: model, large: true, namespace: namespace, plain: true)
+                    OwnedCapsuleButtons(model: model, large: true, namespace: namespace)
                 } accessories: {
                     OwnedCapsuleSecondary(model: model, compact: compact, expanded: true, showQueue: showQueue)
                 }
@@ -134,21 +135,13 @@ struct ExpandedPlayer<Trailing: View>: View {
         }
     }
 
-    /// The transport and its accessories never share space: one row (controls centred while there is room, accessories at the trailing edge) when both
-    /// fit side by side, otherwise the accessories sit under the controls. Both are audited, so an overlap at any width fails the render audit.
+    /// Separate, centered rows keep the play circle on the same axis as the artwork at every width.
     private func transportRow<Controls: View, Accessories: View>(@ViewBuilder _ controls: () -> Controls, @ViewBuilder accessories: () -> Accessories) -> some View {
-        let controlsView = controls().audit("nowPlayingControls", group: "expandedColumn", within: "playerExpanded")
-        let accessoriesView = accessories().audit("nowPlayingAccessories", group: "expandedColumn", within: "playerExpanded")
-        return ViewThatFits(in: .horizontal) {
-            HStack(spacing: MusicSpace.md) {
-                Color.clear.frame(height: 1).frame(maxWidth: .infinity)
-                controlsView.fixedSize()
-                accessoriesView.fixedSize().frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            VStack(spacing: MusicSpace.xs) {
-                controlsView.fixedSize()
-                accessoriesView.fixedSize()
-            }
+        VStack(spacing: MusicSpace.sm) {
+            controls().fixedSize().frame(maxWidth: .infinity)
+                .audit("nowPlayingControls", group: "expandedColumn", within: "playerExpanded")
+            accessories().frame(maxWidth: .infinity)
+                .audit("nowPlayingAccessories", group: "expandedColumn", within: "playerExpanded")
         }
     }
 }

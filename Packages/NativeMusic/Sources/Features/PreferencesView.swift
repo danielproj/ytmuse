@@ -15,12 +15,12 @@ public struct PreferencesView<Extra: View>: View {
           Text("Dark").tag(Appearance.dark.rawValue)
         }.accessibilityIdentifier("appearancePicker")
         Button("Restore Appearance Default") { storedAppearance = Appearance.system.rawValue }
-          .accessibilityIdentifier("restoreAppearance").musicButtons()
+          .accessibilityIdentifier("restoreAppearance").musicPageAction()
         Text("Appearance is stored on this Mac and applies to all app windows.")
           .font(.footnote).foregroundStyle(MusicStyle.secondaryText)
         LanguageRegionSection()
         extra
-      }.formStyle(.grouped).scrollContentBackground(.hidden).padding(MusicSpace.xs).musicSurface()
+      }.formStyle(.grouped).controlSize(.regular).scrollContentBackground(.hidden).padding(MusicSpace.xs).musicInsetSurface()
     }.padding(MusicSpace.lg).frame(width: 500, height: 440).musicCanvas()
   }
 }

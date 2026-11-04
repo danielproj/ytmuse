@@ -35,10 +35,10 @@ import TestSupport
             switch self {
             case .miniCompact, .miniCompactAd: ["miniPlayer", "miniArtwork", "miniTitleBlock", "miniWindowControls", "miniControls", "miniAccessories", "miniTimeline"]
             case .miniCompactIdle: ["miniPlayer", "miniArtwork", "miniTitleBlock", "miniWindowControls", "miniControls", "miniAccessories"]   // nothing plays: no position row
-            case .miniExpanded, .miniExpandedAd: ["miniPlayer", "miniToolbar", "playerExpanded", "nowPlayingControls", "nowPlayingAccessories", "nowPlayingTimeline", "nowPlayingHero", "lightLayer"]
+            case .miniExpanded, .miniExpandedAd: ["miniPlayer", "miniHeaderActions", "playerExpanded", "nowPlayingControls", "nowPlayingAccessories", "nowPlayingTimeline", "nowPlayingHero", "lightLayer"]
             case .fullScreen, .fullScreenAd, .fullScreenLive: ["fullScreenNowPlaying", "playerExpanded", "nowPlayingControls", "nowPlayingAccessories", "nowPlayingTimeline", "nowPlayingHero", "lightLayer"]
             case .fullScreenQueue: ["fullScreenNowPlaying", "playerExpanded", "fullScreenPanel", "nowPlayingControls", "lightLayer"]
-            case .popover, .popoverAd: ["statusPopover", "statusCover", "statusControls", "statusVolumeRow", "statusActions"]
+            case .popover, .popoverAd: ["statusPopover", "statusCover", "statusControls", "statusTimeline", "statusActions"]
             }
         }
         var expectsOneLight: Bool { rawValue.hasPrefix("miniExpanded") || rawValue.hasPrefix("fullScreen") }
@@ -49,12 +49,13 @@ import TestSupport
         static let all: [Case] = Surface.allCases.flatMap { surface in AuditScheme.allCases.map { Case(surface: surface, scheme: $0) } }
     }
 
-    func render(_ surface: Surface, scheme: AuditScheme, mode: AuditPolicyMode = .standard) async throws -> (violations: [AuditViolation], record: AuditRecord, frames: [AuditFrame]) {
+    func render(_ surface: Surface, scheme: AuditScheme, mode: AuditPolicyMode = .standard, sizeOverride: AuditSize? = nil, trackOverride: SyntheticTrack? = nil, variant: String = "") async throws -> (violations: [AuditViolation], record: AuditRecord, frames: [AuditFrame]) {
+        let size = sizeOverride ?? surface.size
         let accounts = LocalAccountBootstrap()
         await accounts.load()
         accounts.installShell()
         let shell = accounts.shell
-        if let track = surface.track { accounts.playback.music = await SyntheticPlayback.player(track) }
+        if let track = trackOverride ?? surface.track { accounts.playback.music = await SyntheticPlayback.player(track) }
         let store = InMemoryDefaults()
         var preferences = MiniPlayerPreferences(); preferences.expanded = surface.rawValue.hasPrefix("miniExpanded")
         preferences.save(to: store)
@@ -65,9 +66,12 @@ import TestSupport
         case .fullScreen, .fullScreenAd, .fullScreenLive, .fullScreenQueue: content = AnyView(NowPlayingFullScreenView(shell: shell, leave: {}, initialPanel: surface == .fullScreenQueue ? .queue : .none))
         case .popover, .popoverAd: content = AnyView(StatusPopoverView(shell: shell))
         }
-        // The root is PINNED to the surface's size (a window gives it exactly this): content wider or taller than its window escapes it and fails the audit,
-        // instead of growing the audited root to fit.
-        let host = AuditHost(content.frame(width: surface.size.width, height: surface.size.height, alignment: .topLeading), size: surface.size, scheme: scheme, title: false, mode: mode)
+        // Mini/fullscreen windows are pinned to their actual dimensions. The status
+        // popover instead gets its intrinsic height, just as StatusItemController gives
+        // NSPopover an NSHostingController without setting a content height.
+        let intrinsic = surface == .popover || surface == .popoverAd
+        let hosted = intrinsic ? content : AnyView(content.frame(width: size.width, height: size.height, alignment: .topLeading))
+        let host = AuditHost(hosted, size: size, scheme: scheme, title: false, mode: mode, intrinsicHeight: intrinsic)
         defer { host.close() }
         await host.settle(until: { surface.required.allSatisfy { name in host.box.frames.contains { $0.tag.name == name } } }, milliseconds: 1500)
         await host.settleUntilReported(surface.required)
@@ -78,10 +82,10 @@ import TestSupport
         }
         var snapshotPath: String?
         if let directory = AuditOutput.directory {
-            let name = "shell-\(surface.rawValue)-\(scheme.rawValue)\(mode == .standard ? "" : "-" + mode.rawValue).png"
+            let name = "shell-\(surface.rawValue)\(variant)-\(scheme.rawValue)\(mode == .standard ? "" : "-" + mode.rawValue).png"
             try await host.snapshot(to: directory.appendingPathComponent(name)); snapshotPath = name
         }
-        let record = AuditRecord(surface: "shell-" + surface.rawValue + (mode == .standard ? "" : "+" + mode.rawValue), size: surface.size.name, scheme: scheme.rawValue, frames: host.box.frames.count, violations: violations.map(\.description), snapshot: snapshotPath)
+        let record = AuditRecord(surface: "shell-" + surface.rawValue + variant + (mode == .standard ? "" : "+" + mode.rawValue), size: size.name, scheme: scheme.rawValue, frames: host.box.frames.count, violations: violations.map(\.description), snapshot: snapshotPath)
         let frames = host.box.frames
         await accounts.shutdown()
         await accounts.isolatedStorage?.destroy()
@@ -94,6 +98,28 @@ import TestSupport
         AuditLog.records.append(result.record)
         if let url = AuditOutput.report { try? JSONEncoder().encode(AuditLog.records).write(to: url) }
         #expect(result.record.frames > 4, "the audit saw the surface (\(result.record.frames) frames)")
+        #expect(result.violations.isEmpty, Comment(rawValue: result.violations.map(\.description).joined(separator: "\n")))
+    }
+
+    struct BoundaryCase: Sendable, CustomTestStringConvertible {
+        let surface: Surface
+        let track: SyntheticTrack
+        let size: AuditSize
+        let label: String
+        var testDescription: String { label }
+        static let all: [Self] = [
+            Self(surface: .miniCompact, track: .longTitle, size: AuditSize(name: "minimum", width: 320, height: 148), label: "minimum-long-title"),
+            Self(surface: .miniCompactAd, track: .advertisement, size: AuditSize(name: "minimum", width: 320, height: 148), label: "minimum-ad"),
+            Self(surface: .miniExpanded, track: .longTitle, size: AuditSize(name: "minimum", width: 320, height: 480), label: "minimum-long-title"),
+            Self(surface: .miniExpanded, track: .liveStream, size: AuditSize(name: "minimum", width: 320, height: 480), label: "minimum-live"),
+            Self(surface: .popover, track: .longTitle, size: AuditSize(name: "popover", width: 300, height: 320), label: "long-title")
+        ]
+    }
+    @Test(arguments: BoundaryCase.all, AuditScheme.allCases)
+    func minimumSizesKeepLongTitlesAndLiveControlsContained(_ item: BoundaryCase, _ scheme: AuditScheme) async throws {
+        let result = try await render(item.surface, scheme: scheme, sizeOverride: item.size, trackOverride: item.track, variant: "-" + item.label)
+        AuditLog.records.append(result.record)
+        if let url = AuditOutput.report { try? JSONEncoder().encode(AuditLog.records).write(to: url) }
         #expect(result.violations.isEmpty, Comment(rawValue: result.violations.map(\.description).joined(separator: "\n")))
     }
 

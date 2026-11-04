@@ -41,9 +41,11 @@ struct ShellCover: View {
 struct ShellControls: View {
     let shell: ShellCoordinator
     var large = false
+    var showMore = true
     var body: some View {
-        if let player = shell.playback.music, WebMusicQueueSummary.isActive(player) { WebMusicControlsView(player: player, large: large) }
-        else { OwnedControlsView(model: shell.playback, large: large) }
+        if let player = shell.playback.music, WebMusicQueueSummary.isActive(player) { WebMusicControlsView(player: player, large: large, plain: true) }
+        else if showMore { OwnedControlsView(model: shell.playback, large: large, plain: true) }
+        else { OwnedCapsuleButtons(model: shell.playback, large: large) }
     }
 }
 
@@ -51,9 +53,9 @@ struct ShellControls: View {
 struct ShellTimeline: View {
     let shell: ShellCoordinator
     var body: some View {
-        if let player = shell.playback.music, WebMusicQueueSummary.isActive(player) { WebMusicTimelineView(player: player) }
+        if let player = shell.playback.music, WebMusicQueueSummary.isActive(player) { WebMusicTimelineView(player: player, plain: true) }
         else if shell.transport.source == .owned {
-            PlaybackTimeline(model: shell.playback.timeline, seek: { target in Task { await shell.playback.act(action: .seek) { try await $0.seek(target) } } })
+            PlaybackTimeline(model: shell.playback.timeline, seek: { target in Task { await shell.playback.act(action: .seek) { try await $0.seek(target) } } }, plain: true)
         }
     }
 }
@@ -66,6 +68,7 @@ struct ShellExpandedPlayer<Trailing: View>: View {
     var showQueue: () -> Void
     var pictureWidth: CGFloat = 560
     var compact = true
+    var headerActions: () -> AnyView = { AnyView(EmptyView()) }
     @ViewBuilder var trailing: () -> Trailing
     @Namespace private var namespace
     @State private var tint = WindowArtworkTint()
@@ -78,7 +81,7 @@ struct ShellExpandedPlayer<Trailing: View>: View {
             ExpandedPlayer(model: shell.playback, artwork: context.pipeline, artworkRequest: context.request, artworkAuthority: context.authority,
                            paletteChanged: { tint.receive($0, source: $1, current: context.request.map(ArtworkTintIdentity.init), authority: context.authority) },
                            accent: shell.playback.music != nil ? webAccent : artworkLight, accentChanged: { webAccent = $0 }, namespace: namespace,
-                           windowVisible: windowVisible, collapse: collapse, showQueue: showQueue, compact: compact, pictureWidth: pictureWidth, trailing: trailing)
+                           windowVisible: windowVisible, collapse: collapse, showQueue: showQueue, compact: compact, pictureWidth: pictureWidth, headerActions: headerActions, trailing: trailing)
         }
         .background(WindowVisibility { value in windowVisible = value; if !value { tint.retract() } })
         .modifier(PlaybackObservation(model: shell.playback))

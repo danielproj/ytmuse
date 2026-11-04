@@ -52,7 +52,6 @@
 52|Overgeschakeld naar %@.
 53|Speel %@ af
 54|Huidige uitvoer: %@
-55|“%@” verwijderen uit je uploads?
 56|Er wordt een advertentie afgespeeld
 57|De advertentie is afgelopen
 58|Nu speelt “%@” van %@.

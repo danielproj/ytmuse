@@ -17,17 +17,17 @@ public struct HistoryView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: MusicSpace.lg) {
                 HStack {
-                    Text("History").font(.largeTitle.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle")
+                    Text("History").font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle")
                     Spacer()
                     if surface.development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("developmentDataLabel") }
                     Button { Task { await history.remote.refresh(); await history.loadLocal() } } label: { Label("Refresh", systemImage: "arrow.clockwise") }
-                        .labelStyle(.iconOnly).help(Text("Refresh")).musicButtons().accessibilityIdentifier("historyRefresh")
+                        .labelStyle(.iconOnly).help(Text("Refresh")).musicPageAction().accessibilityIdentifier("historyRefresh")
                         .keyboardShortcut("r", modifiers: .command)
                 }
                 remoteSection.audit("historyRemote", group: "history-sections", within: "detailPanel", alignLeading: "pageLeading", scrolls: true)
-                controlsSection.audit("historyControls", group: "history-sections", within: "detailPanel", alignLeading: "pageLeading", scrolls: true)
+                controlsSection.padding(MusicSpace.md).musicInsetSurface().audit("historyControls", group: "history-sections", within: "detailPanel", alignLeading: "pageLeading", scrolls: true)
                 localSection.audit("historyLocal", group: "history-sections", within: "detailPanel", alignLeading: "pageLeading", scrolls: true)
-            }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+            }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }
         .restoresScroll()
         .task { await history.remote.load(); if history.remote.isStale { await history.remote.refresh() }; await history.loadLocal() }
@@ -38,7 +38,7 @@ public struct HistoryView: View {
 
     private var remoteSection: some View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
-            Label("YouTube Music history", systemImage: "play.square").font(.title2.bold()).accessibilityAddTraits(.isHeader)
+            Label("YouTube Music history", systemImage: "play.square").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             Text("Read from YouTube Music. YouTube’s own player records it when it plays; this app never writes it.")
                 .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyRemoteProvenance")
             let remote = history.remote
@@ -58,10 +58,10 @@ public struct HistoryView: View {
                         if remote.loadingMore { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading more")) }
                         else if let failure = remote.moreFailure {
                             Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText)
-                            Button("Retry") { Task { await remote.loadMore() } }.musicButtons()
+                            Button("Retry") { Task { await remote.loadMore() } }.musicPageAction()
                         } else {
                             Color.clear.frame(width: 1, height: 1).onAppear { Task { await remote.loadMore() } }
-                            Button("Load more") { Task { await remote.loadMore() } }.musicButtons().accessibilityIdentifier("historyLoadMore")
+                            Button("Load more") { Task { await remote.loadMore() } }.musicPageAction().accessibilityIdentifier("historyLoadMore")
                         }
                     }
                 }
@@ -100,7 +100,7 @@ public struct HistoryView: View {
     private var localSection: some View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
             HStack {
-                Label("On this Mac", systemImage: "internaldrive").font(.title2.bold()).accessibilityAddTraits(.isHeader)
+                Label("On this Mac", systemImage: "internaldrive").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
                 MusicOutlineBadge("Local only").accessibilityIdentifier("historyLocalOnlyBadge")
             }
             Text("The app’s own record of what it played here. It isn’t YouTube Music’s history, and it is never sent to YouTube Music.")
@@ -130,7 +130,7 @@ public struct HistoryView: View {
                     .accessibilityIdentifier("historyLocalRow")
                 }
                 Button("Clear Local History…", role: .destructive) { confirmingClear = true }
-                    .musicButtons().accessibilityIdentifier("historyClearLocal")
+                    .musicPageAction().accessibilityIdentifier("historyClearLocal")
                     // The store keeps more than the list shows, and clearing removes all of it, so the question says "all".
                     .confirmationDialog("Clear all plays from this Mac?", isPresented: $confirmingClear, titleVisibility: .visible) {
                         Button("Clear This Mac’s History", role: .destructive) { Task { await history.clearLocal() } }

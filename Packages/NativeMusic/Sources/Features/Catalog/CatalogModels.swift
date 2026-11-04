@@ -105,8 +105,8 @@ public enum CatalogActionPlan {
     public static func target(for item: MusicCatalogItem) -> PlayTarget? {
         switch item.kind {
         case .song, .video:
-            // An uploaded track has no radio and no catalog collection; it plays from the Uploads library (a later version).
-            guard let video = item.videoID, !item.isUpload else { return nil }
+            // Private service media has no supported catalog playback.
+            guard let video = item.videoID, !item.isPrivatelyOwned else { return nil }
             if let context = item.contextPlaylistID, !context.hasPrefix("RDAMVM") { return PlayTarget(playlistID: context, videoID: video) }
             return PlayTarget(playlistID: "RDAMVM" + video)
         case .album, .playlist, .podcast: return item.playlistID.map { PlayTarget(playlistID: $0) }
@@ -118,11 +118,11 @@ public enum CatalogActionPlan {
     /// named them. Nothing is derived from an id prefix. Its `params` are deliberately NOT sent: every row radio carries the service's
     /// radio flag (`wAEB`), and the hidden player treats any start with parameters as a shuffle that must show "shuffle on" in the
     /// page, which a radio never does, so such a start fails and drops the page. The page-level Start Radio is sent the same way
-    /// (playlist only). Nil where the row published none, for an upload (no catalog radio) and for an unavailable track, and where the
+    /// (playlist only). Nil where the row published none, for private media (no catalog radio) and for an unavailable track, and where the
     /// row's own Play already starts that same radio playlist (a Home song row): one action per outcome, so Play then Start Radio can
     /// never be a second start of what is already playing. Albums, playlists and artists keep their page-level Start Radio.
     public static func radioTarget(for item: MusicCatalogItem) -> PlayTarget? {
-        guard item.kind == .song || item.kind == .video, !item.isUpload, item.availability != .unavailable, let radio = item.radio else { return nil }
+        guard item.kind == .song || item.kind == .video, !item.isPrivatelyOwned, item.availability != .unavailable, let radio = item.radio else { return nil }
         guard target(for: item)?.playlistID != radio.playlistID else { return nil }
         return PlayTarget(playlistID: radio.playlistID, videoID: radio.videoID)
     }
@@ -146,8 +146,8 @@ public enum CatalogActionPlan {
         }
         switch item.kind {
         case .song, .video, .episode:
-            // A private upload has no public link to copy.
-            return item.isUpload ? nil : item.videoID.flatMap { make("/watch", [URLQueryItem(name: "v", value: $0)]) }
+            // Private service media has no public link to copy.
+            return item.isPrivatelyOwned ? nil : item.videoID.flatMap { make("/watch", [URLQueryItem(name: "v", value: $0)]) }
         case .album, .playlist, .podcast: return item.playlistID.flatMap { make("/playlist", [URLQueryItem(name: "list", value: $0)]) }
             ?? item.browseID.flatMap { make("/browse/" + $0) }
         case .artist: return item.browseID.flatMap { $0.hasPrefix("UC") ? make("/channel/" + $0) : nil }

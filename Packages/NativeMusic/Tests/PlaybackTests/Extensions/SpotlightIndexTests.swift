@@ -13,7 +13,7 @@ import Testing
     static let actionTitles = Set(SpotlightAction.allCases.map(\.title))
     static var library: [SpotlightEntry] {
         actions + [entry(.song, "Saved Song", id: "v1"), entry(.album, "Saved Album", id: "OLAK5uy_1"), entry(.artist, "Followed Artist", id: "UC1"),
-                   entry(.playlist, "Private Playlist Name", id: "PLprivate"), entry(.history, "Listened Song", id: "h1"), entry(.upload, "Uploaded Track", id: "u1")]
+                   entry(.playlist, "Private Playlist Name", id: "PLprivate"), entry(.history, "Listened Song", id: "h1")]
     }
     func titles(_ index: InMemorySearchableIndex) -> Set<String> { Set(index.entries.map(\.title)) }
 
@@ -31,13 +31,13 @@ import Testing
         let index = InMemorySearchableIndex(), indexer = SpotlightIndexer(backend: index)
         try await indexer.reconcile(desired: Self.library, accountToken: Self.a, policy: SpotlightPolicy(enabled: true))
         #expect(titles(index) == Set(["Saved Song", "Saved Album", "Followed Artist"]).union(Self.actionTitles))
-        for hidden in ["Private Playlist Name", "Listened Song", "Uploaded Track"] { #expect(!titles(index).contains(hidden), "\(hidden) is private") }
+        for hidden in ["Private Playlist Name", "Listened Song"] { #expect(!titles(index).contains(hidden), "\(hidden) is private") }
         #expect(index.entries.filter { $0.accountToken == nil }.count == SpotlightAction.allCases.count, "actions carry no account")
     }
-    @Test func thePrivateOptInAddsPlaylistsHistoryAndUploadsInTheirOwnDomain() async throws {
+    @Test func thePrivateOptInAddsPlaylistsHistoryInTheirOwnDomain() async throws {
         let index = InMemorySearchableIndex(), indexer = SpotlightIndexer(backend: index)
         try await indexer.reconcile(desired: Self.library, accountToken: Self.a, policy: SpotlightPolicy(enabled: true, includePrivate: true))
-        #expect(titles(index).isSuperset(of: ["Private Playlist Name", "Listened Song", "Uploaded Track"]))
+        #expect(titles(index).isSuperset(of: ["Private Playlist Name", "Listened Song"]))
         for entry in index.entries where entry.visibility == .privateEntity { #expect(index.domain(of: entry.uniqueID) == SpotlightDomains.privateEntities(account: Self.a)) }
         for entry in index.entries where entry.visibility == .catalog { #expect(index.domain(of: entry.uniqueID) == SpotlightDomains.catalog(account: Self.a)) }
     }
@@ -45,7 +45,7 @@ import Testing
         let index = InMemorySearchableIndex(), indexer = SpotlightIndexer(backend: index)
         try await indexer.reconcile(desired: Self.library, accountToken: Self.a, policy: SpotlightPolicy(enabled: true, includePrivate: true))
         try await indexer.reconcile(desired: Self.library, accountToken: Self.a, policy: SpotlightPolicy(enabled: true, includePrivate: false))
-        #expect(!titles(index).contains("Private Playlist Name") && !titles(index).contains("Listened Song") && !titles(index).contains("Uploaded Track"))
+        #expect(!titles(index).contains("Private Playlist Name") && !titles(index).contains("Listened Song"))
         #expect(titles(index).isSuperset(of: ["Saved Song", "Saved Album", "Followed Artist"]), "public items stay")
     }
     @Test func turningIndexingOffRemovesEverythingTheAppIndexed() async throws {

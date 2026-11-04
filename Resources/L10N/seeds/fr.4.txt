@@ -50,15 +50,6 @@
 1050|Élément sans titre
 1051|À suivre
 1052|Mis à jour %@.
-1053|Importer
-1054|Albums importés
-1055|Artistes importés
-1056|Titres importés
-1057|Import de %@
-1058|L’import arrivera dans une prochaine mise à jour
-1059|Imports
-1060|Les imports ne sont pas encore connectés ; il n’y a donc rien à rechercher ici.
-1061|Imports en cours et terminés
 1062|Utiliser la vitesse par défaut pour cette émission
 1063|Utilisez un lien d’élément musical pris en charge, ou trouvez l’élément dans votre collection.
 1064|Vidéo
@@ -70,7 +61,6 @@
 1070|Visibilité : %@
 1071|Volume
 1072|En attente d’une connexion réseau
-1073|En attente d’import
 1074|En attente : le mode économie de données est activé pour cette connexion
 1075|En attente : cette connexion est limitée
 1076|WebKit n’est pas passé en Image dans l’image pour cette vidéo.
@@ -96,7 +86,6 @@
 1096|Vous avez rejoint la playlist.
 1097|Vous pourrez ajouter et modifier des titres dans cette playlist, et elle est ajoutée à votre bibliothèque.
 1098|YouTube Music
-1099|YouTube Music accepte les fichiers jusqu’à %@.
 1100|YouTube Music a répondu sous une forme que cette version ne sait pas lire. Rien n’a été modifié.
 1101|YouTube Music a demandé de ralentir. Affichage des correspondances de ce Mac ; réessayez dans un instant.
 1102|YouTube Music n’a pas pu démarrer cela. Essayez de lire à nouveau.
@@ -107,12 +96,9 @@
 1107|YouTube Music n’a pas modifié la qualité.
 1108|YouTube Music n’a pas proposé « Enregistrer dans la bibliothèque » pour ce titre. Ouvrez le titre une fois pour lire sa page.
 1109|YouTube Music n’a pas indiqué s’il s’agit d’un titre ou d’une vidéo ; il ne peut donc pas être changé ici.
-1110|YouTube Music n’a pas confirmé la suppression. « %@ » a peut-être été supprimé, ou non.
 1111|YouTube Music n’a pas fourni de réglages de diversité ou de découverte pour cette radio ; aucun n’est donc affiché.
 1112|YouTube Music ne propose pas « Je n’aime pas » pour ce titre.
 1113|YouTube Music n’indique pas qu’il s’agit du même enregistrement ; la lecture démarre donc depuis le début.
-1114|YouTube Music a terminé le traitement de ce fichier.
-1115|YouTube Music a terminé le traitement de ce fichier. Votre liste d’imports a été mise à jour.
 1116|YouTube Music n’a rien fourni à lire pour cet élément.
 1117|YouTube Music n’a aucun Samples pour vous pour le moment.
 1118|YouTube Music n’a pas de paroles pour ce titre.
@@ -123,7 +109,6 @@
 1123|Historique de YouTube Music
 1124|Commandes de l’historique de YouTube Music
 1125|YouTube Music demande une pause. Réessayez Samples dans un instant.
-1126|YouTube Music traite encore ce fichier. Vérifiez à nouveau plus tard.
 1127|YouTube Music gère les éléments à venir ; ils ne peuvent donc être ni réorganisés ni supprimés ici.
 1128|YouTube Music gère les éléments à venir pendant la lecture ; cette app ne peut donc pas en ajouter.
 1129|Playlist YouTube Music
@@ -132,7 +117,6 @@
 1132|YouTube Music lit dans son propre lecteur ; l’app ne peut donc ni superposer deux éléments ni traiter leur audio.
 1133|YouTube Music joue via la sortie son de ce Mac. Modifiez-la dans le Centre de contrôle.
 1134|YouTube Music a renvoyé cette page sans aucun élément.
-1135|YouTube Music a indiqué : %@
 1136|La recherche YouTube Music n’est pas disponible pour le moment. Affichage des correspondances de ce Mac.
 1137|YouTube Music a cessé d’envoyer la suite de cette collection avant la fin.
 1138|YouTube Music a activé la collaboration mais n’a renvoyé aucun lien d’invitation utilisable.
@@ -156,7 +140,6 @@
 1156|macOS répertorie ce raccourci parmi ses propres raccourcis activés.
 1157|macOS signale ce raccourci comme déjà pris.
 1158|macOS utilise ce raccourci pour %@.
-1159|ou déposez des fichiers audio ici
 1160|en pause
 1161|en lecture
 1162|préparation
@@ -167,7 +150,6 @@
 1167|cette playlist
 1168|inconnu
 1169|« %@ » est déjà là. « Conserver les doublons » l’ajoute à nouveau comme entrée distincte ; « Ignorer les existants » l’exclut.
-1170|« %@ » est déjà dans la liste des imports.
 1171|« %@ » n’est plus le titre que vous modifiiez.
 1172|« %@ » a également été déplacé ailleurs.
 1173|« %@ » a été retiré de la playlist ailleurs.
@@ -176,7 +158,6 @@ Q2|one:%lld en téléchargement, %lld en attente	many:%lld en téléchargement, 
 Q3|one:%lld en téléchargement, %lld en attente · %@ jusqu’ici	many:%lld en téléchargement, %lld en attente · %@ jusqu’ici	other:%lld en téléchargement, %lld en attente · %@ jusqu’ici
 Q4|one:%lld élément chargé jusqu’ici. Il y en a d’autres.	many:%lld d’éléments chargés jusqu’ici. Il y en a d’autres.	other:%lld éléments chargés jusqu’ici. Il y en a d’autres.
 Q5|one:%lld élément qui n’est pas un titre YouTube Music est exclu.	many:%lld d’éléments qui ne sont pas des titres YouTube Music sont exclus.	other:%lld éléments qui ne sont pas des titres YouTube Music sont exclus.
-Q6|one:%lld fichier de plus	many:%lld de fichiers de plus	other:%lld fichiers de plus
 Q7|one:%lld sur %lld téléchargés	many:%lld sur %lld téléchargés	other:%lld sur %lld téléchargés
 Q8|one:%lld pour cent	many:%lld pour cent	other:%lld pour cent
 Q9|one:%lld lecture · %@ d’écoute	many:%lld de lectures · %@ d’écoute	other:%lld lectures · %@ d’écoute
@@ -206,8 +187,6 @@ Q32|one:Résonance %lld	many:Résonance %lld	other:Résonance %lld
 Q33|one:Veille dans %llds%@	many:Veille dans %llds%@	other:Veille dans %llds%@
 Q34|one:Minuteur de veille réglé sur %lld minute.	many:Minuteur de veille réglé sur %lld de minutes.	other:Minuteur de veille réglé sur %lld minutes.
 Q35|one:Minuteur de veille : il reste %lld:%@	many:Minuteur de veille : il reste %lld:%@	other:Minuteur de veille : il reste %lld:%@
-Q36|one:Cette app ajoute jusqu’à %lld fichier à la fois. Les autres n’ont pas été ajoutés.	many:Cette app ajoute jusqu’à %lld de fichiers à la fois. Les autres n’ont pas été ajoutés.	other:Cette app ajoute jusqu’à %lld fichiers à la fois. Les autres n’ont pas été ajoutés.
 Q37|one:Cela supprime définitivement la playlist et son entrée (%lld) de YouTube Music. Cette action est irréversible.	many:Cela supprime définitivement la playlist et ses %lld d’entrées de YouTube Music. Cette action est irréversible.	other:Cela supprime définitivement la playlist et ses %lld entrées de YouTube Music. Cette action est irréversible.
 Q38|one:Annuler pour %lld titre	many:Annuler pour %lld de titres	other:Annuler pour %lld titres
 Q39|one:Annuler : %lld titre supprimé	many:Annuler : %lld de titres supprimés	other:Annuler : %lld titres supprimés
-Q40|one:Import… %lld %%	many:Import… %lld %%	other:Import… %lld %%

@@ -43,8 +43,8 @@ import WidgetShared
     private var task: Task<Void, Never>?
     private var again = false
     private(set) var runs = 0
-    /// The library collections whose saved rows are indexed, and the entry kind each becomes. Playlists and uploads are private entities.
-    static let collections: [(MusicLibraryKind, SpotlightKind)] = [(.songs, .song), (.likedSongs, .song), (.albums, .album), (.artists, .artist), (.following, .artist), (.playlists, .playlist), (.uploads, .upload)]
+    /// The library collections whose saved rows are indexed, and the entry kind each becomes. Playlists are private entities.
+    static let collections: [(MusicLibraryKind, SpotlightKind)] = [(.songs, .song), (.likedSongs, .song), (.albums, .album), (.artists, .artist), (.following, .artist), (.playlists, .playlist)]
     static let historyLimit = 200
     static var actionEntries: [SpotlightEntry] { SpotlightAction.allCases.map { SpotlightEntry(action: $0) } }
 
@@ -114,7 +114,7 @@ import WidgetShared
         return entries.filter(policy.admits)
     }
     static func visibility(of kind: SpotlightKind) -> SpotlightVisibility {
-        switch kind { case .song, .album, .artist: .catalog; case .playlist, .history, .upload: .privateEntity; case .action: .action }
+        switch kind { case .song, .album, .artist: .catalog; case .playlist, .history: .privateEntity; case .action: .action }
     }
     static func entry(from item: MusicCatalogItem, kind: SpotlightKind, token: String, scope: IntentScope) -> SpotlightEntry? {
         switch kind {
@@ -122,8 +122,6 @@ import WidgetShared
             let mediaKind: IntentMediaKind = switch kind { case .song: .song; case .album: .album; case .artist: .artist; default: .playlist }
             guard let media = AppIntentChannel.media(from: item, kind: mediaKind, scope: scope) else { return nil }
             return SpotlightEntry(kind: kind, title: media.title, subtitle: media.subtitle, accountToken: token, target: media.target)
-        case .upload:
-            return SpotlightEntry(kind: .upload, title: item.title, subtitle: item.details.first, accountToken: token, target: IntentMediaTarget(videoID: item.videoID, browseID: item.browseID))
         case .history, .action: return nil
         }
     }
@@ -162,7 +160,7 @@ import WidgetShared
             guard token == WidgetScope.token(for: live.accountID) else { return .failure(.staleIdentity) }
             let mediaKind: IntentMediaKind
             switch kind { case .song, .history: mediaKind = .song; case .album: mediaKind = .album; case .artist: mediaKind = .artist; case .playlist: mediaKind = .playlist
-            case .upload, .action: return .success(.showPlayer) }
+            case .action: return .success(.showPlayer) }
             return .success(.play(IntentMedia(scope: live, kind: mediaKind, title: String(localized: "YouTube Music"), target: target)))
         }
     }

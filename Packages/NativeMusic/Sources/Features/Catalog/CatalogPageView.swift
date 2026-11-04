@@ -13,7 +13,7 @@ struct CatalogStateView: View {
             ContentUnavailableView {
                 Label("This page couldn’t be loaded", systemImage: "exclamationmark.circle")
             } description: { Text(failure.message) } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicButtons()
+                Button("Try Again") { Task { await model.load() } }.musicPageAction()
             }.accessibilityIdentifier("catalogFailure")
         case .loaded:
             if !model.hasContent || (model.shelves.allSatisfy { $0.items.isEmpty } && model.header == nil) {
@@ -32,20 +32,25 @@ struct CatalogShelvesView<Header: View>: View {
     /// W09-F2: a catalog page restores by identity (`IdentityRestorer`): the first row fully on screen in a list shelf (a playlist's or album's tracks),
     /// else the shelf at the top. Both are recorded for the visit; on return the page scrolls to the row, or to its shelf if the row never arrives.
     @State private var identity = IdentityRestorer(rule: .coveringTop, requiresRealisation: true)
+    private let headerID = "catalog-page-header"
     @Environment(\.podcastsSurface) private var podcasts
     var body: some View {
         ScrollViewReader { proxy in
             let _ = registerItems()
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: MusicSpace.lg) {
-                    header()
+                LazyVStack(alignment: .leading, spacing: MusicSpace.xl) {
+                    // The heading is a scroll target too: a visit left at the top must
+                    // restore the heading, rather than pull the first shelf over it.
+                    // Its inset belongs to the target so restoration keeps page spacing.
+                    VStack(alignment: .leading, spacing: MusicSpace.xl) { header() }
+                        .padding(.top, MusicSpace.xl).identityItem(headerID)
                     CatalogStateView(model: model)
                     ForEach(model.shelves.filter { !$0.items.isEmpty || $0.continuation != nil }) { shelf in
                         ShelfView(shelf: shelf, model: model, navigator: navigator).identityItem(shelf.key)
                     }
                     if model.pageContinuation != nil { pagePager }
                     if model.phase == .loaded, model.hasContent { FreshnessLine(model: model) }
-                }.scrollTargetLayout().padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+                }.scrollTargetLayout().musicPageContent(includeTopInset: false).frame(maxWidth: .infinity, alignment: .leading)
                     .musicAnimation(.reveal, value: model.phase)
             }
             .scrollPosition(id: $model.anchor, anchor: .top)
@@ -67,17 +72,17 @@ struct CatalogShelvesView<Header: View>: View {
     }
     private func registerItems() {
         let registration = CatalogRows.registration(of: model.shelves, podcasts: podcasts, pageReadAt: model.fetchedAt ?? .distantPast)
-        identity.setItems(registration.order, parents: registration.parents)
+        identity.setItems([headerID] + registration.order, parents: registration.parents)
     }
     @ViewBuilder private var pagePager: some View {
         HStack {
             if model.loadingMore.contains("page") { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading more")) }
             else if let failure = model.moreFailures["page"] {
                 Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText)
-                Button("Retry") { Task { await model.loadMorePage() } }.musicButtons()
+                Button("Retry") { Task { await model.loadMorePage() } }.musicPageAction()
             } else {
                 Color.clear.frame(width: 1, height: 1).onAppear { Task { await model.loadMorePage() } }
-                Button("Load more") { Task { await model.loadMorePage() } }.musicButtons().accessibilityIdentifier("catalogLoadMorePage")
+                Button("Load more") { Task { await model.loadMorePage() } }.musicPageAction().accessibilityIdentifier("catalogLoadMorePage")
             }
         }
     }
@@ -91,10 +96,10 @@ struct CatalogTitleRow: View {
     var identifier = "destinationTitle"
     var body: some View {
         HStack {
-            Text(title).font(.largeTitle.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier(identifier).browserRegion(identifier == "destinationTitle" ? "destinationTitle" : "pageTitle")
+            Text(title).font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier(identifier).browserRegion(identifier == "destinationTitle" ? "destinationTitle" : "pageTitle")
             Spacer()
             Button { Task { await model.refresh() } } label: { Label("Refresh", systemImage: "arrow.clockwise") }
-                .labelStyle(.iconOnly).help(Text("Refresh")).musicButtons().disabled(model.isRefreshing || model.phase == .loading)
+                .labelStyle(.iconOnly).help(Text("Refresh")).musicPageAction().disabled(model.isRefreshing || model.phase == .loading)
                 .accessibilityIdentifier("catalogRefresh")
         }
     }

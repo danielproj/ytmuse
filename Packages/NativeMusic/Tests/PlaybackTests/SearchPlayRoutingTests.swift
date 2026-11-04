@@ -81,6 +81,54 @@ private func listID(_ url: URL?) -> String? {
         #expect(log.pages.isEmpty && model.music == nil)
         #expect(search.feedback[item.id] == .failed(String(localized: "Your account changed before this started. Try Play again.")), "an authority with no connected account is reported at the item, not swallowed")
     }
+    @Test func scopedControlUsesExistingOwnerAndAccountReplacementRefusesIt() async throws {
+        let (owner, model, log, performer, _, context) = try await rig()
+        _ = await performer.play(playlistID: "PLsynthetic", title: "Outgoing")
+        let page = try #require(log.pages.first); page.commitLast()
+        page.send(lifecycleState(playing: false, playlist: "PLsynthetic"))
+        await model.music?.pause()
+        func queue(_ id: String) -> [String: Any] {
+            ["type": "queue", "doc": 1, "load": 1, "videoId": lifecycleVideo,
+             "items": "[{\"i\":\"" + id + "\",\"t\":\"Upcoming\"}]", "more": 0]
+        }
+        page.send(queue("bbbbbbbbbb1"))
+        let scope = try #require(performer.captureRadioQueueScope(playlistID: "PLsynthetic"))
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDATmZvkhnokW3Mw24", params: "opaque%3D", playerParams: "0gcJCW0At9Zurpe2"))
+        let starts = model.playRequestCount, player = model.music, state = model.state, loads = page.loads.count
+        let task = Task { await performer.applyRadioFilter(command, scope: scope) }
+        for _ in 0..<100 where !page.commands.contains(where: { $0.body == WebMusicScripts.updateRadioQueue }) {
+            try? await Task.sleep(for: .milliseconds(2))
+        }
+        await Task.yield(); await Task.yield()
+        page.send(queue("cccccccccc1"))
+        #expect(await task.value == .started)
+        #expect(model.playRequestCount == starts && model.music === player && model.session == nil)
+        #expect(model.state == nil && state == nil && page.loads.count == loads && model.music?.snapshot.intent == false)
+        let sent = try #require(page.commands.last { $0.body == WebMusicScripts.updateRadioQueue })
+        #expect(sent.arguments["params"] as? String == command.params && sent.arguments["playerParams"] as? String == command.playerParams)
+        try await owner.detach(previous: context, barrier: RequestContext(account: nil, accountGeneration: 5, requestGeneration: 0))
+        let count = page.commands.count
+        #expect(await performer.applyRadioFilter(command, scope: scope) == .stale)
+        #expect(page.commands.count == count)
+    }
+    @Test func aLocalMediaOwnerOrPendingNewStartRefusesCachedRadioControls() async throws {
+        let (_, model, log, performer, _, _) = try await rig()
+        _ = await performer.play(playlistID: "PLsynthetic", title: "Radio")
+        let page = try #require(log.pages.first); page.commitLast()
+        page.send(lifecycleState(playlist: "PLsynthetic"))
+        page.send(["type": "queue", "doc": 1, "load": 1, "videoId": lifecycleVideo, "items": "[]", "more": 0])
+        let scope = try #require(performer.captureRadioQueueScope(playlistID: "PLsynthetic"))
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
+        let count = page.commands.count, starts = model.playRequestCount
+        model.starting = true
+        #expect(await performer.applyRadioFilter(command, scope: scope) == .stale)
+        model.starting = false
+        let local = try await ownedSession(wall: ManualWall(), clock: ManualMonotonic())
+        model.session = local
+        #expect(await performer.applyRadioFilter(command, scope: scope) == .stale)
+        #expect(model.playRequestCount == starts && page.commands.count == count)
+        await local.close()
+    }
     @Test func copyLinkWritesToTheSuppliedPasteboardOnly() async throws {
         let (_, _, _, performer, board, _) = try await rig()
         performer.copy(link: URL(string: "https://music.youtube.com/watch?v=aaaaaaaaaa1")!)

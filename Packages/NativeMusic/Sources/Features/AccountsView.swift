@@ -202,7 +202,7 @@ public struct AccountsView: View {
   public var body: some View {
     MusicGlassGroup {
       VStack(alignment: .leading, spacing: MusicSpace.md) {
-        Text("Accounts").font(.largeTitle.bold()).audit("accountsTitle", group: "accounts-header", alignLeading: "accountsLeading")
+        Text("Accounts").font(MusicPageStyle.title).audit("accountsTitle", group: "accounts-header", alignLeading: "accountsLeading")
         Text(
           "Local labels and defaults apply to this Mac. Service subscriptions remain with YouTube."
         )
@@ -213,7 +213,7 @@ public struct AccountsView: View {
             description: Text(model.canAuthenticate
               ? "Sign in with your Google account on Google’s own page to connect YouTube Music."
               : "Add an account when browser sign-in is available.")
-          ).frame(maxWidth: .infinity).musicSurface().audit("accountsEmpty", group: "accounts-body", alignLeading: "accountsLeading")
+          ).frame(maxWidth: .infinity).musicInsetSurface().audit("accountsEmpty", group: "accounts-body", alignLeading: "accountsLeading")
         } else {
           // The scrolled glass gets its own container inside the scroll view, and the
           // scroll view clips. One outer container composited the scrolled card's
@@ -240,8 +240,8 @@ public struct AccountsView: View {
                   ViewThatFits(in: .horizontal) {
                     HStack { accountActions(identity) }
                     VStack(alignment: .leading, spacing: MusicSpace.xs) { accountActions(identity) }
-                  }.musicButtons().disabled(model.busy)
-                }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicSurface()
+                  }.musicPageAction().disabled(model.busy)
+                }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
                   .musicTransition(.reveal)
               }
             }.padding(MusicSpace.xxs)
@@ -302,19 +302,19 @@ public struct AccountsView: View {
     Button(model.usesMusicSession && !model.identities.isEmpty ? "Add Another Account" : model.authenticationLabel) {
       Task { await model.authenticate() }
     }.disabled(!model.canAuthenticate || model.busy)
-      .accessibilityIdentifier("addAccount").musicButtons(prominent: true)
+      .accessibilityIdentifier("addAccount").musicPageAction(prominent: true)
     if model.canRefreshAuthorization {
       Button("Refresh Google authorization") { Task { await model.refreshAuthorization() } }.disabled(model.busy)
-        .musicButtons()
+        .musicPageAction()
     }
     if model.canDisconnectAuthorization {
       Button("Disconnect Google authorization") { Task { await model.disconnectAuthorization() } }.disabled(model.busy)
-        .musicButtons()
+        .musicPageAction()
     }
     if model.busy {
       Button(model.usesMusicSession ? "Cancel Sign-In" : "Cancel authorization") {
         Task { await model.cancelAuthentication() }
-      }.musicButtons()
+      }.musicPageAction()
     }
   }
   @ViewBuilder private func accountActions(_ identity: LocalIdentity) -> some View {

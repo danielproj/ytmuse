@@ -70,7 +70,6 @@ enum DevelopmentLibrary {
         case .artists?: throw MusicSessionError.network            // offline
         case .playlists?: throw MusicSessionError.unrecognised     // a page this version cannot read
         case .savedEpisodes?: throw MusicSessionError.signedOut    // restricted: the session ended
-        case .uploads?: throw MusicSessionError.policy             // restricted: not offered here
         default: break
         }
         guard let page = pages()[source.browseID] else { throw MusicSessionError.unrecognised }

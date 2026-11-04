@@ -65,7 +65,7 @@ import SystemIntegration
         }
         return Array(unique.prefix(max(1, limit)))
     }
-    /// A playable entity from a catalog row, or nil when the row published nothing to start (an upload, an artist with no radio, a title only).
+    /// A playable entity from a catalog row, or nil when the row published nothing to start (private media, an artist with no radio, a title only).
     static func media(from item: MusicCatalogItem, kind: IntentMediaKind, scope: IntentScope) -> IntentMedia? {
         let artist = item.links.first { $0.kind == .artist }?.title ?? item.details.first
         switch kind {

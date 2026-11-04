@@ -30,13 +30,13 @@ public struct MediaRow: View {
             HStack(spacing: MusicSpace.sm) {
                 Image(systemName: selected ? "checkmark.circle.fill" : "music.note").frame(width: MusicSpace.lg).contentTransition(.symbolEffect(.replace))
                 VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                    Text(title).font(.body).fixedSize(horizontal: false, vertical: true)
+                    Text(title).font(.body.weight(.medium)).fixedSize(horizontal: false, vertical: true)
                     Text(subtitle).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: MusicSpace.xs)
                 if pending { ProgressView().controlSize(.small).accessibilityLabel(Text("Pending")) }
                 if let status { Text(status).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-            }.padding(.vertical, MusicSpace.xs).padding(.horizontal, MusicSpace.xs).contentShape(Rectangle())
+            }.padding(.vertical, MusicSpace.sm).padding(.horizontal, MusicSpace.xs).contentShape(Rectangle())
                 .musicSelectionBackground(selected).musicHoverHighlight()
                 .musicAnimation(.selection, value: selected)
         }.buttonStyle(.borderless).accessibilityElement(children: .combine)
@@ -103,7 +103,7 @@ public struct QueueList: View {
                 guard let move, let intent = QueuePageMoves.drag(rows: rows, boundary: boundary, source: source, destination: destination) else { return }
                 move(intent.occurrences, intent.before)
             }
-        }.scrollContentBackground(.hidden).id(page)
+        }.listStyle(.plain).scrollContentBackground(.hidden).id(page)
         .overlay { if rows.isEmpty { EmptyState(title: "Your queue is empty", message: "Choose an item to start listening.") } }
         .accessibilityLabel(Text("Queue")).accessibilityIdentifier("queueList")
     }

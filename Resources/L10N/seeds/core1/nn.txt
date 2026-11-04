@@ -52,7 +52,6 @@
 52|Bytte til %@.
 53|Spel av %@
 54|Gjeldande utgang: %@
-55|Vil du fjerne «%@» frå opplastingane dine?
 56|Ei reklame blir spela av
 57|Reklamen er slutt
 58|Speler no: «%@» av %@.

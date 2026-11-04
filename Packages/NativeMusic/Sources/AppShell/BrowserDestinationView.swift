@@ -106,23 +106,17 @@ struct BrowserDestinationView: View {
         if let route = entry.item { return catalog.handles(route) }
         return entry.destination == .home || entry.destination == .explore
     }
-    /// Library, History, Uploads and Podcasts with nothing open are the Library screens'. The older development rows keep their
+    /// Library, History and Podcasts with nothing open are the Library screens'. The older development rows keep their
     /// destinations only for UI runs that ask for them (the development-rows flag without the development-library flag).
     private func libraryOwns(_ entry: BrowserEntry, _ library: LibrarySurface) -> Bool {
-        guard entry.item == nil, [.library, .history, .uploads, .podcasts].contains(entry.destination) else { return false }
+        guard entry.item == nil, [.library, .history, .podcasts].contains(entry.destination) else { return false }
         return library.development || !development
     }
     @ViewBuilder private func libraryPane(_ library: LibrarySurface) -> some View {
         let navigator = catalog?.navigator(navigation) ?? CatalogNavigator()
         Group {
             if entry.destination == .history { HistoryView(surface: library, navigator: navigator, openAccounts: manageAccounts) }
-            else if entry.destination == .uploads, let uploads = library.uploads {
-                UploadsView(surface: uploads, navigator: navigator, openAccounts: manageAccounts)
-                    .task { await uploads.queue.restoreIfNeeded() }
-            } else { LibraryView(surface: library, navigator: navigator, openAccounts: manageAccounts, opensOn: entry.destination == .podcasts ? .podcasts : nil) }
-        }
-        .task(id: entry.destination) {
-            if entry.destination == .uploads { library.selectedKind = .uploads }
+            else { LibraryView(surface: library, navigator: navigator, openAccounts: manageAccounts, opensOn: entry.destination == .podcasts ? .podcasts : nil) }
         }
         .environment(\.catalogArtwork, catalog?.artwork ?? CatalogArtwork(pipeline: nil, authority: ArtworkUIAuthority(), source: nil))
         .accessibilityElement(children: .contain)
@@ -155,7 +149,7 @@ struct BrowserDestinationView: View {
                 ErrorState(title: "This item cannot be loaded", message: "Connect a source that can open this item, or return to your collection.", recovery: "Back to collection") { navigation.back() }
             }
         }
-        // The development label floats in the 24 pt margin above the page, so every page's title sits at the same height.
+        // The development label floats in the page margin above the page, so every page's title sits at the same height.
         .overlay(alignment: .topTrailing) {
             if catalog.development {
                 Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1).minimumScaleFactor(0.6)
@@ -171,11 +165,12 @@ struct BrowserDestinationView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 // The title keeps its room (larger text and long translations wrap the label beside it, never crush the title).
-                Text(LocalizedStringKey(entry.destination.title)).font(.largeTitle.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle").layoutPriority(1)
+                Text(LocalizedStringKey(entry.destination.title)).font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle").layoutPriority(1)
                 Spacer(minLength: MusicSpace.xs)
                 if development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).multilineTextAlignment(.trailing).accessibilityIdentifier("developmentDataLabel") }
-            }.padding(MusicSpace.lg)
+            }.musicPageContent()
             SearchView(model: model, focusToken: searchFocusToken).padding(.horizontal, MusicSpace.lg).padding(.bottom, MusicSpace.md)
+                .environment(\.playlistSurface, library?.playlists)
         }
         .task {
             if accounts.activeConnected, accounts.proof == .none, !accounts.proofLoading { await accounts.loadProof() }
@@ -185,10 +180,10 @@ struct BrowserDestinationView: View {
         VStack(spacing: 0) {
             HStack(alignment: .top) {
                 // The title keeps its room (larger text and long translations wrap the label beside it, never crush the title).
-                Text(LocalizedStringKey(entry.destination.title)).font(.largeTitle.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle").layoutPriority(1)
+                Text(LocalizedStringKey(entry.destination.title)).font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle").layoutPriority(1)
                 Spacer(minLength: MusicSpace.xs)
                 if showsDevelopmentLabel { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).multilineTextAlignment(.trailing).accessibilityIdentifier("developmentDataLabel") }
-            }.padding(MusicSpace.lg)
+            }.musicPageContent()
             if entry.destination != .home && entry.item == nil {
                 HStack {
                     TextField("Search this collection", text: Binding(get: { entry.query }, set: { navigation.session.current.query = String($0.prefix(1024)) })).accessibilityIdentifier("collectionQuery").musicField(dense: true).browserRegion("collectionQuery")
@@ -210,9 +205,9 @@ struct BrowserDestinationView: View {
                     else if development { developmentCollection }
                     else {
                         EmptyState(title: "Your music will appear here", message: "A music source is not connected to this destination yet.")
-                        Button("Manage accounts", action: manageAccounts).musicButtons()
+                        Button("Manage accounts", action: manageAccounts).musicPageAction()
                     }
-                }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+                }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
             }.restoresScroll(observe: { sample in
                 #if DEBUG
                 if diagnosticsEnabled { liveScroll.offset = sample.offset; liveScroll.maximum = sample.maximum; liveScroll.contentHeight = sample.contentHeight }
@@ -247,20 +242,20 @@ struct BrowserDestinationView: View {
             }
             HStack {
                 if signedInLibrary {
-                    Button("Open Your Library") { navigation.open(.library) }.accessibilityIdentifier("openLibrary").musicButtons(prominent: true)
-                    Button("Your Music Account", action: manageAccounts).accessibilityIdentifier("musicAccount").musicButtons()
+                    Button("Open Your Library") { navigation.open(.library) }.accessibilityIdentifier("openLibrary").musicPageAction(prominent: true)
+                    Button("Your Music Account", action: manageAccounts).accessibilityIdentifier("musicAccount").musicPageAction()
                 } else {
                     // An active expired identity signs in again as itself (a new record), never
                     // as a new account that the duplicate-account check would refuse.
                     Button(accounts.activeExpired ? String(localized: "Sign In Again") : accounts.authenticationLabel) {
                         Task { await accounts.authenticate(accounts.activeExpired ? accounts.active : nil) }
-                    }.disabled(!accounts.canAuthenticate || accounts.busy).accessibilityIdentifier("musicSignIn").musicButtons(prominent: true)
-                    Button("Manage Accounts", action: manageAccounts).accessibilityIdentifier("welcomeAccounts").musicButtons()
+                    }.disabled(!accounts.canAuthenticate || accounts.busy).accessibilityIdentifier("musicSignIn").musicPageAction(prominent: true)
+                    Button("Manage Accounts", action: manageAccounts).accessibilityIdentifier("welcomeAccounts").musicPageAction()
                 }
                 if accounts.busy {
                     Button(accounts.usesMusicSession ? String(localized: "Cancel Sign-In") : String(localized: "Cancel authorization")) {
                         Task { await accounts.cancelAuthentication() }
-                    }.musicButtons()
+                    }.musicPageAction()
                 }
             }
             if accounts.usesMusicSession && !accounts.activeConnected {
@@ -308,7 +303,7 @@ struct BrowserDestinationView: View {
                 HStack {
                     Button("Previous page") { collectionStore.rewind(); navigation.session.current.page = max(0, entry.page - 1) }.disabled(entry.page == 0)
                     Button("Next page") { collectionStore.rewind(); navigation.session.current.page += 1 }.disabled(entry.page >= 624).accessibilityIdentifier("nextCollectionPage")
-                }.musicButtons().padding(.top, MusicSpace.md)
+                }.musicPageAction().padding(.top, MusicSpace.md)
             }
         }
     }

@@ -52,7 +52,6 @@
 52|Aistrithe go %@.
 53|Seinn %@
 54|An t-aschur reatha: %@
-55|Bain “%@” de do uaslódálacha?
 56|Fógra ag seinm
 57|Tháinig deireadh leis an bhfógra
 58|Ag seinm anois: “%@” le %@.

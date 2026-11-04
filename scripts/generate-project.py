@@ -57,7 +57,7 @@ for scope in ['project','app','test']:
   if scope=='project': settings+=' SWIFT_OPTIMIZATION_LEVEL = '+('"-Onone";' if config=='Debug' else '"-O";')
   else:
    settings+=' GENERATE_INFOPLIST_FILE = YES; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.0.1;'
-   if scope=='app': settings+=' GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Info.plist; CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO; CODE_SIGN_ENTITLEMENTS = NativeMusic-adhoc.entitlements; PRODUCT_NAME = YTMuse; PRODUCT_BUNDLE_IDENTIFIER = local.native-music.development; INFOPLIST_KEY_CFBundleDisplayName = "YTMuse"; INFOPLIST_KEY_CFBundleName = "YTMuse"; INFOPLIST_KEY_CFBundleIconFile = YTMuse; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music"; COMBINE_HIDPI_IMAGES = NO; ASSETCATALOG_COMPILER_APPICON_NAME = YTMuse;'
+   if scope=='app': settings+=' GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Info.plist; CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO; CODE_SIGN_ENTITLEMENTS = NativeMusic-adhoc.entitlements; PRODUCT_NAME = YTMuse; PRODUCT_BUNDLE_IDENTIFIER = local.native-music.development; INFOPLIST_KEY_CFBundleDisplayName = "YTMuse"; INFOPLIST_KEY_CFBundleName = "YTMuse"; INFOPLIST_KEY_CFBundleIconFile = YTMuse; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music"; COMBINE_HIDPI_IMAGES = NO; ASSETCATALOG_COMPILER_APPICON_NAME = YTMuse; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = MusicAccent;'
    else: settings+=' ENABLE_HARDENED_RUNTIME = NO; PRODUCT_NAME = NativeMusicUITests; PRODUCT_BUNDLE_IDENTIFIER = local.native-music.development.uitests; TEST_TARGET_NAME = NativeMusic;'
   add(scope+config,f'isa = XCBuildConfiguration; buildSettings = {{ {settings} }}; name = {config};')
  add(scope+'configs',f'isa = XCConfigurationList; buildConfigurations = ({ref(scope+"Debug")}, {ref(scope+"Release")},); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;')
@@ -67,6 +67,9 @@ for filename in ['Glass-v2/YTMuse.icon','Glass-v2/YTMuseGlass.icns','YTMuseMenuT
  file=add('brandfile'+filename,f'isa = PBXFileReference; lastKnownFileType = {"folder.icon" if filename.endswith(".icon") else "image.icns" if filename.endswith(".icns") else "image.png"}; path = "../Resources/Brand/{filename}"; sourceTree = "<group>";')
  brandRefs.append(file)
  brandBuilds.append(add('brandbuild'+filename,f'isa = PBXBuildFile; fileRef = {file};'))
+appearance=add('appearancefile','isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "../Resources/Appearance.xcassets"; sourceTree = "<group>";')
+brandRefs.append(appearance)
+brandBuilds.append(add('appearancebuild',f'isa = PBXBuildFile; fileRef = {appearance};'))
 catalog=add('catalogfile','isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = "../Resources/Localizable.xcstrings"; sourceTree = "<group>";')
 brandRefs.append(catalog)
 brandBuilds.append(add('catalogbuild',f'isa = PBXBuildFile; fileRef = {catalog};'))

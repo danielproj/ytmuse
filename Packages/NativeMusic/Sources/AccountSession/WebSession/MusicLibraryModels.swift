@@ -7,7 +7,7 @@ import Foundation
 /// session, so none of them has an anonymous capture; the parser is exercised on real renderers placed in library containers
 /// (`Fixtures/W12`, `synthetic-from-real-renderers`) and every id below is on the end-of-project live check list (`Docs/Library.md`).
 public enum MusicLibraryKind: String, Sendable, CaseIterable, Codable, Hashable {
-    case songs, likedSongs, albums, artists, following, playlists, podcasts, savedEpisodes, uploads
+    case songs, likedSongs, albums, artists, following, playlists, podcasts, savedEpisodes
 
     /// The page that lists this collection.
     public var browseID: String {
@@ -20,13 +20,12 @@ public enum MusicLibraryKind: String, Sendable, CaseIterable, Codable, Hashable 
         case .playlists: "FEmusic_liked_playlists"
         case .podcasts: "FEmusic_library_non_music_audio_list"
         case .savedEpisodes: "VLSE"
-        case .uploads: "FEmusic_library_privately_owned_tracks"
         }
     }
     /// Entry kinds a collection of this kind may hold.
     public var holds: Set<MusicEntityKind> {
         switch self {
-        case .songs, .likedSongs, .uploads: [.song, .video]
+        case .songs, .likedSongs: [.song, .video]
         case .albums: [.album]
         case .artists, .following: [.artist]
         case .playlists: [.playlist]
@@ -41,29 +40,6 @@ public enum MusicLibraryKind: String, Sendable, CaseIterable, Codable, Hashable 
     }
     /// Every library `browseId` the app relies on, for the end-of-project live check.
     public static var allBrowseIDs: [String] { allCases.map(\.browseID) + [MusicHistory.browseID] }
-}
-
-/// The three lists an Uploads screen reads: uploaded songs, albums and artists. Songs are the Library's `uploads` collection (same page,
-/// same model); albums and artists are the two sibling tabs the web client lists beside it.
-///
-/// Internal notes: like every library id these come from the web client's tabs and ytmusicapi/Kaset, not from a capture of this
-/// account; they are on the end-of-project live list (`Docs/Uploads.md`).
-public enum MusicUploadKind: String, Sendable, CaseIterable, Codable, Hashable {
-    case songs, albums, artists
-    public var browseID: String {
-        switch self {
-        case .songs: MusicLibraryKind.uploads.browseID
-        case .albums: "FEmusic_library_privately_owned_releases"
-        case .artists: "FEmusic_library_privately_owned_artists"
-        }
-    }
-    public var holds: Set<MusicEntityKind> {
-        switch self {
-        case .songs: [.song, .video]
-        case .albums: [.album]
-        case .artists: [.artist]
-        }
-    }
 }
 
 /// The service's own history page (read-only; the app never writes remote history).
@@ -127,9 +103,6 @@ public enum MusicWriteRequest: Sendable, Equatable {
     /// Save a song to the library, or remove it, with a feedback token the service published for exactly that direction.
     case songLibrary(feedbackToken: String)
     case follow(channelID: String, params: String?, following: Bool)
-    /// Remove one upload from the person's Music locker (`music/delete_privately_owned_entity`, the request ytmusicapi's
-    /// `delete_upload_entity` sends). The id is the one the upload's own listing published; it is sent only after an explicit confirmation naming the upload.
-    case removeUpload(entityID: String)
     /// Add one podcast episode to the person's "Episodes for Later" (`saved: true`) or remove that one episode. Sent as a playlist-edit request
     /// on the service's `SE` list naming only this episode: the service's own remove toggle also clears every watched episode from the list, which
     /// the person did not ask for, so that extra action is never sent.
@@ -142,7 +115,6 @@ public enum MusicWriteRequest: Sendable, Equatable {
         case .rate(let video, _): return id(video, #"^[A-Za-z0-9_-]{11}$"#)
         case .savePlaylist(let list, _): return id(list, #"^[A-Za-z0-9_-]{2,128}$"#)
         case .songLibrary(let token): return id(token, #"^[A-Za-z0-9_%=+/.-]{8,4096}$"#)
-        case .removeUpload(let entity): return id(entity, #"^[A-Za-z0-9_%=+/.:-]{8,512}$"#)
         case .episodeLater(let video, _): return id(video, #"^[A-Za-z0-9_-]{11}$"#)
         case .follow(let channel, let params, _):
             return id(channel, #"^UC[A-Za-z0-9_-]{22}$"#) && (params.map { id($0, #"^[A-Za-z0-9%_=+/.-]{1,1024}$"#) } ?? true)

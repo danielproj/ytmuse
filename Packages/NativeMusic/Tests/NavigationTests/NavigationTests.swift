@@ -4,6 +4,19 @@ import Foundation
 import DesignSystem
 
 struct NavigationTests {
+    @Test func retiredUploadVisitsRestoreAsLibraryWithoutLosingOtherVisits() throws {
+        var session = BrowserSession()
+        session.open(.library)
+        var plist = try #require(PropertyListSerialization.propertyList(from: session.encoded(), format: nil) as? [String: Any])
+        var entries = try #require(plist["entries"] as? [[String: Any]])
+        entries[1]["destination"] = "uploads"
+        plist["entries"] = entries
+        let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
+        let restored = try BrowserSession.restore(data)
+        #expect(restored.entries.count == 2 && restored.entries[0] == session.entries[0])
+        #expect(restored.current.destination == .library && restored.current.id == session.current.id)
+        #expect(BrowserDestination(rawValue: "uploads") == nil)
+    }
     @Test func backForwardRestoresCompleteEntryAndBranches() throws {
         var session = BrowserSession()
         session.current.query = "Björk 東京"

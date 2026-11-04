@@ -1,5 +1,4 @@
 # English singular forms of counted keys (CLDR "one"); the key itself is the "other" form. Dropping one of these shows "1 seconds remaining".
 # Format: key<TAB>one form.
-%lld more files	%lld more file
 %lld seconds remaining	%lld second remaining
 Fading · %lld seconds remaining	Fading · %lld second remaining

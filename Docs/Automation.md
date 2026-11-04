@@ -42,7 +42,7 @@ Accepted: `https://music.youtube.com/` (watch, playlist, browse, channel), the `
 | `https://music.youtube.com/channel/<UC…>` or `/browse/<UC…>` | the artist |
 | `https://youtu.be/<11 characters>`, `https://www.youtube.com/watch?v=…` | the song |
 | `ytmuse://song/<id>`, `album`, `artist`, `playlist`, `podcast`, `episode` | the item |
-| `ytmuse://home`, `explore`, `search`, `library`, `downloads`, `history`, `uploads`, `podcasts`, `queue` | the screen |
+| `ytmuse://home`, `explore`, `search`, `library`, `downloads`, `history`, `podcasts`, `queue` | the screen |
 
 Refused, with one sentence that names nothing: another scheme (`http`, `file`, `javascript`, `data`), another host or a look-alike (`music.youtube.com.example`, a trailing dot, an IP or `localhost`), user information, a port, a fragment, any percent-encoding, hidden or bidirectional characters, a path that is not exactly one of the above, an unknown or repeated query parameter, an identifier of the wrong shape, and any query at all on a `ytmuse://` link (there are no action parameters to hide a command in). Links reach the app by the system opening one, by File > Open Link from Clipboard, by dropping one on a window, by the Services menu and by AppleScript `open link`.
 
@@ -56,7 +56,7 @@ Refused, with one sentence that names nothing: another scheme (`http`, `file`, `
 
 ## Handoff (MAC12)
 
-While an item page (song, album, artist, podcast or episode) is in front, the app advertises an `NSUserActivity` of type `local.native-music.browse` carrying the **public canonical link** and the navigation context (kind and identifier) — no title, account, cookie, token or local path, and nothing for the Library, History, Downloads, Uploads, the queue or a playlist (which may be private). Receiving-app limits: Handoff only reaches another device signed in to the same Apple Account, nearby, with Bluetooth and Wi-Fi on. The activity carries a web address, so a device without YTMuse opens it in its default browser. There is no iPhone companion, and nothing here is a Spotify Connect-like server. A custom-activity handoff between two YTMuse builds needs both signed by the same team; a development build does not meet that, and the browser is what you get. An automated (isolated) launch advertises nothing.
+While an item page (song, album, artist, podcast or episode) is in front, the app advertises an `NSUserActivity` of type `local.native-music.browse` carrying the **public canonical link** and the navigation context (kind and identifier) — no title, account, cookie, token or local path, and nothing for the Library, History, Downloads, the queue or a playlist (which may be private). Receiving-app limits: Handoff only reaches another device signed in to the same Apple Account, nearby, with Bluetooth and Wi-Fi on. The activity carries a web address, so a device without YTMuse opens it in its default browser. There is no iPhone companion, and nothing here is a Spotify Connect-like server. A custom-activity handoff between two YTMuse builds needs both signed by the same team; a development build does not meet that, and the browser is what you get. An automated (isolated) launch advertises nothing.
 
 ## Notifications and permissions (MAC08)
 

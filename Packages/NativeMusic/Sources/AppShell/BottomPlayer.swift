@@ -77,8 +77,8 @@ struct PlaybackPanel: View {
                     playerArtwork.musicCapsuleCover(compact: compact)
                 }.buttonStyle(.plain).accessibilityLabel(Text("Show Now Playing")).help(Text("Show Now Playing"))
                     .audit("playerArtwork", group: "playerRow", within: "playerBar")
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(model.currentTitle).accessibilityIdentifier("currentMediaTitle").font(.system(size: 13, weight: .semibold)).lineLimit(1).playerMatched("player-title", artworkNamespace, .position)
+                VStack(alignment: .leading, spacing: MusicSpace.hairline) {
+                    Text(model.currentTitle).accessibilityIdentifier("currentMediaTitle").font(.system(size: compact ? 13 : 14, weight: .semibold)).lineLimit(1).playerMatched("player-title", artworkNamespace, .position)
                     if let state = model.state {
                         Text(LocalizedStringKey(model.pending ? "Working…" : state.playback.state.rawValue)).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1).accessibilityIdentifier("playbackState")
                     } else { Text("Choose music to begin").font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1) }
@@ -108,7 +108,7 @@ struct OwnedControlsView: View {
             HStack(spacing: MusicSpace.xs) {
                 OwnedCapsuleButtons(model: model, large: large, namespace: namespace)
                 Menu { OwnedMoreActions(model: model) } label: { MusicGlyphLabel(systemImage: "ellipsis", edge: PlayerCapsule.glyphEdge(large: large)).accessibilityLabel(Text("More playback actions")) }
-                    .buttonStyle(.plain).menuIndicator(.hidden).fixedSize().disabled(model.session == nil).accessibilityIdentifier("sleepTimerMenu")
+                    .buttonStyle(.plain).menuIndicator(.hidden).fixedSize().disabled(model.session == nil).help(Text("More playback actions")).accessibilityIdentifier("sleepTimerMenu")
             }
         } else { boxed }
     }
@@ -163,6 +163,7 @@ struct PlaybackTimeline: View {
     @State private var preview: Double?
     @State private var hovering = false
     @State private var dragging = false
+    @FocusState private var focused: Bool
     var body: some View {
         let state = model.snapshot
         let duration = max(1, state?.media?.duration ?? 1)
@@ -171,12 +172,12 @@ struct PlaybackTimeline: View {
         let slider = Slider(value: Binding(get: { shown }, set: { preview = $0 }), in: 0...duration) { Text("Playback position") } onEditingChanged: { editing in
             dragging = editing
             if !editing, let target = preview { preview = nil; seek(target) }
-        }.labelsHidden().disabled(!seekable).accessibilityIdentifier("transportTimeline")
+        }.labelsHidden().focused($focused).disabled(!seekable).accessibilityIdentifier("transportTimeline")
         HStack {
             Text(model.displayedPosition == nil && preview == nil ? "–:––" : format(preview ?? model.displayedPosition ?? 0)).monospacedDigit().frame(minWidth: 36)
                 .accessibilityIdentifier("transportElapsed")
             if plain {
-                MusicSlimSlider(fraction: shown / duration, active: hovering || dragging, enabled: seekable, thickness: PlayerCapsule.seekHoverThickness) { slider }
+                MusicSlimSlider(fraction: shown / duration, active: hovering || dragging || focused, enabled: seekable, thickness: PlayerCapsule.seekHoverThickness) { slider }
                     .onHover { hovering = $0 }
             } else { slider.tint(MusicStyle.accent) }
             Text(format(state?.media?.duration ?? 0)).monospacedDigit().frame(minWidth: 36)

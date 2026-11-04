@@ -50,7 +50,7 @@ enum PseudoLocale {
     struct Case: Sendable, CustomTestStringConvertible {
         let surface: SurfaceAuditTests.Surface; let size: AuditSize; let locale: AuditLocaleMode
         var testDescription: String { "\(surface.rawValue) \(size.name) \(locale.rawValue)" }
-        static let all: [Case] = [SurfaceAuditTests.Surface.home, .library, .downloads, .uploads, .search, .playerPlaying, .nowPlayingSong, .queueSong].flatMap { surface in
+        static let all: [Case] = [SurfaceAuditTests.Surface.home, .library, .downloads, .search, .playerPlaying, .nowPlayingSong, .queueSong].flatMap { surface in
             [AuditSize.minimum, .standard].flatMap { size in [AuditLocaleMode.doubleLength, .rightToLeft, .largeText].filter { mode in ProcessInfo.processInfo.environment["W28_LOCALE_MODES"].map { $0.split(separator: ",").contains(Substring(mode.rawValue)) } ?? true }.map { Case(surface: surface, size: size, locale: $0) } }
         }
     }

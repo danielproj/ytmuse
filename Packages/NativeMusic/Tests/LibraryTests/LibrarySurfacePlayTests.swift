@@ -21,7 +21,7 @@ import Testing
     }
     private func song(_ title: String = "Row", video: String = "rowVideo0001", context: String? = nil, upload: Bool = false, radio: MusicRadioAction? = nil,
                       availability: MusicAvailability = .available) -> MusicCatalogItem {
-        MusicCatalogItem(kind: .song, title: title, availability: availability, videoID: video, contextPlaylistID: context, isUpload: upload, radio: radio)
+        MusicCatalogItem(kind: .song, title: title, availability: availability, videoID: video, contextPlaylistID: context, isPrivatelyOwned: upload, radio: radio)
     }
 
     // MARK: Play (C4)

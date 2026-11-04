@@ -50,15 +50,6 @@
 1050|Objekt ohne Titel
 1051|Als Nächstes
 1052|%@ aktualisiert.
-1053|Hochladen
-1054|Hochgeladene Alben
-1055|Hochgeladene Interpreten
-1056|Hochgeladene Songs
-1057|%@ wird hochgeladen
-1058|Das Hochladen kommt in einem späteren Update
-1059|Uploads
-1060|Uploads sind noch nicht verbunden, daher gibt es hier nichts zu durchsuchen.
-1061|Laufende und abgeschlossene Uploads
 1062|Standardgeschwindigkeit für diese Sendung verwenden
 1063|Verwende den Link zu einem unterstützten Musikobjekt oder finde das Objekt in deiner Sammlung.
 1064|Video
@@ -70,7 +61,6 @@
 1070|Sichtbarkeit: %@
 1071|Lautstärke
 1072|Warten auf eine Netzwerkverbindung
-1073|Wartet auf den Upload
 1074|Wartet: Der Datenmodus „Weniger Daten“ ist für diese Verbindung eingeschaltet
 1075|Wartet: Diese Verbindung ist getaktet
 1076|WebKit ist für dieses Video nicht in Bild-in-Bild gewechselt.
@@ -96,7 +86,6 @@
 1096|Du bist der Playlist beigetreten.
 1097|Du kannst in dieser Playlist Songs hinzufügen und ändern, und sie wird deiner Mediathek hinzugefügt.
 1098|YouTube Music
-1099|YouTube Music akzeptiert Dateien bis zu %@.
 1100|YouTube Music hat in einer Form geantwortet, die diese Version nicht lesen kann. Es wurde nichts geändert.
 1101|YouTube Music hat darum gebeten, langsamer vorzugehen. Treffer von diesem Mac werden angezeigt; versuche es in Kürze erneut.
 1102|YouTube Music konnte das nicht starten. Versuche es noch einmal mit „Wiedergeben“.
@@ -107,12 +96,9 @@
 1107|YouTube Music hat die Qualität nicht geändert.
 1108|YouTube Music hat „In der Mediathek sichern“ für diesen Song nicht angeboten. Öffne den Song einmal, um seine Seite zu lesen.
 1109|YouTube Music hat nicht angegeben, ob dies ein Song oder ein Video ist, daher kann hier nicht gewechselt werden.
-1110|YouTube Music hat das Entfernen nicht bestätigt. „%@“ wurde möglicherweise entfernt oder auch nicht.
 1111|YouTube Music hat für diesen Radiosender keine Regler für Vielfalt oder Entdeckung geliefert, daher werden keine angezeigt.
 1112|YouTube Music bietet für diesen Song „Nicht gefällt mir“ nicht an.
 1113|YouTube Music gibt nicht an, dass dies dieselbe Aufnahme ist, daher beginnt es von vorn.
-1114|YouTube Music hat die Verarbeitung dieser Datei abgeschlossen.
-1115|YouTube Music hat die Verarbeitung dieser Datei abgeschlossen. Deine Upload-Liste wurde aktualisiert.
 1116|YouTube Music hat zu diesem Objekt nichts zum Abspielen geliefert.
 1117|YouTube Music hat momentan keine Samples für dich.
 1118|YouTube Music hat keinen Songtext für diesen Song.
@@ -123,7 +109,6 @@
 1123|YouTube-Music-Verlauf
 1124|Steuerung des YouTube-Music-Verlaufs
 1125|YouTube Music bittet um eine Pause. Versuche es mit Samples gleich noch einmal.
-1126|YouTube Music verarbeitet diese Datei noch. Prüfe es später noch einmal.
 1127|YouTube Music verwaltet die nächsten Objekte, daher lassen sie sich hier weder neu anordnen noch entfernen.
 1128|YouTube Music verwaltet die nächsten Objekte während der Wiedergabe, daher kann diese App ihnen nichts hinzufügen.
 1129|YouTube-Music-Playlist
@@ -132,7 +117,6 @@
 1132|YouTube Music spielt in seinem eigenen Player ab, daher kann die App zwei Objekte weder überblenden noch ihr Audio verarbeiten.
 1133|YouTube Music spielt über die Tonausgabe dieses Mac ab. Ändere sie im Kontrollzentrum.
 1134|YouTube Music hat diese Seite ohne Objekte zurückgegeben.
-1135|YouTube Music meldet: %@
 1136|Die Suche in YouTube Music ist gerade nicht verfügbar. Treffer von diesem Mac werden angezeigt.
 1137|YouTube Music hat aufgehört, mehr von dieser Sammlung zu senden, bevor sie zu Ende war.
 1138|YouTube Music hat die Zusammenarbeit eingeschaltet, aber keinen brauchbaren Einladungslink zurückgegeben.
@@ -156,7 +140,6 @@
 1156|macOS führt dieses Tastaturkürzel unter seinen eigenen aktivierten Tastaturkürzeln auf.
 1157|macOS meldet dieses Tastaturkürzel als belegt.
 1158|macOS verwendet dieses Tastaturkürzel für %@.
-1159|oder ziehe Audiodateien hierher
 1160|pausiert
 1161|wird abgespielt
 1162|wird vorbereitet
@@ -167,7 +150,6 @@
 1167|diese Playlist
 1168|unbekannt
 1169|„%@“ ist bereits hier. „Duplikate behalten“ fügt es erneut als separaten Eintrag hinzu; „Vorhandene überspringen“ lässt es weg.
-1170|„%@“ ist bereits in der Upload-Liste.
 1171|„%@“ ist nicht mehr der Song, den du geändert hast.
 1172|„%@“ wurde auch anderswohin verschoben.
 1173|„%@“ wurde anderswo aus der Playlist entfernt.
@@ -176,7 +158,6 @@ Q2|one:Wird heruntergeladen: %lld, wartend: %lld	other:Wird heruntergeladen: %ll
 Q3|one:Wird heruntergeladen: %lld, wartend: %lld · %@ bisher	other:Wird heruntergeladen: %lld, wartend: %lld · %@ bisher
 Q4|one:%lld Objekt bisher geladen. Es gibt mehr.	other:%lld Objekte bisher geladen. Es gibt mehr.
 Q5|one:%lld Objekt, das kein YouTube-Music-Song ist, wird ausgelassen.	other:%lld Objekte, die keine YouTube-Music-Songs sind, werden ausgelassen.
-Q6|one:%lld weitere Datei	other:%lld weitere Dateien
 Q7|one:%lld von %lld heruntergeladen	other:%lld von %lld heruntergeladen
 Q8|one:%lld Prozent	other:%lld Prozent
 Q9|one:%lld Wiedergabe · %@ gehört	other:%lld Wiedergaben · %@ gehört
@@ -206,8 +187,6 @@ Q32|one:Resonanz %lld	other:Resonanz %lld
 Q33|one:Einschlafen in %llds%@	other:Einschlafen in %llds%@
 Q34|one:Einschlaftimer auf %lld Minute eingestellt.	other:Einschlaftimer auf %lld Minuten eingestellt.
 Q35|one:Einschlaftimer: noch %lld:%@	other:Einschlaftimer: noch %lld:%@
-Q36|one:Diese App fügt bis zu %lld Datei auf einmal hinzu. Der Rest wurde nicht hinzugefügt.	other:Diese App fügt bis zu %lld Dateien auf einmal hinzu. Der Rest wurde nicht hinzugefügt.
 Q37|one:Dadurch werden die Playlist und ihr %lld Eintrag dauerhaft aus YouTube Music gelöscht. Das kann nicht widerrufen werden.	other:Dadurch werden die Playlist und ihre %lld Einträge dauerhaft aus YouTube Music gelöscht. Das kann nicht widerrufen werden.
 Q38|one:Widerrufen für %lld Song	other:Widerrufen für %lld Songs
 Q39|one:Widerrufen: %lld Song entfernt	other:Widerrufen: %lld Songs entfernt
-Q40|one:Wird hochgeladen … %lld%%	other:Wird hochgeladen … %lld%%

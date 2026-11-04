@@ -1,4 +1,5 @@
 import AccountSession
+import Domain
 import Features
 import Foundation
 import Testing
@@ -133,16 +134,58 @@ import Testing
         #expect(tuner.capability == .controlsSupplied(1))
         let control = try! #require(tuner.controls.first)
         #expect(control.options.map(\.title) == ["Popular", "Deep cuts"] && control.options.map(\.selected) == [true, false])
-        await tuner.choose(option: "RDAMVMvid00000001|deepParams", in: "queue-filter")
-        #expect(performer.plays.last?.params == "deepParams" && performer.plays.last?.playlistID == "RDAMVMvid00000001")
+        await tuner.choose(option: "RDAMVMvid00000001|deepParams", in: "queue-filter", suppliedBy: tuner.controlsIdentity)
+        #expect(performer.plays.count == 1 && tuner.failure == .unsupportedFilter, "legacy performers cannot silently degrade canonical queue updates")
         #expect(tuner.context?.seed.id == "RDAMVMvid00000001")
     }
-    @Test func aQueueThatCouldNotBeReadYieldsNoControlsFromTheSeam() async {
-        let none = QueueRadioControlsSource(reader: { _ in nil })
+    @Test func publishedPlayerParamsAreKeptAndUnsupportedChoicesNeverStartPlayback() async {
+        let book = RadioSeedBook()
+        book.note(items: [MusicCatalogItem(kind: .song, title: seed.title, videoID: seed.videoID,
+            radio: MusicRadioAction(playlistID: seed.id, videoID: seed.videoID, params: seed.params))])
+        let performer = RecordingPerformer()
+        let source = QueueRadioControlsSource { _ in MusicRadioQueue(chips: [
+            MusicRadioChip(title: "Workout", isSelected: false, playlistID: "RDpublished", params: "p", playerParams: "extra")]) }
+        let model = TunerModel(seedBook: book, performer: performer, source: source)
+        await model.start(book.seeds[0])
+        #expect(model.controls.first?.options.first?.playerParams == "extra")
+        await model.choose(option: "RDpublished|p", in: "queue-filter", suppliedBy: model.controlsIdentity)
+        #expect(model.failure == .unsupportedFilter && performer.plays.count == 1)
+        let command = try! #require(MusicQueueFilterCommand(playlistID: "RDpublished", params: "p", playerParams: "extra"))
+        #expect(await performer.playRadioFilter(command, title: "Workout") == .failed)
+        #expect(performer.captureRadioQueueScope(playlistID: command.playlistID) == nil)
+        #expect(!performer.radioQueueScopeIsCurrent(UUID()))
+        #expect(await performer.applyRadioFilter(command, scope: UUID()) == .failed)
+        #expect(performer.plays.count == 1, "default implementation never drops extra fields or queue semantics")
+    }
+    @Test func unreadableQueueThrowsWhileAReadEmptyQueueIsAnAnswer() async throws {
+        let none = QueueRadioControlsSource(reader: { _ in throw MusicSessionError.unrecognised })
         let empty = QueueRadioControlsSource(reader: { _ in MusicRadioQueue(chips: []) })
-        let context = RadioContext(seed: RadioSeed(id: "RDAMVMx0000000001", kind: .song, title: "S"), playlistID: "RDAMVMx0000000001", params: nil, choices: [:])
-        let fromNil = await none.controls(for: context), fromEmpty = await empty.controls(for: context)
-        #expect(fromNil.isEmpty && fromEmpty.isEmpty)
+        let context = RadioContext(seed: seed, playlistID: seed.id, params: seed.params, choices: [:])
+        await #expect(throws: MusicSessionError.unrecognised) { try await none.controls(for: context) }
+        #expect(try await empty.controls(for: context).isEmpty)
+    }
+    @Test func retryReadsFiltersWithoutRestartingAndAccountChangeFencesLateAnswers() async {
+        let book = RadioSeedBook()
+        book.note(items: [MusicCatalogItem(kind: .song, title: seed.title, videoID: seed.videoID,
+            radio: MusicRadioAction(playlistID: seed.id, videoID: seed.videoID, params: seed.params))])
+        let performer = RecordingPerformer()
+        let source = HeldRadioControls()
+        let model = TunerModel(seedBook: book, performer: performer, source: source)
+        let start = Task { await model.start(book.seeds[0]) }
+        while !(await source.holding) { await Task.yield() }
+        #expect(model.capability == .loadingControls && model.context != nil)
+        await source.fail(); await start.value
+        #expect(model.capability == .controlsFailed && model.failure == nil)
+        #expect(performer.plays.count == 1)
+        let retry = Task { await model.retryControls() }
+        while !(await source.holding) { await Task.yield() }
+        await source.finish(); await retry.value
+        #expect(model.capability == .noControlsSupplied && performer.plays.count == 1)
+        let stale = Task { await model.retryControls() }
+        while !(await source.holding) { await Task.yield() }
+        model.accountChanged()
+        await source.finish(); await stale.value
+        #expect(model.context == nil && model.controls.isEmpty && !model.busy)
     }
     @Test func suppliedControlsAreExposedExactlyAsSuppliedNothingAddedOrRenamed() async {
         let (tuner, _) = rig(controls: supplied)
@@ -154,25 +197,28 @@ import Testing
     @Test func choosingAnOptionRestartsTheSameSeedWithWhatThatOptionPublished() async {
         let (tuner, performer) = rig(controls: supplied)
         await tuner.start(tuner.seeds[0])
-        await tuner.choose(option: "discover", in: "variety")
+        await tuner.choose(option: "discover", in: "variety", suppliedBy: tuner.controlsIdentity)
         #expect(performer.plays.count == 2)
-        #expect(performer.plays[1] == .init(playlistID: "RDAMVMother0000001", title: "Seed song", videoID: "vid00000001", params: "disParams"))
+        #expect(performer.plays[1] == .init(playlistID: "RDAMVMother0000001", title: "Seed song", videoID: nil, params: "disParams"))
         #expect(tuner.context?.seed == seed, "the seed is kept")
         #expect(tuner.context?.choices == ["variety": "discover"])
-        #expect(tuner.controls.first { $0.id == "variety" }?.selectedOption?.id == "discover")
+        #expect(tuner.controls.first { $0.id == "variety" }?.selectedOption?.id == "familiar")
+        #expect(tuner.selectionUnconfirmed)
+        await tuner.retryControls()
+        #expect(tuner.selectionUnconfirmed && tuner.controls == supplied)
         #expect(tuner.controls.first { $0.id == "mood" } == supplied[1], "the other control is untouched")
     }
     @Test func anOptionWithNoPlaylistKeepsTheRadiosPlaylistAndAddsItsParameters() async {
         let (tuner, performer) = rig(controls: supplied)
         await tuner.start(tuner.seeds[0])
-        await tuner.choose(option: "calm", in: "mood")
+        await tuner.choose(option: "calm", in: "mood", suppliedBy: tuner.controlsIdentity)
         #expect(performer.plays[1].playlistID == "RDAMVMvid00000001" && performer.plays[1].params == "calmParams")
     }
     @Test func twoChoicesAreKeptTogetherAndTheSeedSurvivesBoth() async {
         let (tuner, performer) = rig(controls: supplied)
         await tuner.start(tuner.seeds[0])
-        await tuner.choose(option: "discover", in: "variety")
-        await tuner.choose(option: "calm", in: "mood")
+        await tuner.choose(option: "discover", in: "variety", suppliedBy: tuner.controlsIdentity)
+        await tuner.choose(option: "calm", in: "mood", suppliedBy: tuner.controlsIdentity)
         #expect(tuner.context?.choices == ["variety": "discover", "mood": "calm"])
         #expect(tuner.context?.seed == seed)
         let plays = performer.plays
@@ -181,13 +227,13 @@ import Testing
     @Test func aControlOrOptionNobodySuppliedIsRefusedAndSendsNothing() async {
         let (tuner, performer) = rig(controls: supplied)
         await tuner.start(tuner.seeds[0])
-        await tuner.choose(option: "extreme", in: "variety")
+        await tuner.choose(option: "extreme", in: "variety", suppliedBy: tuner.controlsIdentity)
         #expect(tuner.failure == .controlNotSupplied)
-        await tuner.choose(option: "familiar", in: "novelty")
+        await tuner.choose(option: "familiar", in: "novelty", suppliedBy: tuner.controlsIdentity)
         #expect(tuner.failure == .controlNotSupplied)
         #expect(performer.plays.count == 1)
         let (bare, p) = rig(controls: [])
-        await bare.choose(option: "familiar", in: "variety")
+        await bare.choose(option: "familiar", in: "variety", suppliedBy: bare.controlsIdentity)
         #expect(p.plays.isEmpty && bare.context == nil)
     }
     @Test func aRefusedRestartKeepsTheRadioThatWasPlaying() async {
@@ -195,7 +241,7 @@ import Testing
         await tuner.start(tuner.seeds[0])
         let before = tuner.context
         performer.outcome = .failed
-        await tuner.choose(option: "discover", in: "variety")
+        await tuner.choose(option: "discover", in: "variety", suppliedBy: tuner.controlsIdentity)
         #expect(tuner.failure == .notStarted)
         #expect(tuner.context == before, "what was playing is unchanged")
         #expect(tuner.controls.first { $0.id == "variety" }?.selectedOption?.id == "familiar")
@@ -219,18 +265,22 @@ import Testing
         #expect(tuner.context == nil && tuner.controls.isEmpty && tuner.seeds.isEmpty && tuner.failure == nil)
         #expect(tuner.capability == .noRadio)
     }
-    @Test func applyingChoicesNeverAddsRemovesOrRenamesAnything() {
-        let marked = TunerModel.applying(["variety": "discover"], to: supplied)
-        #expect(marked.map(\.id) == supplied.map(\.id) && marked.map(\.title) == supplied.map(\.title))
-        #expect(marked.flatMap(\.options).map(\.id) == supplied.flatMap(\.options).map(\.id))
-        #expect(marked[0].options.map(\.selected) == [false, true])
-        #expect(marked[0].options.map(\.params) == supplied[0].options.map(\.params))
-        #expect(TunerModel.applying(["variety": "nonexistent"], to: supplied) == supplied)
+    @Test func serviceConfirmationSurvivesMetadataRetry() async {
+        let confirmed = [TunerControl(id: "variety", title: "Variety", options: [
+            TunerOption(id: "discover", title: "Discover", selected: true, params: "disParams")])]
+        let (tuner, performer) = rig(controls: confirmed)
+        await tuner.start(tuner.seeds[0])
+        #expect(performer.plays[0].videoID == seed.videoID)
+        await tuner.choose(option: "discover", in: "variety", suppliedBy: tuner.controlsIdentity)
+        #expect(tuner.controls == confirmed && !tuner.selectionUnconfirmed)
+        await tuner.retryControls()
+        #expect(tuner.controls == confirmed && !tuner.selectionUnconfirmed)
+        #expect(performer.plays.count == 2)
     }
-    @Test func theApplicationsOwnControlsSourceSuppliesNone() async {
+    @Test func theApplicationsOwnControlsSourceSuppliesNone() async throws {
         let (tuner, _) = rig()
         let context = RadioContext(seed: seed, playlistID: seed.id, params: nil, choices: [:])
-        #expect(await UnresolvedRadioControlsSource().controls(for: context).isEmpty)
+        #expect(try await UnresolvedRadioControlsSource().controls(for: context).isEmpty)
         _ = tuner
     }
 }
@@ -239,4 +289,15 @@ struct FixedControls: RadioControlsSource {
     let unresolved: String?
     init(_ controls: [TunerControl], unresolved: String? = nil) { self.controls = controls; self.unresolved = unresolved }
     func controls(for context: RadioContext) async -> [TunerControl] { controls }
+}
+
+private actor HeldRadioControls: RadioControlsSource {
+    nonisolated var unresolved: String? { nil }
+    private var waiter: CheckedContinuation<[TunerControl], any Error>?
+    var holding: Bool { waiter != nil }
+    func controls(for context: RadioContext) async throws -> [TunerControl] {
+        try await withCheckedThrowingContinuation { waiter = $0 }
+    }
+    func fail() { waiter?.resume(throwing: MusicSessionError.network); waiter = nil }
+    func finish() { waiter?.resume(returning: []); waiter = nil }
 }

@@ -52,7 +52,6 @@
 52|Zu %@ gewechselt.
 53|%@ wiedergeben
 54|Aktuelle Ausgabe: %@
-55|„%@“ aus deinen Uploads entfernen?
 56|Eine Werbeanzeige wird wiedergegeben
 57|Die Werbeanzeige ist beendet
 58|Aktuelle Wiedergabe: „%@“ von %@.

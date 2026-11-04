@@ -115,7 +115,7 @@ public struct MusicSignInSheet: View {
         }
         Spacer(minLength: MusicStyle.compact)
         Button(cancelLabel, role: .cancel) { signIn.close() }
-          .keyboardShortcut(.cancelAction).accessibilityIdentifier("cancelMusicSignIn").musicButtons()
+          .keyboardShortcut(.cancelAction).accessibilityIdentifier("cancelMusicSignIn").musicPageAction()
       }
       HStack(spacing: MusicStyle.compact) {
         Image(systemName: "lock.fill").foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
@@ -128,7 +128,7 @@ public struct MusicSignInSheet: View {
         ProgressView(value: signIn.progress).progressViewStyle(.linear).controlSize(.small)
           .accessibilityLabel("Loading Google sign-in")
       }
-    }.padding(MusicStyle.spacing).musicSurface()
+    }.padding(MusicStyle.spacing).musicInsetSurface()
   }
   private var cancelLabel: String {
     if case .failed = signIn.phase { return "Close" }
@@ -162,7 +162,7 @@ public struct MusicSignInSheet: View {
     case .failed(let failure):
       StateCard(symbol: MusicSignInFeedback.symbol(for: failure), title: "Sign-in didn’t finish",
                 detail: MusicSignInFeedback.message(for: failure)) {
-        Button("Close") { signIn.close() }.keyboardShortcut(.defaultAction).musicButtons(prominent: true)
+        Button("Close") { signIn.close() }.keyboardShortcut(.defaultAction).musicPageAction(prominent: true)
       }.accessibilityIdentifier("musicSignInFailure")
     default: EmptyView()
     }
@@ -192,7 +192,7 @@ private struct StateCard<Actions: View>: View {
       }
       actions
     }
-    .padding(MusicStyle.inset).frame(maxWidth: 380).musicSurface()
+    .padding(MusicStyle.inset).frame(maxWidth: 380).musicInsetSurface()
     .accessibilityElement(children: .contain)
   }
 }
@@ -289,7 +289,7 @@ struct MusicAccountCard: View {
         content
       }
     }
-    .padding(MusicStyle.inset).frame(maxWidth: .infinity, alignment: .leading).musicSurface()
+    .padding(MusicStyle.inset).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
     .accessibilityElement(children: .contain).accessibilityIdentifier("musicAccountCard")
   }
   @ViewBuilder private var content: some View {
@@ -301,7 +301,7 @@ struct MusicAccountCard: View {
         HStack(spacing: MusicStyle.spacing) {
           avatar(proof.avatar)
           VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-            Text(proof.identity.displayName).font(.title2.bold()).accessibilityIdentifier("musicIdentityName")
+            Text(proof.identity.displayName).font(MusicPageStyle.section).accessibilityIdentifier("musicIdentityName")
             if let handle = proof.identity.handle {
               Text(handle).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("musicIdentityHandle")
             }
@@ -309,7 +309,7 @@ struct MusicAccountCard: View {
           }
           Spacer(minLength: MusicStyle.compact)
           Button("Refresh") { Task { await model.loadProof() } }.disabled(model.proofLoading || model.busy)
-            .musicButtons()
+            .musicPageAction()
         }
         Divider()
         library(proof.library)
@@ -319,23 +319,23 @@ struct MusicAccountCard: View {
              detail: String(localized: "Google ended this YouTube Music session. Your local data is kept.")) {
         if let active = model.active {
           Button("Sign In Again") { Task { await model.authenticate(active) } }
-            .disabled(!model.canAuthenticate || model.busy).musicButtons(prominent: true)
+            .disabled(!model.canAuthenticate || model.busy).musicPageAction(prominent: true)
         }
       }
     case .unrecognised:
       notice(symbol: "questionmark.circle", title: "Library not read",
              detail: String(localized: "YouTube Music answered in a way YTMuse doesn’t recognise yet. This is not an empty library.")) {
-        Button("Try Again") { Task { await model.loadProof() } }.disabled(model.proofLoading).musicButtons()
+        Button("Try Again") { Task { await model.loadProof() } }.disabled(model.proofLoading).musicPageAction()
       }
     case .failed(.keychain):
       notice(symbol: "lock.trianglebadge.exclamationmark", title: "Saved session unavailable on this Mac",
              detail: MusicSignInFeedback.message(for: MusicSessionError.keychain)) {
-        Button("Try Again") { Task { await model.loadProof() } }.disabled(model.proofLoading).musicButtons()
+        Button("Try Again") { Task { await model.loadProof() } }.disabled(model.proofLoading).musicPageAction()
       }
     case .failed(let error):
       notice(symbol: "wifi.exclamationmark", title: "Couldn’t reach YouTube Music",
              detail: MusicSignInFeedback.message(for: error)) {
-        Button("Try Again") { Task { await model.loadProof() } }.disabled(model.proofLoading).musicButtons()
+        Button("Try Again") { Task { await model.loadProof() } }.disabled(model.proofLoading).musicPageAction()
       }
     }
   }

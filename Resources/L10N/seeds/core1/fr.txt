@@ -52,7 +52,6 @@
 52|Passage au compte %@.
 53|Lire %@
 54|Sortie actuelle : %@
-55|Supprimer « %@ » de vos imports ?
 56|Une publicité est en cours de lecture
 57|La publicité est terminée
 58|Lecture en cours : « %@ » par %@.

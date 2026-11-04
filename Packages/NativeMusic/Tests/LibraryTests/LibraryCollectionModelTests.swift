@@ -363,7 +363,7 @@ func continuationOf(_ items: [MusicCatalogItem], token: String? = nil) -> MusicC
     }
     @Test func everyKindsFixtureIsAccountedForEndToEnd() async throws {
         let names: [MusicLibraryKind: String] = [.songs: "library-songs", .albums: "library-albums", .artists: "library-artists", .following: "library-following", .playlists: "library-playlists",
-                                                 .podcasts: "library-podcasts", .savedEpisodes: "library-saved-episodes", .uploads: "library-uploads"]
+                                                 .podcasts: "library-podcasts", .savedEpisodes: "library-saved-episodes"]
         for (kind, name) in names {
             let script = LibraryScript()
             let source = LibrarySource(kind: kind)

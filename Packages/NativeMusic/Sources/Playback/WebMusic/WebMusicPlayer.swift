@@ -1,6 +1,15 @@
 import AppKit
+import Domain
 import Foundation
 import Observation
+
+public struct WebMusicRadioQueueScope: Sendable {
+    fileprivate let owner: UUID
+    fileprivate let document: UInt64
+    fileprivate let load: UInt64
+    fileprivate let playlist: String
+    fileprivate let video: String
+}
 
 /// Elapsed time of the current item, observed apart from `WebMusicPlayer.snapshot`.
 /// The hidden page reports its position about four times a second; views that read
@@ -146,21 +155,103 @@ import Observation
                 makePage: @escaping @MainActor (any WebMusicPageDelegate) -> any WebMusicPage = { WebKitMusicPage(delegate: $0) }) {
         self.cookies = cookies; artworkLoader = artwork; self.loadTimeout = loadTimeout; self.rotationDelay = rotationDelay; self.shuffleAttempts = max(1, shuffleAttempts); self.shuffleInterval = shuffleInterval; self.pictureInPictureTimeout = pictureInPictureTimeout; self.sleepTiming = sleepTiming; self.makePage = makePage
     }
+    @ObservationIgnored private let radioOwner = UUID()
+    @ObservationIgnored private(set) var updatingRadioQueue = false
+    /// One uncancellable page invocation at most, including one whose native deadline expired.
+    @ObservationIgnored private var radioDispatch: UUID?
+    @MainActor private final class RadioDispatchResult {
+        var active = true
+        var reply: WebMusicCommandReply?
+        var acceptedRevision: UInt64 = 0
+    }
+    public func captureRadioQueueScope(playlistID: String) -> WebMusicRadioQueueScope? {
+        guard !closed, page != nil, committedDocument != 0, committedDocument == transport.document,
+              transport.confirmed, snapshot.playlistID == playlistID, snapshot.canControlQueue,
+              let video = snapshot.videoID else { return nil }
+        return .init(owner: radioOwner, document: committedDocument, load: transport.load, playlist: playlistID, video: video)
+    }
+    public func radioQueueScopeIsCurrent(_ scope: WebMusicRadioQueueScope) -> Bool {
+        !closed && page != nil && scope.owner == radioOwner && scope.document == committedDocument
+            && committedDocument == transport.document && scope.load == transport.load && transport.confirmed
+            && snapshot.playlistID == scope.playlist && snapshot.videoID == scope.video && !snapshot.isFailed
+            && snapshot.queue?.videoID == scope.video
+    }
+    /// Updates only the published autoplay section of an existing queue. Acceptance is not confirmation.
+    /// Nothing here changes ownership, creates a page, resets the transport or changes pause intent.
+    public func applyRadioFilter(_ command: MusicQueueFilterCommand, scope: WebMusicRadioQueueScope,
+                                 admitted: @escaping @MainActor () -> Bool = { true }) async -> Bool {
+        guard !updatingRadioQueue, radioDispatch == nil, admitted(), radioQueueScopeIsCurrent(scope), let page else { return false }
+        switch transport.admitQueueSetting() {
+        case .failure(let reason): refusal = reason; return false
+        case .success: break
+        }
+        guard let before = snapshot.queue,
+              let invocation = try? WebMusicCommand.updateRadioQueue(command, document: scope.document, load: scope.load,
+                  videoID: scope.video, currentPlaylistID: scope.playlist).invocation() else { return false }
+        let deadline = ContinuousClock.now.advanced(by: loadTimeout)
+        let result = RadioDispatchResult(), dispatch = UUID()
+        updatingRadioQueue = true; radioDispatch = dispatch
+        defer {
+            result.active = false
+            updatingRadioQueue = false
+            // Restore the normal paused/ad scheduling policy even if WebKit never resumes.
+            updateThrottle(transport.snapshot)
+        }
+        // An unstructured invocation is intentional: a task group would join a suspended WebKit
+        // continuation on timeout. Keep its slot until it really returns; repeated presses cannot
+        // accumulate dispatches. Late completion may only release that slot, never certify success.
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { if self.radioDispatch == dispatch { self.radioDispatch = nil } }
+            guard result.active, ContinuousClock.now < deadline, !Task.isCancelled,
+                  admitted(), self.radioQueueScopeIsCurrent(scope) else { return }
+            if case .failure = self.transport.admitQueueSetting() { result.reply = .unavailable; return }
+            self.setThrottle(false)
+            let reply = await page.run(invocation)
+            guard result.active, ContinuousClock.now < deadline,
+                  admitted(), self.radioQueueScopeIsCurrent(scope) else { return }
+            result.acceptedRevision = self.transport.queueRevision
+            result.reply = reply
+        }
+        while result.reply == nil, ContinuousClock.now < deadline, !Task.isCancelled {
+            guard admitted(), radioQueueScopeIsCurrent(scope) else { return false }
+            if case .failure(let reason) = transport.admitQueueSetting() { refusal = reason; return false }
+            try? await Task.sleep(for: .milliseconds(20))
+        }
+        guard admitted(), radioQueueScopeIsCurrent(scope) else { return false }
+        guard !Task.isCancelled, ContinuousClock.now < deadline else { refusal = .pageDidNotTake; return false }
+        guard let reply = result.reply else { refusal = .pageDidNotTake; return false }
+        guard reply == .router else { refusal = Self.refusal(for: reply); return false }
+        // Discard pre-acceptance evidence, using only the revision of the applicable snapshot.
+        let accepted = result.acceptedRevision
+        while ContinuousClock.now < deadline, !Task.isCancelled {
+            guard admitted(), radioQueueScopeIsCurrent(scope) else { return false }
+            if case .failure(let reason) = transport.admitQueueSetting() { refusal = reason; return false }
+            if transport.queueRevision > accepted, let after = snapshot.queue,
+               before.upcoming.map(\.videoID) != after.upcoming.map(\.videoID) {
+                refusal = nil; return true
+            }
+            try? await Task.sleep(for: .milliseconds(20))
+        }
+        refusal = .pageDidNotTake
+        return false
+    }
     public var isClosed: Bool { closed }
     public var hasPage: Bool { page != nil }
 
     // MARK: Commands (the only path from native controls into the page)
 
     /// Plays a whole library playlist through YouTube Music's own queue.
-    public func play(playlistID: String, title: String? = nil, videoID: String? = nil, params: String? = nil) async {
+    public func play(playlistID: String, title: String? = nil, videoID: String? = nil, params: String? = nil, intent: MusicPlaybackIntent = .endpoint, queueCommand: MusicQueueFilterCommand? = nil) async {
         guard !closed, WebMusicIdentifier.isPlaylistID(playlistID),
               videoID.map({ WebMusicIdentifier.isVideoID($0) }) ?? true,
               params.map(WebMusicIdentifier.isEndpointParams) ?? true else { refusal = .invalidTarget; return }
+        guard queueCommand == nil else { refusal = .invalidTarget; return }
         commandRevision &+= 1
         restoredTarget = nil
         refusal = nil
-        // A shuffle is never started as a plain load: nothing may play in order while it is waiting for the service's endpoint.
-        if let params { await playShuffle(playlistID, title: title, videoID: videoID, params: params); return }
+        // Parameterized endpoints always use the router, with no plain playlist fallback.
+        if params != nil || intent == .shuffle { await playEndpoint(playlistID, title: title, videoID: videoID, params: params, intent: intent); return }
         let load = transport.begin(playlistID: playlistID, title: title)
         kickedLoad = 0; artwork = nil; publish()
         currentVideo = videoID
@@ -189,11 +280,10 @@ import Observation
         }
         armTimeout(load)
     }
-    /// Starts a playlist with the service's own shuffle endpoint, or not at all. The page is brought up without starting anything
-    /// (a live document is reused as it is); once it reports its router, the endpoint is routed, retried a bounded number of
-    /// times, and the start is verified from what the page reports (the requested playlist, shuffle not off). A shuffle that cannot be
-    /// routed or verified fails visibly; nothing is ever started in order in its place.
-    private func playShuffle(_ playlistID: String, title: String?, videoID: String?, params: String) async {
+    /// Routes the exact published endpoint after a neutral document is ready, with bounded retries and no plain-load fallback.
+    /// Endpoint intent requires accepted routing and an observable target/queue transition; Shuffle retains strict shuffle evidence.
+    /// Filter selection confirmation comes separately from the queue's fresh chip selection flags.
+    private func playEndpoint(_ playlistID: String, title: String?, videoID: String?, params: String?, intent: MusicPlaybackIntent) async {
         let load = transport.begin(playlistID: playlistID, title: title)
         kickedLoad = 0; artwork = nil; publish()
         currentVideo = videoID
@@ -213,24 +303,25 @@ import Observation
                 cookieBaseline = Self.baseline(session); volumePending = userVolume
                 guard load == transport.load, page === target else { return }
             }
-            guard let url = WebMusicNavigation.hostURL(document: transport.reserveDocument(), load: load) else { fail(.shuffleFailed); return }
+            guard let url = WebMusicNavigation.hostURL(document: transport.reserveDocument(), load: load) else { fail(intent == .shuffle ? .shuffleFailed : .loadFailed); return }
             committedDocument = 0
             target.load(url)
         }
-        transport.expectShuffle()
+        if intent == .shuffle { transport.expectShuffle() } else { transport.expectEndpoint(videoID: videoID) }
         var routed = false
         for _ in 0..<shuffleAttempts {
             guard load == transport.load, !closed, !transport.snapshot.isFailed else { return }
             if let page, committedDocument != 0, committedDocument == transport.document {
-                let reply = await run(.loadTarget(playlistID, videoID: videoID, params: params, load: load), on: page)
+                let command: WebMusicCommand = .loadTarget(playlistID, videoID: videoID, params: params, load: load)
+                let reply = await run(command, on: page)
                 guard load == transport.load else { return }
                 // Only the router's own acceptance counts. "fallback" (no app yet) and "unavailable" (no state yet) are not done.
-                if reply == .router { routed = true; break }
+                if reply == .router { transport.acceptEndpoint(load: load); routed = true; break }
             }
             try? await Task.sleep(for: shuffleInterval)
         }
         guard load == transport.load, !closed, !transport.snapshot.isFailed else { return }
-        guard routed else { fail(.shuffleFailed); return }
+        guard routed else { fail(intent == .shuffle ? .shuffleFailed : .loadFailed); return }
         armTimeout(load)
         while load == transport.load, !transport.confirmed, !transport.snapshot.isFailed, !closed { try? await Task.sleep(for: .milliseconds(20)) }
     }
@@ -498,6 +589,7 @@ import Observation
         if snapshot.isAd { timeoutSuspended = true; return }
         // A shuffle that was routed but never showed itself playing is a failure, not a reason to load the playlist in order.
         if transport.requiresShuffle { fail(.shuffleFailed); return }
+        if transport.requiresEndpoint { fail(.timedOut); return }
         if routerLoad == load, let id = snapshot.playlistID {
             // The in-page router did not start this load: one full-load fallback,
             // bound to the same load generation.

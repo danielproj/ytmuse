@@ -27,9 +27,9 @@ struct LibraryWriteLine: View {
             HStack(spacing: MusicSpace.xs) {
                 Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("libraryWriteFailed-" + scope)
                 if failure != .needsSignIn && failure != .sessionEnded && failure != .notOffered {
-                    Button("Try Again") { Task { await ledger.retry(key) } }.musicButtons().accessibilityIdentifier("libraryWriteRetry-" + scope)
+                    Button("Try Again") { Task { await ledger.retry(key) } }.musicPageAction().accessibilityIdentifier("libraryWriteRetry-" + scope)
                 }
-                Button("Dismiss") { ledger.dismiss(key) }.musicButtons().accessibilityIdentifier("libraryWriteDismiss-" + scope)
+                Button("Dismiss") { ledger.dismiss(key) }.musicPageAction().accessibilityIdentifier("libraryWriteDismiss-" + scope)
             }
             .onAppear { Announcer.post(failure.message, kind: .error) }
         case .needsReconciliation:
@@ -37,14 +37,14 @@ struct LibraryWriteLine: View {
                 HStack(spacing: MusicSpace.xs) {
                     Label("YouTube Music didn’t confirm this change. It may or may not have been applied.", systemImage: "questionmark.circle").font(.caption)
                         .foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("libraryWriteUnconfirmed-" + scope)
-                    if !write.checkedUnreadable { Button("Check") { Task { await ledger.check(key) } }.musicButtons().accessibilityIdentifier("libraryWriteCheck-" + scope) }
+                    if !write.checkedUnreadable { Button("Check") { Task { await ledger.check(key) } }.musicPageAction().accessibilityIdentifier("libraryWriteCheck-" + scope) }
                 }
                 if write.checkedUnreadable {
                     HStack(spacing: MusicSpace.xs) {
                         Text("YouTube Music couldn’t say either. Trying again sets the same state again and can’t duplicate anything.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
                             .accessibilityIdentifier("libraryWriteUncheckable-" + scope)
-                        Button("Try Again") { Task { await ledger.retry(key) } }.musicButtons().accessibilityIdentifier("libraryWriteRetry-" + scope)
-                        Button("Dismiss") { ledger.dismissUnconfirmed(key) }.musicButtons().accessibilityIdentifier("libraryWriteDismiss-" + scope)
+                        Button("Try Again") { Task { await ledger.retry(key) } }.musicPageAction().accessibilityIdentifier("libraryWriteRetry-" + scope)
+                        Button("Dismiss") { ledger.dismissUnconfirmed(key) }.musicPageAction().accessibilityIdentifier("libraryWriteDismiss-" + scope)
                     }
                 }
             }
@@ -72,7 +72,7 @@ struct LibraryControlRow: View {
                 .help(Text(control.title)).accessibilityLabel(Text(control.title))
                 .accessibilityValue(Text(control.isOn ? "On" : "Off"))
                 .disabled(ledger.isBusy(control.key))
-                .musicButtons().accessibilityIdentifier("libraryControl-\(control.kind.rawValue)-" + identifier)
+                .musicPageAction().accessibilityIdentifier("libraryControl-\(control.kind.rawValue)-" + identifier)
             }
         }
     }
@@ -132,14 +132,14 @@ struct LibraryRow: View {
                 if offers.contains(where: { $0.action == .play }), CatalogActionPlan.canEverPlay(item) {
                     Button { Task { await surface.perform(.play, on: item, key: entry.id) } } label: { Label("Play", systemImage: "play.fill") }
                         .labelStyle(.iconOnly).help(Text("Play \(item.title)")).accessibilityLabel(Text("Play \(item.title)"))
-                        .accessibilityIdentifier("libraryPlay-" + entry.id).musicButtons()
+                        .accessibilityIdentifier("libraryPlay-" + entry.id).musicPageAction()
                 }
                 LibraryControlButtons(surface: surface, item: item, source: source)
             }
             FeedbackLine(feedback: surface.feedback[entry.id])
             LibraryWriteLine(ledger: surface.ledger, keys: controls.map(\.key).uniqued(), scope: item.id)
         }
-        .padding(.vertical, MusicSpace.xxs)
+        .musicPageRow()
         .accessibilityActions {
             ForEach(offers.filter(\.isAvailable)) { offer in Button(offer.action.title) { Task { await surface.perform(offer.action, on: item, key: entry.id) } } }
             ForEach(controls) { control in Button(control.title) { Task { await surface.ledger.submit(control.intent) } } }
@@ -155,7 +155,7 @@ struct LibraryCard: View {
     @Bindable var model: LibraryCollectionModel
     let entry: LibraryEntry
     let navigator: CatalogNavigator
-    private let edge: CGFloat = 160
+    private let edge: CGFloat = 168
     var body: some View {
         let item = entry.item
         let controls = LibraryControls.make(item: item, source: model.source, ledger: surface.ledger)
@@ -179,7 +179,7 @@ struct LibraryCard: View {
                 if CatalogActionPlan.canEverPlay(item), surface.offers(for: item).contains(where: { $0.action == .play && $0.isAvailable }) {
                     Button { Task { await surface.perform(.play, on: item, key: entry.id) } } label: { Label("Play", systemImage: "play.fill") }
                         .labelStyle(.iconOnly).help(Text("Play \(item.title)")).accessibilityLabel(Text("Play \(item.title)"))
-                        .accessibilityIdentifier("libraryPlay-" + entry.id).musicButtons()
+                        .accessibilityIdentifier("libraryPlay-" + entry.id).musicPageAction()
                 }
                 LibraryControlButtons(surface: surface, item: item, source: model.source)
             }
@@ -217,25 +217,25 @@ struct LibraryStateView: View {
                      : reason == .notAvailableHere ? "YouTube Music doesn’t offer this collection to this account or version."
                      : "Your library belongs to your YouTube Music account.")
             } actions: {
-                if reason != .notAvailableHere { Button("Manage Accounts", action: openAccounts).musicButtons() }
+                if reason != .notAvailableHere { Button("Manage Accounts", action: openAccounts).musicPageAction() }
             }.accessibilityIdentifier("libraryState-restricted")
         case .offline:
             ContentUnavailableView {
                 Label("You’re offline", systemImage: "wifi.slash")
             } description: { Text("YouTube Music couldn’t be reached, and there is no saved copy of this collection yet.") } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicButtons()
+                Button("Try Again") { Task { await model.load() } }.musicPageAction()
             }.accessibilityIdentifier("libraryState-offline")
         case .unrecognised:
             ContentUnavailableView {
                 Label("This page isn’t readable yet", systemImage: "questionmark.square.dashed")
             } description: { Text("YouTube Music sent this collection in a form this version can’t read. That isn’t the same as an empty library.") } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicButtons()
+                Button("Try Again") { Task { await model.load() } }.musicPageAction()
             }.accessibilityIdentifier("libraryState-unrecognised")
         case .failed(let failure):
             ContentUnavailableView {
                 Label("This collection couldn’t be loaded", systemImage: "exclamationmark.circle")
             } description: { Text(failure.message) } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicButtons()
+                Button("Try Again") { Task { await model.load() } }.musicPageAction()
             }.accessibilityIdentifier("libraryState-failed")
         case .noMatches:
             ContentUnavailableView.search(text: model.query).accessibilityIdentifier("libraryState-noMatches")
@@ -323,11 +323,11 @@ struct LibraryCollectionView: View {
                 }.pickerStyle(.segmented).labelsHidden().frame(width: 92).accessibilityLabel(Text("Layout")).accessibilityIdentifier("libraryLayout")
                 if model.hasMore {
                     Button { Task { await model.loadAll() } } label: { Label("Load All", systemImage: "arrow.down.to.line") }
-                        .musicButtons().disabled(model.loadingMore).accessibilityIdentifier("libraryLoadAll")
+                        .musicPageAction().disabled(model.loadingMore).accessibilityIdentifier("libraryLoadAll")
                 }
                 Spacer()
                 Button { Task { await model.refresh() } } label: { Label("Refresh", systemImage: "arrow.clockwise") }
-                    .labelStyle(.iconOnly).help(Text("Refresh")).musicButtons().disabled(model.isRefreshing).accessibilityIdentifier("libraryRefresh")
+                    .labelStyle(.iconOnly).help(Text("Refresh")).musicPageAction().disabled(model.isRefreshing).accessibilityIdentifier("libraryRefresh")
                     .keyboardShortcut("r", modifiers: .command)
             }
         }.audit("libraryControls", group: "page-top", within: "detailPanel", alignLeading: "pageLeading")
@@ -353,10 +353,10 @@ struct LibraryCollectionView: View {
     private var selectionBar: some View {
         HStack(spacing: MusicSpace.xs) {
             Text("\(model.selection.count) selected").accessibilityIdentifier("librarySelectionCount")
-            Button("Copy Links") { _ = surface.copyLinks(of: model.selectedEntries) }.musicButtons().accessibilityIdentifier("libraryCopyLinks")
+            Button("Copy Links") { _ = surface.copyLinks(of: model.selectedEntries) }.musicPageAction().accessibilityIdentifier("libraryCopyLinks")
             SelectionAddToPlaylistEntry(items: model.selectedEntries.map(\.item))
-            Button("Select All") { model.selectAllVisible() }.musicButtons().keyboardShortcut("a", modifiers: .command)
-            Button("Clear Selection") { model.clearSelection() }.musicButtons().accessibilityIdentifier("libraryClearSelection")
+            Button("Select All") { model.selectAllVisible() }.musicPageAction().keyboardShortcut("a", modifiers: .command)
+            Button("Clear Selection") { model.clearSelection() }.musicPageAction().accessibilityIdentifier("libraryClearSelection")
             Text("Library changes are made one item at a time. Adding songs to a playlist asks first.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
         }
     }
@@ -381,9 +381,9 @@ public struct LibraryView: View {
         surface.showsDownloadedOnly = false; surface.selectedKind = kind
     }
     public var body: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.sm) {
+        VStack(alignment: .leading, spacing: MusicSpace.lg) {
             HStack {
-                Text("Library").font(.largeTitle.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle")
+                Text("Library").font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle")
                 Spacer()
                 if surface.development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("developmentDataLabel") }
             }
@@ -392,13 +392,13 @@ public struct LibraryView: View {
                     HStack(spacing: MusicSpace.xs) {
                         ForEach(MusicLibraryKind.allCases, id: \.self) { kind in
                             Button { show(kind) } label: { Label(kind.title, systemImage: kind.symbol) }
-                                .musicButtons(prominent: kind == surface.selectedKind && !surface.showsDownloadedOnly)
+                                .musicPageAction(prominent: kind == surface.selectedKind && !surface.showsDownloadedOnly)
                                 .accessibilityAddTraits(kind == surface.selectedKind && !surface.showsDownloadedOnly ? .isSelected : [])
                                 .accessibilityIdentifier("libraryKind-" + kind.rawValue)
                         }
                         if surface.downloads != nil {
                             Button { restoration?.scroll.rewind(); surface.showsDownloadedOnly = true } label: { Label("Downloaded only", systemImage: "arrow.down.circle") }
-                                .musicButtons(prominent: surface.showsDownloadedOnly)
+                                .musicPageAction(prominent: surface.showsDownloadedOnly)
                                 .accessibilityAddTraits(surface.showsDownloadedOnly ? .isSelected : [])
                                 .accessibilityIdentifier("libraryDownloadedOnly")
                         }
@@ -418,7 +418,7 @@ public struct LibraryView: View {
                     .id(surface.selectedKind)
             }
         }
-        .padding(MusicSpace.lg).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .musicPageContent().frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .environment(\.libraryLedger, surface.ledger)
         .environment(\.playlistSurface, surface.playlists)
         .coordinateSpace(name: LibraryRegionFrames.space)
@@ -436,7 +436,7 @@ struct EpisodeLaterButton: View {
         if let desired = later.offeredChange(shownSaved: saved) {
             Button { Task { await ledger.submit(.setEpisodeLater(videoID: later.videoID, to: desired, was: saved)) } } label: {
                 Label(saved ? "Remove from Episodes for Later" : "Save for Later", systemImage: saved ? "bookmark.fill" : "bookmark")
-            }.musicButtons().disabled(ledger.isBusy(key)).accessibilityIdentifier("episodeLater")
+            }.musicPageAction().disabled(ledger.isBusy(key)).accessibilityIdentifier("episodeLater")
         }
     }
 }
@@ -511,10 +511,10 @@ struct LibraryListFooter: View {
                     if model.loadingMore { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading more")) }
                     else if let failure = model.moreFailure {
                         Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText)
-                        Button("Retry") { Task { await model.loadMore() } }.musicButtons()
+                        Button("Retry") { Task { await model.loadMore() } }.musicPageAction()
                     } else {
                         Color.clear.frame(width: 1, height: 1).onAppear { Task { await model.loadMore() } }
-                        Button("Load more") { Task { await model.loadMore() } }.musicButtons().accessibilityIdentifier("libraryLoadMore")
+                        Button("Load more") { Task { await model.loadMore() } }.musicPageAction().accessibilityIdentifier("libraryLoadMore")
                     }
                 }
             }

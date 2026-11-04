@@ -10,6 +10,8 @@ import SwiftUI
     public let joiner: PlaylistJoiner
     /// The labelled development data answers instead of the service (Debug, isolated UI runs only).
     public let development: Bool
+    /// Invalidates direct chooser presentations even when switching between two signed-in accounts.
+    public private(set) var accountGeneration: UInt64 = 0
     @ObservationIgnored private let makeSession: @MainActor (String) -> PlaylistEditSession
     @ObservationIgnored private var sessions: [String: PlaylistEditSession] = [:]
     @ObservationIgnored public weak var performer: (any SearchActionPerformer)?
@@ -44,6 +46,7 @@ import SwiftUI
         performer.copy(link: link); return true
     }
     public func accountChanged() {
+        accountGeneration &+= 1
         for session in sessions.values { session.accountChanged() }
         sessions = [:]; creator.accountChanged(); joiner.accountChanged()
     }

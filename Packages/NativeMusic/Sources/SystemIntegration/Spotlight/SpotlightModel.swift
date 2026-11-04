@@ -13,13 +13,11 @@ public enum SpotlightKind: String, Sendable, CaseIterable {
     case playlist
     /// Something from this Mac's listening history.
     case history
-    /// A track the person uploaded.
-    case upload
     /// An app action (play/pause, next, previous, search, queue). Carries no account data.
     case action
 }
 
-/// Where an entry may be shown. `catalog`: a saved public catalog item. `privateEntity`: a private playlist, history or upload. `action`: an app action.
+/// Where an entry may be shown. `catalog`: a saved public catalog item. `privateEntity`: a private playlist, history. `action`: an app action.
 public enum SpotlightVisibility: Sendable, Equatable { case catalog, privateEntity, action }
 
 public enum SpotlightAction: String, Sendable, CaseIterable {
@@ -48,7 +46,7 @@ public struct SpotlightEntry: Sendable, Equatable, Hashable {
     public var visibility: SpotlightVisibility {
         switch kind {
         case .song, .album, .artist: .catalog
-        case .playlist, .history, .upload: .privateEntity
+        case .playlist, .history: .privateEntity
         case .action: .action
         }
     }

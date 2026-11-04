@@ -53,7 +53,7 @@ Operator decision (W24 rework 1): a saved Shortcut must keep working across a re
 - **Duplicate titles are never reduced to one.** `IntentResolver.resolve` returns `.many` for equally good matches. The entity queries return all of them (the system asks the person). For a spoken name (`PlayMediaSearchIntent`) the intent asks the person with the SDK's `requestChoice(between:)` (distinct lines: title, subtitle, kind; at most five) and plays the one picked; if the interaction cannot be had or is cancelled it reports the ambiguity and plays nothing.
 - **One item is one candidate**: items are keyed on identity (kind and video, playlist or page id), not on the context they were listed in, so a song in both Songs and Liked songs is one choice.
 - A **mix** is only a radio the service itself presented as one (a `RadioSeed` from a "Start mix" action). An `RD`-prefixed playlist in the library is a playlist.
-- An **artist** is playable only through the radio action its row published. An uploaded track has no catalog target and is not offered.
+- An **artist** is playable only through the radio action its row published. Private service media has no catalog target and is not offered.
 
 ## What the SDK declares (macOS 27.2 SDK, checked against the interface files and the SDK's own validator)
 

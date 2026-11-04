@@ -124,20 +124,29 @@ extension LocalAccountBootstrap {
         false
         #endif
     }
-    /// Samples, the tuner, Recap and badges. **No source route exists for Samples, Recap, badges or tuner controls yet**: none of the public
+    /// Samples, the tuner, Recap and badges. **No source route exists for Samples, Recap or badges yet**: none of the public
     /// YouTube Music responses captured so far carries them, so the application composes unresolved sources and the screens say so.
     /// Radios come from what the catalog pages already published (seeds), and starting one goes through the shared playback session.
     /// The scripted sources exist only under the Debug development flags (`DevelopmentDiscovery`).
     func makeDiscoverySurface() -> DiscoverySurface {
         var samplesSource: any SamplesSource = UnresolvedSamplesSource()
         var summarySource: any AccountSummarySource = UnresolvedSummarySource()
-        var controlsSource: any RadioControlsSource = UnresolvedRadioControlsSource()
+        var controlsSource: any RadioControlsSource = QueueRadioControlsSource { [weak self] context in
+            guard let self else { throw MusicSessionError.stale }
+            let music = try await self.awaitedMusic()
+            let action = context.queueReadAction
+            let reply = try await music.radioQueue(action: action)
+            guard !reply.sessionExpired else { throw MusicSessionError.signedOut }
+            return reply.value
+        }
         var engine: any PreviewEngine = previewEngine
         var performer: (any SearchActionPerformer)? = searchPerformer
         var development = false
         var busy: @MainActor () -> Bool = { [unowned self] in previewEngine.otherPlaybackBusy }
         var signedIn: @MainActor () -> SearchPlayback = { [unowned self] in searchPlayback }
         #if DEBUG
+        // Isolated automation never acquires credentials or reaches the real reader.
+        if Self.automationIsolated(launchEnvironment) { controlsSource = UnresolvedRadioControlsSource() }
         var scripted: DevelopmentDiscovery?
         if DevelopmentDiscovery.isEnabled(launchEnvironment) {
             let dev = DevelopmentDiscovery(environment: launchEnvironment)

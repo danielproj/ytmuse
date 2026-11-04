@@ -14,7 +14,7 @@ public struct WelcomeView: View {
     }.sheet(isPresented: $showingAccounts) {
       VStack {
         AccountsView(model: accounts)
-        Button("Done") { showingAccounts = false }.keyboardShortcut(.cancelAction).musicButtons()
+        Button("Done") { showingAccounts = false }.keyboardShortcut(.cancelAction).musicPageAction()
           .padding()
       }.musicCanvas().musicSignInSheet(accounts.signIn)
     }.musicCanvas()
@@ -27,7 +27,7 @@ public struct WelcomeView: View {
           contentMode: .fit
         )
         .frame(width: 88, height: 88).accessibilityHidden(true)
-        Text("YTMuse").font(.largeTitle.bold())
+        Text("YTMuse").font(MusicPageStyle.title)
         Text("YouTube Music, native on Mac.").font(.title3)
         Text("An independent native YouTube Music client for Mac").foregroundStyle(
           MusicStyle.secondaryText)
@@ -38,7 +38,7 @@ public struct WelcomeView: View {
         Text("Service subscriptions remain with YouTube.").foregroundStyle(MusicStyle.secondaryText)
         if accounts.usesMusicSession && accounts.activeConnected {
           Button("Your Music Account") { showingAccounts = true }
-            .accessibilityIdentifier("musicAccount").musicButtons(prominent: true)
+            .accessibilityIdentifier("musicAccount").musicPageAction(prominent: true)
         } else {
           // An active expired identity signs in again as itself (a new record), never
           // as a new account that the duplicate-account check would refuse.
@@ -47,7 +47,7 @@ public struct WelcomeView: View {
           }
             .disabled(!accounts.canAuthenticate || accounts.busy).accessibilityIdentifier(
               "musicSignIn"
-            ).musicButtons(prominent: true)
+            ).musicPageAction(prominent: true)
         }
         if accounts.usesMusicSession && !accounts.activeConnected {
           Label("Your password is entered on Google’s page, never in YTMuse.", systemImage: "lock.shield")
@@ -57,7 +57,7 @@ public struct WelcomeView: View {
         if accounts.busy {
           Button(accounts.usesMusicSession ? "Cancel Sign-In" : "Cancel authorization") {
             Task { await accounts.cancelAuthentication() }
-          }.musicButtons()
+          }.musicPageAction()
         }
         if !accounts.canAuthenticate {
           Text("Browser sign-in is not connected in this development build.").foregroundStyle(
@@ -65,10 +65,10 @@ public struct WelcomeView: View {
         }
         Button("Manage Accounts") { showingAccounts = true }.accessibilityIdentifier(
           "manageAccounts"
-        ).musicButtons()
+        ).musicPageAction()
         SettingsLink { Text("Open Settings") }.accessibilityIdentifier("openSettings")
-          .musicButtons()
-      }.padding(MusicSpace.xl).frame(maxWidth: 560).musicSurface()
+          .musicPageAction()
+      }.padding(MusicSpace.xl).frame(maxWidth: 560).musicInsetSurface()
     }
   }
 }

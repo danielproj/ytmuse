@@ -90,36 +90,33 @@ struct RootMode: Sendable { let qa: Bool; let banner: Bool }
             return CGRect(x: r.minX, y: window.frame.height - r.maxY, width: r.width, height: r.height)
         }
         let views = descendants(try #require(window.contentView?.superview))
-        let footer = try #require(frames.values["sidebarFooter"]), settings = try #require(frames.values["sidebarSettings"])
-        #expect(settings.minY >= footer.minY && settings.maxY <= footer.maxY && settings.maxX <= player.minX + 1)   // PLAYER-1: the sidebar runs the full height; the capsule floats beside it, in the detail column
-        #expect(settings.minX >= 0 && settings.maxX <= width && settings.height > 0)
-        // Actual real-app Settings keyboard focus remains a native CUA observation;
-        // invisible hosts do not expose SettingsLink's virtual AX item reliably.
+        let sidebar = try #require(frames.values["sidebar"])
+        #expect(sidebar.minX >= -1 && sidebar.maxX <= player.minX + 1)
+        #expect(sidebar.minY >= edge - 1 && sidebar.maxY <= height + 1 && sidebar.height > 0)
         let tables = views.compactMap { $0 as? NSTableView }.filter { topRect($0, $0.bounds).maxX < 300 }
         #expect(tables.count == 1, "Real sidebar table must be inspected, not an empty census")
         for table in tables {
             let scroll = try #require(table.enclosingScrollView)
             let clip = topRect(scroll.contentView, scroll.contentView.bounds)
-            let overlapping = (0..<table.numberOfRows).filter { row in
-                let visible = topRect(table, table.rect(ofRow: row)).intersection(clip)
-                return !visible.isNull && visible.height > 0 && visible.intersects(footer)
-            }
-            let pockets = views.filter {
-                let r = topRect($0, $0.bounds)
-                return String(describing: type(of: $0)).contains("ScrollPocket") && !$0.isHidden && $0.alphaValue > 0 && r.minX < 300 && r.height > 0 && r.intersects(footer)
-            }.map { topRect($0, $0.bounds) }
-            print("SIDEBAR width=\(width) qa=\(mode.qa) banner=\(mode.banner) footer=\(footer) settings=\(settings) clip=\(clip) rows=\(table.numberOfRows) overlaps=\(overlapping) bottomPockets=\(pockets)")
-            if !overlapping.isEmpty {
-                #expect(!pockets.isEmpty, "Rows behind footer require an actual bottom occluder")
-                #expect(pockets.contains { $0.minY <= footer.minY + 1 && $0.maxY >= footer.maxY - 1 && $0.minX <= footer.minX + 1 && $0.maxX >= footer.maxX - 1 }, "Bottom occluder must cover actual footer bounds")
-            }
+            #expect(clip.width > 0 && clip.height > 0, "Inspect a real, nonempty sidebar viewport")
+            #expect(clip.minX >= sidebar.minX - 1 && clip.maxX <= sidebar.maxX + 1)
+            #expect(clip.minY >= sidebar.minY - 1 && clip.maxY <= sidebar.maxY + 1)
             #expect(table.numberOfRows >= 10)
             table.scrollRowToVisible(table.numberOfRows - 1)
             for _ in 0..<15 { window.contentView?.layoutSubtreeIfNeeded(); try await Task.sleep(for: .milliseconds(20)) }
             let last = topRect(table, table.rect(ofRow: table.numberOfRows - 1))
-            let afterFooter = try #require(frames.values["sidebarFooter"])
-            print("SIDEBAR_AFTER_SCROLL last=\(last) footer=\(afterFooter)")
-            #expect(last.maxY <= afterFooter.minY + 1 && last.minY >= clip.minY - 1, "Last navigation row must fully clear footer after real table scrolling")
+            let afterClip = topRect(scroll.contentView, scroll.contentView.bounds)
+            let afterSidebar = try #require(frames.values["sidebar"])
+            print("SIDEBAR_AFTER_SCROLL last=\(last) clip=\(afterClip) sidebar=\(afterSidebar)")
+            #expect(last.height > 0 && last.minY >= afterClip.minY - 1 && last.maxY <= afterClip.maxY + 1,
+                    "Last navigation row must be fully visible after real table scrolling")
+            #expect(last.maxY <= afterSidebar.maxY + 1 && last.maxX <= afterSidebar.maxX + 1)
+            let bottomPockets = views.filter {
+                let r = topRect($0, $0.bounds)
+                return String(describing: type(of: $0)).contains("ScrollPocket") && !$0.isHidden && $0.alphaValue > 0
+                    && r.minX < 300 && r.height > 0 && r.minY >= afterClip.midY
+            }.map { topRect($0, $0.bounds) }
+            #expect(!bottomPockets.contains { $0.intersection(last).height > 1 }, "Native bottom chrome must not cover the last navigation row")
         }
         var headerBottom = edge
         if let banner = frames.values["banner"] { headerBottom = max(headerBottom, banner.maxY) }

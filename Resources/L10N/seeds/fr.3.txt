@@ -48,7 +48,6 @@
 748|Élément précédent
 749|Page précédente
 750|Privée
-751|Traitement de %@
 752|La progression marquée « Sur ce Mac » est conservée uniquement sur ce Mac. Le lecteur propre à YouTube signale lui-même sa progression à YouTube Music.
 753|Publique
 754|Qualité
@@ -75,13 +74,8 @@
 775|Actualiser
 776|Actualisation…
 777|Supprimer %@ de ce Mac ?
-778|Supprimer %@ de vos imports
 779|Retirer « J’aime »
 780|Retirer de Épisodes à écouter plus tard
-781|« %@ » supprimé de vos imports.
-782|« %@ » supprimé de vos imports. Le fichier sur votre Mac n’a pas été touché.
-783|Supprimer…
-784|Suppression de « %@ »…
 785|Renommer
 786|Renommer le libellé local
 787|Renouveler
@@ -129,7 +123,6 @@
 829|Rechercher plutôt « %@ »
 830|Rechercher des titres, albums, artistes et playlists
 831|Rechercher dans cette collection
-832|Rechercher dans vos imports
 833|Relance la recherche
 834|Recherche dans YouTube Music…
 835|Recherche dans les playlists de votre bibliothèque sur ce Mac. Le service n’est pas sollicité.
@@ -193,7 +186,6 @@
 893|Minuteur de veille : fondu en cours
 894|Téléchargements intelligents
 895|Appareil logiciel
-896|Certains fichiers n’ont pas été ajoutés.
 897|Certains de ces titres sont déjà dans la playlist
 898|Une lecture est déjà en cours ; les aperçus ne démarrent donc pas d’eux-mêmes. Appuyez sur Aperçu pour en écouter un.
 899|Une lecture est déjà en cours ; les aperçus ne démarrent donc pas d’eux-mêmes. Appuyez sur Aperçu pour en écouter un ; il remplace ce qui est en cours de lecture.
@@ -205,7 +197,6 @@
 905|Source : %@ · %@ · %@ · %@
 906|Vitesse
 907|Spotlight
-908|Recommencer
 909|Démarrer la radio
 910|Démarrer une radio à partir de
 911|Démarrer une radio à partir de %@
@@ -238,10 +229,8 @@
 938|Cette recherche est trop longue.
 939|Cette valeur n’est pas valide pour cette commande.
 940|Le récepteur AirPlay s’est déconnecté ; la lecture a donc été mise en pause.
-941|L’app s’est fermée avant la fin de cet import.
 942|La description a également été modifiée.
 943|Le disque est plein
-944|Le fichier a changé après avoir été choisi. Choisissez-le à nouveau.
 945|La première page de la réponse de YouTube Music, pas le catalogue entier.
 946|La clé de ce téléchargement n’est plus disponible
 947|Le dernier élément ou l’élément en cours, avec lecture, précédent et suivant.
@@ -258,7 +247,7 @@
 958|L’élément précédent n’a pas pu s’ouvrir. Essayez à nouveau « Précédent ».
 959|La file d’attente n’a pas pu accepter ce titre.
 960|La file d’attente s’affiche dans la fenêtre principale.
-961|La radio n’a pas pu démarrer. Ce qui était en cours de lecture n’a pas changé.
+961|YouTube Music n’a pas confirmé le démarrage de la radio. La lecture a peut-être changé.
 962|Pendant la diffusion, le curseur de volume règle le volume du récepteur. Le volume du Mac reste inchangé.
 963|L’élément sélectionné de la file d’attente n’a pas pu s’ouvrir. Essayez de le sélectionner à nouveau.
 964|La session de %@ est terminée. Reconnectez-vous.
@@ -280,12 +269,7 @@
 980|Cette app ne modifie jamais le volume du Mac.
 981|Ce commentaire est plus long que ce que cette app envoie en une publication.
 982|Cette connexion est limitée. Les téléchargements automatiques attendent ; vous pouvez tout de même en lancer un.
-983|Cela supprime « %@ » de vos imports YouTube Music. Le fichier sur votre Mac n’est pas touché.
 984|L’émission de cet épisode n’est pas connue ; sa vitesse ne peut donc pas être modifiée.
-985|Ce fichier a changé pendant sa lecture. Choisissez-le à nouveau une fois les modifications terminées.
-986|Ce fichier dépasse les %@ acceptés par YouTube Music.
-987|Il s’agit d’un dossier. Choisissez plutôt les fichiers audio qu’il contient.
-988|Il s’agit d’un fichier vidéo. Les imports dans votre bibliothèque musicale acceptent des fichiers audio.
 989|Il s’agit déjà de la version audio.
 990|Ce n’est pas un direct.
 991|Il s’agit du raccourci standard %@, que toutes les apps utilisent.

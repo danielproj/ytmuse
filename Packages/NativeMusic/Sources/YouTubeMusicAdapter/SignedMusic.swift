@@ -25,8 +25,7 @@ public enum SignedMusicPolicy {
     public static let musicPaths: Set<String> = ["/youtubei/v1/browse", "/youtubei/v1/account/account_menu", "/youtubei/v1/search", "/youtubei/v1/next"]
     /// The only requests that change anything: rate, subscribe and library feedback. Each one is sent only for an explicit user action.
     public static let writePaths: Set<String> = ["/youtubei/v1/like/like", "/youtubei/v1/like/dislike", "/youtubei/v1/like/removelike",
-                                                 "/youtubei/v1/subscription/subscribe", "/youtubei/v1/subscription/unsubscribe", "/youtubei/v1/feedback",
-                                                 "/youtubei/v1/music/delete_privately_owned_entity"]
+                                                 "/youtubei/v1/subscription/subscribe", "/youtubei/v1/subscription/unsubscribe", "/youtubei/v1/feedback"]
     /// The playlist-changing requests: create, edit (add, remove, move, rename, describe, privacy) and delete. Each one is sent only for an
     /// explicit user action by the playlist editing session; nothing else may name these paths.
     public static let playlistWritePaths: Set<String> = ["/youtubei/v1/playlist/create", "/youtubei/v1/browse/edit_playlist", "/youtubei/v1/playlist/delete"]
@@ -226,6 +225,19 @@ public actor SignedMusicClient: MusicSessionReading {
         return .init(value: try MusicEpisodeParser.parse(root), rotation: rotation)
     }
     /// Lyrics: `next` for the song, then the lyrics page it names. Signed requests carry the account's session in case the answer supplies timing.
+    public func radioQueue(action: MusicRadioAction, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicRadioQueue> {
+        let body = try MusicRadioQueueParser.queueBody(action)
+        guard let session else {
+            guard let anonymous else { throw MusicSessionError.policy }
+            do { return .init(value: try await anonymous.radioQueue(action: action), rotation: []) }
+            catch let error as MusicSessionError { throw error }
+            catch let error as ConnectionError { throw Self.classifyConnection(error) }
+            catch { throw DirectSignedMusicTransport.classify(error) }
+        }
+        let (root, rotation) = try await post("next", body: body, session: session, limit: 4_000_000)
+        if Self.loggedOut(root) { throw MusicSessionError.signedOut }
+        return .init(value: try MusicRadioQueueParser.parse(root), rotation: rotation)
+    }
     public func lyrics(videoID: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicLyricsResult> {
         guard MusicBrowseParser.isVideoID(videoID) else { throw MusicSessionError.policy }
         guard let session else {
@@ -311,8 +323,6 @@ public actor SignedMusicClient: MusicSessionReading {
             return (saved ? "like/like" : "like/removelike", ["target": ["playlistId": list]])
         case .songLibrary(let token):
             return ("feedback", ["feedbackTokens": [token]])
-        case .removeUpload(let entity):
-            return ("music/delete_privately_owned_entity", ["entityId": entity])
         case .episodeLater(let video, let saved):
             let action: [String: Any] = saved ? ["action": "ACTION_ADD_VIDEO", "addedVideoId": video]
                                               : ["action": "ACTION_REMOVE_VIDEO_BY_VIDEO_ID", "removedVideoId": video]

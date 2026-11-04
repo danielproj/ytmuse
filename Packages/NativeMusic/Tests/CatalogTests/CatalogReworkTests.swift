@@ -28,6 +28,7 @@ import YouTubeMusicAdapter
         await album.perform(.shuffle)
         await album.perform(.play)
         #expect(performer.targets.count == 2)
+        #expect(performer.intents == [.shuffle])
         #expect(performer.targets[0].playlist == "OLAK5uy_kNhM2yaBTOVwrcZJepB1C9P3-n5_Sfy5c" && performer.targets[0].params == "wAEB8gECKAE%3D" && performer.targets[0].video == nil)
         #expect(performer.targets[1].params == nil, "the two controls no longer send the same thing")
         #expect(album.feedback["page:shuffle"] == .started)

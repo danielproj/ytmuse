@@ -98,16 +98,14 @@ private let channel = "UC_kRDKYrUlrbtrSiyu5Tflg"
         let sent = await transport.captured().count
         #expect(sent == 0)
     }
-    @Test func theAllowlistAdmitsExactlyTheSixWritePathsPlusTheConfirmedUploadRemovalAndNothingElse() throws {
-        // W19 added exactly one path to the six: removing one upload, sent only after an explicit confirmation (UploadsTests pins its wire shape).
+    @Test func theAllowlistAdmitsExactlyTheSixLibraryWritePathsAndNothingElse() throws {
         #expect(SignedMusicPolicy.writePaths == ["/youtubei/v1/like/like", "/youtubei/v1/like/dislike", "/youtubei/v1/like/removelike",
-                                                 "/youtubei/v1/subscription/subscribe", "/youtubei/v1/subscription/unsubscribe", "/youtubei/v1/feedback",
-                                                 "/youtubei/v1/music/delete_privately_owned_entity"])
+                                                 "/youtubei/v1/subscription/subscribe", "/youtubei/v1/subscription/unsubscribe", "/youtubei/v1/feedback"])
         #expect(SignedMusicPolicy.musicPaths.isDisjoint(with: SignedMusicPolicy.writePaths), "reads and writes are separate sets")
         // W13: the three playlist-changing paths are no longer refused outright; they are admitted only through their own set
         // (`playlistWritePaths`, pinned in PlaylistTests), which is disjoint from both the reads and the six library writes above.
         // Everything else destructive stays refused, as do near-misses of the playlist paths.
-        for path in ["/youtubei/v1/history/clear", "/youtubei/v1/like/unknown", "/youtubei/v1/playlist/get_add_to_playlist", "/youtubei/v1/browse/edit_playlist/extra",
+        for path in ["/youtubei/v1/music/delete_privately_owned_entity", "/youtubei/v1/history/clear", "/youtubei/v1/like/unknown", "/youtubei/v1/playlist/get_add_to_playlist", "/youtubei/v1/browse/edit_playlist/extra",
                      "/youtubei/v1/playlist/remove", "/youtubei/v1/playlist/update"] {
             #expect(!SignedMusicPolicy.musicPaths.contains(path) && !SignedMusicPolicy.writePaths.contains(path) && !SignedMusicPolicy.playlistWritePaths.contains(path), Comment(rawValue: path))
             var request = URLRequest(url: URL(string: "https://music.youtube.com" + path + "?prettyPrint=false")!)

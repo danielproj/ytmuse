@@ -52,7 +52,6 @@
 52|S’ha canviat a %@.
 53|Reprodueix %@
 54|Sortida actual: %@
-55|Vols eliminar «%@» de les teves pujades?
 56|S’està reproduint un anunci
 57|L’anunci ha acabat
 58|Es reprodueix ara «%@» de %@.

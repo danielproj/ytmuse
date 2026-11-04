@@ -1,3 +1,4 @@
+import Domain
 import AccountSession
 import Foundation
 import Testing
@@ -84,11 +85,16 @@ actor ServiceScript {
     var played: [(String, String)] = []
     /// Every start with the track and parameters it carried (`played` holds the same starts as playlist + title).
     var targets: [(playlist: String, video: String?, params: String?)] = []
+    var intents: [MusicPlaybackIntent] = []
     var copied: [URL] = []
     var outcome: SearchPlayOutcome = .started
     func play(playlistID: String, title: String) async -> SearchPlayOutcome { played.append((playlistID, title)); targets.append((playlistID, nil, nil)); return outcome }
     func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome {
         played.append((playlistID, title)); targets.append((playlistID, videoID, params)); return outcome
+    }
+    func play(playlistID: String, title: String, videoID: String?, params: String?, intent: MusicPlaybackIntent) async -> SearchPlayOutcome {
+        intents.append(intent)
+        return await play(playlistID: playlistID, title: title, videoID: videoID, params: params)
     }
     func copy(link: URL) { copied.append(link) }
 }

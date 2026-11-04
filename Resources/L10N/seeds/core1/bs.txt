@@ -52,7 +52,6 @@
 52|Prebačeno na %@.
 53|Reproduciraj %@
 54|Trenutni izlaz: %@
-55|Ukloniti „%@” iz vaših otpremljenih datoteka?
 56|Reproducira se reklama
 57|Reklama je završena
 58|Trenutno svira „%@” – %@.

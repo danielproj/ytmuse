@@ -61,7 +61,6 @@ let package = Package(name: "NativeMusic", platforms: [.macOS("27.0")], products
  .testTarget(name: "SearchTests", dependencies: ["Features", "AccountSession", "YouTubeMusicAdapter", "AppShell", "Persistence", "Domain", "TestSupport"]),
  .testTarget(name: "CatalogTests", dependencies: ["Features", "AccountSession", "YouTubeMusicAdapter", "AppShell", "Artwork", "Domain"]),
  .testTarget(name: "LibraryTests", dependencies: ["Features", "AccountSession", "YouTubeMusicAdapter", "AppShell", "Artwork", "Domain"]),
- .testTarget(name: "UploadsTests", dependencies: ["Features", "AccountSession", "YouTubeMusicAdapter", "AppShell", "Domain"]),
  .testTarget(name: "PlaylistTests", dependencies: ["Features", "AccountSession", "YouTubeMusicAdapter", "AppShell", "Domain"]),
  .testTarget(name: "DiscoverySocialTests", dependencies: ["Features", "AccountSession", "YouTubeMusicAdapter", "AppShell", "Domain"]),
  .testTarget(name: "PodcastsLyricsTests", dependencies: ["Features", "AccountSession", "YouTubeMusicAdapter", "AppShell", "Playback", "Downloads", "Domain", "SystemIntegration"]),

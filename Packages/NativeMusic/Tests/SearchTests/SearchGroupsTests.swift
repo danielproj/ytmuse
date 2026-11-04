@@ -4,7 +4,7 @@ import Testing
 @testable import Features
 
 /// T10.3 — grouped Top/Songs/Albums/Artists/Playlists/Videos/Podcasts/Episodes, Library and
-/// Uploads scopes, and badges that survive merging and scope changes.
+/// Library scopes, and badges that survive merging and scope changes.
 @Suite @MainActor struct SearchGroupsTests {
     @MainActor final class Rig {
         let clock = VirtualClock(), remote = ScriptedRemote(), performer = SpyPerformer()
@@ -72,15 +72,6 @@ import Testing
         rig.model.scope = .all; await settle()
         #expect(rig.model.remoteStatus == .waiting, "switching back asks the service again after the quiet period")
         #expect(rig.model.results.first { $0.title == "Café Mix" }?.badges.contains(.library) == true)
-    }
-    @Test func uploadsScopeIsHonestlyEmptyAndAsksNothing() async throws {
-        let rig = Rig()
-        rig.model.scope = .uploads
-        rig.model.query = "café"; await settle()
-        rig.clock.advance(by: .seconds(1)); await settle()
-        let calls = await rig.remote.callCount
-        #expect(rig.model.sections.isEmpty && calls == 0)
-        #expect(rig.model.scopeNotice == String(localized: "Uploads aren’t connected yet, so there is nothing to search here."))
     }
     @Test func aServiceStatementThatItHasNoResultsIsNotAFailure() async throws {
         let rig = Rig(library: [])

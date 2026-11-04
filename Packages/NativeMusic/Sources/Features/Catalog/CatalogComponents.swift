@@ -91,7 +91,7 @@ struct CatalogCard: View {
     let item: MusicCatalogItem
     @Bindable var model: CatalogPageModel
     let navigator: CatalogNavigator
-    private let edge: CGFloat = 160
+    private let edge: CGFloat = 168
     var body: some View {
         let offers = model.offers(for: item)
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
@@ -100,7 +100,7 @@ struct CatalogCard: View {
                 if CatalogActionPlan.canEverPlay(item) {
                     Button { Task { await model.perform(.play, on: item) } } label: { Label("Play", systemImage: "play.fill") }
                         .labelStyle(.iconOnly).help(Text("Play \(item.title)")).accessibilityLabel(Text("Play \(item.title)"))
-                        .accessibilityIdentifier("catalogPlay-" + item.id).musicButtons().padding(MusicSpace.xs)
+                        .accessibilityIdentifier("catalogPlay-" + item.id).musicPageAction(prominent: true).padding(MusicSpace.xs)
                 }
             }
             Button { if item.opensPage { navigator.openItem(item) } } label: {
@@ -114,7 +114,9 @@ struct CatalogCard: View {
             FeedbackLine(feedback: model.feedback[item.id]).frame(width: edge, alignment: .leading)
         }
         .frame(width: edge, alignment: .leading).audit("card-" + item.id, group: "shelf-cards", alignLeading: nil)
-        .contextMenu { ItemMenu(item: item, model: model, navigator: navigator) }
+        .directPlaylistMenu(addition: DirectPlaylistAddition.candidate(item), identifier: "catalogAddToPlaylist-" + item.id) {
+            ItemMenu(item: item, model: model, navigator: navigator)
+        }
         .accessibilityActions { ForEach(offers.filter(\.isAvailable)) { offer in Button(offer.action.title) { Task { await model.perform(offer.action, on: item) } } } }
     }
 }
@@ -168,7 +170,7 @@ struct CatalogRow: View {
                     Button { Task { await model.perform(.play, on: item) } } label: { Label("Play", systemImage: "play.fill") }
                         .labelStyle(.iconOnly).help(Text("Play \(item.title)")).accessibilityLabel(Text("Play \(item.title)"))
                         .accessibilityHint(CatalogActionPlan.continuesCollection(item) ? Text("Continues the album or playlist from this track.") : Text("Plays this song and then similar music."))
-                        .accessibilityIdentifier("catalogPlay-" + item.id).musicButtons()
+                        .accessibilityIdentifier("catalogPlay-" + item.id).musicPageAction()
                 }
             }
             if item.kind == .episode {
@@ -177,22 +179,25 @@ struct CatalogRow: View {
             }
             FeedbackLine(feedback: model.feedback[item.id])
         }
-        .padding(.vertical, MusicSpace.xxs).padding(.horizontal, MusicSpace.xs).musicHoverHighlight()
+        .musicPageRow()
         .songDraggable(videoID: item.videoID, title: item.title, kind: item.kind)
-        .contextMenu { ItemMenu(item: item, model: model, navigator: navigator) }
+        .directPlaylistMenu(addition: DirectPlaylistAddition.candidate(item), identifier: "catalogAddToPlaylist-" + item.id) {
+            ItemMenu(item: item, model: model, navigator: navigator)
+        }
         .accessibilityActions { ForEach(offers.filter(\.isAvailable)) { offer in Button(offer.action.title) { Task { await model.perform(offer.action, on: item) } } } }
     }
 }
 
-/// A navigation tile (a mood, a genre, Charts, New releases).
+/// A compact navigation pill (a mood, a genre, Charts, New releases).
 struct CategoryTile: View {
     let item: MusicCatalogItem
     let navigator: CatalogNavigator
     var body: some View {
         Button { navigator.openItem(item) } label: {
-            Text(item.title).font(.body.weight(.medium)).lineLimit(2).multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).padding(.horizontal, MusicSpace.sm)
-        }.musicButtons().accessibilityIdentifier("catalogCategory-" + item.id)
+            Text(item.title).font(.callout.weight(.medium)).multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+        }.musicButtons().buttonBorderShape(.capsule).controlSize(.regular)
+            .accessibilityIdentifier("catalogCategory-" + item.id)
     }
 }
 
@@ -207,10 +212,12 @@ struct ShelfView: View {
     private var listItems: [MusicCatalogItem] { CatalogRows.drawn(shelf, podcasts: podcasts, pageReadAt: model.fetchedAt ?? .distantPast) }
     var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.sm) {
-            HStack {
-                if let title = shelf.title, !title.isEmpty { Text(title).font(.title2.bold()).accessibilityAddTraits(.isHeader).audit("shelfTitle-" + shelf.key, group: "shelf-titles", alignLeading: "pageLeading") }
-                Spacer()
-                if let more = shelf.more { Button("More") { navigator.openTarget(CatalogTarget(link: more), shelf.title ?? "") }.musicButtons().accessibilityIdentifier("catalogMore-" + shelf.key) }
+            if shelf.title?.isEmpty == false || shelf.more != nil {
+                HStack {
+                    if let title = shelf.title, !title.isEmpty { Text(title).font(MusicPageStyle.section).accessibilityAddTraits(.isHeader).audit("shelfTitle-" + shelf.key, group: "shelf-titles", alignLeading: "pageLeading") }
+                    Spacer()
+                    if let more = shelf.more { Button("More") { navigator.openTarget(CatalogTarget(link: more), shelf.title ?? "") }.musicPageAction().accessibilityIdentifier("catalogMore-" + shelf.key) }
+                }
             }
             content
             pager
@@ -221,11 +228,11 @@ struct ShelfView: View {
         switch shelf.layout {
         case .carousel, .grid:
             ScrollView(.horizontal) {
-                LazyHStack(alignment: .top, spacing: MusicSpace.md) { ForEach(shelf.items) { CatalogCard(item: $0, model: model, navigator: navigator) } }
+                LazyHStack(alignment: .top, spacing: MusicSpace.lg) { ForEach(shelf.items) { CatalogCard(item: $0, model: model, navigator: navigator) } }
                     .padding(.vertical, MusicSpace.xxs)
             }.scrollIndicators(.automatic)
         case .categories:
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 152), spacing: MusicSpace.sm)], spacing: MusicSpace.sm) {
+            MusicActionLayout {
                 ForEach(shelf.items) { CategoryTile(item: $0, navigator: navigator) }
             }
         case .list:
@@ -254,11 +261,11 @@ struct ShelfView: View {
                 if model.loadingMore.contains(shelf.key) { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading more")) }
                 else if let failure = model.moreFailures[shelf.key] {
                     Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText)
-                    Button("Retry") { Task { await model.loadMore(shelf: shelf.key) } }.musicButtons()
+                    Button("Retry") { Task { await model.loadMore(shelf: shelf.key) } }.musicPageAction()
                 } else {
                     // Reaching the end loads the next page; the button is the same action for keyboard and VoiceOver users.
                     Color.clear.frame(width: 1, height: 1).onAppear { Task { await model.loadMore(shelf: shelf.key) } }
-                    Button("Load more") { Task { await model.loadMore(shelf: shelf.key) } }.musicButtons().accessibilityIdentifier("catalogLoadMore-" + shelf.key)
+                    Button("Load more") { Task { await model.loadMore(shelf: shelf.key) } }.musicPageAction().accessibilityIdentifier("catalogLoadMore-" + shelf.key)
                 }
             }
         }
@@ -297,10 +304,10 @@ struct PageActionsBar: View {
             VStack(alignment: .leading, spacing: MusicSpace.xs) {
                 if !offers.isEmpty {
                     MusicGlassGroup {
-                        HStack {
+                        MusicActionLayout() {
                             ForEach(offers) { offer in
                                 Button { Task { await model.perform(offer.action) } } label: { Label(offer.action.title, systemImage: offer.action.symbol) }
-                                    .musicButtons(prominent: offer.action == offers.first?.action).accessibilityIdentifier("pageAction-" + offer.action.rawValue)
+                                    .musicPageAction(prominent: offer.action == offers.first?.action).accessibilityIdentifier("pageAction-" + offer.action.rawValue)
                             }
                         }
                     }

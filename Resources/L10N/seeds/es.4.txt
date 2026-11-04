@@ -50,15 +50,6 @@
 1050|Elemento sin título
 1051|A continuación
 1052|Actualizado %@.
-1053|Subir
-1054|Álbumes subidos
-1055|Artistas subidos
-1056|Canciones subidas
-1057|Subiendo %@
-1058|La subida llegará en una próxima actualización
-1059|Subidas
-1060|Las subidas aún no están conectadas, así que no hay nada que buscar aquí.
-1061|Subidas en curso y terminadas
 1062|Usar la velocidad predeterminada para este programa
 1063|Usa un enlace de elemento de música compatible o busca el elemento en tu colección.
 1064|Video
@@ -70,7 +61,6 @@
 1070|Visibilidad: %@
 1071|Volumen
 1072|Esperando una conexión de red
-1073|Esperando para subir
 1074|En espera: el modo de datos bajos está activado para esta conexión
 1075|En espera: esta conexión es de datos limitados
 1076|WebKit no activó Imagen en imagen para este video.
@@ -96,7 +86,6 @@
 1096|Te uniste a la lista de reproducción.
 1097|Podrás añadir y cambiar canciones en esta lista de reproducción, y se añade a tu biblioteca.
 1098|YouTube Music
-1099|YouTube Music acepta archivos de hasta %@.
 1100|YouTube Music respondió en un formato que esta versión no puede leer. No se ha cambiado nada.
 1101|YouTube Music pidió reducir el ritmo. Se muestran coincidencias de este Mac; inténtalo de nuevo en breve.
 1102|YouTube Music no pudo iniciar esto. Prueba Reproducir de nuevo.
@@ -107,12 +96,9 @@
 1107|YouTube Music no cambió la calidad.
 1108|YouTube Music no ofreció Guardar en la biblioteca para esta canción. Abre la canción una vez para leer su página.
 1109|YouTube Music no indicó si esto es una canción o un video, así que no se puede cambiar aquí.
-1110|YouTube Music no confirmó la eliminación. Puede que “%@” se haya eliminado o no.
 1111|YouTube Music no proporcionó controles de diversidad o descubrimiento para esta radio, así que no se muestra ninguno.
 1112|YouTube Music no ofrece “No me gusta” para esta canción.
 1113|YouTube Music no indica que sean la misma grabación, así que empieza desde el principio.
-1114|YouTube Music terminó de procesar este archivo.
-1115|YouTube Music terminó de procesar este archivo. Se actualizó tu lista de subidas.
 1116|YouTube Music no dio nada que reproducir para este elemento.
 1117|YouTube Music no tiene Samples para ti por el momento.
 1118|YouTube Music no tiene letras para esta canción.
@@ -123,7 +109,6 @@
 1123|Historial de YouTube Music
 1124|Controles del historial de YouTube Music
 1125|YouTube Music está pidiendo una pausa. Prueba Samples de nuevo en un momento.
-1126|YouTube Music sigue procesando este archivo. Vuelve a comprobarlo más tarde.
 1127|YouTube Music gestiona los elementos siguientes, así que aquí no se pueden reordenar ni quitar.
 1128|YouTube Music gestiona los elementos siguientes mientras reproduce, así que esta app no puede añadirles nada.
 1129|Lista de reproducción de YouTube Music
@@ -132,7 +117,6 @@
 1132|YouTube Music se reproduce en su propio reproductor, así que la app no puede solapar dos elementos ni procesar su audio.
 1133|YouTube Music se reproduce por la salida de sonido de este Mac. Cámbiala en el Centro de control.
 1134|YouTube Music devolvió esta página sin ningún elemento.
-1135|YouTube Music dijo: %@
 1136|La búsqueda de YouTube Music no está disponible en este momento. Se muestran coincidencias de este Mac.
 1137|YouTube Music dejó de enviar más de esta colección antes del final.
 1138|YouTube Music activó la colaboración, pero no devolvió ningún enlace de invitación utilizable.
@@ -156,7 +140,6 @@
 1156|macOS incluye este atajo entre sus propios atajos activados.
 1157|macOS indica que este atajo está ocupado.
 1158|macOS usa este atajo para %@.
-1159|o suelta aquí archivos de audio
 1160|en pausa
 1161|reproduciendo
 1162|preparando
@@ -167,7 +150,6 @@
 1167|esta lista de reproducción
 1168|desconocido
 1169|“%@” ya está aquí. Conservar duplicados lo añade de nuevo como una entrada aparte; Omitir existentes lo deja fuera.
-1170|“%@” ya está en la lista de subidas.
 1171|“%@” ya no es la canción que estabas cambiando.
 1172|“%@” también se movió a otro lugar.
 1173|“%@” se eliminó de la lista de reproducción en otro lugar.
@@ -176,7 +158,6 @@ Q2|one:%lld descargando, %lld en espera	many:%lld descargando, %lld en espera	ot
 Q3|one:%lld descargando, %lld en espera · %@ hasta ahora	many:%lld descargando, %lld en espera · %@ hasta ahora	other:%lld descargando, %lld en espera · %@ hasta ahora
 Q4|one:Se ha cargado %lld elemento hasta ahora. Hay más.	many:Se han cargado %lld de elementos hasta ahora. Hay más.	other:Se han cargado %lld elementos hasta ahora. Hay más.
 Q5|one:Se omitió %lld elemento que no es una canción de YouTube Music.	many:Se omitieron %lld de elementos que no son canciones de YouTube Music.	other:Se omitieron %lld elementos que no son canciones de YouTube Music.
-Q6|one:%lld archivo más	many:%lld de archivos más	other:%lld archivos más
 Q7|one:%lld de %lld descargados	many:%lld de %lld descargados	other:%lld de %lld descargados
 Q8|one:%lld por ciento	many:%lld por ciento	other:%lld por ciento
 Q9|one:%lld reproducción · %@ de escucha	many:%lld de reproducciones · %@ de escucha	other:%lld reproducciones · %@ de escucha
@@ -206,8 +187,6 @@ Q32|one:Resonancia %lld	many:Resonancia %lld	other:Resonancia %lld
 Q33|one:Reposo en %llds%@	many:Reposo en %llds%@	other:Reposo en %llds%@
 Q34|one:Temporizador de reposo configurado para %lld minuto.	many:Temporizador de reposo configurado para %lld de minutos.	other:Temporizador de reposo configurado para %lld minutos.
 Q35|one:Temporizador de reposo: quedan %lld:%@	many:Temporizador de reposo: quedan %lld:%@	other:Temporizador de reposo: quedan %lld:%@
-Q36|one:Esta app añade hasta %lld archivo a la vez. El resto no se añadió.	many:Esta app añade hasta %lld de archivos a la vez. El resto no se añadió.	other:Esta app añade hasta %lld archivos a la vez. El resto no se añadió.
 Q37|one:Esto elimina de forma permanente la lista de reproducción y su %lld entrada de YouTube Music. No se puede deshacer.	many:Esto elimina de forma permanente la lista de reproducción y sus %lld de entradas de YouTube Music. No se puede deshacer.	other:Esto elimina de forma permanente la lista de reproducción y sus %lld entradas de YouTube Music. No se puede deshacer.
 Q38|one:Deshacer para %lld canción	many:Deshacer para %lld de canciones	other:Deshacer para %lld canciones
 Q39|one:Deshacer: se eliminó %lld canción	many:Deshacer: se eliminaron %lld de canciones	other:Deshacer: se eliminaron %lld canciones
-Q40|one:Subiendo… %lld%%	many:Subiendo… %lld%%	other:Subiendo… %lld%%

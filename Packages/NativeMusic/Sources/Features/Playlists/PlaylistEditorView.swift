@@ -13,7 +13,7 @@ struct PlaylistOperationLines: View {
                 HStack(spacing: MusicSpace.xs) {
                     Label("The playlist couldn’t be read back after the last change, so what you see is an estimate.", systemImage: "arrow.triangle.2.circlepath").font(.caption)
                         .foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistRefreshNeeded")
-                    Button("Refresh") { Task { await session.refresh() } }.musicButtons().accessibilityIdentifier("playlistRefresh")
+                    Button("Refresh") { Task { await session.refresh() } }.musicPageAction().accessibilityIdentifier("playlistRefresh")
                 }
             }
         }
@@ -40,9 +40,9 @@ struct PlaylistOperationLines: View {
                 MusicGlassGroup {
                     HStack(spacing: MusicSpace.xs) {
                         if ![.needsSignIn, .sessionEnded, .notPermitted, .needsConfirmation, .invalid, .notFullyRead].contains(failure) {
-                            Button("Try Again") { Task { await session.retry(operation.id) } }.musicButtons().accessibilityIdentifier("playlistRetry")
+                            Button("Try Again") { Task { await session.retry(operation.id) } }.musicPageAction().accessibilityIdentifier("playlistRetry")
                         }
-                        Button("Dismiss") { session.dismiss(operation.id) }.musicButtons().accessibilityIdentifier("playlistDismiss")
+                        Button("Dismiss") { session.dismiss(operation.id) }.musicPageAction().accessibilityIdentifier("playlistDismiss")
                     }
                 }
             }
@@ -53,10 +53,10 @@ struct PlaylistOperationLines: View {
                     .foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistUnconfirmed")
                 MusicGlassGroup {
                     HStack(spacing: MusicSpace.xs) {
-                        Button("Check") { Task { await session.check(operation.id) } }.musicButtons().accessibilityIdentifier("playlistCheck")
-                        Button("Try Again") { Task { await session.retry(operation.id) } }.musicButtons().accessibilityIdentifier("playlistRetry")
+                        Button("Check") { Task { await session.check(operation.id) } }.musicPageAction().accessibilityIdentifier("playlistCheck")
+                        Button("Try Again") { Task { await session.retry(operation.id) } }.musicPageAction().accessibilityIdentifier("playlistRetry")
                             .help(Text("Reads the playlist first and sends only what is missing"))
-                        Button("Dismiss") { session.dismissUnconfirmed(operation.id) }.musicButtons().accessibilityIdentifier("playlistDismiss")
+                        Button("Dismiss") { session.dismissUnconfirmed(operation.id) }.musicPageAction().accessibilityIdentifier("playlistDismiss")
                     }
                 }
                 if operation.checkedUnreadable {
@@ -91,14 +91,14 @@ struct PlaylistConflictView: View {
             MusicGlassGroup {
                 HStack(spacing: MusicSpace.xs) {
                     if conflict.allowsKeepMine {
-                        Button("Keep My Change") { Task { await session.resolve(conflict.id, .keepMine) } }.musicButtons(prominent: true).accessibilityIdentifier("playlistKeepMine")
+                        Button("Keep My Change") { Task { await session.resolve(conflict.id, .keepMine) } }.musicPageAction(prominent: true).accessibilityIdentifier("playlistKeepMine")
                     }
                     Button(conflict.allowsKeepMine ? "Keep YouTube Music’s" : "Leave It As It Is") { Task { await session.resolve(conflict.id, .keepTheirs) } }
-                        .musicButtons().accessibilityIdentifier("playlistKeepTheirs")
+                        .musicPageAction().accessibilityIdentifier("playlistKeepTheirs")
                 }.disabled(session.isBusy)
             }
         }
-        .padding(MusicSpace.sm).musicSurface()
+        .padding(MusicSpace.sm).musicInsetSurface()
         .accessibilityElement(children: .contain).accessibilityIdentifier("playlistConflict")
     }
 }
@@ -154,7 +154,7 @@ public struct PlaylistEditorView: View {
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                Text(session.displayed?.title ?? "").font(.title2.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("playlistEditorTitle")
+                Text(session.displayed?.title ?? "").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader).accessibilityIdentifier("playlistEditorTitle")
                 HStack(spacing: MusicSpace.sm) {
                     Label(session.role.title, systemImage: "person.crop.circle").font(.caption).accessibilityIdentifier("playlistRole")
                     if let privacy = session.displayed?.privacy {
@@ -164,7 +164,7 @@ public struct PlaylistEditorView: View {
                 }
             }
             Spacer()
-            Button("Done") { dismiss() }.musicButtons(prominent: true).keyboardShortcut(.defaultAction).accessibilityIdentifier("playlistDone")
+            Button("Done") { dismiss() }.musicPageAction(prominent: true).keyboardShortcut(.defaultAction).accessibilityIdentifier("playlistDone")
         }
     }
 
@@ -175,7 +175,7 @@ public struct PlaylistEditorView: View {
         case .failed(let failure):
             VStack(spacing: MusicSpace.xs) {
                 Label(failure.message, systemImage: "exclamationmark.triangle").accessibilityIdentifier("playlistLoadFailed")
-                Button("Try Again") { Task { await session.load() } }.musicButtons()
+                Button("Try Again") { Task { await session.load() } }.musicPageAction()
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
         case .loaded:
             if let snapshot = session.displayed { loaded(snapshot) }
@@ -185,7 +185,7 @@ public struct PlaylistEditorView: View {
     @ViewBuilder private func loaded(_ snapshot: PlaylistSnapshot) -> some View {
         let canEdit = session.role.canEdit
         ScrollView {
-            VStack(alignment: .leading, spacing: MusicSpace.md) {
+            VStack(alignment: .leading, spacing: MusicSpace.lg) {
                 if !canEdit {
                     Label("YouTube Music doesn’t let you change this playlist, so nothing here can edit it.", systemImage: "lock").accessibilityIdentifier("playlistReadOnly")
                 }
@@ -200,14 +200,14 @@ public struct PlaylistEditorView: View {
                         Text(undo.label).font(.callout).accessibilityIdentifier("playlistUndoLabel")
                         // One song is reversed at once; more than one needs the same naming confirmation as the change itself.
                         Button("Undo") { if let prompt = session.undoPrompt { pendingUndo = prompt } else { Task { await session.undoLast() } } }
-                            .musicButtons().disabled(session.isBusy).accessibilityIdentifier("playlistUndo")
+                            .musicPageAction().disabled(session.isBusy).accessibilityIdentifier("playlistUndo")
                     }
                 }
-                if canEdit, session.snapshot?.editing?.canEditDetails == true { detailsEditor }
+                if canEdit, session.snapshot?.editing?.canEditDetails == true { detailsEditor.padding(MusicSpace.md).musicInsetSurface() }
                 trackList(snapshot, canEdit: canEdit)
                 if canEdit, !session.suggestions.isEmpty || session.suggestionsFailed { suggestions(snapshot) }
-                shareSection(snapshot)
-                if session.role == .owner { collaborationSection }
+                shareSection(snapshot).padding(MusicSpace.md).musicInsetSurface()
+                if session.role == .owner { collaborationSection.padding(MusicSpace.md).musicInsetSurface() }
                 if session.role == .owner { deleteSection }
             }.frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -219,19 +219,19 @@ public struct PlaylistEditorView: View {
             HStack {
                 TextField("Title", text: $titleDraft).textFieldStyle(.roundedBorder).accessibilityIdentifier("playlistTitleField")
                 Button("Rename") { Task { await session.submit(.rename(titleDraft.trimmingCharacters(in: .whitespacesAndNewlines))) } }
-                    .musicButtons().disabled(session.isBusy || titleDraft.trimmingCharacters(in: .whitespacesAndNewlines) == session.snapshot?.title).accessibilityIdentifier("playlistRename")
+                    .musicPageAction().disabled(session.isBusy || titleDraft.trimmingCharacters(in: .whitespacesAndNewlines) == session.snapshot?.title).accessibilityIdentifier("playlistRename")
             }
             HStack {
                 TextField("Description", text: $detailsDraft, axis: .vertical).textFieldStyle(.roundedBorder).lineLimit(1...3).accessibilityIdentifier("playlistDescriptionField")
                 Button("Save Description") { Task { await session.submit(.describe(detailsDraft)) } }
-                    .musicButtons().disabled(session.isBusy || detailsDraft == session.snapshot?.details).accessibilityIdentifier("playlistSaveDescription")
+                    .musicPageAction().disabled(session.isBusy || detailsDraft == session.snapshot?.details).accessibilityIdentifier("playlistSaveDescription")
             }
             HStack {
                 Picker("Visibility", selection: $privacyDraft) {
                     ForEach(MusicPlaylistPrivacy.allCases, id: \.self) { Label($0.title, systemImage: $0.symbol).tag($0) }
                 }.accessibilityIdentifier("playlistPrivacyPicker")
                 Button("Change Visibility") { Task { await session.submit(.setPrivacy(privacyDraft)) } }
-                    .musicButtons().disabled(session.isBusy || privacyDraft == session.snapshot?.privacy).accessibilityIdentifier("playlistApplyPrivacy")
+                    .musicPageAction().disabled(session.isBusy || privacyDraft == session.snapshot?.privacy).accessibilityIdentifier("playlistApplyPrivacy")
             }
         }
     }
@@ -243,7 +243,7 @@ public struct PlaylistEditorView: View {
                 Spacer()
                 if canEdit {
                     Button("Remove Selected…") { startBulkRemove(snapshot) }
-                        .musicButtons().disabled(session.isBusy || selection.count < 2 || selection.count > MusicPlaylistRequest.maximumActions)
+                        .musicPageAction().disabled(session.isBusy || selection.count < 2 || selection.count > MusicPlaylistRequest.maximumActions)
                         .accessibilityIdentifier("playlistRemoveSelected")
                 }
             }
@@ -345,7 +345,7 @@ public struct PlaylistEditorView: View {
                         Text(item.title).lineLimit(1)
                         Spacer()
                         Button("Add") { stage([PlaylistAddition(videoID: video, title: item.title)]) }
-                            .musicButtons().disabled(session.isBusy).accessibilityIdentifier("playlistAddSuggestion-" + video)
+                            .musicPageAction().disabled(session.isBusy).accessibilityIdentifier("playlistAddSuggestion-" + video)
                     }.accessibilityElement(children: .contain).accessibilityIdentifier("playlistSuggestion-" + video)
                 }
             }
@@ -363,14 +363,14 @@ public struct PlaylistEditorView: View {
             MusicGlassGroup {
                 HStack {
                     Button { surface.copyLink(playlistID: snapshot.playlistID) } label: { Label("Copy Link", systemImage: "link") }
-                        .musicButtons().accessibilityIdentifier("playlistCopyLink")
+                        .musicPageAction().accessibilityIdentifier("playlistCopyLink")
                     // The system share sheet, opened by this press; the link is the canonical one and nothing is uploaded by the app.
                     if let url = PlaylistSharing.canonicalURL(playlistID: snapshot.playlistID) {
                         if sharingStandIn {
                             // Isolated Debug runs (UI automation) never open the system share machinery: a button with the same identifier stands in.
-                            Button { standInPresses += 1 } label: { Label("Share…", systemImage: "square.and.arrow.up") }.musicButtons().accessibilityIdentifier("playlistShare")
+                            Button { standInPresses += 1 } label: { Label("Share…", systemImage: "square.and.arrow.up") }.musicPageAction().accessibilityIdentifier("playlistShare")
                         } else {
-                            ShareLink(item: url) { Label("Share…", systemImage: "square.and.arrow.up") }.musicButtons().accessibilityIdentifier("playlistShare")
+                            ShareLink(item: url) { Label("Share…", systemImage: "square.and.arrow.up") }.musicPageAction().accessibilityIdentifier("playlistShare")
                         }
                     }
                 }
@@ -393,7 +393,7 @@ public struct PlaylistEditorView: View {
                     HStack(spacing: MusicSpace.xs) {
                         Label("Collaboration is on. The invite link is ready.", systemImage: "checkmark.circle").font(.caption).accessibilityIdentifier("playlistInviteReady")
                         MusicGlassGroup {
-                            Button { surface.copy(link: link) } label: { Label("Copy Invite Link", systemImage: "link.badge.plus") }.musicButtons().accessibilityIdentifier("playlistInviteCopy")
+                            Button { surface.copy(link: link) } label: { Label("Copy Invite Link", systemImage: "link.badge.plus") }.musicPageAction().accessibilityIdentifier("playlistInviteCopy")
                         }
                     }
                 } else {
@@ -402,19 +402,19 @@ public struct PlaylistEditorView: View {
             case .closed: Label("The playlist is closed to contributions.", systemImage: "lock").font(.caption).accessibilityIdentifier("playlistContributionsClosed")
             case .failed(let failure):
                 HStack { Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistCollaborationFailed")
-                    Button("Dismiss") { session.dismissCollaboration() }.musicButtons() }
+                    Button("Dismiss") { session.dismissCollaboration() }.musicPageAction() }
             case .unconfirmed:
                 HStack { Label("YouTube Music didn’t confirm this. It may or may not have happened.", systemImage: "questionmark.circle").font(.caption).accessibilityIdentifier("playlistCollaborationUnconfirmed")
-                    Button("Try Again") { Task { await session.retryCollaboration() } }.musicButtons().accessibilityIdentifier("playlistCollaborationRetry")
-                    Button("Dismiss") { session.dismissCollaboration() }.musicButtons() }
+                    Button("Try Again") { Task { await session.retryCollaboration() } }.musicPageAction().accessibilityIdentifier("playlistCollaborationRetry")
+                    Button("Dismiss") { session.dismissCollaboration() }.musicPageAction() }
             case .idle: EmptyView()
             }
             MusicGlassGroup {
                 HStack {
                     Button { Task { if let social { await social.createInvite(for: session, title: session.snapshot?.title ?? "") } else { await session.createInviteLink() } } } label: { Label("Create Invite Link", systemImage: "person.badge.plus") }
-                        .musicButtons().disabled(session.collaboration == .pending || session.isBusy).accessibilityIdentifier("playlistInviteCreate")
+                        .musicPageAction().disabled(session.collaboration == .pending || session.isBusy).accessibilityIdentifier("playlistInviteCreate")
                     Button { confirmingStop = true } label: { Label("Stop Contributions…", systemImage: "person.badge.minus") }
-                        .musicButtons().disabled(session.collaboration == .pending || session.isBusy).accessibilityIdentifier("playlistStopContributions")
+                        .musicPageAction().disabled(session.collaboration == .pending || session.isBusy).accessibilityIdentifier("playlistStopContributions")
                 }
             }
         }
@@ -433,17 +433,17 @@ public struct PlaylistEditorView: View {
             if case .failed(let failure)? = session.deletion {
                 HStack {
                     Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistDeleteFailed")
-                    Button("Dismiss") { session.dismissDeletionFailure() }.musicButtons()
+                    Button("Dismiss") { session.dismissDeletionFailure() }.musicPageAction()
                 }
             }
             if session.deletion == .needsReconciliation {
                 HStack {
                     Label("YouTube Music didn’t confirm the deletion.", systemImage: "questionmark.circle").font(.caption).accessibilityIdentifier("playlistDeleteUnconfirmed")
-                    Button("Check") { Task { await session.checkDeletion() } }.musicButtons()
+                    Button("Check") { Task { await session.checkDeletion() } }.musicPageAction()
                 }
             }
             Button("Delete Playlist…", role: .destructive) { confirmingDelete = true }
-                .musicButtons().disabled(session.deletion == .pending).accessibilityIdentifier("playlistDelete")
+                .musicPageAction().disabled(session.deletion == .pending).accessibilityIdentifier("playlistDelete")
                 .confirmationDialog(String(localized: "Delete “\(session.snapshot?.title ?? "")”?"), isPresented: $confirmingDelete, titleVisibility: .visible) {
                     Button("Delete Playlist", role: .destructive) { Task { await session.deletePlaylist(confirmation: session.deletionPrompt) } }
                     Button("Cancel", role: .cancel) {}

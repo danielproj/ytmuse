@@ -40,9 +40,9 @@ struct SpotlightPreferencesSection: View {
     var body: some View {
         Section("Spotlight") {
             Toggle("Show saved songs, albums and artists in Spotlight", isOn: Binding(get: { settings.enabled }, set: { settings.setEnabled($0) })).accessibilityIdentifier("spotlightIndexing")
-            Toggle("Also show my playlists, uploads and listening history", isOn: Binding(get: { settings.includePrivate }, set: { settings.setIncludePrivate($0) }))
+            Toggle("Also show my playlists and listening history", isOn: Binding(get: { settings.includePrivate }, set: { settings.setIncludePrivate($0) }))
                 .disabled(!settings.enabled).accessibilityIdentifier("spotlightIndexPrivate")
-            Text("Off until you turn it on. Playlists, uploads and history are private: they are shown only if you choose to, and are removed from Spotlight when you sign out, remove the account or turn this off.")
+            Text("Off until you turn it on. Playlists and history are private: they are shown only if you choose to, and are removed from Spotlight when you sign out, remove the account or turn this off.")
                 .font(.footnote).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("spotlightNote")
         }
     }

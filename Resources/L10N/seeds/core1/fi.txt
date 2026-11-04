@@ -52,7 +52,6 @@
 52|Vaihdettu tiliin %@.
 53|Toista %@
 54|Nykyinen ulostulo: %@
-55|Poistetaanko “%@” lähetyksistäsi?
 56|Mainos soi
 57|Mainos päättyi
 58|Nyt soi “%@”, esittäjä %@.

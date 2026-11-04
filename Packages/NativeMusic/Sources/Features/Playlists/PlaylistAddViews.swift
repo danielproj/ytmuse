@@ -68,12 +68,12 @@ public struct PlaylistAddView: View {
     public init(surface: PlaylistSurface, songs: [PlaylistAddition], preselected: PlaylistListing? = nil) { self.surface = surface; self.songs = songs; self.preselected = preselected }
     public init(surface: PlaylistSurface, song: PlaylistAddition) { self.init(surface: surface, songs: [song]) }
     public var body: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.sm) {
-            Text("Add to Playlist").font(.title2.bold()).accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: MusicSpace.lg) {
+            Text("Add to Playlist").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             Text(songs.count == 1 ? "“\(songs[0].title)”" : String(localized: "\(songs.count) songs")).font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistAddSongs")
             if let chosen { destination(chosen) } else { picker }
             MusicGlassGroup {
-                HStack { Spacer(); Button("Close") { dismiss() }.musicButtons().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistAddClose") }
+                HStack { Spacer(); Button("Close") { dismiss() }.musicPageAction().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistAddClose") }
             }
         }
         .padding(MusicSpace.lg).frame(minWidth: 460, minHeight: 280)
@@ -88,7 +88,7 @@ public struct PlaylistAddView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                         ForEach(choices, id: \.playlistID) { option in
-                            Button(option.title) { Task { await choose(option) } }.buttonStyle(.plain).padding(.vertical, MusicSpace.xxs).accessibilityIdentifier("playlistAddChoice-" + option.playlistID)
+                            Button(option.title) { Task { await choose(option) } }.buttonStyle(.plain).musicPageRow().accessibilityIdentifier("playlistAddChoice-" + option.playlistID)
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -107,7 +107,7 @@ public struct PlaylistAddView: View {
                 } else {
                     MusicGlassGroup {
                         Button { Task { staged = await session.addSongs(songs) } } label: { Text(songs.count == 1 ? "Add to “\(chosenTitle)”" : String(localized: "Add \(songs.count) Songs to “\(chosenTitle)”")) }
-                            .musicButtons(prominent: true).disabled(session.isBusy).accessibilityIdentifier("playlistAddButton")
+                            .musicPageAction(prominent: true).disabled(session.isBusy).accessibilityIdentifier("playlistAddButton")
                     }
                 }
                 PlaylistOperationLines(session: session)
@@ -134,19 +134,19 @@ public struct PlaylistJoinView: View {
     @State private var confirming = false
     public init(joiner: PlaylistJoiner, open: @escaping (String) -> Void) { self.joiner = joiner; self.open = open }
     public var body: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.sm) {
-            Text("Join a Collaborative Playlist").font(.title2.bold()).accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: MusicSpace.lg) {
+            Text("Join a Collaborative Playlist").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             TextField("Paste an invite link", text: $link).textFieldStyle(.roundedBorder).accessibilityIdentifier("playlistJoinLink")
             Text("The link is only read to name the playlist. You join only if you press Join and confirm.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
             status
             MusicGlassGroup {
                 HStack {
                     Spacer()
-                    Button("Close") { joiner.reset(); dismiss() }.musicButtons().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistJoinClose")
-                    Button("Look Up") { Task { await joiner.prepare(link: link) } }.musicButtons()
+                    Button("Close") { joiner.reset(); dismiss() }.musicPageAction().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistJoinClose")
+                    Button("Look Up") { Task { await joiner.prepare(link: link) } }.musicPageAction()
                         .disabled(link.trimmingCharacters(in: .whitespaces).isEmpty || joiner.state == .reading || joiner.state == .joining).accessibilityIdentifier("playlistJoinLookUp")
                     if case .offer(let offer) = joiner.state {
-                        Button("Join…") { confirming = true }.musicButtons(prominent: true).accessibilityIdentifier("playlistJoinButton")
+                        Button("Join…") { confirming = true }.musicPageAction(prominent: true).accessibilityIdentifier("playlistJoinButton")
                             .confirmationDialog(String(localized: "Join “\(offer.title)”?"), isPresented: $confirming, titleVisibility: .visible) {
                                 Button("Join Playlist") { Task { await joiner.join(confirmation: joiner.joinPrompt) } }
                                 Button("Cancel", role: .cancel) {}
@@ -168,13 +168,13 @@ public struct PlaylistJoinView: View {
         case .joined(let id):
             HStack {
                 Label("You joined the playlist.", systemImage: "checkmark.circle").accessibilityIdentifier("playlistJoined")
-                Button("Open") { open(id); dismiss() }.musicButtons().accessibilityIdentifier("playlistJoinedOpen")
+                Button("Open") { open(id); dismiss() }.musicPageAction().accessibilityIdentifier("playlistJoinedOpen")
             }
         case .failed(let failure): Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistJoinFailed")
         case .needsReconciliation:
             HStack {
                 Label("YouTube Music didn’t confirm this. You may or may not have joined.", systemImage: "questionmark.circle").font(.caption).accessibilityIdentifier("playlistJoinUnconfirmed")
-                Button("Check") { Task { await joiner.check() } }.musicButtons().accessibilityIdentifier("playlistJoinCheck")
+                Button("Check") { Task { await joiner.check() } }.musicPageAction().accessibilityIdentifier("playlistJoinCheck")
             }
         }
     }

@@ -106,7 +106,7 @@ Documented example: `GET https://www.googleapis.com/youtube/v3/channels?part=id,
 
 Per-response validation: verify endpoint/error envelope even for HTTP 200; bind returned entity/page to requested account/channel/region and collection; preserve playlist occurrence IDs and duplicates; reject malformed declared data, unknown renderer variants and expired cursors distinctly. Restart cursors in the same context; never silently call an unfiltered collection when a selection is empty. Limit six metadata requests per account/host initially; honor Retry-After with bounded backoff. Mutation timeout after submission is needs-reconciliation, not permission to replay. Confirm a disposable write with a fresh remote read; store preconditions and operation UUID locally, never fabricate a server idempotency guarantee. All personal playlists remain outside test scope.
 
-Full Music parity still requires actual Home/search suggestions, typed library entities, lyrics attribution/timing, podcasts/progress, collaboration/roles, history semantics, uploads and processing, Samples/tuner, Recap/badges and source-present social workflows. Generic YouTube search, likes or video uploads cannot close those rows. Reference implementations are provenance for hypotheses only.
+Full Music parity still requires actual Home/search suggestions, typed library entities, lyrics attribution/timing, podcasts/progress, collaboration/roles, history semantics, Samples/tuner, Recap/badges and source-present social workflows. Generic YouTube search or likes cannot close those rows. Reference implementations are provenance for hypotheses only.
 
 ## Source obligations and retention
 

@@ -192,8 +192,7 @@ private let video = "dQw4w9WgXcQ"
     }
     @Test func theThreePlaylistPathsAreAllowlistedAndNothingElseWasAdded() {
         #expect(SignedMusicPolicy.playlistWritePaths == ["/youtubei/v1/playlist/create", "/youtubei/v1/browse/edit_playlist", "/youtubei/v1/playlist/delete"])
-        // The six library write paths are unchanged; W19 added exactly one (the confirmed upload removal, pinned in LibraryTests and UploadsTests).
-        #expect(SignedMusicPolicy.writePaths.count == 7 && SignedMusicPolicy.writePaths.contains("/youtubei/v1/music/delete_privately_owned_entity"), "the six library write paths plus the one upload removal")
+        #expect(SignedMusicPolicy.writePaths.count == 6 && !SignedMusicPolicy.writePaths.contains("/youtubei/v1/music/delete_privately_owned_entity"), "only the six library write paths remain")
         #expect(SignedMusicPolicy.playlistWritePaths.isDisjoint(with: SignedMusicPolicy.writePaths))
     }
 

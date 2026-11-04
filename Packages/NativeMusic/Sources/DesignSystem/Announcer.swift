@@ -13,7 +13,7 @@ public enum AnnouncementKind: String, CaseIterable, Sendable {
   case error
   /// Sign-in, sign-out, a switched or expired account.
   case account
-  /// A download or upload finished, failed or was cancelled.
+  /// A download finished, failed or was cancelled.
   case download
   /// A change the person asked for that has no other visible confirmation (copied, removed, moved).
   case confirmation

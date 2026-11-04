@@ -65,9 +65,11 @@ public protocol MusicSessionReading: Sendable {
     func episode(id: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicEpisodePage>
     /// A song's lyrics: its `next` response (where the Lyrics tab is), then the lyrics page it names. Signed when `session` is given, in case a
     /// signed answer supplies timing; anonymous otherwise. "No lyrics" is a result; a response that cannot be read is an error.
+    func radioQueue(action: MusicRadioAction, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicRadioQueue>
     func lyrics(videoID: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicLyricsResult>
 }
 extension MusicSessionReading {
+    public func radioQueue(action: MusicRadioAction, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicRadioQueue> { throw MusicSessionError.policy }
     /// Readers that predate search do not offer it; the caller reports it as unavailable.
     public func search(query: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicSearchResponse> {
         throw MusicSessionError.policy

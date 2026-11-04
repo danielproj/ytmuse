@@ -18,7 +18,7 @@ import Testing
         let hub = hub()
         let home = entry(.home), explore = entry(.explore)
         #expect(hub.model(for: home)?.target == .home && hub.model(for: explore)?.target == .explore)
-        for other in [BrowserDestination.library, .downloads, .history, .uploads, .podcasts, .queue, .nowPlaying, .search] { #expect(hub.model(for: entry(other)) == nil, "\(other)") }
+        for other in [BrowserDestination.library, .downloads, .history, .podcasts, .queue, .nowPlaying, .search] { #expect(hub.model(for: entry(other)) == nil, "\(other)") }
     }
     @Test func theSameEntryKeepsItsModelSoBackReturnsToTheSamePageAndAnchor() {
         let hub = hub()

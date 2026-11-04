@@ -3,6 +3,7 @@ import AppKit
 import Features
 import Foundation
 import Persistence
+import Playback
 import Domain
 
 /// Search actions land on the one application playback session: the same
@@ -19,6 +20,35 @@ import Domain
         let request = playback.authority.requestOwnedStart()
         return await playback.playMusic(playlistID: playlistID, title: title, videoID: videoID, params: params, request: request)
     }
+    func play(playlistID: String, title: String, videoID: String?, params: String?, intent: MusicPlaybackIntent) async -> SearchPlayOutcome {
+        let request = playback.authority.requestOwnedStart()
+        return await playback.playMusic(playlistID: playlistID, title: title, videoID: videoID, params: params, intent: intent, request: request)
+    }
+    var supportsRadioQueueUpdates: Bool { true }
+    // A scope is issued only for the existing owner. No start permit or player creation.
+    private var radioScope: (id: UUID, player: WebMusicPlayer, scope: WebMusicRadioQueueScope, starts: Int, epoch: UInt64)?
+    func captureRadioQueueScope(playlistID: String) -> UUID? {
+        guard !playback.starting, playback.session == nil, let player = playback.music,
+              let scope = player.captureRadioQueueScope(playlistID: playlistID) else { return nil }
+        let id = UUID()
+        radioScope = (id, player, scope, playback.playRequestCount, playback.authority.currentRadioControlEpoch())
+        return id
+    }
+    func radioQueueScopeIsCurrent(_ id: UUID) -> Bool {
+        guard let saved = radioScope, saved.id == id, !playback.starting,
+              playback.session == nil, playback.music === saved.player,
+              playback.playRequestCount == saved.starts, playback.authority.currentRadioControlEpoch() == saved.epoch else { return false }
+        return saved.player.radioQueueScopeIsCurrent(saved.scope)
+    }
+    func applyRadioFilter(_ command: MusicQueueFilterCommand, scope id: UUID) async -> SearchPlayOutcome {
+        guard radioQueueScopeIsCurrent(id), let saved = radioScope else { return .stale }
+        let applied = await saved.player.applyRadioFilter(command, scope: saved.scope) { [weak self] in
+            self?.radioQueueScopeIsCurrent(id) == true
+        }
+        guard radioQueueScopeIsCurrent(id) else { return .stale }
+        return applied ? .started : .failed
+    }
+    func playRadioFilter(_ command: MusicQueueFilterCommand, title: String) async -> SearchPlayOutcome { .failed }
     func copy(link: URL) {
         pasteboard.clearContents()
         pasteboard.setString(link.absoluteString, forType: .string)

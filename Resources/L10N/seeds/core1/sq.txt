@@ -52,7 +52,6 @@
 52|U kaluat te %@.
 53|Luaj %@
 54|Dalja aktuale: %@
-55|Të hiqet “%@” nga ngarkimet tuaja?
 56|Po luhet një reklamë
 57|Reklama përfundoi
 58|Po luhet tani “%@” nga %@.

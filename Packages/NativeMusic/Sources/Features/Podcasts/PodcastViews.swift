@@ -187,10 +187,10 @@ public struct EpisodeDetailView: View {
         let progress = EpisodeProgressResolver.resolve(service: page.info, local: surface.playback.localRecord(page.videoID), pageReadAt: model.readAt)
         let request = EpisodePlayTargets.request(videoID: page.videoID, title: page.title, showBrowseID: page.show?.browseID)
         VStack(alignment: .leading, spacing: MusicSpace.lg) {
-            HStack(alignment: .top, spacing: MusicSpace.lg) {
+            MusicHeroLayout() {
                 CatalogArtworkView(thumbnails: page.thumbnails, edge: 200, corner: .feature)
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    Text(page.title).font(.largeTitle.bold()).fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader).accessibilityIdentifier("catalogTitle")
+                    Text(page.title).font(MusicPageStyle.title).fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader).accessibilityIdentifier("catalogTitle")
                     if let show = page.show { Button(show.title) { navigator.openLink(show) }.buttonStyle(.link).accessibilityIdentifier("episodeShowLink") }
                     if !page.details.isEmpty { Text(page.details.joined(separator: String(localized: "detailSeparator"))).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeDetails") }
                     if let length = page.info.durationText { Text(length).font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeLength") }
@@ -208,7 +208,7 @@ public struct EpisodeDetailView: View {
                 Text("Progress marked “On this Mac” is kept on this Mac only. YouTube’s own player reports its progress to YouTube Music by itself.")
                     .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeProgressNote")
             }
-        }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+        }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
     }
     private func playbackReason(_ state: SearchPlayback) -> String? {
         switch state {

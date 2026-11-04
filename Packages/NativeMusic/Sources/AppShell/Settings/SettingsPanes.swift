@@ -235,7 +235,7 @@ struct DiagnosticsSettingsPane: View {
                 Text("Exactly this text is saved. \(bundle.redactions) items were redacted. No media, credentials, names, searches or links are included.").font(.footnote).foregroundStyle(MusicStyle.secondaryText)
                 ScrollView { Text(bundle.text).font(.system(.caption, design: .monospaced)).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading).accessibilityIdentifier("bundlePreviewText") }
                     .frame(minHeight: 260)
-                HStack { Button("Close", action: close).accessibilityIdentifier("bundleClose"); Spacer(); Button("Save…", action: export).accessibilityIdentifier("bundleSave").musicButtons(prominent: true) }
+                HStack { Button("Close", action: close).accessibilityIdentifier("bundleClose"); Spacer(); Button("Save…", action: export).accessibilityIdentifier("bundleSave").musicPageAction(prominent: true) }
             }.padding(MusicSpace.lg).frame(width: 560, height: 460)
         }
     }

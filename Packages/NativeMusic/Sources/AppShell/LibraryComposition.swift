@@ -42,8 +42,6 @@ extension LocalAccountBootstrap {
         let remote = LibraryCollectionModel(source: .history, reader: reader, continuer: continuer, accountScope: scope)
         let history = HistoryModel(remote: remote, store: store, policy: listeningPolicy, accountKey: accountKey)
         let surface = LibrarySurface(models: models, history: history, ledger: ledger, performer: searchPerformer, playback: signedIn, accountScope: scope, development: development)
-        surface.uploads = makeUploadsSurface(library: surface, reader: reader, continuer: continuer, writer: writer, scope: scope, signedIn: signedIn,
-                                             accountKey: accountKey, development: development)
         catalog.pageObserver = { [weak ledger] page in
             if let controls = page.header?.actions.controls { ledger?.observe(controls: controls) }
             for item in page.shelves.flatMap(\.items) { ledger?.observe(item: item) }

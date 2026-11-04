@@ -68,7 +68,7 @@ import SwiftUI
         popover.animates = ShellMotion.animatesWindows
         popover.delegate = self
         // The content exists only while the popover does, so a closed popover costs no view updates, artwork decoding or observation.
-        popover.contentViewController = NSHostingController(rootView: StatusPopoverView(shell: shell))
+        popover.contentViewController = NSHostingController(rootView: StatusPopoverView(shell: shell).appAppearance())
         self.popover = popover
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
     }
@@ -108,12 +108,13 @@ import SwiftUI
 struct StatusPopoverView: View {
     let shell: ShellCoordinator
     @State private var windowVisible = false
+    @State private var accent: MusicTint?
     var body: some View {
         let state = shell.transport
         MusicGlassGroup {
             VStack(alignment: .leading, spacing: MusicSpace.sm) {
                 HStack(spacing: MusicSpace.sm) {
-                    ShellCover(shell: shell, edge: Self.coverEdge, visible: windowVisible).audit("statusCover", group: "statusHeader", within: "statusPopover")
+                    ShellCover(shell: shell, edge: Self.coverEdge, visible: windowVisible, accentChanged: { accent = $0 }).audit("statusCover", group: "statusHeader", within: "statusPopover")
                     VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                         HStack(spacing: MusicSpace.xs) {
                             Text(state.hasItem ? state.title : String(localized: "YTMuse")).font(.headline).lineLimit(2).accessibilityIdentifier("statusTitle")
@@ -124,19 +125,24 @@ struct StatusPopoverView: View {
                     }
                     Spacer(minLength: 0)
                 }
-                HStack { Spacer(minLength: 0); ShellControls(shell: shell).audit("statusControls", group: "statusColumn", within: "statusPopover"); Spacer(minLength: 0) }
+                HStack { Spacer(minLength: 0); ShellControls(shell: shell, large: true, showMore: false).audit("statusControls", group: "statusColumn", within: "statusPopover"); Spacer(minLength: 0) }
+                ShellTimeline(shell: shell).audit("statusTimeline", group: "statusColumn", within: "statusPopover")
+                Divider().opacity(0.4)
                 HStack(spacing: MusicSpace.xs) {
-                    Image(systemName: "speaker.fill").foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
-                    Slider(value: Binding(get: { state.volume }, set: { shell.setVolume($0) }), in: 0...1) { Text("Volume") }.labelsHidden().tint(MusicStyle.accent)
-                        .disabled(!state.hasItem || !state.volumeEnabled).help(state.volumeHelp ?? "").accessibilityIdentifier("statusVolume")
-                    Image(systemName: "speaker.wave.3.fill").foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
-                }.audit("statusVolumeRow", group: "statusColumn", within: "statusPopover")
-                HStack {
-                    Button { shell.showMainWindow() } label: { Label("Show Window", systemImage: "macwindow") }.accessibilityIdentifier("statusShowWindow")
-                    Button { shell.showMiniPlayer() } label: { Label("Mini-player", systemImage: "rectangle.on.rectangle") }.labelStyle(.iconOnly).help(Text("Mini-player"))
-                        .accessibilityIdentifier("statusMiniPlayer")
+                    Button { shell.showMainWindow() } label: { Label("Show Window", systemImage: "macwindow") }
+                        .buttonStyle(.plain).font(.caption.weight(.medium)).help(Text("Show Window")).accessibilityIdentifier("statusShowWindow")
                     Spacer(minLength: 0)
-                }.musicButtons().audit("statusActions", group: "statusColumn", within: "statusPopover")
+                    if state.source == .owned {
+                        Menu { OwnedMoreActions(model: shell.playback) } label: {
+                            MusicGlyphLabel(systemImage: "ellipsis").accessibilityLabel(Text("More playback actions"))
+                        }.buttonStyle(.plain).menuIndicator(.hidden).fixedSize().help(Text("More playback actions"))
+                            .accessibilityIdentifier("sleepTimerMenu")
+                    }
+                    CapsuleVolume(level: state.volume, set: { shell.setVolume($0) }, label: "Volume", identifier: "statusVolume",
+                                  enabled: state.hasItem && state.volumeEnabled, help: state.volumeHelp ?? "")
+                    Button { shell.showMiniPlayer() } label: { Label("Mini-player", systemImage: "rectangle.on.rectangle") }
+                        .buttonStyle(.musicGlyph).help(Text("Mini-player")).accessibilityIdentifier("statusMiniPlayer")
+                }.audit("statusActions", group: "statusColumn", within: "statusPopover")
                 #if DEBUG
                 // Debug only: the window census and policy, so a UI run can state why the Dock icon is where it is.
                 Text(shell.windows.debugCensus).font(.caption2).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("shellCensus")
@@ -144,6 +150,7 @@ struct StatusPopoverView: View {
                 #endif
             }
         }.padding(MusicSpace.md).frame(width: Self.width)
+            .background { MusicCanvas(artworkAccent: accent?.color) }
             .audit("statusPopover", group: "outer", kind: .region)
             .modifier(PlaybackObservation(model: shell.playback))
             .background(WindowVisibility { windowVisible = $0 })

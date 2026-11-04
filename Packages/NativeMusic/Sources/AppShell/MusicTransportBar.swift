@@ -119,9 +119,9 @@ struct WebMusicTransportContent: View {
     }
     /// Title and artist, two lines. A failure, a notice or a refusal takes the artist line for as long as it lasts.
     private func titleBlock(_ state: WebMusicSnapshot) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: MusicSpace.hairline) {
             HStack(spacing: MusicSpace.xs) {
-                Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(.system(size: 13, weight: .semibold)).lineLimit(1)
+                Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(.system(size: compact ? 13 : 14, weight: .semibold)).lineLimit(1)
                     .accessibilityIdentifier("musicTitle").playerMatched("player-title", namespace, .position)
                 if state.isAd {
                     MusicBadge("Ad", style: .advertisement).fixedSize()
@@ -191,6 +191,7 @@ struct WebMusicTimelineView: View {
     @State private var preview: Double?
     @State private var hovering = false
     @State private var dragging = false
+    @FocusState private var focused: Bool
     var body: some View {
         let state = player.snapshot
         let position = player.timeline.position
@@ -204,7 +205,7 @@ struct WebMusicTimelineView: View {
             dragging = editing
             if !editing, let target = preview { preview = nil; Task { await player.seek(target) } }
         }
-        .disabled(!state.canSeek).labelsHidden()
+        .disabled(!state.canSeek).labelsHidden().focused($focused)
         .accessibilityLabel(Text("Playback position"))
         .accessibilityValue(Text(state.isAd ? "Ad playing" : (state.isLive ? (state.atLiveEdge ? "Live" : "\(Self.format(behind ?? 0)) behind live") : "\(Self.format(position)) of \(Self.format(state.duration))")))
         .accessibilityIdentifier("musicTimeline")
@@ -212,7 +213,7 @@ struct WebMusicTimelineView: View {
             Text(state.isAd ? "Ad" : (state.isLive ? (state.atLiveEdge ? String(localized: "Live") : Self.format(behind ?? 0)) : Self.format(preview ?? position))).monospacedDigit().frame(minWidth: 36)
                 .accessibilityIdentifier("musicElapsed")
             if plain {
-                MusicSlimSlider(fraction: shown / span, active: hovering || dragging, enabled: state.canSeek, thickness: PlayerCapsule.seekHoverThickness) { slider }
+                MusicSlimSlider(fraction: shown / span, active: hovering || dragging || focused, enabled: state.canSeek, thickness: PlayerCapsule.seekHoverThickness) { slider }
                     .onHover { hovering = $0 }
             } else { slider.tint(MusicStyle.accent) }
             Text(state.isAd || state.isLive ? "" : "-" + Self.format(max(0, state.duration - (preview ?? position)))).monospacedDigit().frame(minWidth: 40)
@@ -230,7 +231,7 @@ struct WebMusicControlsView: View {
     let player: WebMusicPlayer
     var large = false
     var namespace: Namespace.ID? = nil
-    /// The expanded player's look: the capsule's plain glyphs and accent Play circle, larger (the mini player and the popover keep the boxed controls).
+    /// The shared player family: plain glyphs and an accent Play circle, larger when requested.
     var plain = false
     var body: some View {
         if plain { WebCapsuleButtons(player: player, large: large, namespace: namespace) } else { boxed }

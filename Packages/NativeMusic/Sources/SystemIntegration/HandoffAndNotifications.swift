@@ -6,7 +6,7 @@ import Foundation
 
 /// What the app advertises for Handoff: the public canonical link of the item page being viewed, and the navigation context (kind and identifier),
 /// nothing else. No title, account, cookie, token, signed URL or local path, and nothing for a screen that may hold private content (a playlist,
-/// the Library, History, Downloads, Uploads, the queue).
+/// the Library, History, Downloads, the queue).
 ///
 /// Limits of the receiving side, stated because nothing here can change them:
 /// - Handoff only reaches another device signed in to the same Apple Account, nearby, with Bluetooth and Wi-Fi on.

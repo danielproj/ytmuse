@@ -206,29 +206,74 @@ public enum WebMusicScripts {
       }
     """
 
-    /// CORE-A: read-only access to the page's own queue (`ytmusic-player-queue-item` elements, whose `data` is the service's own
-    /// `playlistPanelVideoRenderer`, bare or inside a `playlistPanelVideoWrapperRenderer`). An element in any other shape is skipped, so an unknown
+    /// CORE-A: read-only access to the page's own queue (legacy queue items, redesigned renderer elements, or responsive rows scoped to the queue).
+    /// The payload is a bare `playlistPanelVideoRenderer` or its named wrapper. An element in any other shape is skipped, so an unknown
     /// layout yields an empty list (hidden in the app) and never an error or an invented item. The renderer fields read by the observer
     /// (`title.runs`, `longBylineText.runs`, `thumbnail.thumbnails`, `videoId`, `selected`, `navigationEndpoint.watchEndpoint`) are the ones in the
-    /// anonymous public `next` capture `Fixtures/W18-real/next-song.json`; that the DOM `data` carries them in this exact form is a live check.
+    /// anonymous public `next` captures in `Fixtures/W18-real` and `Fixtures/R1-real`. DOM binding remains a live check; compatibility evidence
+    /// and its limits are recorded in `artifacts/harness/nodes/LIVE-CORE/readback.md`.
     static let queueDetection = """
       function ytmuseQueueEntries() {
         var result = [];
         try {
-          var nodes = document.querySelectorAll("ytmusic-player-queue-item");
+          // The redesigned queue uses renderer elements; responsive rows are
+          // accepted only inside the queue, never from the surrounding catalog.
+          var selector = "ytmusic-player-queue-item, ytmusic-player-queue-item-renderer, ytmusic-player-queue ytmusic-responsive-list-item-renderer";
+          var nodes = document.querySelectorAll(selector);
           for (var i = 0; i < nodes.length && i < 300; i += 1) {
-            var data = nodes[i].data, renderer = null;
+            var node = nodes[i];
+            // A responsive row inside a queue-item is the same occurrence.
+            if (typeof node.closest === "function") {
+              var outer = node.closest("ytmusic-player-queue-item, ytmusic-player-queue-item-renderer");
+              if (outer && outer !== node) { continue; }
+            }
+            var data = node.data || node.__data, renderer = null;
             if (data && data.playlistPanelVideoWrapperRenderer) {
               var wrapper = data.playlistPanelVideoWrapperRenderer;
               renderer = wrapper.primaryRenderer && wrapper.primaryRenderer.playlistPanelVideoRenderer;
             } else if (data && data.playlistPanelVideoRenderer) { renderer = data.playlistPanelVideoRenderer; }
+            else if (data && typeof data.videoId === "string") { renderer = data; }
             if (!renderer || typeof renderer.videoId !== "string" || !/^[A-Za-z0-9_-]{11}$/.test(renderer.videoId)) { continue; }
             var marked = renderer.selected === true;
-            try { if (!marked && typeof nodes[i].hasAttribute === "function" && nodes[i].hasAttribute("selected")) { marked = true; } } catch (e) {}
+            try {
+              if (!marked && typeof node.hasAttribute === "function") {
+                marked = node.hasAttribute("selected") || node.hasAttribute("is-playlist-panel-video-renderer-selected");
+              }
+              if (!marked && typeof node.getAttribute === "function") {
+                var current = node.getAttribute("aria-current");
+                marked = current === "true" || current === "page";
+              }
+              if (!marked && node.classList && typeof node.classList.contains === "function") { marked = node.classList.contains("selected"); }
+            } catch (e) {}
             result.push({ renderer: renderer, selected: marked });
           }
         } catch (e) {}
         return result;
+      }
+      // Playlist identity must be observed alongside the same playing video.
+      // Never substitute the native request or the page URL for player read-back.
+      function ytmuseObservedPlaylistID(playing) {
+        if (typeof playing !== "string" || !/^[A-Za-z0-9_-]{11}$/.test(playing)) { return ""; }
+        var found = [];
+        function note(value) {
+          if (typeof value === "string" && /^[A-Za-z0-9_-]{2,128}$/.test(value) && found.indexOf(value) < 0) { found.push(value); }
+        }
+        var apis = ytmuseAdAPIs();
+        for (var i = 0; i < apis.length; i += 1) {
+          try {
+            if (typeof apis[i].getVideoData !== "function" || typeof apis[i].getPlaylistId !== "function") { continue; }
+            var data = apis[i].getVideoData();
+            if (data && (data.video_id || data.videoId) === playing) { note(apis[i].getPlaylistId()); }
+          } catch (e) {}
+        }
+        var entries = ytmuseQueueEntries();
+        var selected = entries.filter(function (entry) { return entry.selected; });
+        if (selected.length > 1) { return ""; }
+        if (selected.length === 1 && selected[0].renderer.videoId === playing) {
+          var endpoint = selected[0].renderer.navigationEndpoint && selected[0].renderer.navigationEndpoint.watchEndpoint;
+          if (endpoint && endpoint.videoId === playing) { note(endpoint.playlistId); }
+        }
+        return found.length === 1 ? found[0] : "";
       }
       // The index of the item that is playing: the entry the page marks selected AND whose video is the playing one; failing that, the only entry
       // with that video. A video listed twice with no marker is ambiguous, so it is -1 (nothing is claimed to follow it).
@@ -294,22 +339,10 @@ public enum WebMusicScripts {
       }
       function finite(value) { return typeof value === "number" && isFinite(value) && value >= 0 && value <= 86400 ? value : 0; }
       function videoID() {
-        var api = ytmusePlayerAPI();
-        try {
-          var data = api && typeof api.getVideoData === "function" ? api.getVideoData() : null;
-          var id = data && (data.video_id || data.videoId);
-          if (typeof id === "string" && /^[A-Za-z0-9_-]{11}$/.test(id)) { return id; }
-        } catch (e) {}
-        return "";
+        var id = ytmusePlayingVideoID();
+        return typeof id === "string" && /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
       }
-      function playlistID() {
-        var api = ytmusePlayerAPI();
-        try {
-          var id = api && typeof api.getPlaylistId === "function" ? api.getPlaylistId() : "";
-          if (typeof id === "string" && /^[A-Za-z0-9_-]{2,128}$/.test(id)) { return id; }
-        } catch (e) {}
-        return "";
-      }
+      function playlistID() { return ytmuseObservedPlaylistID(videoID()); }
       function contentVideoID() {
         try {
           var id = new URL(window.location.href).searchParams.get("v") || "";
@@ -545,27 +578,69 @@ public enum WebMusicScripts {
 
     // MARK: Fixed command bodies (arguments only; see WebMusicCommand)
 
+    /// The public web client routes UI endpoints through `yt-navigate` and queue
+    /// operations through `yt-action`. Legacy wrappers may expose resolveCommand.
+    /// Dispatch is not playback proof: native confirmation still requires fresh
+    /// target/queue observations. See LIVE-CORE/routing.md for source evidence.
+    static let commandRouting = """
+      function ytmuseRouteCommand(command, queueOnly) {
+        var app = document.querySelector("ytmusic-app");
+        if (!app) { return false; }
+        if (typeof app.resolveCommand === "function") { return app.resolveCommand(command) !== false; }
+        // A parser-created but not upgraded app element has no installed routes.
+        if (typeof customElements === "undefined" || typeof customElements.get !== "function" || !customElements.get("ytmusic-app")) { return false; }
+        if (typeof app.dispatchEvent !== "function" || typeof CustomEvent !== "function") { return false; }
+        var name = queueOnly ? "yt-action" : "yt-navigate";
+        var detail = queueOnly
+          ? { actionName: "yt-queue-update-command", optionalAction: false, args: [command], returnValue: [] }
+          : { endpoint: command };
+        app.dispatchEvent(new CustomEvent(name, { bubbles: true, composed: true, detail: detail }));
+        return true;
+      }
+    """
+
     static let loadPlaylist = """
     var state = window.__ytmuseState;
     if (!state || state.doc < 0) { return "unavailable"; }
+    \(commandRouting)
     state.load = load; state.intent = true;
-    var app = document.querySelector("ytmusic-app");
-    if (!app || typeof app.resolveCommand !== "function") { return "fallback"; }
-    try { app.resolveCommand({ watchEndpoint: { playlistId: playlistId } }); return "router"; } catch (e) { return "fallback"; }
+    try { return ytmuseRouteCommand({ watchEndpoint: { playlistId: playlistId } }, false) ? "router" : "fallback"; } catch (e) { return "fallback"; }
     """
     /// Like `loadPlaylist`, with the endpoint exactly as the service published it: from a given video, and/or with its own
     /// parameters (the shuffle flag). Empty strings mean "not given".
     static let loadTarget = """
     var state = window.__ytmuseState;
     if (!state || state.doc < 0) { return "unavailable"; }
-    state.load = load; state.intent = true;
-    var app = document.querySelector("ytmusic-app");
-    if (!app || typeof app.resolveCommand !== "function") { return "fallback"; }
+    \(commandRouting)
     var endpoint = { playlistId: playlistId };
     if (videoId !== "") { endpoint.videoId = videoId; }
     if (params !== "") { endpoint.params = params; }
     var command = (videoId === "" && params !== "") ? { watchPlaylistEndpoint: endpoint } : { watchEndpoint: endpoint };
-    try { app.resolveCommand(command); return "router"; } catch (e) { return "fallback"; }
+    var previousLoad = state.load, previousIntent = state.intent;
+    state.load = load; state.intent = true;
+    try { if (ytmuseRouteCommand(command, false)) { return "router"; } } catch (e) {}
+    state.load = previousLoad; state.intent = previousIntent; return "fallback";
+    """
+    /// Frozen public queue-chip operation, routed by the same official page as other native controls.
+    static let updateRadioQueue = """
+    var state = window.__ytmuseState;
+    if (!state || state.doc < 0) { return "unavailable"; }
+    if (state.doc !== documentID || state.load !== load) { return "rejected"; }
+    \(adDetection)
+    \(queueDetection)
+    \(commandRouting)
+    if (ytmuseAdShowing()) { return "ad"; }
+    if (ytmusePlayingVideoID() !== videoId) { return "rejected"; }
+    if (ytmuseObservedPlaylistID(videoId) !== currentPlaylistId) { return "rejected"; }
+    var endpoint = { playlistId: playlistId, params: params };
+    if (playerParams !== "") { endpoint.playerParams = playerParams; }
+    var command = { queueUpdateCommand: {
+        queueUpdateSection: "QUEUE_UPDATE_SECTION_AUTOPLAY",
+        fetchContentsCommand: { watchEndpoint: endpoint },
+        dedupeAgainstLocalQueue: true,
+        syncMode: "QUEUE_UPDATE_SYNC_MODE_DEDUPE_AGAINST_LOCAL"
+    } };
+    try { return ytmuseRouteCommand(command, true) ? "router" : "fallback"; } catch (e) { return "fallback"; }
     """
     static let play = """
     var state = window.__ytmuseState;
@@ -768,6 +843,7 @@ public enum WebMusicScripts {
     if (!state || state.doc < 0) { return "unavailable"; }
     \(adDetection)
     \(queueDetection)
+    \(commandRouting)
     if (ytmuseAdShowing()) { return "ad"; }
     var playing = ytmusePlayingVideoID();
     var entries = ytmuseQueueEntries();
@@ -778,11 +854,12 @@ public enum WebMusicScripts {
     if (!target) { return "rejected"; }
     var endpoint = target.renderer.navigationEndpoint;
     if (!endpoint || typeof endpoint !== "object" || !endpoint.watchEndpoint) { return "rejected"; }
-    var app = document.querySelector("ytmusic-app");
-    if (!app || typeof app.resolveCommand !== "function") { return "unsupported"; }
     var before = state.intent;
     state.intent = true;
-    try { app.resolveCommand(endpoint); return "ok"; } catch (e) { state.intent = before; return "rejected"; }
+    try {
+      if (ytmuseRouteCommand(endpoint, false)) { return "ok"; }
+      state.intent = before; return "unsupported";
+    } catch (e) { state.intent = before; return "rejected"; }
     """
     /// CORE-A: the player bar's own shuffle toggle. Clicks only a control whose state it can read, and answers `ok` only once the page shows the
     /// requested state. Refused while an advertisement shows (a shuffle may restart the track).

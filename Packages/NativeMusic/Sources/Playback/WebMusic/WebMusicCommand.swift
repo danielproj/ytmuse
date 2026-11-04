@@ -1,4 +1,5 @@
 import Foundation
+import Domain
 
 /// The only operations native code performs on the hidden player. Each maps to a
 /// constant script body plus typed arguments for `callAsyncJavaScript`; no
@@ -7,6 +8,7 @@ public enum WebMusicCommand: Sendable, Equatable {
     case loadPlaylist(String, load: UInt64)
     /// A play endpoint the service published: the playlist, optionally starting at a video and/or carrying the service's own parameters (a shuffle flag).
     case loadTarget(String, videoID: String?, params: String?, load: UInt64)
+    case updateRadioQueue(MusicQueueFilterCommand, document: UInt64, load: UInt64, videoID: String, currentPlaylistID: String)
     case play, pause
     case seek(Double)
     case next, previous
@@ -51,6 +53,12 @@ public enum WebMusicCommand: Sendable, Equatable {
                   video.map({ WebMusicIdentifier.isVideoID($0) }) ?? true,
                   params.map(WebMusicIdentifier.isEndpointParams) ?? true else { throw .invalidArgument }
             return .init(body: WebMusicScripts.loadTarget, arguments: ["playlistId": id, "videoId": video ?? "", "params": params ?? "", "load": Int(load)])
+        case .updateRadioQueue(let command, let document, let load, let videoID, let currentPlaylistID):
+            guard load > 0, load <= 9_007_199_254_740_991, document > 0, document <= 9_007_199_254_740_991,
+                  WebMusicIdentifier.isVideoID(videoID), WebMusicIdentifier.isPlaylistID(currentPlaylistID) else { throw .invalidArgument }
+            return .init(body: WebMusicScripts.updateRadioQueue, arguments: ["playlistId": command.playlistID,
+                "params": command.params, "playerParams": command.playerParams ?? "", "load": Int(load),
+                "documentID": Int(document), "videoId": videoID, "currentPlaylistId": currentPlaylistID])
         case .play: return .init(body: WebMusicScripts.play, arguments: [:])
         case .pause: return .init(body: WebMusicScripts.pause, arguments: [:])
         case .seek(let seconds):

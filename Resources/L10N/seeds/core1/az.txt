@@ -52,7 +52,6 @@
 52|%@ hesabına keçildi.
 53|%@ oxut
 54|Cari çıxış: %@
-55|“%@” yükləmələrinizdən silinsin?
 56|Reklam oxunur
 57|Reklam bitdi
 58|İndi oxunur: “%@”, ifaçı: %@.

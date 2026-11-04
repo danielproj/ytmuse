@@ -52,7 +52,6 @@
 52|Skipt yfir í %@.
 53|Spila %@
 54|Núverandi úttak: %@
-55|Fjarlægja „%@“ úr innsendu efni þínu?
 56|Auglýsing er í spilun
 57|Auglýsingunni er lokið
 58|Í spilun núna: „%@“ með %@.

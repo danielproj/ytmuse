@@ -135,7 +135,13 @@ struct BrowserShell: View {
                 Button { navigationMotion = .navigation; navigation.forward() } label: { Label("Forward", systemImage: "chevron.right") }.disabled(!navigation.session.canForward).help(Text("Forward")).accessibilityIdentifier("browserForward")
             }
             ToolbarItemGroup(placement: .primaryAction) {
-                AccountSwitcher(label: "Accounts", pending: accounts.model.busy) { showAccounts = true }.accessibilityIdentifier("manageAccounts")
+                Menu {
+                    Button { showAccounts = true } label: { Label("Manage Accounts", systemImage: "person.crop.circle") }
+                        .disabled(accounts.model.busy).accessibilityIdentifier("manageAccounts")
+                    Divider()
+                    SettingsLink { Label("Settings", systemImage: "gearshape") }.accessibilityIdentifier("openSettings")
+                } label: { Label("Accounts", systemImage: "person.crop.circle") }
+                    .help(Text("Accounts")).accessibilityIdentifier("accountMenu")
                 Button { toggle(.lyrics) } label: { Label("Lyrics", systemImage: "quote.bubble") }.help(Text("Lyrics"))
                 Button { toggle(.queue) } label: { Label("Queue", systemImage: "list.bullet") }.accessibilityIdentifier("browserQueue")
             }
@@ -370,28 +376,29 @@ struct BrowserShell: View {
         List(selection: Binding<BrowserDestination?>(get: { navigation.session.current.destination }, set: { if let value = $0 { navigationMotion = .navigation; navigation.open(value) } })) {
             Section {
                 ForEach([BrowserDestination.home, .explore, .search, .library, .downloads], id: \.self) { destination in
-                    Label(LocalizedStringKey(destination.title), systemImage: destination.symbol).tag(destination).accessibilityIdentifier("nav-\(destination.rawValue)")
+                    Label(LocalizedStringKey(destination.title), systemImage: destination.symbol)
+                        .font(.body.weight(navigation.session.current.destination == destination ? .semibold : .regular))
+                        .symbolVariant(navigation.session.current.destination == destination ? .fill : .none)
+                        .padding(.vertical, MusicSpace.xxs).tag(destination).accessibilityIdentifier("nav-\(destination.rawValue)")
                         .sidebarFirstRowAudit(destination == .home)
                 }
             }
             Section("Your music") {
-                ForEach([BrowserDestination.history, .uploads, .podcasts, .nowPlaying], id: \.self) { destination in
-                    Label(LocalizedStringKey(destination.title), systemImage: destination.symbol).tag(destination).accessibilityIdentifier("nav-\(destination.rawValue)")
+                ForEach([BrowserDestination.history, .podcasts, .nowPlaying], id: \.self) { destination in
+                    Label(LocalizedStringKey(destination.title), systemImage: destination.symbol)
+                        .font(.body.weight(navigation.session.current.destination == destination ? .semibold : .regular))
+                        .symbolVariant(navigation.session.current.destination == destination ? .fill : .none)
+                        .padding(.vertical, MusicSpace.xxs).tag(destination).accessibilityIdentifier("nav-\(destination.rawValue)")
                 }
             }
-        }.listStyle(.sidebar).scrollContentBackground(.hidden)
+        }.listStyle(.sidebar).environment(\.defaultMinListRowHeight, 36).scrollContentBackground(.hidden)
             // POL-A: the first row's highlight sat ~4 pt under the panel's rounded top edge but ~16-20 pt from its sides. A top inset gives the
             // selection the same breathing room on every side; the soft top edge effect lets rows scrolled up fade out instead of cutting against the corner.
             // `contentMargins(.top, ..., for: .scrollContent)` was tried first and has no effect on this sidebar-style List (the audit measured the row
             // 6 pt below the panel top with 12 and with 40); `safeAreaPadding` moves it (SurfaceAuditTests, "sidebarFirstRow").
             .safeAreaPadding(.top, Self.sidebarTopInset)
             .scrollEdgeEffectStyle(.soft, for: .top)
-            .safeAreaBar(edge: .bottom) {
-                VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    Text("Independent. Native. Yours.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
-                    SettingsLink { Label("Settings", systemImage: "gearshape") }.accessibilityIdentifier("openSettings").musicButtons().browserRegion("sidebarSettings")
-                }.frame(maxWidth: .infinity, alignment: .leading).padding(MusicSpace.md).browserRegion("sidebarFooter")
-            }.scrollEdgeEffectStyle(.hard, for: .bottom).musicSurface().audit("sidebarPanel", group: "panels", kind: .region)
+            .scrollEdgeEffectStyle(.hard, for: .bottom).musicSurface().audit("sidebarPanel", group: "panels", kind: .region).browserRegion("sidebar")
             .padding([.leading, .vertical], MusicSpace.sm)
     }
     @ViewBuilder private var destination: some View {
@@ -410,13 +417,7 @@ struct BrowserShell: View {
     @ViewBuilder private var queue: some View {
         if let player = activeMusic {
             ScrollView {
-            VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    WebMusicQueueView(player: player).browserRegion("queueList")
-                    // YouTube Music owns this queue and its upcoming items are not visible to the app, so there is nothing true to save.
-                    QueueSaveAsPlaylistEntry(surface: accounts.library.playlists, songs: [], leftOut: 0,
-                                             unavailableReason: String(localized: "YouTube Music manages the upcoming songs of this queue. The app only sees the one playing, so it can’t save this queue as a playlist."))
-                        .padding(.horizontal, MusicSpace.md)
-                }
+                WebMusicQueueView(player: player).browserRegion("queueList")
             }
         } else { nativeQueue }
     }

@@ -132,7 +132,7 @@ public struct CommandPaletteView: View {
                 EmptyState(title: "No matches", message: "Try another command, or search for music.")
             }
         }
-        .padding(MusicSpace.md)
+        .padding(MusicSpace.lg)
         }
         .frame(minWidth: 520, minHeight: 420).musicCanvas()
         .task { focused = true }
@@ -144,7 +144,7 @@ public struct CommandPaletteView: View {
         return VStack(alignment: .leading, spacing: MusicSpace.hairline) {
             HStack(spacing: MusicSpace.sm) {
                 Image(systemName: command.symbol).frame(width: 24).foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
-                Text(command.title)
+                Text(command.title).font(.body.weight(.medium))
                 Spacer(minLength: 8)
                 if let shortcut = command.shortcut { Text(shortcut).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
             }

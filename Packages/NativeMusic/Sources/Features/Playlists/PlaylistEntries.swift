@@ -132,3 +132,79 @@ struct PlaylistPageDrop: ViewModifier {
         } else { content }
     }
 }
+
+/// Only concrete songs/videos can enter the direct chooser. Collection ids are never addition targets.
+enum DirectPlaylistAddition {
+    static func candidate(_ item: MusicCatalogItem) -> PlaylistAddition? {
+        guard item.kind == .song || item.kind == .video, item.availability != .unavailable else { return nil }
+        return song(videoID: item.videoID, title: item.title)
+    }
+    static func candidate(_ result: SearchResult) -> PlaylistAddition? {
+        guard result.kind == .song || result.kind == .video else { return nil }
+        return song(videoID: result.target.videoID, title: result.title)
+    }
+    static func offered(_ candidate: PlaylistAddition?, playback: SearchPlayback?) -> PlaylistAddition? {
+        playback == .available ? candidate : nil
+    }
+    private static func song(videoID: String?, title: String) -> PlaylistAddition? {
+        guard let videoID, MusicPlaylistRequest.isVideoID(videoID) else { return nil }
+        return PlaylistAddition(videoID: videoID, title: title)
+    }
+}
+
+/// Captured when a native action is constructed, checked both at press and presentation.
+@MainActor struct DirectPlaylistScope: Equatable {
+    let identity: ObjectIdentifier
+    let generation: UInt64
+    init(_ surface: PlaylistSurface) { identity = ObjectIdentifier(surface); generation = surface.accountGeneration }
+    func admits(_ song: PlaylistAddition, current: PlaylistAddition?, surface: PlaylistSurface?) -> Bool {
+        guard let surface, surface.isSignedIn else { return false }
+        return self == DirectPlaylistScope(surface) && song == current
+    }
+}
+
+private struct DirectPlaylistSelection: Identifiable {
+    let id = UUID()
+    let song: PlaylistAddition
+    let scope: DirectPlaylistScope
+}
+
+/// State and sheet belong to the row/card modifier, outside the native menu's transient subtree.
+/// Selecting the entry snapshots the song and opens only the existing chooser; all writes remain in its staged flow.
+private struct DirectPlaylistMenu<Menu: View>: ViewModifier {
+    let addition: PlaylistAddition?
+    let identifier: String
+    @ViewBuilder let menu: () -> Menu
+    @Environment(\.playlistSurface) private var surface
+    @State private var pending: DirectPlaylistSelection?
+    private var offered: PlaylistAddition? { DirectPlaylistAddition.offered(addition, playback: surface?.playback) }
+    func body(content: Content) -> some View {
+        content
+            .contextMenu {
+                menu()
+                if let offered, let surface { entry(offered, scope: DirectPlaylistScope(surface)) }
+            }
+            .accessibilityActions { if let offered, let surface { entry(offered, scope: DirectPlaylistScope(surface)) } }
+            .sheet(item: $pending) { selection in
+                if selection.scope.admits(selection.song, current: offered, surface: surface), let surface { PlaylistAddView(surface: surface, song: selection.song) }
+            }
+            .onChange(of: addition) { _, _ in pending = nil }
+            .onChange(of: surface.map(ObjectIdentifier.init)) { _, _ in pending = nil }
+            .onChange(of: surface?.accountGeneration) { _, _ in pending = nil }
+            .onChange(of: offered) { _, new in if new == nil { pending = nil } }
+    }
+    private func entry(_ song: PlaylistAddition, scope: DirectPlaylistScope) -> some View {
+        Button {
+            guard scope.admits(song, current: offered, surface: surface) else { return }
+            pending = DirectPlaylistSelection(song: song, scope: scope)
+        } label: { Label("Add to Playlist…", systemImage: "text.badge.plus") }
+            .accessibilityLabel(Text(verbatim: String(localized: "Add to Playlist…") + " “\(song.title)”"))
+            .accessibilityIdentifier(identifier)
+    }
+}
+
+extension View {
+    func directPlaylistMenu<Menu: View>(addition: PlaylistAddition?, identifier: String, @ViewBuilder menu: @escaping () -> Menu) -> some View {
+        modifier(DirectPlaylistMenu(addition: addition, identifier: identifier, menu: menu))
+    }
+}

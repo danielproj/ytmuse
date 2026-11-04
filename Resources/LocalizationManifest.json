@@ -61,8 +61,8 @@
     "it-CH",
     "pt-PT"
   ],
-  "catalogKeyCount": 1488,
-  "translatableKeyCount": 1448,
+  "catalogKeyCount": 1416,
+  "translatableKeyCount": 1375,
   "completeLocales": [
     "en",
     "fr",
@@ -127,8 +127,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -140,8 +140,8 @@
         "few",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -154,8 +154,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -166,8 +166,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -178,8 +178,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -190,7 +190,7 @@
         "one",
         "other"
       ],
-      "translatedKeys": 1448,
+      "translatedKeys": 1375,
       "coverage": 1.0,
       "complete": true,
       "origin": "source",
@@ -202,8 +202,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -214,8 +214,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -227,7 +227,7 @@
         "many",
         "other"
       ],
-      "translatedKeys": 1448,
+      "translatedKeys": 1375,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -239,7 +239,7 @@
         "one",
         "other"
       ],
-      "translatedKeys": 1448,
+      "translatedKeys": 1375,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -251,8 +251,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -263,8 +263,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -278,8 +278,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -291,8 +291,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -304,8 +304,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -318,8 +318,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -333,8 +333,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -347,8 +347,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -360,8 +360,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -373,8 +373,8 @@
         "few",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -387,8 +387,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -401,8 +401,8 @@
         "few",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -414,7 +414,7 @@
         "many",
         "other"
       ],
-      "translatedKeys": 1448,
+      "translatedKeys": 1375,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -426,8 +426,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -440,7 +440,7 @@
         "many",
         "other"
       ],
-      "translatedKeys": 1448,
+      "translatedKeys": 1375,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -454,8 +454,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -468,8 +468,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -480,8 +480,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -492,8 +492,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -504,8 +504,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -516,8 +516,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -529,8 +529,8 @@
         "few",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -541,8 +541,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -554,8 +554,8 @@
         "few",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -567,8 +567,8 @@
         "few",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -579,8 +579,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -592,8 +592,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -604,8 +604,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -616,8 +616,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -632,8 +632,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -646,8 +646,8 @@
         "few",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -658,8 +658,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -670,8 +670,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -682,8 +682,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -694,8 +694,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -706,8 +706,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -718,8 +718,8 @@
         "one",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42"
@@ -769,7 +769,7 @@
         "one",
         "other"
       ],
-      "translatedKeys": 1448,
+      "translatedKeys": 1375,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -787,7 +787,7 @@
       "origin": "inherits it",
       "review": "inherits-base",
       "complete": false,
-      "coverage": 0.0456
+      "coverage": 0.0473
     },
     "pt-PT": {
       "kind": "formatting-variant",
@@ -796,8 +796,8 @@
         "many",
         "other"
       ],
-      "translatedKeys": 66,
-      "coverage": 0.0456,
+      "translatedKeys": 65,
+      "coverage": 0.0473,
       "complete": false,
       "origin": "machine-seed",
       "review": "pending-W42",

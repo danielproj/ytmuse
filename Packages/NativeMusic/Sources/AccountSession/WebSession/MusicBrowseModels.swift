@@ -40,7 +40,11 @@ public struct MusicRadioAction: Sendable, Equatable, Hashable {
     public let videoID: String?
     /// The parameters the action's endpoint carried (a radio endpoint in the real captures carries them), sent unchanged.
     public let params: String?
-    public init(playlistID: String, videoID: String? = nil, params: String? = nil) { self.playlistID = playlistID; self.videoID = videoID; self.params = params }
+    /// Additional opaque player options carried by a published queue fetch endpoint.
+    public let playerParams: String?
+    public init(playlistID: String, videoID: String? = nil, params: String? = nil, playerParams: String? = nil) {
+        self.playlistID = playlistID; self.videoID = videoID; self.params = params; self.playerParams = playerParams
+    }
 }
 /// One entry of a shelf, grid, track list or navigation tile. Only identifiers the entry itself carried are present.
 public struct MusicCatalogItem: Sendable, Equatable, Identifiable {
@@ -74,11 +78,8 @@ public struct MusicCatalogItem: Sendable, Equatable, Identifiable {
     public let occurrenceID: String?
     /// The write controls the entry published for itself (rate, save, follow); nil when it published none.
     public let controls: MusicItemControls?
-    /// A track the person uploaded (it plays from the Uploads library, not from the catalog's radio).
-    public let isUpload: Bool
-    /// The id the service's own menu for this upload names as the target of its "Delete from library" command (`musicDeletePrivatelyOwnedEntityCommand`),
-    /// when a library page published one. Nothing else supplies a removal target: no id is derived or guessed.
-    public let uploadEntityID: String?
+    /// Private service media has no supported catalog playback or public share target.
+    public let isPrivatelyOwned: Bool
     /// The radio the entry's own menu offers ("Start mix"), when it offers exactly one. Nil: the entry published none.
     public let radio: MusicRadioAction?
     /// An episode's progress and menu facts as its row printed them (W18); nil for every other kind and for an episode row that printed none.
@@ -92,12 +93,12 @@ public struct MusicCatalogItem: Sendable, Equatable, Identifiable {
     public init(kind: MusicEntityKind, title: String, details: [String] = [], serviceLabel: String? = nil, explicit: Bool = false,
                 availability: MusicAvailability = .available, videoID: String? = nil, browseID: String? = nil, browseParams: String? = nil,
                 playlistID: String? = nil, contextPlaylistID: String? = nil, thumbnails: [MusicThumbnail] = [], links: [MusicLink] = [], position: String? = nil,
-                durationText: String? = nil, occurrenceID: String? = nil, controls: MusicItemControls? = nil, isUpload: Bool = false, uploadEntityID: String? = nil,
+                durationText: String? = nil, occurrenceID: String? = nil, controls: MusicItemControls? = nil, isPrivatelyOwned: Bool = false,
                 radio: MusicRadioAction? = nil, episode: MusicEpisodeInfo? = nil) {
         self.kind = kind; self.title = title; self.details = details; self.serviceLabel = serviceLabel; self.explicit = explicit
         self.availability = availability; self.videoID = videoID; self.browseID = browseID; self.browseParams = browseParams
         self.playlistID = playlistID; self.contextPlaylistID = contextPlaylistID; self.thumbnails = thumbnails; self.links = links; self.position = position
-        self.durationText = durationText; self.occurrenceID = occurrenceID; self.controls = controls; self.isUpload = isUpload; self.uploadEntityID = uploadEntityID
+        self.durationText = durationText; self.occurrenceID = occurrenceID; self.controls = controls; self.isPrivatelyOwned = isPrivatelyOwned
         self.radio = radio; self.episode = episode
     }
 }
@@ -261,7 +262,11 @@ public struct MusicRadioChip: Sendable, Equatable {
     public let isSelected: Bool
     public let playlistID: String
     public let params: String
-    public init(title: String, isSelected: Bool, playlistID: String, params: String) { self.title = title; self.isSelected = isSelected; self.playlistID = playlistID; self.params = params }
+    /// Additional published playback semantics. Retained verbatim; the shared playback path cannot apply these yet.
+    public let playerParams: String?
+    public init(title: String, isSelected: Bool, playlistID: String, params: String, playerParams: String? = nil) {
+        self.title = title; self.isSelected = isSelected; self.playlistID = playlistID; self.params = params; self.playerParams = playerParams
+    }
 }
 /// What a radio's queue (`next`) response says about tuning that radio. Empty `chips` is a real answer only when a queue response was read.
 public struct MusicRadioQueue: Sendable, Equatable {
@@ -269,7 +274,7 @@ public struct MusicRadioQueue: Sendable, Equatable {
     public init(chips: [MusicRadioChip]) { self.chips = chips }
 }
 /// The queue request a radio is started or filtered with. This is the seam where a radio's tuner settings arrive; nothing in the application
-/// sends it yet (the live reader is unresolved), so it is a typed value whose wire body is built and tested in the adapter.
+/// uses the reference-only tuner setting below in production. Production queue reads forward only published action values.
 public enum MusicRadioQueueRequest: Sendable, Equatable {
     /// Start a radio from its service action. `tunerSetting` is sent as the request's `tunerSettingValue`.
     case start(MusicRadioAction, tunerSetting: String)

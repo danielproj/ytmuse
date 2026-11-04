@@ -111,7 +111,7 @@ import Testing
 
     @Test func aPlaylistAndEveryPrivateScreenAdvertiseNothing() {
         #expect(HandoffActivity(item: LinkItem(kind: .playlist, identifier: "PLvcD45uIlPVoAkPQ5LTumatKEWZlxbHYN")) == nil, "a playlist may be private")
-        #expect(HandoffActivity(item: nil) == nil, "no item page: Library, History, Downloads, Uploads, the queue")
+        #expect(HandoffActivity(item: nil) == nil, "no item page: Library, History, Downloads, the queue")
         #expect(HandoffActivity.advertisedKinds == [.song, .album, .artist, .podcast, .episode])
     }
 

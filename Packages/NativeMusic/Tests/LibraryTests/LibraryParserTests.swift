@@ -17,7 +17,6 @@ import Testing
         .init(name: "library-playlists", kind: .playlists, items: 5, classified: 4, unsupported: 1, kinds: [.playlist]),
         .init(name: "library-podcasts", kind: .podcasts, items: 2, classified: 2, unsupported: 0, kinds: [.podcast]),
         .init(name: "library-saved-episodes", kind: .savedEpisodes, items: 8, classified: 8, unsupported: 0, kinds: [.episode]),
-        .init(name: "library-uploads", kind: .uploads, items: 4, classified: 4, unsupported: 0, kinds: [.song]),
     ]
 
     @Test(arguments: LibraryParserTests.table) func everyRendererIsAccountedForAndHoldsTheKindsItsCollectionHolds(_ expected: Expected) throws {
@@ -84,19 +83,19 @@ import Testing
     }
     @Test func uploadedTracksAreMarkedAndOnlyReadInACollection() throws {
         let page = try libraryPage("library-uploads.json")
-        #expect(page.shelves[0].items.count == 4 && page.shelves[0].items.allSatisfy { $0.isUpload && $0.kind == .song })
+        #expect(page.shelves[0].items.count == 4 && page.shelves[0].items.allSatisfy { $0.isPrivatelyOwned && $0.kind == .song })
         let catalog = try? MusicBrowseParser.parse(try w12("library-uploads.json"))
         #expect(catalog == nil || catalog?.shelves.flatMap(\.items).isEmpty == true, "a catalog page never presents an upload")
     }
     @Test @MainActor func anUploadedTrackIsListedButNeverOfferedAPlayTargetOrALink() throws {
         let upload = try #require(try libraryPage("library-uploads.json").shelves[0].items.first)
-        #expect(upload.isUpload && upload.videoID != nil)
+        #expect(upload.isPrivatelyOwned && upload.videoID != nil)
         #expect(CatalogActionPlan.target(for: upload) == nil && !CatalogActionPlan.canEverPlay(upload) && CatalogActionPlan.link(for: upload) == nil)
         let surface = LibrarySurface(models: [:], history: HistoryModel(remote: LibraryCollectionModel(source: .history, reader: { _ in throw MusicSessionError.policy }, continuer: { _ in throw MusicSessionError.policy }),
                                                                        store: nil, policy: nil, accountKey: { nil }),
                                      ledger: LibraryWriteLedger(writer: { _ in throw MusicSessionError.policy }), performer: nil, playback: { .available })
         let offers = surface.offers(for: upload)
-        #expect(offers.count == 1 && offers[0].action == .play && offers[0].unavailable != nil, "the reason is text, not a button that does nothing")
+        #expect(offers.isEmpty, "private service media has no supported action")
     }
     @Test func aLibraryArtistPageTypeIsAnArtist() throws {
         let root = try w12("library-artists.json")

@@ -28,7 +28,7 @@ public struct LyricsPanelView: View {
             case .failed(let failure):
                 VStack(spacing: MusicSpace.sm) {
                     Label(failure.message, systemImage: "exclamationmark.circle").accessibilityIdentifier("lyricsFailed")
-                    Button("Try Again") { Task { await model.retry() } }.musicButtons().accessibilityIdentifier("lyricsRetry")
+                    Button("Try Again") { Task { await model.retry() } }.musicPageAction().accessibilityIdentifier("lyricsRetry")
                 }.frame(maxWidth: .infinity, maxHeight: .infinity).padding()
             case .loaded(let document):
                 loaded(document).id(model.videoID ?? "")
@@ -48,7 +48,7 @@ public struct LyricsPanelView: View {
                     // Honest about what the source supplied: no times, so no highlight, no seek.
                     Label("These lyrics came without timing, so they don’t follow the song. Scroll to read.", systemImage: "info.circle")
                         .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("lyricsUntimedNote")
-                }.padding()
+                }.padding(MusicSpace.lg)
             }
         case .timed(let lines):
             timed(lines, footer: document.sourceFooter)
@@ -58,7 +58,7 @@ public struct LyricsPanelView: View {
         ScrollViewReader { proxy in
             ZStack(alignment: .bottom) {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: MusicSpace.sm) {
+                    LazyVStack(alignment: .leading, spacing: MusicSpace.lg) {
                         ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
                             let isCurrent = follow.current == index
                             Group {
@@ -70,12 +70,12 @@ public struct LyricsPanelView: View {
                             .id(index).accessibilityAddTraits(isCurrent ? .isSelected : []).accessibilityIdentifier("lyricsLine-\(index)")
                         }
                         if let footer { Text(verbatim: footer).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("lyricsSource") }
-                    }.padding()
+                    }.padding(MusicSpace.lg)
                 }
                 .onScrollPhaseChange { _, phase in if phase == .interacting || phase == .decelerating { follow.userScrolled() } }
                 if follow.canReturn {
                     Button { follow.returnToCurrent(); scroll(proxy) } label: { Label("Return to Current Line", systemImage: "arrow.down.to.line") }
-                        .musicButtons(prominent: true).padding().accessibilityIdentifier("lyricsReturn")
+                        .musicPageAction(prominent: true).padding().accessibilityIdentifier("lyricsReturn")
                 }
             }
             .onAppear { follow.setLines(lines); follow.update(position: position()); scroll(proxy) }
@@ -84,7 +84,7 @@ public struct LyricsPanelView: View {
         }
     }
     private func lineText(_ text: String, current: Bool) -> some View {
-        Text(verbatim: text).font(current ? .title3.bold() : .body).foregroundStyle(current ? Color.primary : MusicStyle.secondaryText)
+        Text(verbatim: text).font(current ? .title2.weight(.semibold) : .title3).lineSpacing(MusicSpace.xxs).foregroundStyle(current ? Color.primary : MusicStyle.secondaryText)
             .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
             // Highlight moves without animation under Reduce Motion.
             .musicAnimation(.selection, value: current)

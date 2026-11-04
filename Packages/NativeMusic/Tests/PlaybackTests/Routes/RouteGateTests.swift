@@ -96,6 +96,16 @@ import Testing
         await session.close()
     }
 
+    @Test func aRadioQueueControlNeverCreatesAnOutputHeldStart() async throws {
+        let (rig, _, page) = try await lostMusic()
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDATmZvkhnokW3Mw24", params: "opaque%3D", playerParams: "0gcJCW0At9Zurpe2"))
+        let starts = rig.model.playRequestCount, before = page.commands.count
+        // The former start entry point fails closed, before output gating or ownership changes.
+        let result = await rig.model.playMusic(playlistID: command.playlistID, title: "Workout", queueCommand: command, request: rig.base.authority.requestOwnedStart())
+        #expect(result == .failed && rig.model.playRequestCount == starts)
+        #expect(page.commands.count == before && rig.coordinator.prompt == nil)
+    }
+
     // MARK: finding 5: account barrier
     @Test func aHeldPromptDoesNotSurviveAnAccountBarrierAndItsStartPermitIsRejected() async throws {
         let (rig, _, page) = try await lostMusic()

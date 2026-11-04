@@ -72,7 +72,6 @@ import DesignSystem
     .init(drag: "Packages/NativeMusic/Sources/Features/Playlists/PlaylistEditorView.swift", file: "Packages/NativeMusic/Sources/Features/Playlists/PlaylistEditorView.swift", labels: ["Move Up", "Move Down"], what: "playlist reorder"),
     .init(drag: "Packages/NativeMusic/Sources/Features/Playlists/PlaylistDragDrop.swift", file: "Packages/NativeMusic/Sources/Features/Playlists/PlaylistEntries.swift", labels: ["Add to Playlist…"], what: "drag a song onto a playlist"),
     .init(drag: "Packages/NativeMusic/Sources/Features/Playlists/PlaylistEntries.swift", file: "Packages/NativeMusic/Sources/Features/Playlists/PlaylistAddViews.swift", labels: ["Skip Existing"], what: "drop songs into a playlist"),
-    .init(drag: "Packages/NativeMusic/Sources/Features/Uploads/UploadsView.swift", file: "Packages/NativeMusic/Sources/Features/Uploads/UploadsView.swift", labels: ["Choose Files…"], what: "drop audio files to upload"),
     .init(drag: "Packages/NativeMusic/Sources/AppShell/BrowserShell.swift", file: "Packages/NativeMusic/Sources/AppShell/NativeMusicScenes.swift", labels: ["Open Link from Clipboard"], what: "drop a link on the window"),
   ]
   @Test func everyDragHasAKeyboardAndVoiceOverAlternative() throws {

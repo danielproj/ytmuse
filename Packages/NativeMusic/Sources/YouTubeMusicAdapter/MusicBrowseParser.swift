@@ -21,7 +21,7 @@ public enum MusicBrowseParser {
     /// How a page's entries are read. A catalog page lists each thing once (a repeat inside one shelf is a duplicate and is dropped
     /// and counted). A collection page (a library tab or the history) lists what the person has: the same song can be there twice,
     /// so only an entry that names the service's own occurrence id is deduplicated. A collection page also admits the entry kinds
-    /// only a library holds (an uploaded track) and counts the control tiles it carries ("New playlist", "Shuffle all") as unsupported.
+    /// only a library holds (a privately owned track) and counts the control tiles it carries ("New playlist", "Shuffle all") as unsupported.
     public enum Mode: Sendable { case catalog, collection }
 
     public static func isVideoID(_ value: String) -> Bool { value.range(of: videoPattern, options: .regularExpression) != nil }
@@ -288,7 +288,6 @@ public enum MusicBrowseParser {
         var mode = Mode.catalog
         var controls: MusicItemControls?
         var actionTile = false
-        var uploadEntity: String?
         var radio: MusicRadioAction?
         var episode: MusicEpisodeInfo?
     }
@@ -298,10 +297,10 @@ public enum MusicBrowseParser {
         let kind: MusicEntityKind
         // A collection page's control tiles ("New playlist", "Shuffle all") are not members of the collection.
         if fields.mode == .collection, fields.actionTile { return .unsupported }
-        var upload = false
+        var privatelyOwned = false
         if fields.mode == .collection, fields.nav?.videoType == "MUSIC_VIDEO_TYPE_PRIVATELY_OWNED_TRACK" || fields.play?.videoType == "MUSIC_VIDEO_TYPE_PRIVATELY_OWNED_TRACK",
-           fields.nav?.pageType == nil { upload = true }
-        switch upload ? Resolved.kind(.song) : resolve(fields.nav, fields.play) {
+           fields.nav?.pageType == nil { privatelyOwned = true }
+        switch privatelyOwned ? Resolved.kind(.song) : resolve(fields.nav, fields.play) {
         case .kind(let value): kind = value
         case .unsupported: return .unsupported
         case .unreadable:
@@ -321,8 +320,7 @@ public enum MusicBrowseParser {
                                    availability: fields.availability, videoID: video, browseID: browse, browseParams: params, playlistID: playlist,
                                    contextPlaylistID: (kind == .song || kind == .video) ? fields.nav?.playlistID : nil,
                                    thumbnails: fields.thumbnails, links: links, position: fields.position, durationText: fields.duration,
-                                   occurrenceID: fields.occurrence, controls: Self.restricted(fields.controls, to: kind), isUpload: upload,
-                                   uploadEntityID: fields.mode == .collection ? fields.uploadEntity : nil,
+                                   occurrenceID: fields.occurrence, controls: Self.restricted(fields.controls, to: kind), isPrivatelyOwned: privatelyOwned,
                                    radio: [.song, .video, .album, .artist, .playlist].contains(kind) ? fields.radio : nil,
                                    episode: kind == .episode ? fields.episode : nil))
         }
@@ -363,7 +361,6 @@ public enum MusicBrowseParser {
         fields.actionTile = isActionTile(renderer["navigationEndpoint"], nav: nav)
         fields.controls = controls(menu: renderer["menu"], nav: nav)
         fields.radio = radioAction(menu: renderer["menu"])
-        fields.uploadEntity = mode == .collection ? uploadEntityID(menu: renderer["menu"]) : nil
         return make(fields)
     }
 
@@ -397,7 +394,6 @@ public enum MusicBrowseParser {
            removal.setVideoID != fields.occurrence || removal.videoID != fields.occurrenceVideoID {
             published.playlistRemoval = nil; fields.controls = published.isEmpty ? nil : published
         }
-        fields.uploadEntity = mode == .collection ? uploadEntityID(menu: renderer["menu"]) : nil
         return make(fields)
     }
 
@@ -510,22 +506,6 @@ public enum MusicBrowseParser {
             found.append(MusicRadioAction(playlistID: list, videoID: target.videoID, params: target.params))
         }
         return Set(found).count == 1 ? found[0] : nil
-    }
-    /// The target of an upload's own "Delete from library" command, read from the menu the library page published: the
-    /// `musicDeletePrivatelyOwnedEntityCommand` the confirm dialog of that item carries (the place ytmusicapi reads it). The search is
-    /// bounded and takes only an id of the service's own shape; two different ids in one menu mean nothing is offered.
-    private static func uploadEntityID(menu: Any?) -> String? {
-        var found: Set<String> = []
-        func walk(_ node: Any, depth: Int) {
-            guard depth < 24 else { return }
-            if let object = node as? [String: Any] {
-                if let command = object["musicDeletePrivatelyOwnedEntityCommand"] as? [String: Any], let id = command["entityId"] as? String,
-                   id.range(of: #"^[A-Za-z0-9_%=+/.:-]{8,512}$"#, options: .regularExpression) != nil { found.insert(id) }
-                for child in object.values { walk(child, depth: depth + 1) }
-            } else if let list = node as? [Any] { for child in list { walk(child, depth: depth + 1) } }
-        }
-        if let menu { walk(menu, depth: 0) }
-        return found.count == 1 ? found.first : nil
     }
     /// The like state, library toggles and (for pages) save targets an entry's `menu` published for itself. Anonymous pages publish a
     /// sign-in prompt where the signed endpoints would be, so they yield no library toggle (they do carry the like button's current

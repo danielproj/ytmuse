@@ -19,12 +19,6 @@ public struct LibrarySource: Hashable, Sendable {
     private init(browseID: String, holds: Set<MusicEntityKind>, title: String, staleAfter: TimeInterval) {
         kind = nil; self.browseID = browseID; self.holds = holds; self.title = title; self.staleAfter = staleAfter
     }
-    /// One of the Uploads destination's three lists. Songs read the same page as the Library's Uploads collection.
-    public static func uploads(_ kind: MusicUploadKind) -> LibrarySource {
-        let title: String
-        switch kind { case .songs: title = String(localized: "Uploaded songs"); case .albums: title = String(localized: "Uploaded albums"); case .artists: title = String(localized: "Uploaded artists") }
-        return LibrarySource(browseID: kind.browseID, holds: kind.holds, title: title, staleAfter: 900)
-    }
     public static let history = LibrarySource(browseID: MusicHistory.browseID, holds: [.song, .video, .episode], title: String(localized: "YouTube Music history"), staleAfter: 300)
 }
 
@@ -39,7 +33,6 @@ public extension MusicLibraryKind {
         case .playlists: String(localized: "Playlists")
         case .podcasts: String(localized: "Podcasts")
         case .savedEpisodes: String(localized: "Saved Episodes")
-        case .uploads: String(localized: "Uploads")
         }
     }
     var symbol: String {
@@ -52,7 +45,6 @@ public extension MusicLibraryKind {
         case .playlists: "music.note.list"
         case .podcasts: "mic"
         case .savedEpisodes: "bookmark"
-        case .uploads: "arrow.up.circle"
         }
     }
     /// Albums, playlists, artists and shows read well as a grid; tracks and episodes as a list.
@@ -67,7 +59,6 @@ public extension MusicLibraryKind {
         case .playlists: String(localized: "No playlists yet")
         case .podcasts: String(localized: "No saved podcasts yet")
         case .savedEpisodes: String(localized: "No saved episodes yet")
-        case .uploads: String(localized: "No uploads yet")
         }
     }
 }

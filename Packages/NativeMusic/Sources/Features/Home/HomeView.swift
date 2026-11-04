@@ -17,12 +17,12 @@ public struct HomeView<Intro: View>: View {
         CatalogShelvesView(model: model, navigator: navigator) {
             VStack(alignment: .leading, spacing: MusicSpace.md) {
                 CatalogTitleRow(title: String(localized: "Home"), model: model)
-                intro()
+                intro().padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
                 if !model.chips.isEmpty {
                     ScrollView(.horizontal) {
                         MusicGlassGroup {
                             HStack { ForEach(model.chips, id: \.self) { chip in
-                                Button(chip.title) { openChip(chip) }.musicButtons(prominent: chip.selected).accessibilityIdentifier("homeChip-" + chip.title)
+                                Button(chip.title) { openChip(chip) }.musicPageAction(prominent: chip.selected).accessibilityIdentifier("homeChip-" + chip.title)
                             } }
                         }
                     }.scrollIndicators(.hidden)

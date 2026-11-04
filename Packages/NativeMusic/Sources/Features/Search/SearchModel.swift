@@ -113,7 +113,6 @@ public struct SearchCorrectionOffer: Sendable, Equatable {
         switch scope {
         case .all: nil
         case .library: String(localized: "Searching the playlists in your library on this Mac. The service is not asked.")
-        case .uploads: String(localized: "Uploads aren’t connected yet, so there is nothing to search here.")
         }
     }
 
@@ -263,7 +262,6 @@ public struct SearchCorrectionOffer: Sendable, Equatable {
             switch scope {
             case .all: true
             case .library: result.badges.contains(.library)
-            case .uploads: result.badges.contains(.upload)
             }
         }
         var merged: [String: SearchResult] = [:]

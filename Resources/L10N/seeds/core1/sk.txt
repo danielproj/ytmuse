@@ -52,7 +52,6 @@
 52|Prepnuté na %@.
 53|Prehrať %@
 54|Aktuálny výstup: %@
-55|Odstrániť „%@“ z vašich nahraných súborov?
 56|Prehráva sa reklama
 57|Reklama sa skončila
 58|Teraz hrá „%@“ od %@.

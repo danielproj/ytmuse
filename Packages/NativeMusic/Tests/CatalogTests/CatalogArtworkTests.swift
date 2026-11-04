@@ -5,6 +5,7 @@ import Domain
 import Features
 import Foundation
 import ImageIO
+import Observation
 import Testing
 import UniformTypeIdentifiers
 
@@ -97,4 +98,72 @@ final class LockedBox<T: Sendable>: @unchecked Sendable {
     init(_ value: T) { stored = value }
     var value: T { lock.withLock { stored } }
     func mutate(_ change: (inout T) -> Void) { lock.withLock { change(&stored) } }
+}
+
+@MainActor @Suite struct CatalogArtworkRequestStabilityTests {
+    private final class Clock { var now = Date(timeIntervalSince1970: 10_000) }
+    private func thumbnails(_ name: String) -> [MusicThumbnail] {
+        [MusicThumbnail(url: URL(string: "https://i.ytimg.com/\(name)")!, width: 300, height: 300)]
+    }
+    private func context(_ generation: UInt64 = 1) throws -> RequestContext {
+        RequestContext(account: try AccountContext(accountID: UUID(), channelID: ID("lease"), region: "US"), accountGeneration: generation, requestGeneration: 1)
+    }
+    @Test func redrawsKeepIdentityUntilTheRealDeadlineThenRenew() throws {
+        let clock = Clock(), authority = ArtworkUIAuthority()
+        let source = CatalogArtworkSource { _ in Data() }
+        let pipeline = ArtworkPipeline(source: source, diskDirectory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        #expect(authority.bind(try context()))
+        let artwork = CatalogArtwork(pipeline: pipeline, authority: authority, source: source, clock: { clock.now })
+        let first = try #require(artwork.request(for: thumbnails("a")))
+        let published = LockedBox(false)
+        withObservationTracking {
+            _ = artwork.request(for: thumbnails("a"))
+        } onChange: { published.mutate { $0 = true } }
+        _ = artwork.request(for: thumbnails("b"))
+        #expect(!published.value, "request bookkeeping must not publish changes during body evaluation")
+        for _ in 0..<100 {
+            clock.now.addTimeInterval(1)
+            let redraw = try #require(artwork.request(for: thumbnails("a")))
+            #expect(redraw.policy == first.policy)
+            #expect(ArtworkImageIdentity(redraw) == ArtworkImageIdentity(first))
+            #expect(redraw.size == first.size)
+        }
+        let small = try #require(ArtworkDisplayRequest.make(first, width: 44, height: 44, scale: 2))
+        let large = try #require(ArtworkDisplayRequest.make(first, width: 200, height: 200, scale: 2))
+        #expect(small.size != large.size)
+        #expect(small.policy == large.policy && ArtworkImageIdentity(small) == ArtworkImageIdentity(large), "size-only fallback keeps the same cover identity")
+        clock.now = Date(timeIntervalSince1970: 11_800)
+        let renewed = try #require(artwork.request(for: thumbnails("a")))
+        #expect(renewed.policy == .memory(until: clock.now.addingTimeInterval(1800)))
+        #expect(ArtworkImageIdentity(renewed) != ArtworkImageIdentity(first))
+        #expect(artwork.request(for: []) == nil)
+    }
+    @Test func resourcesOwnersGenerationsRemovalAndCapacityAreFenced() throws {
+        let clock = Clock(), authority = ArtworkUIAuthority()
+        let source = CatalogArtworkSource { _ in Data() }
+        let pipeline = ArtworkPipeline(source: source, diskDirectory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let owner = try context()
+        #expect(authority.bind(owner))
+        let artwork = CatalogArtwork(pipeline: pipeline, authority: authority, source: source, requestCapacity: 2, clock: { clock.now })
+        let a = try #require(artwork.request(for: thumbnails("a")))
+        clock.now.addTimeInterval(1)
+        let b = try #require(artwork.request(for: thumbnails("b")))
+        #expect(a.resource != b.resource)
+        #expect(ArtworkImageIdentity(a) != ArtworkImageIdentity(b))
+        _ = artwork.request(for: thumbnails("c"))
+        clock.now.addTimeInterval(1)
+        #expect(try #require(artwork.request(for: thumbnails("a"))).policy != a.policy, "the oldest lease was evicted at capacity")
+        let next = RequestContext(account: owner.account, accountGeneration: 2, requestGeneration: 1)
+        #expect(authority.bind(next))
+        let generation = try #require(artwork.request(for: thumbnails("a")))
+        #expect(generation.context == next && ArtworkImageIdentity(generation) != ArtworkImageIdentity(a))
+        let other = try context(3)
+        #expect(authority.bind(other))
+        let switched = try #require(artwork.request(for: thumbnails("a")))
+        #expect(switched.context == other && ArtworkImageIdentity(switched) != ArtworkImageIdentity(generation))
+        authority.removeAccount(try #require(other.account).accountID)
+        #expect(artwork.request(for: thumbnails("a")) == nil)
+        artwork.pipeline = nil
+        #expect(artwork.request(for: thumbnails("a")) == nil)
+    }
 }

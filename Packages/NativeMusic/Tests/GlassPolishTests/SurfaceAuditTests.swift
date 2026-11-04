@@ -23,7 +23,7 @@ struct AuditRecord: Codable {
 @Suite(.serialized, .enabled(if: ProcessInfo.processInfo.environment["YTMUSE_NATIVE_DESIGN_TEST"] == "1"))
 @MainActor struct SurfaceAuditTests {
     enum Surface: String, CaseIterable, Sendable {
-        case home, explore, detail, library, search, downloads, uploads, history, nowPlaying, queuePanel
+        case home, explore, detail, library, search, downloads, history, nowPlaying, queuePanel
         /// A hidden-player stand-in is playing (synthetic track), so the bar, Now Playing and the queue show real states.
         case playerPlaying, playerShuffleRepeat, playerAd, playerLongTitle, playerLive, nowPlayingSong, nowPlayingAd, nowPlayingLongTitle, nowPlayingLive, queueSong
         /// Now Playing with the queue panel inline (1120 pt and wider; below that the panel is a sheet), for both playback paths.
@@ -46,7 +46,7 @@ struct AuditRecord: Codable {
         var destination: BrowserDestination {
             switch self {
             case .home: .home; case .explore: .explore; case .detail: .search; case .library: .library; case .search: .search; case .downloads: .downloads
-            case .uploads: .uploads; case .history: .history; case .nowPlaying: .nowPlaying; case .queuePanel: .library
+            case .history: .history; case .nowPlaying: .nowPlaying; case .queuePanel: .library
             case .playerPlaying, .playerShuffleRepeat, .playerAd, .playerLongTitle, .playerLive: .home; case .nowPlayingSong, .nowPlayingAd, .nowPlayingLongTitle, .nowPlayingLive, .nowPlayingQueueOwned, .nowPlayingQueueSong: .nowPlaying; case .queueSong: .queue
             case .chromeLoaded: .library
             }
@@ -59,7 +59,7 @@ struct AuditRecord: Codable {
             if expanded { base += ["playerExpanded", "nowPlayingControls", "nowPlayingAccessories", "nowPlayingTimeline", "nowPlayingHero", "nowPlayingMain", "lightLayer"] }
             else { base += ["playerBar", "playerRow", "playerTimeline", "playerArtwork", "playerTitle", "playerControls", "playerAccessories", "detailColumn"] }
             switch self {
-            case .home, .explore, .library, .search, .history, .uploads, .downloads, .chromeLoaded: base += ["destinationTitle"]
+            case .home, .explore, .library, .search, .history, .downloads, .chromeLoaded: base += ["destinationTitle"]
             case .nowPlayingSong, .nowPlayingLongTitle, .nowPlayingAd, .nowPlayingLive, .nowPlaying, .nowPlayingQueueOwned, .nowPlayingQueueSong: base += ["nowPlayingArtwork"]
             default: break
             }
@@ -109,9 +109,9 @@ struct AuditRecord: Codable {
         let scaleFree: Set<AuditViolation.Rule> = [.overlap, .containment, .missing, .empty]
         let violations = host.violations(expecting: surface.required(width: size.width)).filter { localeMode != .largeText || scaleFree.contains($0.rule) }
         inspect?(host)
-        // Page titles share one height: 24 pt below the detail panel's top, on the grid (the audit's `pageTitleTop` key checks the rest within a render).
+        // APP-DESIGN: page titles share one height: 32 pt below the detail panel's top, on the grid (the audit's `pageTitleTop` key checks the rest within a render).
         let frames = Dictionary(host.box.frames.map { ($0.tag.name, $0.rect) }, uniquingKeysWith: { first, _ in first })
-        if let title = frames["destinationTitle"], let panel = frames["detailPanel"] { #expect(abs(title.minY - panel.minY - MusicSpace.lg * (localeMode == .largeText ? 1.5 : 1)) <= LayoutAudit.tolerance, "\(surface) title sits \(title.minY - panel.minY) pt below the panel top") }
+        if let title = frames["destinationTitle"], let panel = frames["detailPanel"] { #expect(abs(title.minY - panel.minY - MusicSpace.xl * (localeMode == .largeText ? 1.5 : 1)) <= LayoutAudit.tolerance, "\(surface) title sits \(title.minY - panel.minY) pt below the panel top") }
         // POL-A: the first sidebar row's highlight must not crowd the panel's rounded top edge. The audit sees the row's label (the highlight is drawn by
         // the list and has no frame of its own), which sits inside the highlight, so the label's gap to the panel's top must be at least the margin the sidebar
         // adds above its first row; the list's own ~4 pt inset and the highlight's inner padding come on top, which is what puts the highlight ~16 pt from the

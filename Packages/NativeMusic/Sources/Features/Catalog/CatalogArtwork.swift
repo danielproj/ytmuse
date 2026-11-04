@@ -54,16 +54,38 @@ public final class CatalogArtworkSource: ArtworkSource, @unchecked Sendable {
     public var pipeline: ArtworkPipeline?
     public let authority: ArtworkUIAuthority
     @ObservationIgnored public let source: CatalogArtworkSource?
-    public init(pipeline: ArtworkPipeline?, authority: ArtworkUIAuthority, source: CatalogArtworkSource?) {
+    // Non-observable bookkeeping: body may read a request without publishing a view mutation.
+    @ObservationIgnored private var leases: [ArtworkResource: Date] = [:]
+    @ObservationIgnored private var leaseOrder: [ArtworkResource] = []
+    @ObservationIgnored private var leaseContext: RequestContext?
+    @ObservationIgnored private let clock: () -> Date
+    @ObservationIgnored private let requestCapacity: Int
+    public init(pipeline: ArtworkPipeline?, authority: ArtworkUIAuthority, source: CatalogArtworkSource?, requestCapacity: Int = 4096, clock: @escaping () -> Date = Date.init) {
         self.pipeline = pipeline; self.authority = authority; self.source = source
+        self.requestCapacity = max(1, requestCapacity); self.clock = clock
     }
     /// A request template for an entry's thumbnails, or nil (placeholder art) when there is no image, no source, or no
     /// account owning the pipeline yet.
     public func request(for thumbnails: [MusicThumbnail]) -> ArtworkRequest? {
         let context = authority.context
-        guard pipeline != nil, context.account != nil, let source, let resource = source.register(thumbnails),
+        if leaseContext != context || !authority.accepts(context) || pipeline == nil {
+            leases.removeAll(); leaseOrder.removeAll(); leaseContext = context
+        }
+        guard pipeline != nil, authority.accepts(context), let source, let resource = source.register(thumbnails),
               let size = try? ArtworkSize(pointsWidth: 1, pointsHeight: 1, scale: 1) else { return nil }
-        return ArtworkRequest(resource: resource, size: size, policy: .memory(until: Date().addingTimeInterval(1800)), context: context)
+        let now = clock()
+        let deadline: Date
+        if let held = leases[resource], held > now { deadline = held }
+        else {
+            // Expired leases cannot extend old pixels' retention. A renewed request has a new identity;
+            // the pipeline still intersects this deadline with the source response's real deadline.
+            leases = leases.filter { $0.value > now }
+            leaseOrder.removeAll { leases[$0] == nil }
+            while leaseOrder.count >= requestCapacity { leases[leaseOrder.removeFirst()] = nil }
+            deadline = now.addingTimeInterval(1800)
+            leases[resource] = deadline; leaseOrder.append(resource)
+        }
+        return ArtworkRequest(resource: resource, size: size, policy: .memory(until: deadline), context: context)
     }
 }
 private struct CatalogArtworkKey: EnvironmentKey { static let defaultValue: CatalogArtwork? = nil }

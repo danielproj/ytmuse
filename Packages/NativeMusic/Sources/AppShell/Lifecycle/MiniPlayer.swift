@@ -49,7 +49,7 @@ final class MiniPlayerPanel: NSPanel {
                                     styleMask: [.titled, .closable, .resizable, .fullSizeContentView, .utilityWindow, .nonactivatingPanel], backing: .buffered, defer: false)
         Self.configure(panel, preferences: preferences)
         panel.title = String(localized: "Mini-player")
-        let hosting = NSHostingView(rootView: makeContent(self))
+        let hosting = NSHostingView(rootView: makeContent(self).appAppearance())
         hosting.sizingOptions = []   // the window's size is the person's; the content never resizes it
         panel.contentView = hosting
         panel.delegate = self
@@ -89,7 +89,7 @@ final class MiniPlayerPanel: NSPanel {
 
 /// The mini-player's content (GLASS01, GLASS11), composed from V02's surfaces. Compact: the cover, title, artist and Ad pill, V02's transport, Like, queue,
 /// volume, pin and expand, over V02's timeline. Expanded: V02's `ExpandedPlayer` itself (hero, timeline, transport, accessories), with the pin and
-/// Like above it. During an advertisement seek, skip and Previous are off (V02's controls and timeline read the same snapshot) and the Ad pill shows.
+/// Like in its header. During an advertisement seek, skip and Previous are off (V02's controls and timeline read the same snapshot) and the Ad pill shows.
 struct MiniPlayerView: View {
     let shell: ShellCoordinator
     let controller: MiniPlayerController
@@ -104,13 +104,11 @@ struct MiniPlayerView: View {
     var body: some View {
         Group {
             if expanded {
-                VStack(spacing: MusicSpace.xs) {
-                    HStack(spacing: MusicSpace.xs) { likeButton; Spacer(minLength: 0); pinButton }.musicButtons().audit("miniToolbar", group: "miniExpandedRows", within: "miniPlayer")
-                    ShellExpandedPlayer(shell: shell, collapse: { setExpanded(false) }, showQueue: { shell.showQueue() }, compact: true) { EmptyView() }
-                        .audit("miniExpandedPlayer", group: "miniExpandedRows", kind: .layer)
-                }.padding([.horizontal, .bottom], MusicSpace.xs).padding(.top, Self.titlebar)
+                ShellExpandedPlayer(shell: shell, collapse: { setExpanded(false) }, showQueue: { shell.showQueue() }, compact: true,
+                                    headerActions: { AnyView(HStack(spacing: MusicSpace.xxs) { likeButton; pinButton }.buttonStyle(.musicGlyph).audit("miniHeaderActions", group: "miniHeader", within: "playerExpanded")) }) { EmptyView() }
+                    .padding([.horizontal, .bottom], MusicSpace.xs).padding(.top, Self.titlebar)
             } else {
-                compact.padding([.horizontal, .bottom], MusicSpace.sm).padding(.top, Self.titlebar)
+                compact.padding(.horizontal, MusicSpace.sm).padding(.bottom, MusicSpace.xs).padding(.top, Self.titlebar)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -137,10 +135,10 @@ struct MiniPlayerView: View {
     private var compact: some View {
         let state = shell.transport
         return MusicGlassGroup {
-            VStack(alignment: .leading, spacing: MusicSpace.xs) {
+            VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                 HStack(spacing: MusicSpace.sm) {
                     ShellCover(shell: shell, edge: Self.coverEdge, visible: visible, accentChanged: { accent = $0 }).audit("miniArtwork", group: "miniHeader", within: "miniPlayer")
-                    VStack(alignment: .leading, spacing: MusicSpace.xxs) {
+                    VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: MusicSpace.xs) {
                             Text(state.hasItem ? state.title : String(localized: "Nothing playing")).font(.headline).lineLimit(1).accessibilityIdentifier("miniTitle")
                             if state.isAd { MusicBadge("Ad", style: .advertisement).accessibilityLabel(Text("Advertisement playing")).accessibilityIdentifier("miniAdBadge") }
@@ -149,7 +147,7 @@ struct MiniPlayerView: View {
                         SleepTimerLine(model: shell.playback, episode: shell.playback.playingEpisode(shell.playback.episodes), identifier: "miniSleepRemaining")
                     }.audit("miniTitleBlock", group: "miniHeader", within: "miniPlayer")
                     Spacer(minLength: 0)
-                    HStack(spacing: MusicSpace.xs) { pinButton; expandButton }.labelStyle(.iconOnly).musicButtons().audit("miniWindowControls", group: "miniHeader", within: "miniPlayer")
+                    HStack(spacing: MusicSpace.xs) { pinButton; expandButton }.labelStyle(.iconOnly).buttonStyle(.musicGlyph).audit("miniWindowControls", group: "miniHeader", within: "miniPlayer")
                 }
                 HStack(spacing: MusicSpace.xs) {
                     ShellControls(shell: shell).audit("miniControls", group: "miniControlRow", within: "miniPlayer")
@@ -157,16 +155,15 @@ struct MiniPlayerView: View {
                     HStack(spacing: MusicSpace.xs) {
                         likeButton
                         Button { shell.showQueue() } label: { Label("Queue", systemImage: "list.bullet") }.labelStyle(.iconOnly).help(Text("Queue")).accessibilityIdentifier("miniQueue")
-                        Slider(value: Binding(get: { state.volume }, set: { shell.setVolume($0) }), in: 0...1) { Text("Volume") }.labelsHidden().tint(MusicStyle.accent)
-                            .frame(width: Self.volumeWidth).disabled(!state.hasItem || !state.volumeEnabled).help(state.volumeHelp ?? "").accessibilityIdentifier("miniVolume")
-                    }.musicButtons().audit("miniAccessories", group: "miniControlRow", within: "miniPlayer")
+                        CapsuleVolume(level: state.volume, set: { shell.setVolume($0) }, label: "Volume", identifier: "miniVolume",
+                                      enabled: state.hasItem && state.volumeEnabled, compact: true, help: state.volumeHelp ?? "")
+                    }.buttonStyle(.musicGlyph).audit("miniAccessories", group: "miniControlRow", within: "miniPlayer")
                 }
                 ShellTimeline(shell: shell).audit("miniTimeline", group: "miniRows", within: "miniPlayer")
             }
         }
     }
-    static let coverEdge: CGFloat = 48
-    static let volumeWidth: CGFloat = 48
+    static let coverEdge: CGFloat = 40
     @ViewBuilder private var likeButton: some View {
         let availability = shell.likeAvailability()
         let control = availability.control

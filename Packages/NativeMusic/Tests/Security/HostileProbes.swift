@@ -71,25 +71,7 @@ import Features
         let negative = try? await source.read(item: target, descriptor: descriptor, offset: -1, count: 4096, context: context)
         #expect(negative == nil || (negative?.data.count ?? 0) <= 4096, "a negative offset cannot read before the file")
     }
-    @Test func theUploadInspectorReadsAHeaderOnlyAndRefusesSpecialFiles() async throws {
-        let dir = try scratch(); defer { dir.cleanup() }
-        let inspector = UploadSourceInspector(maximumFileBytes: nil, testRoot: dir.url)
-        let big = dir.url.appendingPathComponent("huge.wav"); try sparse(big, bytes: 4 * 1024 * 1024 * 1024)
-        let started = Date()
-        let result = await withinDeadline(10) { await inspector.inspect(big) }
-        #expect(Date().timeIntervalSince(started) < 10 && result != nil, "a 4 GiB file is inspected from its header, not read")
-        let folder = dir.url.appendingPathComponent("folder", isDirectory: true); try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: false)
-        let pipe = try fifo(in: dir.url)
-        for (name, url) in [("folder", folder), ("fifo", pipe)] {
-            let outcome = await withinDeadline { () -> Bool in if case .failure = await inspector.inspect(url) { true } else { false } }
-            #expect(outcome == true, "\(name) is refused without blocking")
-        }
-        let limited = UploadSourceInspector(maximumFileBytes: 1024, testRoot: dir.url)
-        let outcome = await limited.inspect(big)
-        if case .failure(let reason) = outcome { #expect("\(reason)".hasPrefix("tooLarge")) } else { Issue.record("a file above the published limit was accepted") }
-        // Outside the one folder a test may use, nothing is read at all.
-        if case .success = await inspector.inspect(URL(fileURLWithPath: "/dev/zero")) { Issue.record("a file outside the test folder was inspected") }
-    }
+
 }
 
 /// Resumes one continuation, once, with the first value offered.

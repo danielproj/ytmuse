@@ -52,7 +52,6 @@
 52|Skiftede til %@.
 53|Afspil %@
 54|Aktuelt output: %@
-55|Vil du fjerne “%@” fra dine uploads?
 56|En reklame afspilles
 57|Reklamen sluttede
 58|Afspiller nu “%@” af %@.

@@ -13,7 +13,7 @@ Status vocabulary (checked by `scripts/check-docs.py`):
 | Area | Status | Notes and limits |
 | --- | --- | --- |
 | Google sign-in (system browser, PKCE) and local account lifecycle (add, switch, remove, Keychain isolation) | Built, live unverified | Implemented against a development registration. Real Music sign-in, refresh and revocation are gate G01 and not verified. No manual cookie copying is offered. |
-| Home, Explore, search, library, history, playlists, podcasts, lyrics, uploads, Samples, tuner, Recap, badges | Built, fixtures only | Parsers and flows are tested with sanitized and real anonymous public captures and development data. Signed account reads and every account mutation are unverified (gate G06). |
+| Home, Explore, search, library, history, playlists, podcasts, lyrics, Samples, tuner, Recap, badges | Built, fixtures only | Parsers and flows are tested with sanitized and real anonymous public captures and development data. Signed account reads and every account mutation are unverified (gate G06). |
 | Playback of YouTube Music | Built, live unverified | Through the user-approved hidden player, which is the system WebKit; the app does not ship a browser. It cannot choose or report codec, bitrate or sample rate. Free-account advertising follows the service and is shown, never skipped (G03). |
 | Native playback engine, queue, gapless, crossfade, EQ and normalization | Built, fixtures only | For music from files on this Mac. The hidden YouTube Music player is never processed. |
 | Video and live | Built, live unverified | Hidden-player video surface and audio/video continuity tested against a stand-in page. |

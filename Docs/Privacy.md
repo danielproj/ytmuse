@@ -17,7 +17,7 @@ Diagnostics are local. The Diagnostics screen reads a bounded in-memory log. **E
 | Downloaded media | Encrypted objects in the app's private folder | Encrypted with a key kept in the Keychain. The **names, titles and sizes** of downloads are in the download ledger and are not encrypted |
 | Artwork cache | Account-partitioned folder | Owner-only; images only; size-bounded |
 | Widget snapshot | The App Group folder | A title, an artist, a small thumbnail and an account stamp for the playing item; a redacted file with no content when signed out or the screen is locked. The widget refuses any file with a field it does not know |
-| Spotlight entries | The system index | **Off until you turn it on**; your private playlists, history and uploads are indexed only if you also turn that option on, and leave the index when you turn it off |
+| Spotlight entries | The system index | **Off until you turn it on**; your private playlists and history are indexed only if you also turn that option on, and leave the index when you turn it off |
 | Handoff, notifications, share links | The system | A Handoff activity carries the public link of the song, album, artist, podcast or episode page being viewed and nothing else (never a playlist, a title or an account). A song-change notification carries the title and artist you can already see, and exists only after you turn it on. A shared link is always the item's own public identifier |
 
 ## When you remove an account or reset

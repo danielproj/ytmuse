@@ -85,7 +85,7 @@ public struct SocialPanel: View {
             Label("Sign in to YouTube Music to read comments.", systemImage: "person.crop.circle.badge.questionmark").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCommentsSignIn")
         case .failed(let failure):
             HStack { Label(failure.message, systemImage: "exclamationmark.circle").foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("socialCommentsFailed")
-                Button("Retry") { Task { await surface.loadComments(subject) } }.musicButtons() }
+                Button("Retry") { Task { await surface.loadComments(subject) } }.musicPageAction() }
         case .loaded(let page):
             if page.comments.isEmpty { Text("No comments yet.").foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCommentsEmpty") }
             ForEach(page.comments) { comment in
@@ -114,7 +114,7 @@ public struct SocialPanel: View {
                     Button("Post") {
                         let text = draft
                         Task { if await surface.post(text, on: subject) == .confirmed { draft = "" } }
-                    }.musicButtons(prominent: true).disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || surface.busy.contains(subject)).accessibilityIdentifier("socialPost")
+                    }.musicPageAction(prominent: true).disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || surface.busy.contains(subject)).accessibilityIdentifier("socialPost")
                 }
             } else {
                 Text("YouTube Music didn’t offer commenting here.").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCannotPost")

@@ -34,7 +34,7 @@ public struct DownloadsView: View {
                 if !model.snapshot.storageChoices.isEmpty { choicesCard.identityItem("choices") }
                 collectionsSection.identityItem("collections")
                 list
-            }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+            }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }
         .restoresByIdentity(identity, proxy: proxy)
         .remembersPage(identity: identity, capture: { model.pageMemory }, apply: { model.restorePage($0) })
@@ -47,7 +47,7 @@ public struct DownloadsView: View {
 
     private var header: some View {
         MusicAdaptiveRow {
-            Text("Downloads").font(.largeTitle.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle")
+            Text("Downloads").font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle")
         } trailing: {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: MusicSpace.xs) { filterPicker; addFileButton }
@@ -63,22 +63,22 @@ public struct DownloadsView: View {
     }
     private var addFileButton: some View {
         Button { model.importing = true } label: { Label("Add Audio File…", systemImage: "plus") }
-            .disabled(!model.snapshot.hasAccount).musicButtons().accessibilityIdentifier("downloadsAddFile")
+            .disabled(!model.snapshot.hasAccount).musicPageAction().accessibilityIdentifier("downloadsAddFile")
             .help(model.snapshot.hasAccount ? Text("Keep an audio file from this Mac and play it from here") : Text("Select a signed-in account to keep files"))
     }
     private func noticeBar(_ text: String) -> some View {
         HStack {
             Label(text, systemImage: "info.circle").accessibilityIdentifier("downloadsNotice")
             Spacer()
-            Button("Dismiss") { model.dismissNotice() }.musicButtons().accessibilityIdentifier("downloadsNoticeDismiss")
-        }.padding(MusicSpace.sm).musicSurface()
+            Button("Dismiss") { model.dismissNotice() }.musicPageAction().accessibilityIdentifier("downloadsNoticeDismiss")
+        }.padding(MusicSpace.sm).musicInsetSurface()
         .onAppear { Announcer.post(text, kind: .download) }
     }
     private var capabilityCard: some View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
             Label(DownloadsText.youTubeMusicExplanation, systemImage: "arrow.down.circle.dotted").font(.headline).accessibilityIdentifier("downloadsYouTubeMusicNote")
             Text(DownloadsText.youTubeMusicDetail).font(.callout).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
-        }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicSurface().accessibilityElement(children: .combine)
+        }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface().accessibilityElement(children: .combine)
     }
     @ViewBuilder private var environmentNotes: some View {
         let snapshot = model.snapshot
@@ -140,7 +140,7 @@ public struct DownloadsView: View {
                 Text("\(DownloadsText.bytes(model.snapshot.unlistedBytes)) of earlier downloads are no longer listed but still count toward the limit.").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadsUnlisted")
             }
             Text("Lowering the limit never removes downloads you chose to keep.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
-        }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicSurface()
+        }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
     }
     private var choicesCard: some View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
@@ -150,14 +150,14 @@ public struct DownloadsView: View {
                 case .raiseBudget:
                     Menu("Raise the storage limit") {
                         ForEach(DownloadBudgetChoices.choices.filter { $0 > model.snapshot.storage.budgetBytes }, id: \.self) { size in Button(DownloadsText.bytes(size)) { model.setBudget(bytes: size) } }
-                    }.musicButtons().accessibilityIdentifier("downloadsChoice-raiseBudget")
+                    }.musicPageAction().accessibilityIdentifier("downloadsChoice-raiseBudget")
                 case .removeAutomaticDownloads:
-                    Button(DownloadsText.storageChoice(choice)) { model.removeAutomaticDownloads() }.musicButtons().accessibilityIdentifier("downloadsChoice-removeAutomatic")
+                    Button(DownloadsText.storageChoice(choice)) { model.removeAutomaticDownloads() }.musicPageAction().accessibilityIdentifier("downloadsChoice-removeAutomatic")
                 case .removeDownloads, .freeDiskSpace:
                     Label(DownloadsText.storageChoice(choice), systemImage: "arrow.right.circle").foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadsChoice-" + choice.rawValue)
                 }
             }
-        }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicSurface().accessibilityElement(children: .contain).accessibilityIdentifier("downloadsStorageChoices")
+        }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface().accessibilityElement(children: .contain).accessibilityIdentifier("downloadsStorageChoices")
     }
     @ViewBuilder private var collectionsSection: some View {
         if !model.snapshot.collections.isEmpty {
@@ -217,7 +217,7 @@ struct DownloadItemRow: View {
             if !row.actions.isEmpty {
                 HStack {
                     ForEach(row.actions, id: \.self) { action in
-                        Button(DownloadsText.action(action)) { perform(action) }.musicButtons().accessibilityIdentifier("downloadAction-\(action.rawValue)-" + row.id.uuidString)
+                        Button(DownloadsText.action(action)) { perform(action) }.musicPageAction().accessibilityIdentifier("downloadAction-\(action.rawValue)-" + row.id.uuidString)
                             .accessibilityLabel(Text("\(DownloadsText.action(action)) \(row.title)"))
                     }
                 }
@@ -255,7 +255,7 @@ public struct DownloadedItemsSection: View {
                         VStack(alignment: .leading) { Text(row.title); if let subtitle = row.subtitle { Text(subtitle).font(.caption).foregroundStyle(MusicStyle.secondaryText) } }
                         Spacer()
                         if row.actions.contains(.play) {
-                            Button { model.perform(.play, on: row) } label: { Label("Play", systemImage: "play.fill") }.musicButtons(prominent: true)
+                            Button { model.perform(.play, on: row) } label: { Label("Play", systemImage: "play.fill") }.musicPageAction(prominent: true)
                                 .accessibilityLabel(Text("Play \(row.title)")).accessibilityIdentifier("libraryDownloadedPlay-" + row.id.uuidString)
                         }
                     }

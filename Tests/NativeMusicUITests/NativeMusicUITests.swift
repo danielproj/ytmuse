@@ -14,6 +14,23 @@ final class NativeMusicUITests: XCTestCase {
         }
         throw NSError(domain: "T50", code: 1, userInfo: [NSLocalizedDescriptionKey: "Built sibling native account test host is missing"])
     }
+    /// Production-shell actions are native menu items; account-test-host fixture buttons stay direct.
+    @MainActor private func accountMenuItem(_ identifier: String, in window: XCUIElement, app: XCUIApplication) -> XCUIElement {
+        let menu = window.descendants(matching: .any).matching(identifier: "accountMenu").firstMatch
+        XCTAssertTrue(menu.waitForExistence(timeout: 5))
+        menu.click()
+        let item = app.menuItems[identifier].firstMatch
+        XCTAssertTrue(item.waitForExistence(timeout: 5))
+        return item
+    }
+    @MainActor private func compactVolumeSlider(_ identifier: String, in window: XCUIElement, app: XCUIApplication) -> XCUIElement {
+        let trigger = window.buttons[identifier].firstMatch
+        XCTAssertTrue(trigger.waitForExistence(timeout: 5))
+        trigger.click()
+        let slider = app.sliders[identifier + "Slider"].firstMatch
+        XCTAssertTrue(slider.waitForExistence(timeout: 5))
+        return slider
+    }
     /// Every automated YTMuse launch uses the Debug-only isolated QA namespace: a fresh
     /// temporary store and isolated keychain files, never the account holder's data.
     /// Saved application state is ignored too, so no launch restores the account holder's windows.
@@ -269,7 +286,8 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertFalse(window.staticTexts["windowHistoryNotice"].exists)
         sidebar("Library", in: window).click()
         XCTAssertEqual(window.textFields["collectionQuery"].value as? String, "")
-        XCTAssertTrue(window.buttons["manageAccounts"].isEnabled, "Only local window state was affected")
+        XCTAssertTrue(accountMenuItem("manageAccounts", in: window, app: app).isEnabled, "Only local window state was affected")
+        app.typeKey(.escape, modifierFlags: [])
         XCTAssertFalse(app.staticTexts["playbackState"].exists)
         let capture = XCTAttachment(screenshot: window.screenshot()); capture.name = "W09 degraded saved-window state and explicit safe recovery"; capture.lifetime = .keepAlways; add(capture)
         }
@@ -839,7 +857,7 @@ final class NativeMusicUITests: XCTestCase {
         mainCapture.name = "Native main window"
         mainCapture.lifetime = .keepAlways
         add(mainCapture)
-        app.buttons["openSettings"].click()
+        accountMenuItem("openSettings", in: app.windows["YTMuse"].firstMatch, app: app).click()
         let picker = app.popUpButtons["appearancePicker"]
         XCTAssertTrue(picker.waitForExistence(timeout: 5))
         picker.click()
@@ -881,7 +899,7 @@ final class NativeMusicUITests: XCTestCase {
         // E01 M2: the production app offers in-app YouTube Music web sign-in. The
         // test never clicks it (no live Google page); it only asserts the offer.
         XCTAssertTrue(app.buttons["musicSignIn"].isEnabled)
-        app.buttons["manageAccounts"].click()
+        accountMenuItem("manageAccounts", in: app.windows["YTMuse"].firstMatch, app: app).click()
         XCTAssertTrue(app.staticTexts["No accounts connected"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["authUnavailable"].exists)
         app.terminate()
@@ -1000,6 +1018,129 @@ final class NativeMusicUITests: XCTestCase {
         host.terminate()
     }
 
+    // Design finish: capture production components over labelled, isolated fixtures. No playback or remote write.
+    @MainActor private func captureDesignReview(appearance: String) throws {
+        continueAfterFailure = false
+        let product = try builtProduct()
+        let repository = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        XCTAssertTrue(product.standardizedFileURL.path.hasPrefix(repository.standardizedFileURL.path + "/.build/"))
+        XCTAssertTrue(product.path.hasSuffix("/Build/Products/Debug/YTMuse.app"))
+        XCTAssertFalse(product.path.hasPrefix("/Applications/"))
+        let app = try lifecycleApplication()
+        app.launchArguments += ["-AppleInterfaceStyle", appearance, "-AppleKeyboardUIMode", "3"]
+        for key in ["YTMUSE_UI_DEVELOPMENT_DATA", "YTMUSE_UI_DEVELOPMENT_LIBRARY", "YTMUSE_UI_DEVELOPMENT_PLAYLISTS", "YTMUSE_UI_DEVELOPMENT_DOWNLOADS"] { app.launchEnvironment[key] = "1" }
+        app.launchEnvironment["YTMUSE_UI_TEST_WINDOW_SIZE"] = "1240x820"
+        app.launch(); defer { app.terminate() }
+        let window = app.windows["YTMuse"].firstMatch
+        XCTAssertTrue(window.waitForExistence(timeout: 20))
+        // Verify the actual root guard before any fixture navigation or preference action.
+        app.typeKey(",", modifierFlags: .command)
+        let roots = app.staticTexts["localDataRoots"].firstMatch
+        XCTAssertTrue(roots.waitForExistence(timeout: 15))
+        let rootText = lifecycleText(app, "localDataRoots")
+        guard rootText.hasPrefix("roots: isolated; guard=accepted"), rootText.contains("prefs=plist"), !rootText.contains("REAL"), !rootText.contains("PRODUCTION") else {
+            XCTFail("Refusing design review without accepted isolated roots"); return
+        }
+        let settings = app.windows.containing(.staticText, identifier: "localDataRoots").firstMatch
+        XCTAssertTrue(settings.waitForExistence(timeout: 10))
+        func chooseAppearance(_ mode: String) {
+            let picker = app.popUpButtons["appearancePicker"].firstMatch
+            XCTAssertTrue(picker.waitForExistence(timeout: 10)); XCTAssertTrue(picker.isHittable)
+            picker.click()
+            let choice = app.menuItems[mode].firstMatch
+            XCTAssertTrue(choice.waitForExistence(timeout: 5)); choice.click()
+            XCTAssertTrue(waitUntil { [picker.value as? String, picker.title, picker.label].compactMap { $0 }.contains(mode) })
+        }
+        chooseAppearance(appearance)
+        capture(settings, "Design-" + appearance + "-settings-appearance")
+        settings.buttons[XCUIIdentifierCloseWindow].click()
+        app.activate()
+        func shot(_ name: String) { self.capture(window, "Design-" + appearance + "-" + name) }
+        func click(_ element: XCUIElement) {
+            XCTAssertTrue(element.waitForExistence(timeout: 10))
+            XCTAssertTrue(element.isHittable, "Refusing a click outside the visible target")
+            let frame = element.frame
+            XCTAssertTrue(frame.minX.isFinite && frame.minY.isFinite && frame.width > 0 && frame.height > 0)
+            // Avoid the SDK's invalid automatic hit point; this remains an ordinary
+            // click at the visible, accessibility-reported control's centre.
+            element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).click()
+        }
+        for (name, destination) in [("home", "home"), ("explore", "explore"), ("library", "library"), ("downloads", "downloads"), ("history", "history")] {
+            let nav = self.w10(window, "nav-" + destination)
+            click(nav)
+            XCTAssertTrue(self.w10(window, "destinationTitle").waitForExistence(timeout: 10))
+            shot(name)
+            if destination == "explore" {
+                let chart = self.w10(window, "catalogCategory-category:FEmusic_charts")
+                click(chart)
+                XCTAssertTrue(self.w10(window, "catalogTitle").waitForExistence(timeout: 10))
+                shot("charts")
+                click(self.w10(window, "browserBack"))
+                let restoredHeading = self.w10(window, "destinationTitle")
+                XCTAssertTrue(restoredHeading.waitForExistence(timeout: 10))
+                XCTAssertTrue(restoredHeading.isHittable, "Back keeps Explore at its heading")
+                let album = self.w10(window, "catalogItem-album:MPREbdevelopment1")
+                click(album)
+                XCTAssertTrue(self.w10(window, "catalogTitle").waitForExistence(timeout: 10))
+                shot("album")
+            }
+            if destination == "library" {
+                click(self.w10(window, "libraryKind-albums")); shot("library-albums")
+                click(self.w10(window, "libraryKind-playlists")); shot("library-playlists")
+            }
+        }
+        click(self.w10(window, "nav-search"))
+        let search = app.textFields["searchField"].firstMatch
+        click(search); search.typeText("cafe")
+        XCTAssertTrue(self.w10(window, "searchResult-song:devsong0001").waitForExistence(timeout: 10))
+        shot("search")
+        app.typeKey("k", modifierFlags: .command)
+        let palette = app.descendants(matching: .any).matching(identifier: "commandPalette").firstMatch
+        XCTAssertTrue(palette.waitForExistence(timeout: 10)); capture(app.windows.firstMatch, "Design-" + appearance + "-palette")
+        app.typeKey(.escape, modifierFlags: [])
+        app.typeKey("m", modifierFlags: [.command, .shift])
+        let mini = app.windows["miniPlayerWindow"]
+        XCTAssertTrue(mini.waitForExistence(timeout: 10)); capture(mini, "Design-" + appearance + "-mini-compact")
+        click(self.w10(mini, "miniExpand"))
+        XCTAssertTrue(waitUntil { mini.frame.height > 400 })
+        capture(mini, "Design-" + appearance + "-mini-expanded")
+        let item = statusItem(app)
+        click(item)
+        let popover = app.descendants(matching: .any).matching(identifier: "statusPopover").firstMatch
+        XCTAssertTrue(popover.waitForExistence(timeout: 10)); capture(popover, "Design-" + appearance + "-popup")
+        app.typeKey(.escape, modifierFlags: [])
+        // An already-open panel follows a change, rather than taking a one-time theme snapshot.
+        let opposite = appearance == "Light" ? "Dark" : "Light"
+        app.typeKey(",", modifierFlags: .command)
+        chooseAppearance(opposite)
+        settings.buttons[XCUIIdentifierCloseWindow].click(); app.activate()
+        // Window screenshots sample visible pixels: bring the non-activating panel
+        // back above the browser after Settings has closed.
+        app.typeKey("m", modifierFlags: [.command, .shift])
+        let miniTitle = self.w10(mini, "currentMediaTitle")
+        XCTAssertTrue(waitUntil { miniTitle.exists && miniTitle.frame.width > 0 && mini.frame.contains(miniTitle.frame) })
+        capture(mini, "Design-" + appearance + "-mini-switched-to-" + opposite)
+        click(item)
+        XCTAssertTrue(popover.waitForExistence(timeout: 10)); capture(popover, "Design-" + appearance + "-popup-switched-to-" + opposite)
+        app.typeKey(.escape, modifierFlags: [])
+        app.typeKey(",", modifierFlags: .command)
+        chooseAppearance(appearance)
+        settings.buttons[XCUIIdentifierCloseWindow].click(); app.activate()
+        click(app.menuBars.menuBarItems["Window"].firstMatch)
+        click(app.menuItems["Now Playing Full Screen"].firstMatch)
+        let fullScreen = app.windows["nowPlayingFullScreen"].firstMatch
+        XCTAssertTrue(fullScreen.waitForExistence(timeout: 10))
+        let displayWidth = NSScreen.main?.frame.width ?? window.frame.width
+        XCTAssertTrue(waitUntil { fullScreen.frame.width >= displayWidth - 4 })
+        capture(fullScreen, "Design-" + appearance + "-fullscreen")
+        app.typeKey(.escape, modifierFlags: [])
+        XCTAssertTrue(waitUntil { !fullScreen.exists || fullScreen.frame.width < displayWidth - 4 })
+        if fullScreen.exists { fullScreen.buttons[XCUIIdentifierCloseWindow].click() }
+        XCTAssertTrue(waitUntil { !fullScreen.exists })
+    }
+    @MainActor func testDesignReviewLight() throws { try captureDesignReview(appearance: "Light") }
+    @MainActor func testDesignReviewDark() throws { try captureDesignReview(appearance: "Dark") }
+
     // MARK: W10 search and command palette (isolated launch, labelled development catalog; never the live service)
 
     @MainActor private func w10(_ window: XCUIElement, _ identifier: String) -> XCUIElement {
@@ -1081,7 +1222,7 @@ final class NativeMusicUITests: XCTestCase {
         capture(window, "W10 correction applied with original available")
         w10(window, "revertCorrection").click()
         XCTAssertEqual(field.value as? String, "cafe del mer", "the original is recoverable exactly")
-        // Scopes: Library is local only; Uploads says it is not connected.
+        // Scopes: Library is local only.
         field.typeKey("a", modifierFlags: .command); field.typeText("cafe")
         let scope = window.radioGroups["searchScope"]
         XCTAssertTrue(scope.waitForExistence(timeout: 5))
@@ -1089,10 +1230,6 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertTrue(w10(window, "searchScopeNotice").waitForExistence(timeout: 5))
         XCTAssertTrue(w10(window, "searchResult-playlist:PLdevelopmentCafe").exists)
         XCTAssertFalse(w10(window, "searchResult-song:devsong0001").exists, "the service is not asked in the Library scope")
-        scope.radioButtons["Uploads"].click()
-        let uploadsNotice = NSPredicate { _, _ in self.w10Text(self.w10(window, "searchScopeNotice")).contains("Uploads aren’t connected yet") }
-        expectation(for: uploadsNotice, evaluatedWith: nil); waitForExpectations(timeout: 5)
-        XCTAssertFalse(w10(window, "searchResult-playlist:PLdevelopmentCafe").exists)
         scope.radioButtons["All"].click()
         XCTAssertTrue(w10(window, "searchResult-song:devsong0001").waitForExistence(timeout: 5))
         // Command palette: Command-K, tolerant command match, Return runs it and closes.
@@ -1414,7 +1551,7 @@ final class NativeMusicUITests: XCTestCase {
         w10(window, "nav-library").click()
         XCTAssertTrue(w10Text(w12Wait(window, "destinationTitle")).contains("Library"))
         XCTAssertTrue(w10(window, "developmentDataLabel").exists, "the development library is labelled")
-        for kind in ["songs", "likedSongs", "albums", "artists", "following", "playlists", "podcasts", "savedEpisodes", "uploads"] { w12Wait(window, "libraryKind-" + kind) }
+        for kind in ["songs", "likedSongs", "albums", "artists", "following", "playlists", "podcasts", "savedEpisodes"] { w12Wait(window, "libraryKind-" + kind) }
         // Songs: a song listed twice is two rows; the first response is not the whole library.
         w12Wait(window, "libraryRow-song:devsong0001")
         w12Wait(window, "libraryRow-song:devsong0001#1")
@@ -1459,7 +1596,7 @@ final class NativeMusicUITests: XCTestCase {
         // Distinct states: empty, offline, unreadable, restricted (session ended), restricted (not offered).
         let expected: [(String, String, String)] = [
             ("likedSongs", "libraryState-empty", "read completely"), ("artists", "libraryState-offline", "offline"), ("playlists", "libraryState-unrecognised", "isn’t the same as an empty library"),
-            ("savedEpisodes", "libraryState-restricted", "Sign in again"), ("uploads", "libraryState-restricted", "doesn’t offer this collection")]
+            ("savedEpisodes", "libraryState-restricted", "Sign in again")]
         var texts: Set<String> = []
         for (kind, state, phrase) in expected {
             w12Kind(window, kind)
@@ -1473,7 +1610,7 @@ final class NativeMusicUITests: XCTestCase {
         }
         XCTAssertEqual(texts.count, expected.count, "each state reads differently")
         capture(window, "W12 Library restricted state")
-        // The Podcasts and Uploads destinations are the Library's own kinds.
+        // The Podcasts destination is one of the Library's own kinds.
         w10(window, "nav-podcasts").click()
         w12Wait(window, "libraryRow-podcast:MPSPPLdevelopmentshow")
     }
@@ -1564,131 +1701,6 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertTrue(w10Text(empty).contains("YouTube Music’s history is unchanged"), w10Text(empty))
         w12Wait(window, "libraryRow-song:devsong0001")        // the service's rows are untouched
         capture(window, "W12 Local history cleared, remote unchanged")
-    }
-
-    // MARK: W19 Uploads (labelled development data; a scripted upload route over synthetic audio; nothing reaches a service)
-
-    @MainActor private func uploadsApplication() -> XCUIApplication {
-        let app = libraryApplication()
-        app.launchEnvironment["YTMUSE_UI_DEVELOPMENT_UPLOADS"] = "1"
-        return app
-    }
-    @MainActor private func w19Rows(_ window: XCUIElement, prefix: String) -> Int {
-        window.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", prefix)).count
-    }
-
-    @MainActor func testW19UploadsStateTheirCapabilityHonestlyWhenThereIsNoUploadRoute() throws {
-        let app = libraryApplication(); app.launch(); defer { app.terminate() }
-        let window = app.windows["YTMuse"].firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 10))
-        w10(window, "nav-uploads").click()
-        XCTAssertTrue(w10Text(w12Wait(window, "destinationTitle")).contains("Uploads"))
-        let capability = w12Wait(window, "uploadsCapability-unavailable")
-        XCTAssertTrue(w10Text(capability).contains("Uploading arrives in a later update"), w10Text(capability))
-        XCTAssertFalse(w10(window, "uploadChoose").exists, "no upload control without an upload route")
-        XCTAssertFalse(w10(window, "uploadDropZone").exists, "no drop area either: a fake one would read as working")
-        XCTAssertFalse(window.buttons["Choose Files…"].exists)
-        for kind in ["songs", "albums", "artists"] { w12Wait(window, "uploadsKind-" + kind) }
-        capture(window, "W19 Uploads without an upload route")
-    }
-
-    @MainActor func testW19ChoosingFilesRunsJobsThroughProcessingAndOnlyTheServicesWordAddsALibraryItem() throws {
-        let app = uploadsApplication(); app.launch(); defer { app.terminate() }
-        let window = app.windows["YTMuse"].firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 10))
-        w10(window, "nav-uploads").click()
-        XCTAssertTrue(w10Text(w12Wait(window, "destinationTitle")).contains("Uploads"))
-        XCTAssertTrue(w10(window, "developmentDataLabel").exists, "the development route is labelled")
-        XCTAssertFalse(w10(window, "uploadsCapability-unavailable").exists)
-        XCTAssertTrue(w10Text(w12Wait(window, "uploadFacts")).contains("can’t be resumed"), "the route's own facts: no resumption, and no size claim")
-        XCTAssertFalse(w10Text(w12Wait(window, "uploadFacts")).contains("up to"), "no invented size limit")
-        w12Wait(window, "uploadDropZone")
-        w12Wait(window, "libraryRow-song:devupsong01")
-        XCTAssertEqual(w19Rows(window, prefix: "libraryRow-song:devupnew"), 0)
-        w12Wait(window, "uploadChoose").click()
-        // The slow file is still sending while the others have been through the route.
-        let slowProgress = w12Wait(window, "uploadJobProgress-Slow Test Tone.wav", timeout: 30)
-        XCTAssertTrue(slowProgress.exists)
-        // A refusal when sending: the service's words, nothing completed, nothing offered to send the same file again.
-        let refused = w12Wait(window, "uploadJobState-Refused Test Tone.wav", timeout: 30)
-        XCTAssertTrue(w12Gone(w10(window, "uploadJobProgress-Refused Test Tone.wav")))
-        XCTAssertTrue(w10Text(refused).contains("didn’t accept this file"), w10Text(refused))
-        XCTAssertTrue(w10Text(w12Wait(window, "uploadJobServerMessage-Refused Test Tone.wav")).contains("Development message"))
-        XCTAssertFalse(w10(window, "uploadJobStartOver-Refused Test Tone.wav").exists)
-        // A processing failure: failed, with the service's words, and no library item for it.
-        let failed = w12Wait(window, "uploadJobServerMessage-Processing Fails Test Tone.wav", timeout: 40)
-        XCTAssertTrue(w10Text(failed).contains("processing failed"))
-        XCTAssertTrue(w10Text(w10(window, "uploadJobState-Processing Fails Test Tone.wav")).contains("couldn’t process this file"))
-        // The good file: processing first (not in the library yet), completed only after the service said so, and only then in the list.
-        let aurora = w12Wait(window, "uploadJobState-Aurora Test Tone.wav", timeout: 5)
-        capture(window, "W19 Upload jobs: processing, refused, failed, sending")
-        let completed = NSPredicate { _, _ in self.w10Text(aurora).contains("finished processing") }
-        XCTAssertEqual(XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: completed, object: nil)], timeout: 40), .completed, w10Text(aurora))
-        XCTAssertTrue(w10Text(aurora).contains("uploads list was updated"))
-        let newRow = window.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "libraryRow-song:devupnew")).firstMatch
-        XCTAssertTrue(newRow.waitForExistence(timeout: 15), "the refreshed Uploads list holds the processed file")
-        XCTAssertEqual(w19Rows(window, prefix: "libraryRow-song:devupnew"), 1, "one new item: the failed and refused files never became library items")
-        // The same file chosen again is dropped as a duplicate while it is in the list.
-        w12Wait(window, "uploadChoose").click()
-        XCTAssertTrue(w10Text(w12Wait(window, "uploadRefusal-Aurora Test Tone.wav")).contains("already in the upload list"))
-        w12Wait(window, "uploadRefusalsDismiss").click()
-        // Cancelling the one still sending: it stops, and says the file on the Mac wasn't changed.
-        w12Wait(window, "uploadJobCancel-Slow Test Tone.wav").click()
-        let cancelled = w12Wait(window, "uploadJobState-Slow Test Tone.wav")
-        let stopped = NSPredicate { _, _ in self.w10Text(cancelled).contains("Cancelled") }
-        XCTAssertEqual(XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: stopped, object: nil)], timeout: 10), .completed, w10Text(cancelled))
-        XCTAssertTrue(w10Text(cancelled).contains("Your file wasn’t changed"))
-        XCTAssertTrue(w12Gone(w10(window, "uploadJobProgress-Slow Test Tone.wav")))
-        capture(window, "W19 Upload jobs settled")
-        w12Wait(window, "uploadJobDismiss-Slow Test Tone.wav").click()
-        XCTAssertTrue(w12Gone(w10(window, "uploadJob-Slow Test Tone.wav")), "dismissing removes only the job record")
-    }
-
-    @MainActor func testW19RemovingAnUploadNamesItNeedsConfirmationAndNeverClaimsWhatTheServiceDidNotConfirm() throws {
-        let app = uploadsApplication(); app.launch(); defer { app.terminate() }
-        let window = app.windows["YTMuse"].firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 10))
-        w10(window, "nav-uploads").click()
-        w12Wait(window, "libraryRow-song:devupsong01")
-        // Asking names the upload, says what stays untouched, and sends nothing; Cancel leaves everything as it was.
-        w12Wait(window, "uploadRemove-song:devupsong01").click()
-        var dialog = app.sheets.firstMatch
-        XCTAssertTrue(dialog.buttons["Remove from Uploads"].waitForExistence(timeout: 8))
-        XCTAssertTrue(dialog.staticTexts.matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", "Home Recording", "Home Recording")).firstMatch.exists, "the question names the selected upload")
-        XCTAssertTrue(dialog.staticTexts.matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", "isn’t touched", "isn’t touched")).firstMatch.exists, "and says the file on the Mac isn't touched")
-        capture(window, "W19 Remove upload confirmation")
-        dialog.buttons["Cancel"].click()
-        XCTAssertTrue(w12Gone(w10(window, "uploadRemovePending-song:devupsong01")))
-        w12Wait(window, "libraryRow-song:devupsong01")
-        // Confirmed: pending, then removed (the service confirmed), and the refreshed list no longer holds it.
-        w12Wait(window, "uploadRemove-song:devupsong01").click()
-        dialog = app.sheets.firstMatch
-        dialog.buttons["Remove from Uploads"].click()
-        w12Wait(window, "uploadRemovePending-song:devupsong01", timeout: 5)
-        let removed = w12Wait(window, "uploadRemoved-song:devupsong01", timeout: 15)
-        XCTAssertTrue(w10Text(removed).contains("The file on your Mac wasn’t touched"))
-        capture(window, "W19 Upload removed")
-        // Refused by the service: nothing changed, the row stays, with the reason and a retry.
-        w12Wait(window, "uploadRemove-song:devupsong02").click()
-        app.sheets.firstMatch.buttons["Remove from Uploads"].click()
-        let failed = w12Wait(window, "uploadRemoveFailed-song:devupsong02", timeout: 15)
-        XCTAssertTrue(w10Text(failed).contains("Nothing was changed"), w10Text(failed))
-        w12Wait(window, "libraryRow-song:devupsong02")
-        w12Wait(window, "uploadRemoveDismiss-song:devupsong02").click()
-        // Not confirmed: shown as unconfirmed, never as removed; the check can't tell, and only then is trying again offered.
-        w12Wait(window, "uploadRemove-song:devupsong03").click()
-        app.sheets.firstMatch.buttons["Remove from Uploads"].click()
-        w12Wait(window, "uploadRemoveUnconfirmed-song:devupsong03", timeout: 15)
-        XCTAssertFalse(w10(window, "uploadRemoved-song:devupsong03").exists, "an answer without evidence is never shown as removed")
-        XCTAssertFalse(w10(window, "uploadRemoveRetry-song:devupsong03").exists, "no repeat before the list has been read")
-        w12Wait(window, "uploadRemoveCheck-song:devupsong03").click()
-        w12Wait(window, "uploadRemoveUncheckable-song:devupsong03")
-        w12Wait(window, "uploadRemoveRetry-song:devupsong03")
-        capture(window, "W19 Unconfirmed removal")
-        // An upload that published no removal command offers none (albums here).
-        w12Wait(window, "uploadsKind-albums").click()
-        w12Wait(window, "libraryRow-album:MPREdevelopmentupload1")
-        XCTAssertEqual(w19Rows(window, prefix: "uploadRemove-"), 0, "no removal control for an entry that published no removal target")
     }
 
     // MARK: W13 — Playlist editing (labelled development playlists; no account, no service, no network)
@@ -2835,6 +2847,11 @@ final class NativeMusicUITests: XCTestCase {
         for id in ["transportPlayPause", "transportPrevious", "transportNext", "miniLike", "miniQueue", "miniVolume", "miniPin", "miniExpand"] {
             XCTAssertTrue(mini.descendants(matching: .any).matching(identifier: id).firstMatch.waitForExistence(timeout: 5), id)
         }
+        let volume = compactVolumeSlider("miniVolume", in: mini, app: app)
+        XCTAssertTrue(volume.isEnabled)
+        // Move the real slider through its existing keyboard action, then close the popover.
+        volume.click(); volume.typeKey(.leftArrow, modifierFlags: [])
+        app.typeKey(.escape, modifierFlags: [])
         capture(mini, "W21 mini-player compact")
         // A track change from the mini-player's own Next: the title moves on.
         let title = mini.staticTexts["miniTitle"].firstMatch
@@ -3247,7 +3264,7 @@ final class NativeMusicUITests: XCTestCase {
         let app = designApplication()
         app.launchEnvironment["YTMUSE_UI_TEST_DEFAULTS_ID"] = UUID().uuidString   // one throwaway preferences plist for the relaunch below
         app.launchArguments = app.launchArguments.filter { $0 != "3" && $0 != "-AppleKeyboardUIMode" } + ["-AppleKeyboardUIMode", "2"]   // full keyboard access for this launch only (process-local)
-        for key in ["YTMUSE_UI_DEVELOPMENT_LIBRARY", "YTMUSE_UI_DEVELOPMENT_PLAYLISTS", "YTMUSE_UI_DEVELOPMENT_UPLOADS"] { app.launchEnvironment[key] = "1" }
+        for key in ["YTMUSE_UI_DEVELOPMENT_LIBRARY", "YTMUSE_UI_DEVELOPMENT_PLAYLISTS"] { app.launchEnvironment[key] = "1" }
         app.launch(); defer { app.terminate() }
         let window = app.windows["YTMuse"]
         XCTAssertTrue(window.waitForExistence(timeout: 20), "the main window is up")
@@ -3276,7 +3293,7 @@ final class NativeMusicUITests: XCTestCase {
         var visited: [String: (operable: Int, unnamed: [String])] = [:]
         func identifiers(_ root: XCUIElement) throws -> [String] { var out: [String] = []; w28Walk(try root.snapshot()) { if !$0.identifier.isEmpty { out.append($0.identifier) } }; return out }
         var lastIdentifiers = Set(try identifiers(window))
-        for (title, destination) in [("Downloads", "downloads"), ("Uploads", "uploads"), ("History", "history"), ("Library", "library"), ("Explore", "explore"), ("Home", "home")] {
+        for (title, destination) in [("Downloads", "downloads"), ("History", "history"), ("Library", "library"), ("Explore", "explore"), ("Home", "home")] {
             app.typeKey("k", modifierFlags: .command)
             XCTAssertTrue(any("commandPalette").waitForExistence(timeout: 10), "Command-K opens the palette")
             app.typeText("Go to " + title)

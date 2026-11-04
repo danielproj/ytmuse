@@ -37,7 +37,6 @@ import TestSupport
                 .artists: [IntentFixtures.artist("Library Artist", id: "art1")],
                 .following: [IntentFixtures.artist("Followed Artist", id: "art2")],
                 .playlists: [IntentFixtures.playlist("Private Playlist Name", id: "PLpriv")],
-                .uploads: [MusicCatalogItem(kind: .song, title: "Uploaded Track", videoID: "vUp", isUpload: true)],
             ]
             source.history = [LocalHistoryRecord(videoID: "vHist", title: "Listened Song", artist: "Synthetic Artist", startedAt: Date(), listenedSeconds: 60)]
         }
@@ -60,7 +59,7 @@ import TestSupport
         await rig.controller.reconcileNow()
         #expect(rig.index.entries.isEmpty)
     }
-    @Test func enabledIndexesSavedSongsAlbumsAndArtistsAndTheActionsButNotPlaylistsUploadsOrHistory() async {
+    @Test func enabledIndexesSavedSongsAlbumsAndArtistsAndTheActionsButNotPlaylistsOrHistory() async {
         let rig = Rig(); defer { rig.cleanUp() }
         rig.settings.setEnabled(true)
         await rig.controller.reconcileNow()
@@ -68,14 +67,14 @@ import TestSupport
         let token = WidgetScope.token(for: rig.account)
         #expect(rig.index.entries.filter { $0.accountToken != nil }.allSatisfy { $0.accountToken == token && $0.visibility == .catalog })
     }
-    @Test func thePrivateOptInAddsLibraryPlaylistsUploadsAndLocalHistory() async {
+    @Test func thePrivateOptInAddsLibraryPlaylistsAndLocalHistory() async {
         let rig = Rig(); defer { rig.cleanUp() }
         rig.settings.setEnabled(true); rig.settings.setIncludePrivate(true)
         await rig.controller.reconcileNow()
-        #expect(rig.titles.isSuperset(of: ["Private Playlist Name", "Uploaded Track", "Listened Song"]))
+        #expect(rig.titles.isSuperset(of: ["Private Playlist Name", "Listened Song"]))
         rig.settings.setIncludePrivate(false)
         await rig.controller.reconcileNow()
-        #expect(!rig.titles.contains("Private Playlist Name") && !rig.titles.contains("Uploaded Track") && !rig.titles.contains("Listened Song") && rig.titles.contains("Saved Song"))
+        #expect(!rig.titles.contains("Private Playlist Name") && !rig.titles.contains("Listened Song") && rig.titles.contains("Saved Song"))
     }
     @Test func anItemWithNothingToOpenIsNotIndexed() async {
         let rig = Rig(); defer { rig.cleanUp() }
@@ -154,8 +153,7 @@ import TestSupport
         #expect(SpotlightActivation.command(for: "com.apple.photos|1", live: live) == .failure(.notFound))
         #expect(SpotlightActivation.command(for: SpotlightEntry(action: .playPause).uniqueID, live: nil) == .success(.toggle), "an action needs no account (the channel applies its own gates)")
         #expect(SpotlightActivation.command(for: SpotlightEntry(action: .showQueue).uniqueID, live: live) == .success(.showQueue))
-        let upload = SpotlightEntry(kind: .upload, title: "U", accountToken: token, target: IntentMediaTarget(videoID: "vu"))!
-        #expect(SpotlightActivation.command(for: upload.uniqueID, live: live) == .success(.showPlayer), "an upload does not play from here; the window opens")
+        #expect(SpotlightActivation.command(for: "ytmuse.spot.v1|\(token)|upload|v=vu", live: live) == .failure(.notFound), "removed Spotlight kinds cannot activate")
         #expect(SpotlightActivation.activityType == "com.apple.corespotlightitem" && SpotlightActivation.identifierKey == "kCSSearchableItemActivityIdentifier")
     }
 }

@@ -297,15 +297,15 @@ import Observation
         if let reason = offer.unavailable { feedback[key] = .failed(reason); return }
         guard performer != nil else { feedback[key] = .failed(String(localized: "This action isn’t available right now.")); return }
         // Only the show's own Play and Shuffle register its episodes; a radio (or any other page action) does not.
-        await start(target: target, title: header?.title ?? heading ?? "", feedbackKey: key, registersShow: action == .play || action == .shuffle)
+        await start(target: target, title: header?.title ?? heading ?? "", feedbackKey: key, registersShow: action == .play || action == .shuffle, shuffle: action == .shuffle)
     }
-    private func start(target: CatalogActionPlan.PlayTarget, title: String, feedbackKey: String, registersShow: Bool = false) async {
+    private func start(target: CatalogActionPlan.PlayTarget, title: String, feedbackKey: String, registersShow: Bool = false, shuffle: Bool = false) async {
         guard let performer else { return }
         let scopeAtStart = accountScope()
         feedback[feedbackKey] = .working
-        let outcome = (target.videoID == nil && target.params == nil)
+        let outcome = (target.videoID == nil && target.params == nil && !shuffle)
             ? await performer.play(playlistID: target.playlistID, title: title)
-            : await performer.play(playlistID: target.playlistID, title: title, videoID: target.videoID, params: target.params)
+            : await performer.play(playlistID: target.playlistID, title: title, videoID: target.videoID, params: target.params, intent: shuffle ? .shuffle : .endpoint)
         if registersShow, self.target.browseID.hasPrefix("MPSP"), outcome == .started, accountScope() == scopeAtStart { podcastStart?.began(self.target.browseID, target.playlistID) }
         guard accountScope() == scopeAtStart else { feedback[feedbackKey] = nil; return }
         switch outcome {

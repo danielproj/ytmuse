@@ -15,8 +15,8 @@ public struct PlaylistCreateView: View {
 
     public init(creator: PlaylistCreator, songs: [PlaylistAddition] = [], open: @escaping (String) -> Void) { self.creator = creator; self.songs = Array(songs.prefix(MusicPlaylistRequest.maximumActions)); self.open = open; _privacy = State(initialValue: creator.startingVisibility()) }
     public var body: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.sm) {
-            Text(songs.isEmpty ? "New Playlist" : "Save Queue as Playlist").font(.title2.bold()).accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: MusicSpace.lg) {
+            Text(songs.isEmpty ? "New Playlist" : "Save Queue as Playlist").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             if !songs.isEmpty { Text("\(songs.count) songs from the queue").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistCreateSongs") }
             TextField("Title", text: $title).textFieldStyle(.roundedBorder).accessibilityIdentifier("playlistCreateTitle")
             TextField("Description (optional)", text: $details, axis: .vertical).textFieldStyle(.roundedBorder).lineLimit(1...3).accessibilityIdentifier("playlistCreateDescription")
@@ -29,9 +29,9 @@ public struct PlaylistCreateView: View {
                 Spacer()
                 MusicGlassGroup {
                     HStack {
-                        Button("Close") { creator.reset(); dismiss() }.musicButtons().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistCreateClose")
+                        Button("Close") { creator.reset(); dismiss() }.musicPageAction().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistCreateClose")
                         Button("Create") { Task { await creator.create(title: title, description: details, privacy: privacy, songs: songs) } }
-                            .musicButtons(prominent: true).disabled(title.trimmingCharacters(in: .whitespaces).isEmpty || creator.state == .creating || isCreated || creator.state == .needsReconciliation)
+                            .musicPageAction(prominent: true).disabled(title.trimmingCharacters(in: .whitespaces).isEmpty || creator.state == .creating || isCreated || creator.state == .needsReconciliation)
                             .accessibilityIdentifier("playlistCreateButton")
                     }
                 }
@@ -49,23 +49,23 @@ public struct PlaylistCreateView: View {
         case .created(let id):
             HStack {
                 Label("Created “\(title)” as \(privacy.title.lowercased()).", systemImage: "checkmark.circle").accessibilityIdentifier("playlistCreated")
-                Button("Open") { open(id); dismiss() }.musicButtons().accessibilityIdentifier("playlistCreatedOpen")
+                Button("Open") { open(id); dismiss() }.musicPageAction().accessibilityIdentifier("playlistCreatedOpen")
             }
         case .failed(let failure):
             HStack {
                 Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistCreateFailed")
-                if failure != .invalid && failure != .needsSignIn && failure != .sessionEnded { Button("Try Again") { Task { await creator.create(title: title, description: details, privacy: privacy, songs: songs) } }.musicButtons() }
+                if failure != .invalid && failure != .needsSignIn && failure != .sessionEnded { Button("Try Again") { Task { await creator.create(title: title, description: details, privacy: privacy, songs: songs) } }.musicPageAction() }
             }
         case .needsReconciliation:
             HStack {
                 Label("YouTube Music didn’t confirm the new playlist. It may or may not exist.", systemImage: "questionmark.circle").font(.caption).accessibilityIdentifier("playlistCreateUnconfirmed")
-                Button("Check") { Task { await creator.check() } }.musicButtons().accessibilityIdentifier("playlistCreateCheck")
+                Button("Check") { Task { await creator.check() } }.musicPageAction().accessibilityIdentifier("playlistCreateCheck")
             }
         case .ambiguous(let options):
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                 Text("More than one new playlist has this title. Which one is yours?").font(.caption)
                 ForEach(options, id: \.playlistID) { option in
-                    Button(option.title + " · " + option.playlistID) { creator.choose(option.playlistID) }.musicButtons()
+                    Button(option.title + " · " + option.playlistID) { creator.choose(option.playlistID) }.musicPageAction()
                 }
             }
         }

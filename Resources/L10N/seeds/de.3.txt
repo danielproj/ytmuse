@@ -48,7 +48,6 @@
 748|Vorheriges Objekt
 749|Vorherige Seite
 750|Privat
-751|%@ wird verarbeitet
 752|Fortschritt mit der Markierung „Auf diesem Mac“ wird nur auf diesem Mac behalten. Der eigene Player von YouTube meldet seinen Fortschritt von selbst an YouTube Music.
 753|Öffentlich
 754|Qualität
@@ -75,13 +74,8 @@
 775|Aktualisieren
 776|Wird aktualisiert …
 777|%@ von diesem Mac entfernen?
-778|%@ aus deinen Uploads entfernen
 779|Gefällt mir entfernen
 780|Aus „Folgen für später“ entfernen
-781|„%@“ wurde aus deinen Uploads entfernt.
-782|„%@“ wurde aus deinen Uploads entfernt. Die Datei auf deinem Mac wurde nicht angetastet.
-783|Entfernen …
-784|„%@“ wird entfernt …
 785|Umbenennen
 786|Lokale Bezeichnung umbenennen
 787|Erneuern
@@ -129,7 +123,6 @@
 829|Stattdessen nach „%@“ suchen
 830|Songs, Alben, Interpreten und Playlists suchen
 831|Diese Sammlung durchsuchen
-832|Deine Uploads durchsuchen
 833|Sucht erneut
 834|YouTube Music wird durchsucht …
 835|Die Playlists in deiner Mediathek werden auf diesem Mac durchsucht. Der Dienst wird nicht gefragt.
@@ -193,7 +186,6 @@
 893|Einschlaftimer: wird ausgeblendet
 894|Intelligente Downloads
 895|Software-Gerät
-896|Einige Dateien wurden nicht hinzugefügt.
 897|Einige dieser Songs sind bereits in der Playlist
 898|Es läuft bereits etwas, daher starten Vorschauen nicht von selbst. Klicke auf „Vorschau“, um eine zu hören.
 899|Es läuft bereits etwas, daher starten Vorschauen nicht von selbst. Klicke auf „Vorschau“, um eine zu hören; sie ersetzt, was gerade läuft.
@@ -205,7 +197,6 @@
 905|Quelle: %@ · %@ · %@ · %@
 906|Geschwindigkeit
 907|Spotlight
-908|Von vorn beginnen
 909|Radio starten
 910|Ein Radio starten von
 911|Radio von %@ starten
@@ -238,10 +229,8 @@
 938|Diese Suche ist zu lang.
 939|Dieser Wert ist für diesen Befehl ungültig.
 940|Der AirPlay-Empfänger wurde getrennt, daher wurde die Wiedergabe pausiert.
-941|Die App wurde beendet, bevor dieser Upload abgeschlossen war.
 942|Die Beschreibung wurde ebenfalls geändert.
 943|Der Speicher ist voll
-944|Die Datei hat sich nach der Auswahl geändert. Wähle sie erneut aus.
 945|Die erste Seite der Antwort von YouTube Music, nicht der ganze Katalog.
 946|Der Schlüssel für diesen Download ist nicht mehr verfügbar
 947|Das letzte oder aktuelle Objekt, mit Wiedergabe, Zurück und Weiter.
@@ -258,7 +247,7 @@
 958|Das vorherige Objekt konnte nicht geöffnet werden. Versuche es noch einmal mit „Vorheriger“.
 959|Die Warteschlange konnte diesen Song nicht aufnehmen.
 960|Die Warteschlange wird im Hauptfenster angezeigt.
-961|Das Radio konnte nicht gestartet werden. Was lief, bleibt unverändert.
+961|YouTube Music hat den Radiostart nicht bestätigt. Die Wiedergabe hat sich möglicherweise geändert.
 962|Beim Casten stellt der Lautstärkeregler die Lautstärke des Empfängers ein. Die Lautstärke des Mac bleibt unverändert.
 963|Das gewählte Objekt der Warteschlange konnte nicht geöffnet werden. Versuche, es erneut auszuwählen.
 964|Die Sitzung für %@ wurde beendet. Melde dich erneut an.
@@ -280,12 +269,7 @@
 980|Diese App ändert nie die Lautstärke des Mac.
 981|Dieser Kommentar ist länger, als diese App in einem Beitrag sendet.
 982|Diese Verbindung ist getaktet. Automatische Downloads warten; du kannst trotzdem einen starten.
-983|Dadurch wird „%@“ aus deinen YouTube-Music-Uploads gelöscht. Die Datei auf deinem Mac wird nicht angetastet.
 984|Die Sendung dieser Folge ist nicht bekannt, daher kann ihre Geschwindigkeit nicht geändert werden.
-985|Diese Datei hat sich beim Lesen geändert. Wähle sie erneut aus, sobald sie sich nicht mehr ändert.
-986|Diese Datei ist größer als das Maximum von %@, das YouTube Music akzeptiert.
-987|Das ist ein Ordner. Wähle stattdessen die Audiodateien darin aus.
-988|Das ist eine Videodatei. Uploads in deine Musikmediathek nehmen Audiodateien an.
 989|Das ist bereits die Audioversion.
 990|Das ist kein Livestream.
 991|Das ist das Standardkürzel %@, das jede App verwendet.

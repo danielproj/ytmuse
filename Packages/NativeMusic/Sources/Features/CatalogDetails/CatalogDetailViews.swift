@@ -11,10 +11,10 @@ struct CollectionHeaderView: View {
     var artworkEdge: CGFloat = 200
     var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.md) {
-            HStack(alignment: .top, spacing: MusicSpace.lg) {
+            MusicHeroLayout() {
                 CatalogArtworkView(thumbnails: header.thumbnails, edge: artworkEdge, corner: .feature)
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    Text(header.title).font(.largeTitle.bold()).fixedSize(horizontal: false, vertical: true)
+                    Text(header.title).font(MusicPageStyle.title).fixedSize(horizontal: false, vertical: true)
                         .accessibilityAddTraits(.isHeader).accessibilityIdentifier("catalogTitle")
                     if !header.subtitle.isEmpty {
                         Text(header.subtitle.joined(separator: String(localized: "detailSeparator"))).foregroundStyle(MusicStyle.secondaryText)
@@ -32,7 +32,7 @@ struct CollectionHeaderView: View {
                     PlaylistEditEntry(model: model, header: header, navigator: navigator)
                 }
             }
-            RichDescriptionView(runs: header.description)
+            RichDescriptionView(runs: header.description).padding(.top, MusicSpace.xs)
         }
     }
 }
@@ -80,10 +80,10 @@ public struct CollectionDetailView: View {
         CatalogShelvesView(model: model, navigator: navigator) {
             VStack(alignment: .leading, spacing: MusicSpace.sm) {
                 HStack {
-                    if model.header == nil { Text(model.heading ?? fallbackTitle).font(.largeTitle.bold()).accessibilityIdentifier("catalogTitle") }
+                    if model.header == nil { Text(model.heading ?? fallbackTitle).font(MusicPageStyle.title).accessibilityIdentifier("catalogTitle") }
                     Spacer()
                     Button { Task { await model.refresh() } } label: { Label("Refresh", systemImage: "arrow.clockwise") }
-                        .labelStyle(.iconOnly).help(Text("Refresh")).musicButtons().disabled(model.isRefreshing || model.phase == .loading)
+                        .labelStyle(.iconOnly).help(Text("Refresh")).musicPageAction().disabled(model.isRefreshing || model.phase == .loading)
                         .accessibilityIdentifier("catalogRefresh")
                 }
                 if let header = model.header { CollectionHeaderView(model: model, header: header, navigator: navigator) }
@@ -109,11 +109,11 @@ public struct SongDetailView: View {
         let offers = detail.offers(playback: model.playback)
         ScrollView {
             VStack(alignment: .leading, spacing: MusicSpace.lg) {
-                HStack(alignment: .top, spacing: MusicSpace.lg) {
+                MusicHeroLayout() {
                     CatalogArtworkView(thumbnails: item.thumbnails, edge: 200, corner: .feature)
                     VStack(alignment: .leading, spacing: MusicSpace.xs) {
                         HStack(spacing: MusicSpace.xs) {
-                            Text(item.title).font(.largeTitle.bold()).fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader)
+                            Text(item.title).font(MusicPageStyle.title).fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader)
                                 .accessibilityIdentifier("catalogTitle")
                             if item.explicit { ExplicitBadge() }
                         }
@@ -135,10 +135,10 @@ public struct SongDetailView: View {
                 Label("Audio quality is chosen by YouTube Music’s own player. YTMuse doesn’t measure or select it.", systemImage: "waveform")
                     .font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("songQuality")
                 MusicGlassGroup {
-                    HStack {
+                    MusicActionLayout() {
                         ForEach(offers) { offer in
                             Button { Task { await model.perform(offer.action, on: item) } } label: { Label(offer.action.title, systemImage: offer.action.symbol) }
-                                .musicButtons(prominent: offer.action == .play).accessibilityIdentifier("songAction-" + offer.action.rawValue)
+                                .musicPageAction(prominent: offer.action == .play).accessibilityIdentifier("songAction-" + offer.action.rawValue)
                         }
                     }
                 }
@@ -159,7 +159,7 @@ public struct SongDetailView: View {
                     Divider()
                     SocialPanel(surface: social, subject: SocialSubject(kind: .song, id: video, title: item.title))
                 }
-            }.padding(MusicSpace.lg).frame(maxWidth: .infinity, alignment: .leading)
+            }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }.restoresScroll().accessibilityIdentifier("songDetail")
     }
 }

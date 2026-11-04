@@ -188,16 +188,16 @@ public struct GoogleAuthorizationSetup: Sendable {
     @ObservationIgnored var discoveryReadout: (@MainActor () -> String)?
     /// This Mac's own listening record; bound to its file store once the account directory is known.
     @ObservationIgnored let historyStore = LateBoundHistoryStore()
-    /// The upload job list (W19), bound to its per-account file store once the account directory is known.
-    @ObservationIgnored let uploadStore = LateBoundUploadStore()
     /// The adapter-defined rule for when listening counts as a play; nil disables the local record.
     @ObservationIgnored let listeningPolicy: ListeningPolicy?
     /// The real Music search through the coordinator (signed for the active account, otherwise anonymous).
     var searchRemote: SearchModel.RemoteSearch? {
-        guard let music else { return nil }
         let remote: SearchModel.RemoteSearch = { [weak self] query in
             let start = DispatchTime.now().uptimeNanoseconds
             do {
+                // A window creates its Search model before account loading finishes.
+                // Resolve the coordinator when the request runs, as catalog reads do.
+                guard let music = try await self?.awaitedMusic() else { throw MusicSessionError.policy }
                 let answer = try await music.search(query: query)
                 await MainActor.run { self?.profiler?.record(.searchRequest, milliseconds: Double(DispatchTime.now().uptimeNanoseconds - start) / 1_000_000) }
                 return answer
@@ -404,8 +404,6 @@ public struct GoogleAuthorizationSetup: Sendable {
                 await historyStore.bind(localHistory)
                 let podcastFiles = PodcastLocalFileStore(directory: appDirectory.appendingPathComponent("podcasts"))
                 await podcastStore.bind(podcastFiles)
-                let uploadJobs = UploadJobFileStore(directory: appDirectory.appendingPathComponent("upload-jobs"))
-                await uploadStore.bind(uploadJobs)
                 let resumeFiles = MusicResumeFileStore(directory: appDirectory.appendingPathComponent("music-resume"))
                 let lateResume = LateBoundMusicResumeStore(); await lateResume.bind(resumeFiles)
                 playback.resumeStore = lateResume
@@ -423,7 +421,7 @@ public struct GoogleAuthorizationSetup: Sendable {
                 // SEC08: the settings store is a lifecycle participant, so an account's own settings go with it on every removal path.
                 let settingsScope = SettingsAccountParticipant { [weak self] in try self?.settings.removeAccount($0) }
                 let lifecycle = try await setup.openLocal(directory: appDirectory, playback: playback.authority, artwork: art, windows: windows,
-                                                          google: google, music: music, vault: vault, extra: [localHistory, podcastFiles, uploadJobs, resumeFiles, lateDownloads, settingsScope])
+                                                          google: google, music: music, vault: vault, extra: [localHistory, podcastFiles, resumeFiles, lateDownloads, settingsScope])
                 self.music = music
                 lifecycleHandle = lifecycle
                 configureLocalData(appDirectory: appDirectory, lifecycle: lifecycle)

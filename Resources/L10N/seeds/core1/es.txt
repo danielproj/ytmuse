@@ -52,7 +52,6 @@
 52|Cambiaste a %@.
 53|Reproducir %@
 54|Salida actual: %@
-55|¿Eliminar “%@” de tus subidas?
 56|Se está reproduciendo un anuncio
 57|El anuncio ha terminado
 58|Reproduciendo “%@” de %@.

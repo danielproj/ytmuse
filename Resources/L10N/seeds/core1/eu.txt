@@ -52,7 +52,6 @@
 52|%@ kontura aldatu da.
 53|Erreproduzitu %@
 54|Uneko irteera: %@
-55|«%@» kendu nahi duzu zure igoeretatik?
 56|Iragarki bat erreproduzitzen ari da
 57|Iragarkia amaitu da
 58|Orain erreproduzitzen: «%@», %@(r)en eskutik.

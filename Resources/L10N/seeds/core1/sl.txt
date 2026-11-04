@@ -52,7 +52,6 @@
 52|Preklopljeno na %@.
 53|Predvajaj %@
 54|Trenutni izhod: %@
-55|Želite odstraniti »%@« iz svojih nalaganj?
 56|Predvaja se oglas
 57|Oglas se je končal
 58|Zdaj se predvaja »%@« izvajalca %@.

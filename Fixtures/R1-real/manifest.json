@@ -1,0 +1,23 @@
+{
+  "mode": "real-public-anonymous-capture",
+  "capturedUTC": "2026-11-03T16:41:38.789797+00:00",
+  "request": {
+    "playlistId": "RDAMVMkhnokW3Mw24",
+    "params": "wAEB8gECeAHqBAtraG5va1czTXcyNA%3D%3D",
+    "isAudioOnly": true,
+    "enablePersistentPlaylistPanel": true
+  },
+  "clientVersion": "1.20261031.09.00",
+  "cookies": false,
+  "credentials": false,
+  "requests": 2,
+  "byteLimit": 4000000,
+  "timeoutSeconds": 30,
+  "redactions": [
+    "visitorData",
+    "trackingParams",
+    "clickTrackingParams"
+  ],
+  "sha256": "e00e9e6f0d22296a973b4b9094f00e2d0252c6a953e007eaf3776cc5d0ae97aa",
+  "bytes": 1961076
+}

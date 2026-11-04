@@ -18,14 +18,11 @@
 418|Prüfen
 419|Jetzt prüfen
 420|Wird geprüft
-421|Wählen
-422|Dateien wählen …
 423|Ausgabe wählen …
 424|Wähle eine Dauer zwischen einer Sekunde und 24 Stunden.
 425|Wähle eine Position innerhalb des Objekts.
 426|Wähle ein Objekt, um mit dem Hören zu beginnen.
 427|Wähle zwischen 1 Minute und 24 Stunden.
-428|Musik zum Hochladen wählen
 429|Sprunglängen wählen
 430|Löschen
 431|Verlauf löschen
@@ -98,7 +95,6 @@
 498|Filter
 499|Suchen
 500|Suchen …
-501|Schließe zuerst das laufende Entfernen ab oder verwirf es.
 502|Folgen
 503|Gefolgt
 504|„Folgen“ und das Speichern in deiner Mediathek sind noch nicht verfügbar. YTMuse liest den Katalog, ändert aber nicht deine Mediathek.
@@ -124,7 +120,6 @@
 524|Unabhängig. Nativ. Deins.
 525|Einladungslink für die Playlist „%@“
 526|Das Einladen von Mitwirkenden aus YTMuse ist in dieser Version nicht verfügbar.
-527|Er kann fortgesetzt werden.
 528|Es wird nur hinzugefügt, wenn du auf „Hinzufügen“ klickst.
 529|Objekt
 530|Objekte sind hier fertig, sobald sie auf diesem Mac gesichert sind.
@@ -246,7 +241,6 @@
 646|Kein Song in dieser Warteschlange ist ein YouTube-Music-Song, den diese App kennt, daher gibt es nichts, was als Playlist gesichert werden könnte.
 647|Es läuft kein Song
 648|Noch keine Songs in deiner Mediathek
-649|Noch keine Uploads
 650|Keine
 651|Für dich gerade nicht verfügbar
 652|Noch nicht verfügbar

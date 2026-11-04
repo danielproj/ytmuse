@@ -52,7 +52,6 @@
 52|Skift til %@.
 53|Spæl %@
 54|Verandi útgangur: %@
-55|Tak “%@” burtur úr upphalingunum hjá tær?
 56|Ein lýsing verður spældur
 57|Lýsingin er liðug
 58|Spælir nú “%@” við %@.

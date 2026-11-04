@@ -31,47 +31,6 @@
         }
       }
     },
-    "%@ by its name": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ nach Name"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ nach Name"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ by its name"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ por su nombre"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ par son nom"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ по названию"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "%@ is always kept free on this Mac.": {
       "localizations": {
         "de": {
@@ -3322,143 +3281,6 @@
                 "stringUnit": {
                   "state": "needs_review",
                   "value": "%lld хвилини"
-                }
-              }
-            }
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "%lld more files": {
-      "localizations": {
-        "de": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld weitere Datei"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld weitere Dateien"
-                }
-              }
-            }
-          }
-        },
-        "de-CH": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld weitere Datei"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld weitere Dateien"
-                }
-              }
-            }
-          }
-        },
-        "en": {
-          "variations": {
-            "plural": {
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld more files"
-                }
-              },
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld more file"
-                }
-              }
-            }
-          }
-        },
-        "es": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld archivo más"
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld de archivos más"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld archivos más"
-                }
-              }
-            }
-          }
-        },
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld fichier de plus"
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld de fichiers de plus"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "%lld fichiers de plus"
-                }
-              }
-            }
-          }
-        },
-        "ru": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Ещё %lld файл"
-                }
-              },
-              "few": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Ещё %lld файла"
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Ещё %lld файлов"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Ещё %lld файла"
                 }
               }
             }
@@ -8299,42 +8121,42 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Also show my playlists, uploads and listening history": {
+    "Also show my playlists and listening history": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Auch meine Playlists, Uploads und meinen Hörverlauf anzeigen"
+            "value": "Auch meine Playlists und meinen Hörverlauf anzeigen"
           }
         },
         "de-CH": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Auch meine Playlists, Uploads und meinen Hörverlauf anzeigen"
+            "value": "Auch meine Playlists und meinen Hörverlauf anzeigen"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Also show my playlists, uploads and listening history"
+            "value": "Also show my playlists and listening history"
           }
         },
         "es": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Mostrar también mis listas de reproducción, subidas e historial de reproducción"
+            "value": "Mostrar también mis listas de reproducción y mi historial de reproducción"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Afficher aussi mes playlists, mes imports et mon historique d’écoute"
+            "value": "Afficher aussi mes playlists et mon historique d’écoute"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Также показывать мои плейлисты, загруженные файлы и историю прослушивания"
+            "value": "Также показывать мои плейлисты и историю прослушивания"
           }
         }
       },
@@ -8458,88 +8280,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Независимый нативный клиент YouTube Music для Mac"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "An interrupted upload can be resumed.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ein unterbrochener Upload kann fortgesetzt werden."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ein unterbrochener Upload kann fortgesetzt werden."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An interrupted upload can be resumed."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Una subida interrumpida se puede reanudar."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Un import interrompu peut être repris."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Прерванную загрузку можно возобновить."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "An interrupted upload can’t be resumed; it starts over.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ein unterbrochener Upload kann nicht fortgesetzt werden; er beginnt von vorn."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ein unterbrochener Upload kann nicht fortgesetzt werden; er beginnt von vorn."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An interrupted upload can’t be resumed; it starts over."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Una subida interrumpida no se puede reanudar; empieza de nuevo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Un import interrompu ne peut pas être repris ; il recommence depuis le début."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Прерванную загрузку нельзя возобновить; она начнётся заново."
           }
         }
       },
@@ -11904,47 +11644,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Cancelled. Your file wasn’t changed.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Abgebrochen. Deine Datei wurde nicht geändert."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Abgebrochen. Deine Datei wurde nicht geändert."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancelled. Your file wasn’t changed."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Cancelado. Tu archivo no se ha modificado."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Annulé. Votre fichier n’a pas été modifié."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Отменено. Ваш файл не изменён."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Canvas accent: %@": {
       "localizations": {
         "en": {
@@ -12775,88 +12474,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Choose": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Wählen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Wählen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Elegir"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Choisir"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Выбрать"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Choose Files…": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Dateien wählen …"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Dateien wählen …"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose Files…"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Elegir archivos…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Choisir des fichiers…"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Выбрать файлы…"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Choose Output…": {
       "localizations": {
         "de": {
@@ -13397,47 +13014,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Виберіть музику, щоб почати"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Choose music to upload": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Musik zum Hochladen wählen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Musik zum Hochladen wählen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose music to upload"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Elige música para subir"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Choisir de la musique à importer"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Выберите музыку для загрузки"
           }
         }
       },
@@ -20020,6 +19596,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Filters require this radio’s active player, readable queue and supported playback options. Restart the radio to reload its controls.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Filter benötigen den aktiven Player dieses Radios, eine lesbare Warteschlange und unterstützte Wiedergabeoptionen. Starte das Radio neu, um die Steuerelemente erneut zu laden."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Filter benötigen den aktiven Player dieses Radios, eine lesbare Warteschlange und unterstützte Wiedergabeoptionen. Starte das Radio neu, um die Steuerelemente erneut zu laden."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters require this radio’s active player, readable queue and supported playback options. Restart the radio to reload its controls."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Los filtros necesitan el reproductor activo de esta radio, una cola legible y opciones de reproducción compatibles. Reinicia la radio para recargar sus controles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Les filtres nécessitent le lecteur actif de cette radio, une file lisible et des options de lecture prises en charge. Redémarrez la radio pour recharger ses commandes."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Для фильтров нужны активный проигрыватель этого радио, доступная очередь и поддерживаемые параметры воспроизведения. Перезапустите радио, чтобы загрузить его элементы управления заново."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Find": {
       "localizations": {
         "de": {
@@ -20097,47 +19714,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Найти…"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Finish or dismiss the removal in progress first.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Schließe zuerst das laufende Entfernen ab oder verwirf es."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Schliesse zuerst das laufende Entfernen ab oder verwirf es."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Finish or dismiss the removal in progress first."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Termina o descarta primero la eliminación en curso."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Terminez ou fermez d’abord la suppression en cours."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Сначала завершите или отмените текущее удаление."
           }
         }
       },
@@ -22993,47 +22569,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Приглашение соавторов из YTMuse в этой версии недоступно."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "It can be resumed.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Er kann fortgesetzt werden."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Er kann fortgesetzt werden."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "It can be resumed."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Se puede reanudar."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Il peut être repris."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Можно возобновить."
           }
         }
       },
@@ -26062,6 +25597,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Загружается ещё"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Loading radio filters…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Radiofilter werden geladen…"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Radiofilter werden geladen…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading radio filters…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Cargando filtros de radio…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Chargement des filtres radio…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Радиофильтры загружаются…"
           }
         }
       },
@@ -31210,47 +30786,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "No uploads yet": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Noch keine Uploads"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Noch keine Uploads"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No uploads yet"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Aún no hay subidas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Aucun import pour le moment"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загруженных файлов пока нет"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "None": {
       "localizations": {
         "de": {
@@ -33623,42 +33158,42 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Off until you turn it on. Playlists, uploads and history are private: they are shown only if you choose to, and are removed from Spotlight when you sign out, remove the account or turn this off.": {
+    "Off until you turn it on. Playlists and history are private: they are shown only if you choose to, and are removed from Spotlight when you sign out, remove the account or turn this off.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Aus, bis du es einschaltest. Playlists, Uploads und Verlauf sind privat: Sie werden nur angezeigt, wenn du es möchtest, und aus Spotlight entfernt, wenn du dich abmeldest, den Account entfernst oder dies ausschaltest."
+            "value": "Aus, bis du es einschaltest. Playlists und Verlauf sind privat: Sie werden nur angezeigt, wenn du es möchtest, und aus Spotlight entfernt, wenn du dich abmeldest, den Account entfernst oder dies ausschaltest."
           }
         },
         "de-CH": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Aus, bis du es einschaltest. Playlists, Uploads und Verlauf sind privat: Sie werden nur angezeigt, wenn du es möchtest, und aus Spotlight entfernt, wenn du dich abmeldest, den Account entfernst oder dies ausschaltest."
+            "value": "Aus, bis du es einschaltest. Playlists und Verlauf sind privat: Sie werden nur angezeigt, wenn du es möchtest, und aus Spotlight entfernt, wenn du dich abmeldest, den Account entfernst oder dies ausschaltest."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Off until you turn it on. Playlists, uploads and history are private: they are shown only if you choose to, and are removed from Spotlight when you sign out, remove the account or turn this off."
+            "value": "Off until you turn it on. Playlists and history are private: they are shown only if you choose to, and are removed from Spotlight when you sign out, remove the account or turn this off."
           }
         },
         "es": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Desactivado hasta que lo actives. Las listas de reproducción, las subidas y el historial son privados: solo se muestran si tú lo eliges, y se quitan de Spotlight cuando cierras sesión, eliminas la cuenta o desactivas esta opción."
+            "value": "Desactivado hasta que lo actives. Las listas de reproducción y el historial son privados: solo se muestran si tú lo eliges, y se quitan de Spotlight cuando cierras sesión, eliminas la cuenta o desactivas esta opción."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Désactivé tant que vous ne l’activez pas. Les playlists, les imports et l’historique sont privés : ils ne s’affichent que si vous le choisissez, et sont retirés de Spotlight quand vous vous déconnectez, supprimez le compte ou désactivez cette option."
+            "value": "Désactivé tant que vous ne l’activez pas. Les playlists et l’historique sont privés : ils ne s’affichent que si vous le choisissez, et sont retirés de Spotlight quand vous vous déconnectez, supprimez le compte ou désactivez cette option."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Выключено, пока вы не включите. Плейлисты, загруженные файлы и история приватны: они показываются, только если вы так решите, и удаляются из Spotlight, когда вы выходите из аккаунта, удаляете его или выключаете эту функцию."
+            "value": "Выключено, пока вы не включите. Плейлисты и история приватны: они показываются, только если вы так решите, и удаляются из Spotlight, когда вы выходите из аккаунта, удаляете его или выключаете эту функцию."
           }
         }
       },
@@ -34276,47 +33811,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Это может сделать только владелец плейлиста."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Only upload music you have the right to. YouTube Music checks each file after it’s uploaded and decides what it accepts. Your files on this Mac are only read, never changed or deleted.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Lade nur Musik hoch, zu der du die Rechte hast. YouTube Music prüft jede Datei nach dem Hochladen und entscheidet, was es akzeptiert. Deine Dateien auf diesem Mac werden nur gelesen, nie geändert oder gelöscht."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Lade nur Musik hoch, zu der du die Rechte hast. YouTube Music prüft jede Datei nach dem Hochladen und entscheidet, was es akzeptiert. Deine Dateien auf diesem Mac werden nur gelesen, nie geändert oder gelöscht."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Only upload music you have the right to. YouTube Music checks each file after it’s uploaded and decides what it accepts. Your files on this Mac are only read, never changed or deleted."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Sube solo música sobre la que tengas derechos. YouTube Music revisa cada archivo después de subirlo y decide qué acepta. Tus archivos en este Mac solo se leen, nunca se modifican ni se eliminan."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Importez uniquement de la musique dont vous détenez les droits. YouTube Music vérifie chaque fichier après son import et décide de ce qu’il accepte. Vos fichiers sur ce Mac sont seulement lus, jamais modifiés ni supprimés."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загружайте только ту музыку, на которую у вас есть права. YouTube Music проверяет каждый файл после загрузки и сам решает, что принять. Ваши файлы на этом Mac только читаются, их не изменяют и не удаляют."
           }
         }
       },
@@ -38318,47 +37812,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Playing uploads isn’t available in this version.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Abspielen von Uploads ist in dieser Version nicht verfügbar."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Abspielen von Uploads ist in dieser Version nicht verfügbar."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Playing uploads isn’t available in this version."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La reproducción de subidas no está disponible en esta versión."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La lecture des imports n’est pas disponible dans cette version."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Воспроизведение загруженных файлов в этой версии недоступно."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Playing.": {
       "localizations": {
         "de": {
@@ -39724,47 +39177,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Processing %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ wird verarbeitet"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ wird verarbeitet"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Processing %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Procesando %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Traitement de %@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Обработка: %@"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Progress marked “On this Mac” is kept on this Mac only. YouTube’s own player reports its progress to YouTube Music by itself.": {
       "localizations": {
         "de": {
@@ -40471,6 +39883,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Фильтр радио"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Radio filters couldn’t load. The radio has started.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Radiofilter konnten nicht geladen werden. Das Radio wurde gestartet."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Radiofilter konnten nicht geladen werden. Das Radio wurde gestartet."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radio filters couldn’t load. The radio has started."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "No se pudieron cargar los filtros de radio. La radio se ha iniciado."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Les filtres radio n’ont pas pu être chargés. La radio a démarré."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Не удалось загрузить радиофильтры. Радио запущено."
           }
         }
       },
@@ -42748,47 +42201,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Remove %@ from your uploads": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ aus deinen Uploads entfernen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ aus deinen Uploads entfernen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove %@ from your uploads"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Eliminar %@ de tus subidas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Supprimer %@ de vos imports"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удалить %@ из загруженного"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Remove %lld Songs": {
       "localizations": {
         "de": {
@@ -43490,88 +42902,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Remove from Uploads": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Aus den Uploads entfernen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Aus den Uploads entfernen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove from Uploads"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Eliminar de las subidas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Supprimer des imports"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удалить из загруженного"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Remove from Uploads…": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Aus den Uploads entfernen …"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Aus den Uploads entfernen …"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove from Uploads…"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Eliminar de las subidas…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Supprimer des imports…"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удалить из загруженного…"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Remove this account from this Mac?": {
       "localizations": {
         "de": {
@@ -43608,469 +42938,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Удалить этот аккаунт с этого Mac?"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Remove “%@” from your uploads?": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "“%@” yükləmələrinizdən silinsin?"
-          }
-        },
-        "be": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Выдаліць «%@» з вашых загрузак?"
-          }
-        },
-        "bg": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Да се премахне ли „%@“ от качените ви файлове?"
-          }
-        },
-        "bs": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ukloniti „%@” iz vaših otpremljenih datoteka?"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vols eliminar «%@» de les teves pujades?"
-          }
-        },
-        "cs": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Odebrat „%@“ z vašich nahrávek?"
-          }
-        },
-        "cy": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Tynnu “%@” o'ch uwchlwythiadau?"
-          }
-        },
-        "da": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vil du fjerne “%@” fra dine uploads?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ aus deinen Uploads entfernen?"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ aus deinen Uploads entfernen?"
-          }
-        },
-        "el": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Να αφαιρεθεί το «%@» από τις μεταφορτώσεις σας;"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove “%@” from your uploads?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "¿Eliminar “%@” de tus subidas?"
-          }
-        },
-        "et": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Kas eemaldada „%@” oma üleslaadimistest?"
-          }
-        },
-        "eu": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "«%@» kendu nahi duzu zure igoeretatik?"
-          }
-        },
-        "fi": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Poistetaanko “%@” lähetyksistäsi?"
-          }
-        },
-        "fo": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Tak “%@” burtur úr upphalingunum hjá tær?"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Supprimer « %@ » de vos imports ?"
-          }
-        },
-        "ga": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Bain “%@” de do uaslódálacha?"
-          }
-        },
-        "gd": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "A bheil thu airson “%@” a thoirt air falbh o na h-uaslódan agad?"
-          }
-        },
-        "gl": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Eliminar «%@» das túas subidas?"
-          }
-        },
-        "hr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ukloniti „%@” iz vaših prijenosa?"
-          }
-        },
-        "hu": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Eltávolítja a(z) „%@” elemet a feltöltései közül?"
-          }
-        },
-        "hy": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Հեռացնե՞լ «%@»-ը ձեր վերբեռնումներից։"
-          }
-        },
-        "is": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Fjarlægja „%@“ úr innsendu efni þínu?"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Rimuovere “%@” dai tuoi caricamenti?"
-          }
-        },
-        "ka": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "წაიშალოს „%@“ თქვენი ატვირთვებიდან?"
-          }
-        },
-        "lb": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ aus Ären Uploads ewechhuelen?"
-          }
-        },
-        "lt": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Pašalinti „%@“ iš jūsų įkėlimų?"
-          }
-        },
-        "lv": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vai noņemt “%@” no jūsu augšupielādēm?"
-          }
-        },
-        "mk": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Да се отстрани „%@“ од вашите поставувања?"
-          }
-        },
-        "mt": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Tneħħi “%@” mill-upload tiegħek?"
-          }
-        },
-        "nb": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vil du fjerne «%@» fra opplastingene dine?"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "“%@” verwijderen uit je uploads?"
-          }
-        },
-        "nn": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vil du fjerne «%@» frå opplastingane dine?"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Usunąć „%@” z Twoich przesłanych plików?"
-          }
-        },
-        "pt": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Remover “%@” dos seus carregamentos?"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Remover “%@” dos seus carregamentos?"
-          }
-        },
-        "rm": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Allontanar «%@» da tes upload?"
-          }
-        },
-        "ro": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Elimini „%@” din încărcările tale?"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удалить «%@» из ваших загрузок?"
-          }
-        },
-        "sk": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Odstrániť „%@“ z vašich nahraných súborov?"
-          }
-        },
-        "sl": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Želite odstraniti »%@« iz svojih nalaganj?"
-          }
-        },
-        "sq": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Të hiqet “%@” nga ngarkimet tuaja?"
-          }
-        },
-        "sr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Уклонити „%@“ из ваших отпремања?"
-          }
-        },
-        "sr-Latn": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ukloniti „%@“ iz vaših otpremanja?"
-          }
-        },
-        "sv": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ta bort ”%@” från dina uppladdningar?"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "“%@” yüklemelerinizden kaldırılsın mı?"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Видалити «%@» із ваших завантажень?"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Removed “%@” from your uploads.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ wurde aus deinen Uploads entfernt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ wurde aus deinen Uploads entfernt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removed “%@” from your uploads."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Se eliminó “%@” de tus subidas."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "« %@ » supprimé de vos imports."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удалено из загруженного: «%@»."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Removed “%@” from your uploads. The file on your Mac wasn’t touched.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ wurde aus deinen Uploads entfernt. Die Datei auf deinem Mac wurde nicht angetastet."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ wurde aus deinen Uploads entfernt. Die Datei auf deinem Mac wurde nicht angetastet."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removed “%@” from your uploads. The file on your Mac wasn’t touched."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Se eliminó “%@” de tus subidas. El archivo de tu Mac no se tocó."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "« %@ » supprimé de vos imports. Le fichier sur votre Mac n’a pas été touché."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удалено из загруженного: «%@». Файл на вашем Mac не затронут."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Remove…": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Entfernen …"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Entfernen …"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove…"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Eliminar…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Supprimer…"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удалить…"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Removing “%@”…": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ wird entfernt …"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ wird entfernt …"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removing “%@”…"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Eliminando “%@”…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Suppression de « %@ »…"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Удаление «%@»…"
           }
         }
       },
@@ -45735,6 +44602,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Повторить доступ к локальному хранилищу"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Retry radio filters": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Radiofilter erneut laden"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Radiofilter erneut laden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry radio filters"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Reintentar filtros de radio"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Réessayer les filtres radio"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Повторить загрузку радиофильтров"
           }
         }
       },
@@ -47747,47 +46655,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Искать в этой коллекции"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Search your uploads": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Deine Uploads durchsuchen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Deine Uploads durchsuchen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search your uploads"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Buscar en tus subidas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Rechercher dans vos imports"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Искать в загруженном"
           }
         }
       },
@@ -52549,88 +51416,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Sign in to YouTube Music to upload.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Melde dich bei YouTube Music an, um hochzuladen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Melde dich bei YouTube Music an, um hochzuladen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sign in to YouTube Music to upload."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Inicia sesión en YouTube Music para subir música."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Connectez-vous à YouTube Music pour importer."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Войдите в YouTube Music, чтобы загружать файлы."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Sign in to YouTube Music to upload. Nothing was added.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Melde dich bei YouTube Music an, um hochzuladen. Es wurde nichts hinzugefügt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Melde dich bei YouTube Music an, um hochzuladen. Es wurde nichts hinzugefügt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sign in to YouTube Music to upload. Nothing was added."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Inicia sesión en YouTube Music para subir música. No se añadió nada."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Connectez-vous à YouTube Music pour importer. Rien n’a été ajouté."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Войдите в YouTube Music, чтобы загружать файлы. Ничего не добавлено."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Sign in to save this episode for later.": {
       "localizations": {
         "de": {
@@ -55473,42 +54258,12 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Some files weren’t added.": {
+    "Some filters need playback options this app can’t apply yet.": {
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Einige Dateien wurden nicht hinzugefügt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Einige Dateien wurden nicht hinzugefügt."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Some files weren’t added."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Algunos archivos no se añadieron."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Certains fichiers n’ont pas été ajoutés."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Некоторые файлы не добавлены."
+            "value": "Some filters need playback options this app can’t apply yet."
           }
         }
       },
@@ -56042,47 +54797,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Устаревшее или противоречивое состояние аккаунта."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Start Over": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Von vorn beginnen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Von vorn beginnen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start Over"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Empezar de nuevo"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Recommencer"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Начать сначала"
           }
         }
       },
@@ -57669,16 +56383,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Test mode only accepts the app’s own synthetic audio files.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Test mode only accepts the app’s own synthetic audio files."
-          }
-        }
-      }
-    },
     "Text size": {
       "localizations": {
         "de": {
@@ -58540,47 +57244,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "The account changed, so this upload was stopped.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Der Account hat sich geändert, daher wurde dieser Upload gestoppt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Der Account hat sich geändert, daher wurde dieser Upload gestoppt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The account changed, so this upload was stopped."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La cuenta cambió, así que esta subida se detuvo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Le compte a changé, cet import a donc été arrêté."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Аккаунт изменился, поэтому загрузка остановлена."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "The account could not be fully removed. Open Accounts to retry.": {
       "localizations": {
         "de": {
@@ -58658,47 +57321,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Аккаунт удалён с этого Mac."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "The app closed before this upload finished.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die App wurde beendet, bevor dieser Upload abgeschlossen war."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die App wurde beendet, bevor dieser Upload abgeschlossen war."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The app closed before this upload finished."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La app se cerró antes de que terminara esta subida."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "L’app s’est fermée avant la fin de cet import."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Приложение закрылось до завершения этой загрузки."
           }
         }
       },
@@ -59254,47 +57876,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Диск заполнен"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "The file changed after it was chosen. Choose it again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Datei hat sich nach der Auswahl geändert. Wähle sie erneut aus."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Datei hat sich nach der Auswahl geändert. Wähle sie erneut aus."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The file changed after it was chosen. Choose it again."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "El archivo cambió después de elegirlo. Elígelo de nuevo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Le fichier a changé après avoir été choisi. Choisissez-le à nouveau."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Файл изменился после выбора. Выберите его снова."
           }
         }
       },
@@ -60860,40 +59441,10 @@
     },
     "The radio could not start. What was playing is unchanged.": {
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Radio konnte nicht gestartet werden. Was lief, bleibt unverändert."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Radio konnte nicht gestartet werden. Was lief, bleibt unverändert."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "The radio could not start. What was playing is unchanged."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "No se pudo iniciar la radio. Lo que sonaba no ha cambiado."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La radio n’a pas pu démarrer. Ce qui était en cours de lecture n’a pas changé."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Не удалось запустить радио. То, что играло, не изменилось."
           }
         }
       },
@@ -62070,88 +60621,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "The upload list couldn’t be read. Jobs from before aren’t shown.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Upload-Liste konnte nicht gelesen werden. Frühere Aufträge werden nicht angezeigt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Upload-Liste konnte nicht gelesen werden. Frühere Aufträge werden nicht angezeigt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The upload list couldn’t be read. Jobs from before aren’t shown."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "No se pudo leer la lista de subidas. No se muestran las tareas anteriores."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La liste des imports n’a pas pu être lue. Les tâches précédentes ne sont pas affichées."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Список загруженных файлов не удалось прочитать. Прежние задания не показаны."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "The upload list couldn’t be saved. It won’t survive a restart.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Upload-Liste konnte nicht gesichert werden. Sie übersteht keinen Neustart."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Upload-Liste konnte nicht gesichert werden. Sie übersteht keinen Neustart."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The upload list couldn’t be saved. It won’t survive a restart."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "No se pudo guardar la lista de subidas. No se conservará después de reiniciar."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La liste des imports n’a pas pu être enregistrée. Elle ne survivra pas à un redémarrage."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Список загруженных файлов не удалось сохранить. Он не сохранится после перезапуска."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "The video could not be switched. Try again.": {
       "localizations": {
         "de": {
@@ -63271,172 +61740,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "This app adds up to %lld files at a time. The rest weren’t added.": {
-      "localizations": {
-        "de": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Diese App fügt bis zu %lld Datei auf einmal hinzu. Der Rest wurde nicht hinzugefügt."
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Diese App fügt bis zu %lld Dateien auf einmal hinzu. Der Rest wurde nicht hinzugefügt."
-                }
-              }
-            }
-          }
-        },
-        "de-CH": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Diese App fügt bis zu %lld Datei auf einmal hinzu. Der Rest wurde nicht hinzugefügt."
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Diese App fügt bis zu %lld Dateien auf einmal hinzu. Der Rest wurde nicht hinzugefügt."
-                }
-              }
-            }
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This app adds up to %lld files at a time. The rest weren’t added."
-          }
-        },
-        "es": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Esta app añade hasta %lld archivo a la vez. El resto no se añadió."
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Esta app añade hasta %lld de archivos a la vez. El resto no se añadió."
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Esta app añade hasta %lld archivos a la vez. El resto no se añadió."
-                }
-              }
-            }
-          }
-        },
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Cette app ajoute jusqu’à %lld fichier à la fois. Les autres n’ont pas été ajoutés."
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Cette app ajoute jusqu’à %lld de fichiers à la fois. Les autres n’ont pas été ajoutés."
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Cette app ajoute jusqu’à %lld fichiers à la fois. Les autres n’ont pas été ajoutés."
-                }
-              }
-            }
-          }
-        },
-        "ru": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Приложение добавляет за раз до %lld файла. Остальные не добавлены."
-                }
-              },
-              "few": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Приложение добавляет за раз до %lld файлов. Остальные не добавлены."
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Приложение добавляет за раз до %lld файлов. Остальные не добавлены."
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Приложение добавляет за раз до %lld файла. Остальные не добавлены."
-                }
-              }
-            }
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This app can’t read the file any more. Choose it again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese App kann die Datei nicht mehr lesen. Wähle sie erneut aus."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese App kann die Datei nicht mehr lesen. Wähle sie erneut aus."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This app can’t read the file any more. Choose it again."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esta app ya no puede leer el archivo. Elígelo de nuevo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Cette app ne peut plus lire le fichier. Choisissez-le à nouveau."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Приложение больше не может прочитать файл. Выберите его снова."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "This app can’t read this from YouTube Music yet. No response it can read carries it, so nothing is shown and nothing is made up.": {
       "localizations": {
         "de": {
@@ -63473,47 +61776,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Приложение пока не может прочитать это из YouTube Music. Ни в одном ответе, который оно может прочитать, этого нет, поэтому ничего не показано и ничего не придумано."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This app couldn’t read this file, so it wasn’t added.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese App konnte die Datei nicht lesen, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese App konnte die Datei nicht lesen, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This app couldn’t read this file, so it wasn’t added."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esta app no pudo leer este archivo, así que no se añadió."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Cette app n’a pas pu lire ce fichier ; il n’a donc pas été ajouté."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Приложению не удалось прочитать этот файл, поэтому он не добавлен."
           }
         }
       },
@@ -63970,47 +62232,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "This deletes “%@” from your YouTube Music uploads. The file on your Mac isn’t touched.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Dadurch wird „%@“ aus deinen YouTube-Music-Uploads gelöscht. Die Datei auf deinem Mac wird nicht angetastet."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Dadurch wird „%@“ aus deinen YouTube-Music-Uploads gelöscht. Die Datei auf deinem Mac wird nicht angetastet."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This deletes “%@” from your YouTube Music uploads. The file on your Mac isn’t touched."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esto elimina “%@” de tus subidas de YouTube Music. El archivo de tu Mac no se toca."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Cela supprime « %@ » de vos imports YouTube Music. Le fichier sur votre Mac n’est pas touché."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Это удаляет «%@» из ваших загрузок в YouTube Music. Файл на вашем Mac не затрагивается."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "This development collection contains no retained media.": {
       "localizations": {
         "en": {
@@ -64020,47 +62241,6 @@
           }
         }
       }
-    },
-    "This doesn’t look like an audio file, so it wasn’t added.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das sieht nicht nach einer Audiodatei aus, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das sieht nicht nach einer Audiodatei aus, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This doesn’t look like an audio file, so it wasn’t added."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esto no parece un archivo de audio, así que no se añadió."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Cela ne ressemble pas à un fichier audio ; il n’a donc pas été ajouté."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Это не похоже на аудиофайл, поэтому он не добавлен."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
     "This episode didn’t say which show to play it from, so Play isn’t offered here. Open the show to play it.": {
       "localizations": {
@@ -64144,165 +62324,42 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "This file changed while it was being read. Choose it again once it has finished changing.": {
+    "This filter needs playback options this app can’t apply yet.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Diese Datei hat sich beim Lesen geändert. Wähle sie erneut aus, sobald sie sich nicht mehr ändert."
+            "value": "Dieser Filter benötigt Wiedergabeoptionen, die diese App noch nicht anwenden kann."
           }
         },
         "de-CH": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Diese Datei hat sich beim Lesen geändert. Wähle sie erneut aus, sobald sie sich nicht mehr ändert."
+            "value": "Dieser Filter benötigt Wiedergabeoptionen, die diese App noch nicht anwenden kann."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This file changed while it was being read. Choose it again once it has finished changing."
+            "value": "This filter needs playback options this app can’t apply yet."
           }
         },
         "es": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Este archivo cambió mientras se leía. Elígelo de nuevo cuando termine de cambiar."
+            "value": "Este filtro necesita opciones de reproducción que la app aún no puede aplicar."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Ce fichier a changé pendant sa lecture. Choisissez-le à nouveau une fois les modifications terminées."
+            "value": "Ce filtre nécessite des options de lecture que l’app ne peut pas encore appliquer."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Этот файл изменился во время чтения. Выберите его снова, когда он перестанет меняться."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This file is copy-protected, so it can’t be uploaded.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese Datei ist kopiergeschützt und kann nicht hochgeladen werden."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese Datei ist kopiergeschützt und kann nicht hochgeladen werden."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This file is copy-protected, so it can’t be uploaded."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Este archivo tiene protección contra copia, así que no se puede subir."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ce fichier est protégé contre la copie ; il ne peut donc pas être importé."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Этот файл защищён от копирования, поэтому его нельзя загрузить."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This file is empty, so it wasn’t added.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese Datei ist leer, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese Datei ist leer, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This file is empty, so it wasn’t added."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Este archivo está vacío, así que no se añadió."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ce fichier est vide ; il n’a donc pas été ajouté."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Этот файл пуст, поэтому он не добавлен."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This file is larger than the %@ YouTube Music accepts.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese Datei ist größer als das Maximum von %@, das YouTube Music akzeptiert."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Diese Datei ist grösser als das Maximum von %@, das YouTube Music akzeptiert."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This file is larger than the %@ YouTube Music accepts."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Este archivo supera los %@ que acepta YouTube Music."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ce fichier dépasse les %@ acceptés par YouTube Music."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Этот файл больше, чем %@, которые принимает YouTube Music."
+            "value": "Для этого фильтра нужны параметры воспроизведения, которые приложение пока не поддерживает."
           }
         }
       },
@@ -64385,88 +62442,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Этот профиль или контент недоступен. Выберите другой аккаунт или объект."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This is a folder. Choose the audio files inside it instead.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das ist ein Ordner. Wähle stattdessen die Audiodateien darin aus."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das ist ein Ordner. Wähle stattdessen die Audiodateien darin aus."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This is a folder. Choose the audio files inside it instead."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esto es una carpeta. Elige en su lugar los archivos de audio que contiene."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Il s’agit d’un dossier. Choisissez plutôt les fichiers audio qu’il contient."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Это папка. Выберите вместо неё аудиофайлы внутри."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This is a video file. Uploads to your music library take audio files.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das ist eine Videodatei. Uploads in deine Musikmediathek nehmen Audiodateien an."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das ist eine Videodatei. Uploads in deine Musikmediathek nehmen Audiodateien an."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This is a video file. Uploads to your music library take audio files."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esto es un archivo de video. Las subidas a tu biblioteca de música admiten archivos de audio."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Il s’agit d’un fichier vidéo. Les imports dans votre bibliothèque musicale acceptent des fichiers audio."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Это видеофайл. В музыкальную медиатеку загружаются аудиофайлы."
           }
         }
       },
@@ -64723,47 +62698,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Это ваш собственный звук или локальный файл, а не песня YouTube Music, поэтому у него нет лайка."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This isn’t a regular file, so it wasn’t added.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das ist keine reguläre Datei, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das ist keine reguläre Datei, daher wurde sie nicht hinzugefügt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This isn’t a regular file, so it wasn’t added."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esto no es un archivo normal, así que no se añadió."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ce n’est pas un fichier ordinaire ; il n’a donc pas été ajouté."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Это не обычный файл, поэтому он не добавлен."
           }
         }
       },
@@ -67045,47 +64979,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Этот трек вам недоступен."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "This upload failed.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Dieser Upload ist fehlgeschlagen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Dieser Upload ist fehlgeschlagen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This upload failed."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esta subida falló."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Cet import a échoué."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Не удалось загрузить файл."
           }
         }
       },
@@ -70829,582 +68722,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Upload": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochladen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochladen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upload"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Subir"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Importer"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загрузить"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploaded albums": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladene Alben"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladene Alben"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploaded albums"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Álbumes subidos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Albums importés"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загруженные альбомы"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploaded artists": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladene Interpreten"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladene Interpreten"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploaded artists"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Artistas subidos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Artistes importés"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загруженные исполнители"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploaded songs": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladene Songs"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladene Songs"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploaded songs"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Canciones subidas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Titres importés"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загруженные песни"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploaded. YouTube Music is processing this file; it isn’t in your library yet.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladen. YouTube Music verarbeitet diese Datei; sie ist noch nicht in deiner Mediathek."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Hochgeladen. YouTube Music verarbeitet diese Datei; sie ist noch nicht in deiner Mediathek."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploaded. YouTube Music is processing this file; it isn’t in your library yet."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Subido. YouTube Music está procesando este archivo; aún no está en tu biblioteca."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Importé. YouTube Music traite ce fichier ; il n’est pas encore dans votre bibliothèque."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загружено. YouTube Music обрабатывает этот файл; в вашей медиатеке его пока нет."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploading %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ wird hochgeladen"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ wird hochgeladen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploading %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Subiendo %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Import de %@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загрузка: %@"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploading arrives in a later update": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Hochladen kommt in einem späteren Update"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Hochladen kommt in einem späteren Update"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploading arrives in a later update"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La subida llegará en una próxima actualización"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "L’import arrivera dans une prochaine mise à jour"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загрузка файлов появится в одном из следующих обновлений"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploading arrives in a later update, so nothing was added.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Hochladen kommt in einem späteren Update, daher wurde nichts hinzugefügt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Das Hochladen kommt in einem späteren Update, daher wurde nichts hinzugefügt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploading arrives in a later update, so nothing was added."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "La subida llegará en una próxima actualización, así que no se añadió nada."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "L’import arrivera dans une prochaine mise à jour ; rien n’a donc été ajouté."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загрузка файлов появится в одном из следующих обновлений, поэтому ничего не добавлено."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploading… %lld%%": {
-      "localizations": {
-        "de": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Wird hochgeladen … %lld%%"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Wird hochgeladen … %lld%%"
-                }
-              }
-            }
-          }
-        },
-        "de-CH": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Wird hochgeladen … %lld%%"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Wird hochgeladen … %lld%%"
-                }
-              }
-            }
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploading… %lld%%"
-          }
-        },
-        "es": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Subiendo… %lld%%"
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Subiendo… %lld%%"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Subiendo… %lld%%"
-                }
-              }
-            }
-          }
-        },
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Import… %lld %%"
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Import… %lld %%"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Import… %lld %%"
-                }
-              }
-            }
-          }
-        },
-        "ru": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Загрузка… %lld%%"
-                }
-              },
-              "few": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Загрузка… %lld%%"
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Загрузка… %lld%%"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "needs_review",
-                  "value": "Загрузка… %lld%%"
-                }
-              }
-            }
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploads": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Uploads"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Uploads"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploads"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Subidas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Imports"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загруженное"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploads aren’t connected yet, so there is nothing to search here.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Uploads sind noch nicht verbunden, daher gibt es hier nichts zu durchsuchen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Uploads sind noch nicht verbunden, daher gibt es hier nichts zu durchsuchen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploads aren’t connected yet, so there is nothing to search here."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Las subidas aún no están conectadas, así que no hay nada que buscar aquí."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Les imports ne sont pas encore connectés ; il n’y a donc rien à rechercher ici."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загрузка файлов пока не подключена, поэтому искать здесь нечего."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Uploads in progress and finished": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Laufende und abgeschlossene Uploads"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Laufende und abgeschlossene Uploads"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploads in progress and finished"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Subidas en curso y terminadas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Imports en cours et terminés"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Загрузки в процессе и завершённые"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Use Default Speed for This Show": {
       "localizations": {
         "de": {
@@ -72097,47 +69414,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Ожидание громкости приёмника."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Waiting to upload": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Wartet auf den Upload"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Wartet auf den Upload"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waiting to upload"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Esperando para subir"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "En attente d’import"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ожидает загрузки"
           }
         }
       },
@@ -74041,47 +71317,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "You can browse the music you’ve already uploaded and remove it here. Adding music from this Mac isn’t available yet.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Du kannst die Musik, die du bereits hochgeladen hast, durchsuchen und hier entfernen. Das Hinzufügen von Musik von diesem Mac ist noch nicht verfügbar."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Du kannst die Musik, die du bereits hochgeladen hast, durchsuchen und hier entfernen. Das Hinzufügen von Musik von diesem Mac ist noch nicht verfügbar."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You can browse the music you’ve already uploaded and remove it here. Adding music from this Mac isn’t available yet."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Puedes explorar la música que ya subiste y eliminarla aquí. Añadir música desde este Mac aún no está disponible."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vous pouvez parcourir la musique que vous avez déjà importée et la supprimer ici. L’ajout de musique depuis ce Mac n’est pas encore disponible."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Здесь можно просматривать уже загруженную музыку и удалять её. Добавление музыки с этого Mac пока недоступно."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "You can choose the app’s appearance in Settings.": {
       "localizations": {
         "de": {
@@ -74118,47 +71353,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Оформление приложения можно выбрать в настройках."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "You cancelled this upload.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Du hast diesen Upload abgebrochen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Du hast diesen Upload abgebrochen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You cancelled this upload."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Cancelaste esta subida."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vous avez annulé cet import."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Вы отменили эту загрузку."
           }
         }
       },
@@ -74323,47 +71517,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YouTube Music"
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music accepts files up to %@.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music akzeptiert Dateien bis zu %@."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music akzeptiert Dateien bis zu %@."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music accepts files up to %@."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music acepta archivos de hasta %@."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music accepte les fichiers jusqu’à %@."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music принимает файлы размером до %@."
           }
         }
       },
@@ -74615,88 +71768,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "YouTube Music can’t continue this upload.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music kann diesen Upload nicht fortsetzen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music kann diesen Upload nicht fortsetzen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music can’t continue this upload."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music no puede continuar esta subida."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music ne peut pas poursuivre cet import."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music не может продолжить эту загрузку."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music can’t resume an interrupted upload, so it has to start over.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music kann einen unterbrochenen Upload nicht fortsetzen, daher muss er von vorn beginnen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music kann einen unterbrochenen Upload nicht fortsetzen, daher muss er von vorn beginnen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music can’t resume an interrupted upload, so it has to start over."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music no puede reanudar una subida interrumpida, así que tiene que empezar de nuevo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music ne peut pas reprendre un import interrompu ; il doit donc recommencer."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music не может возобновить прерванную загрузку, поэтому её нужно начать заново."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "YouTube Music could not start this. Try Play again.": {
       "localizations": {
         "de": {
@@ -74820,47 +71891,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "YouTube Music couldn’t be asked just now. Trying again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte gerade nicht angefragt werden. Neuer Versuch läuft."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte gerade nicht angefragt werden. Neuer Versuch läuft."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music couldn’t be asked just now. Trying again."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "No se pudo consultar a YouTube Music en este momento. Reintentando."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music n’a pas pu être sollicité à l’instant. Nouvelle tentative."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Сейчас не удалось обратиться к YouTube Music. Повторяем попытку."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "YouTube Music couldn’t be reached, and there is no saved copy of this collection yet.": {
       "localizations": {
         "de": {
@@ -74897,47 +71927,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Не удалось связаться с YouTube Music, а сохранённой копии этой коллекции пока нет."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music couldn’t be reached. Check again later.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte nicht erreicht werden. Prüfe es später noch einmal."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte nicht erreicht werden. Prüfe es später noch einmal."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music couldn’t be reached. Check again later."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "No se pudo acceder a YouTube Music. Vuelve a comprobarlo más tarde."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music n’a pas pu être joint. Vérifiez à nouveau plus tard."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Не удалось связаться с YouTube Music. Проверьте позже."
           }
         }
       },
@@ -75623,47 +72612,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "YouTube Music couldn’t process this file.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte diese Datei nicht verarbeiten."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte diese Datei nicht verarbeiten."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music couldn’t process this file."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music no pudo procesar este archivo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music n’a pas pu traiter ce fichier."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music не смог обработать этот файл."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "YouTube Music couldn’t say either. Trying again sets the same state again and can’t duplicate anything.": {
       "localizations": {
         "de": {
@@ -75828,47 +72776,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "YouTube Music couldn’t take this upload right now.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte diesen Upload gerade nicht annehmen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music konnte diesen Upload gerade nicht annehmen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music couldn’t take this upload right now."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music no pudo aceptar esta subida en este momento."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music n’a pas pu prendre en charge cet import pour le moment."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music сейчас не может принять эту загрузку."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "YouTube Music did not change the captions.": {
       "localizations": {
         "de": {
@@ -75946,6 +72853,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YouTube Music не изменил качество."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "YouTube Music did not confirm the radio start. Playback may have changed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat den Radiostart nicht bestätigt. Die Wiedergabe hat sich möglicherweise geändert."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat den Radiostart nicht bestätigt. Die Wiedergabe hat sich möglicherweise geändert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music did not confirm the radio start. Playback may have changed."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music no confirmó el inicio de la radio. La reproducción puede haber cambiado."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music n’a pas confirmé le démarrage de la radio. La lecture a peut-être changé."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music не подтвердил запуск радио. Воспроизведение могло измениться."
           }
         }
       },
@@ -76115,47 +73063,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "YouTube Music didn’t accept this file.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat diese Datei nicht akzeptiert."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat diese Datei nicht akzeptiert."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music didn’t accept this file."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music no aceptó este archivo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music n’a pas accepté ce fichier."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music не принял этот файл."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "YouTube Music didn’t accept this. Nothing was changed.": {
       "localizations": {
         "de": {
@@ -76315,47 +73222,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YouTube Music не подтвердил создание нового плейлиста. Он может существовать, а может и нет."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music didn’t confirm the removal. “%@” may or may not have been removed.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat das Entfernen nicht bestätigt. „%@“ wurde möglicherweise entfernt oder auch nicht."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat das Entfernen nicht bestätigt. „%@“ wurde möglicherweise entfernt oder auch nicht."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music didn’t confirm the removal. “%@” may or may not have been removed."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music no confirmó la eliminación. Puede que “%@” se haya eliminado o no."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music n’a pas confirmé la suppression. « %@ » a peut-être été supprimé, ou non."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music не подтвердил удаление. Объект «%@» мог быть удалён, а мог и нет."
           }
         }
       },
@@ -77017,129 +73883,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "YouTube Music finished processing this file, but your uploads list couldn’t be updated. Refresh it to see the file.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat die Verarbeitung dieser Datei abgeschlossen, aber deine Upload-Liste konnte nicht aktualisiert werden. Aktualisiere sie, um die Datei zu sehen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat die Verarbeitung dieser Datei abgeschlossen, aber deine Upload-Liste konnte nicht aktualisiert werden. Aktualisiere sie, um die Datei zu sehen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music finished processing this file, but your uploads list couldn’t be updated. Refresh it to see the file."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music terminó de procesar este archivo, pero no se pudo actualizar tu lista de subidas. Actualízala para ver el archivo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music a terminé le traitement de ce fichier, mais votre liste d’imports n’a pas pu être mise à jour. Actualisez-la pour voir le fichier."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music закончил обработку этого файла, но список загруженных файлов не удалось обновить. Обновите его, чтобы увидеть файл."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music finished processing this file.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat die Verarbeitung dieser Datei abgeschlossen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat die Verarbeitung dieser Datei abgeschlossen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music finished processing this file."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music terminó de procesar este archivo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music a terminé le traitement de ce fichier."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music закончил обработку этого файла."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music finished processing this file. Your uploads list was updated.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat die Verarbeitung dieser Datei abgeschlossen. Deine Upload-Liste wurde aktualisiert."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music hat die Verarbeitung dieser Datei abgeschlossen. Deine Upload-Liste wurde aktualisiert."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music finished processing this file. Your uploads list was updated."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music terminó de procesar este archivo. Se actualizó tu lista de subidas."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music a terminé le traitement de ce fichier. Votre liste d’imports a été mise à jour."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music закончил обработку этого файла. Список загруженных файлов обновлён."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "YouTube Music gave this item nothing to play.": {
       "localizations": {
         "de": {
@@ -77468,6 +74211,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "YouTube Music hasn’t confirmed the requested filter. The selection shown comes from its queue.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat den angeforderten Filter noch nicht bestätigt. Die angezeigte Auswahl stammt aus der Warteschlange."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat den angeforderten Filter noch nicht bestätigt. Die angezeigte Auswahl stammt aus der Warteschlange."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music hasn’t confirmed the requested filter. The selection shown comes from its queue."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music aún no ha confirmado el filtro solicitado. La selección mostrada procede de su cola."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music n’a pas encore confirmé le filtre demandé. La sélection affichée provient de sa file d’attente."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music ещё не подтвердил запрошенный фильтр. Показан выбор из его очереди."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "YouTube Music history": {
       "localizations": {
         "de": {
@@ -77750,47 +74534,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YouTube Music ограничивает число запросов. Подождите немного и повторите попытку."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music is still processing this file. Check again later.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music verarbeitet diese Datei noch. Prüfe es später noch einmal."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music verarbeitet diese Datei noch. Prüfe es später noch einmal."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music is still processing this file. Check again later."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music sigue procesando este archivo. Vuelve a comprobarlo más tarde."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music traite encore ce fichier. Vérifiez à nouveau plus tard."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music всё ещё обрабатывает этот файл. Проверьте позже."
           }
         }
       },
@@ -78335,47 +75078,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YouTube Music вернул эту страницу без объектов."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "YouTube Music said: %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music meldet: %@"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music meldet: %@"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YouTube Music said: %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music dijo: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music a indiqué : %@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "YouTube Music сообщил: %@"
           }
         }
       },
@@ -80889,47 +77591,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "Your session ended. Sign in again to upload.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Deine Sitzung wurde beendet. Melde dich erneut an, um hochzuladen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Deine Sitzung wurde beendet. Melde dich erneut an, um hochzuladen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your session ended. Sign in again to upload."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Tu sesión terminó. Inicia sesión de nuevo para subir música."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Votre session est terminée. Reconnectez-vous pour importer."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Ваш сеанс завершён. Войдите снова, чтобы загружать файлы."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "Your session ended. Sign in again.": {
       "localizations": {
         "de": {
@@ -81007,47 +77668,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Ваш сеанс завершён. Локальные данные сохранены."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "Your uploads list couldn’t say either. Removing again can’t remove anything else.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Deine Upload-Liste konnte es auch nicht sagen. Ein erneutes Entfernen kann nichts anderes entfernen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Deine Upload-Liste konnte es auch nicht sagen. Ein erneutes Entfernen kann nichts anderes entfernen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your uploads list couldn’t say either. Removing again can’t remove anything else."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Tu lista de subidas tampoco pudo decirlo. Volver a eliminar no puede eliminar nada más."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Votre liste d’imports n’a pas pu le dire non plus. Supprimer à nouveau ne peut rien supprimer d’autre."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Список загруженных файлов тоже не смог ответить. Повторное удаление не удалит ничего другого."
           }
         }
       },
@@ -81557,47 +78177,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "You’re offline. The upload stopped and nothing was queued.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Du bist offline. Der Upload wurde gestoppt und nichts wurde vorgemerkt."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Du bist offline. Der Upload wurde gestoppt und nichts wurde vorgemerkt."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You’re offline. The upload stopped and nothing was queued."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Estás sin conexión. La subida se detuvo y no se puso nada en cola."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Vous êtes hors ligne. L’import s’est arrêté et rien n’a été mis en file d’attente."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Нет подключения. Загрузка остановлена, ничего не поставлено в очередь."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "You’re on Google’s own sign-in page. YTMuse never sees or stores your password.": {
       "localizations": {
         "de": {
@@ -82013,47 +78592,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "macOS использует это сочетание: %@."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "or drop audio files here": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "oder ziehe Audiodateien hierher"
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "oder ziehe Audiodateien hierher"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "or drop audio files here"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "o suelta aquí archivos de audio"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "ou déposez des fichiers audio ici"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "или перетащите сюда аудиофайлы"
           }
         }
       },
@@ -82515,47 +79053,6 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "«%@» уже здесь. «Оставить дубликаты» добавляет его снова как отдельную запись; «Пропустить существующие» не добавляет."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
-    "“%@” is already in the upload list.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ ist bereits in der Upload-Liste."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "„%@“ ist bereits in der Upload-Liste."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "“%@” is already in the upload list."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "“%@” ya está en la lista de subidas."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "« %@ » est déjà dans la liste des imports."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "«%@» уже есть в списке загрузки."
           }
         }
       },

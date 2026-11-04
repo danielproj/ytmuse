@@ -52,7 +52,6 @@
 52|Przełączono na konto %@.
 53|Odtwórz %@
 54|Bieżące wyjście: %@
-55|Usunąć „%@” z Twoich przesłanych plików?
 56|Odtwarzana jest reklama
 57|Reklama się zakończyła
 58|Teraz odtwarzane: „%@” – %@.

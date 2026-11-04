@@ -55,10 +55,12 @@ struct CapsuleVolume: View {
     @State private var shown = false
     @State private var hovering = false
     @State private var dragging = false
+    @FocusState private var focused: Bool
     var body: some View {
         if compact {
             Button { shown.toggle() } label: { Label(label, systemImage: symbol) }
-                .buttonStyle(.musicGlyph(edge: PlayerCapsule.glyphEdge(large: large))).disabled(!enabled && (mute?.disabled ?? true)).help(Text(label))
+                .buttonStyle(.musicGlyph(edge: PlayerCapsule.glyphEdge(large: large))).disabled(!enabled && (mute?.disabled ?? true)).help(help.isEmpty ? Text(label) : Text(verbatim: help))
+                .accessibilityIdentifier(identifier)
                 .popover(isPresented: $shown, arrowEdge: .top) {
                     HStack(spacing: MusicSpace.xs) {
                         if let mute { muteButton(mute) }
@@ -84,9 +86,9 @@ struct CapsuleVolume: View {
     }
     private var slider: some View {
         let span = max(range.upperBound - range.lowerBound, 0.000001)
-        return MusicSlimSlider(fraction: (level - range.lowerBound) / span, active: hovering || dragging, enabled: enabled) {
+        return MusicSlimSlider(fraction: (level - range.lowerBound) / span, active: hovering || dragging || focused, enabled: enabled) {
             Slider(value: Binding(get: { level }, set: set), in: range, onEditingChanged: { dragging = $0 }) { Text(label) }
-                .labelsHidden().disabled(!enabled).help(Text(verbatim: help)).accessibilityIdentifier(identifier)
+                .labelsHidden().focused($focused).disabled(!enabled).help(Text(verbatim: help)).accessibilityIdentifier(compact ? identifier + "Slider" : identifier)
         }.onHover { hovering = $0 }
     }
 }
@@ -182,7 +184,12 @@ struct WebCapsuleSecondary: View {
     var body: some View {
         let state = player.snapshot
         let episode = podcasts?.playback.current.map { $0.videoID == state.videoID } ?? false
-        if compact || expanded { group(state, episode: episode, compactVolume: compact) }
+        if expanded {
+            VStack(spacing: MusicSpace.xs) {
+                if state.isLive { liveRow(state) }
+                group(state, episode: episode, compactVolume: compact)
+            }
+        } else if compact { group(state, episode: episode, compactVolume: true) }
         else {
             // When the capsule is too narrow for the slider, the volume becomes a glyph with a popover.
             ViewThatFits(in: .horizontal) {
@@ -195,12 +202,6 @@ struct WebCapsuleSecondary: View {
         let enabled = state.canControlQueue
         let edge = PlayerCapsule.glyphEdge(large: expanded)
         HStack(spacing: MusicSpace.hairline) {
-            if expanded, state.isLive {
-                MusicBadge("LIVE", style: .live(atEdge: state.atLiveEdge))
-                    .accessibilityLabel(Text(state.atLiveEdge ? "Live" : "Behind live")).accessibilityIdentifier("musicLiveBadge")
-                Button { Task { await player.goLive() } } label: { Label("Go Live", systemImage: "dot.radiowaves.left.and.right") }
-                    .buttonStyle(.musicGlyph(edge: edge)).disabled(!state.canGoLive).help(Text("Jump to the live edge")).accessibilityIdentifier("musicGoLive")
-            }
             Button { Task { await player.setShuffle(!(state.shuffle ?? false)) } } label: { Label("Shuffle", systemImage: "shuffle") }
                 .buttonStyle(.musicGlyph(on: state.shuffle == true, edge: edge)).disabled(!enabled || state.shuffle == nil)
                 .help(Text("Shuffle")).accessibilityValue(Text(state.shuffle == true ? "On" : "Off")).accessibilityAddTraits(.isToggle).accessibilityIdentifier("musicShuffle")
@@ -220,6 +221,16 @@ struct WebCapsuleSecondary: View {
                 .buttonStyle(.musicGlyph(edge: edge)).help(Text("Queue")).accessibilityIdentifier("transportQueue")
             if !expanded, let playback { SleepTimerChip(model: playback, episode: episode, identifier: "musicSleepRemaining") }
             more(state, episode: episode, edge: edge)
+        }
+    }
+    /// Keep translated live status clear of the fixed accessory controls, including in the 320 pt mini-player.
+    private func liveRow(_ state: WebMusicSnapshot) -> some View {
+        HStack(spacing: MusicSpace.xs) {
+            MusicBadge("LIVE", style: .live(atEdge: state.atLiveEdge))
+                .accessibilityLabel(Text(state.atLiveEdge ? "Live" : "Behind live")).accessibilityIdentifier("musicLiveBadge")
+            Button { Task { await player.goLive() } } label: { Label("Go Live", systemImage: "dot.radiowaves.left.and.right") }
+                .buttonStyle(.musicGlyph(edge: PlayerCapsule.glyphEdge(large: expanded))).disabled(!state.canGoLive)
+                .help(Text("Jump to the live edge")).accessibilityIdentifier("musicGoLive")
         }
     }
     /// ⋯: what has no slot of its own: the sleep timer, the video window, Go Live and an episode's speed and jumps.
@@ -387,8 +398,8 @@ struct OwnedCapsuleSecondary: View {
             Button(action: showQueue) { Label("Queue", systemImage: "list.bullet") }
                 .buttonStyle(.musicGlyph(edge: edge)).help(Text("Queue")).accessibilityIdentifier("transportQueue")
             if !expanded { SleepTimerChip(model: model, identifier: "sleepRemaining") }
-            // The expanded player's ⋯ is beside its transport (`OwnedControlsView`), so it has one only.
-            if !expanded { Menu {
+            // Keep secondary actions together, leaving the three transport buttons centered.
+            Menu {
                 if let state = model.state {
                     // The quality line used to sit under the bar; it is a menu item now.
                     Text("Source: \(state.media?.codec ?? String(localized: "Unknown")) · \(state.media?.bitrate.map { "\($0) bit/s" } ?? String(localized: "Unknown bitrate")) · \(state.media?.sampleRate.map { "\(Int($0)) Hz" } ?? String(localized: "Unknown sample rate")) · \(state.media?.route ?? String(localized: "Unknown output"))")
@@ -397,7 +408,7 @@ struct OwnedCapsuleSecondary: View {
                 }
                 OwnedMoreActions(model: model)
             } label: { MusicGlyphLabel(systemImage: "ellipsis", edge: edge).accessibilityLabel(Text("More playback actions")) }
-                .buttonStyle(.plain).menuIndicator(.hidden).fixedSize().disabled(model.session == nil).accessibilityIdentifier("sleepTimerMenu") }
+                .buttonStyle(.plain).menuIndicator(.hidden).fixedSize().disabled(model.session == nil).help(Text("More playback actions")).accessibilityIdentifier("sleepTimerMenu")
         }
     }
 }

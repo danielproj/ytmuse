@@ -18,14 +18,11 @@
 418|Comprobar
 419|Comprobar ahora
 420|Comprobando
-421|Elegir
-422|Elegir archivos…
 423|Elegir salida…
 424|Elige una duración entre un segundo y 24 horas.
 425|Elige una posición dentro del elemento.
 426|Elige un elemento para empezar a escuchar.
 427|Elige entre 1 minuto y 24 horas.
-428|Elige música para subir
 429|Elige la duración de los saltos
 430|Borrar
 431|Borrar historial
@@ -98,7 +95,6 @@
 498|Filtrar
 499|Buscar
 500|Buscar…
-501|Termina o descarta primero la eliminación en curso.
 502|Seguir
 503|Siguiendo
 504|Seguir y guardar en tu biblioteca aún no están disponibles. YTMuse lee el catálogo, pero no modifica tu biblioteca.
@@ -124,7 +120,6 @@
 524|Independiente. Nativa. Tuya.
 525|Enlace de invitación a la lista de reproducción “%@”
 526|Invitar a colaboradores desde YTMuse no está disponible en esta versión.
-527|Se puede reanudar.
 528|Solo se añade si pulsas Añadir.
 529|Elemento
 530|Los elementos terminan aquí una vez guardados en este Mac.
@@ -246,7 +241,6 @@
 646|Ninguna canción de esta cola es una canción de YouTube Music que esta app conozca, así que no hay nada que guardar como lista de reproducción.
 647|No suena ninguna canción
 648|Aún no hay canciones en tu biblioteca
-649|Aún no hay subidas
 650|Ninguno
 651|No disponible para ti ahora mismo
 652|Aún no disponible

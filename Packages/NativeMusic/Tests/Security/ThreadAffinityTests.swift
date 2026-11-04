@@ -226,7 +226,6 @@ enum MainActorSweep {
     static let allowed: [(file: String, pattern: String, reason: String)] = [
         ("LocalAccountComposition.swift", #"DispatchQueue\.main\.sync"#, "the diagnostic log's context provider runs on whatever thread logs; it takes the main-queue branch only OFF the main thread (the main thread answers directly), so the main thread never waits on itself"),
         ("WidgetViews.swift", #"NSImage\(data"#, "TH2: a widget view is rendered once per timeline entry in the widget extension, which has no interactive main thread and cannot await; its input is the publisher's own thumbnail, bounded at 32 KB (`WidgetSnapshot.artworkByteLimit`)"),
-        ("DevelopmentUploads.swift", #"\.write\(to:"#, "design-mode fixture: four 3 KB synthetic WAV files, written only under the Debug development flags in an isolated session"),
     ]
     struct Result { var scanned = 0; var hits: [String] = [] }
     /// Removes comments and string literals so braces and words inside them do not count.

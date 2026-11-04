@@ -4,12 +4,22 @@ import Observation
 import SystemIntegration
 
 public enum BrowserDestination: String, CaseIterable, Codable, Sendable {
-    case home, explore, search, library, downloads, history, uploads, podcasts, queue, nowPlaying
+    case home, explore, search, library, downloads, history, podcasts, queue, nowPlaying
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let raw = try container.decode(String.self)
+        // Restore the retired destination without discarding the window's other visits.
+        if raw == "uploads" { self = .library; return }
+        guard let destination = Self(rawValue: raw) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown browser destination")
+        }
+        self = destination
+    }
     public var title: String {
-        switch self { case .home: "Home"; case .explore: "Explore"; case .search: "Search"; case .library: "Library"; case .downloads: "Downloads"; case .history: "History"; case .uploads: "Uploads"; case .podcasts: "Podcasts"; case .queue: "Queue"; case .nowPlaying: "Now Playing" }
+        switch self { case .home: "Home"; case .explore: "Explore"; case .search: "Search"; case .library: "Library"; case .downloads: "Downloads"; case .history: "History"; case .podcasts: "Podcasts"; case .queue: "Queue"; case .nowPlaying: "Now Playing" }
     }
     public var symbol: String {
-        switch self { case .home: "house"; case .explore: "safari"; case .search: "magnifyingglass"; case .library: "square.stack"; case .downloads: "arrow.down.circle"; case .history: "clock"; case .uploads: "arrow.up.circle"; case .podcasts: "mic"; case .queue: "list.bullet"; case .nowPlaying: "play.circle" }
+        switch self { case .home: "house"; case .explore: "safari"; case .search: "magnifyingglass"; case .library: "square.stack"; case .downloads: "arrow.down.circle"; case .history: "clock"; case .podcasts: "mic"; case .queue: "list.bullet"; case .nowPlaying: "play.circle" }
     }
 }
 public enum NativeItemKind: String, Codable, Sendable {

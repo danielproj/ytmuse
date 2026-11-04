@@ -1,4 +1,5 @@
 import AccountSession
+import Domain
 import CryptoKit
 import Features
 import Foundation
@@ -150,55 +151,75 @@ enum Captures {
         #expect(!songs.isEmpty)
         for seed in songs { #expect(seed.videoID != nil && seed.id.hasPrefix("RDAMVM"), Comment(rawValue: seed.id)) }
     }
-    @Test func theTunerControlsStayUnresolvedBecauseNoRadioQueueCaptureExistsAndFailWhenChipsOfTheReferenceShapeAppear() throws {
-        // F1: no radio queue (`next`) capture exists, so tuning controls are UNRESOLVED. If a capture ever carries queue filter chips of the shape the reference
-        // client uses (a chip whose endpoint is a watch-playlist endpoint with parameters), the application must be able to read them: this fails then, so
-        // "unresolved" cannot go on being reported over a capture that shows them.
-        for file in try Captures.files() {
-            let queue = MusicRadioQueueParser.parse(try Captures.object(file))
-            #expect(queue.chips.isEmpty, Comment(rawValue: "\(file.lastPathComponent) carries radio-queue chips \(queue.chips.map(\.title)): the tuner's unresolved state is now wrong and must read them"))
+    @Test func radioFiltersUseTheRealQueueShapeAndPreserveEveryPublishedChoice() throws {
+        let data = try Data(contentsOf: fixturesRoot().appendingPathComponent("R1-real/next-radio.json"))
+        let root = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let manifestData = try Data(contentsOf: fixturesRoot().appendingPathComponent("R1-real/manifest.json"))
+        let manifest = try #require(try JSONSerialization.jsonObject(with: manifestData) as? [String: Any])
+        let hash = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        #expect(hash == "e00e9e6f0d22296a973b4b9094f00e2d0252c6a953e007eaf3776cc5d0ae97aa")
+        #expect(hash == manifest["sha256"] as? String && manifest["mode"] as? String == "real-public-anonymous-capture")
+        let queue = try MusicRadioQueueParser.parse(root)
+        #expect(queue.chips.map(\.title) == ["All", "Popular", "Discover", "Deep cuts", "Party", "2010s", "Workout", "2000s", "Electronic", "Pop", "Alternative", "Glitch house", "Gothic Funk"])
+        #expect(queue.chips.count == 13 && queue.chips[0].isSelected)
+        #expect(queue.chips.dropFirst().allSatisfy { !$0.isSelected })
+        #expect(queue.chips.filter { $0.playerParams != nil }.map(\.title) == ["Workout", "Gothic Funk"])
+        for chip in queue.chips where chip.playerParams == nil {
+            let body = try MusicRadioQueueParser.queueBody(MusicRadioAction(playlistID: chip.playlistID, params: chip.params))
+            #expect(body["playlistId"] as? String == chip.playlistID && body["params"] as? String == chip.params)
+            #expect(body["videoId"] == nil && body["tunerSettingValue"] == nil)
         }
-        // Positive control: the same parser does read the shape when it is there.
-        let synthetic: [String: Any] = ["contents": ["chipCloudChipRenderer": ["text": ["simpleText": "Popular"], "isSelected": true,
-            "navigationEndpoint": ["watchPlaylistEndpoint": ["playlistId": "RDAMVMsyntheticvid", "params": "syntheticParams"]]]]]
-        #expect(MusicRadioQueueParser.parse(synthetic).chips.map(\.title) == ["Popular"])
-        // Home's mood chips are real chips in a real capture and are not radio filters.
+    }
+    @Test func validNoFilterQueueIsDifferentFromMalformedOrUnrelatedBody() throws {
+        let data = try Data(contentsOf: fixturesRoot().appendingPathComponent("W18-real/next-song.json"))
+        let root = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(try MusicRadioQueueParser.parse(root).chips.isEmpty)
+        #expect(throws: MusicSessionError.unrecognised) { try MusicRadioQueueParser.parse([:]) }
         let home = try Captures.object(fixturesRoot().appendingPathComponent("W11-real/browse-home.json"))
-        var chipRenderers = 0
-        func count(_ value: Any) { if let o = value as? [String: Any] { if o["chipCloudChipRenderer"] != nil { chipRenderers += 1 }; o.values.forEach(count) } else if let a = value as? [Any] { a.forEach(count) } }
-        count(home)
-        #expect(chipRenderers > 0 && MusicRadioQueueParser.parse(home).chips.isEmpty, "Home's chips (\(chipRenderers)) are browse filters, not a radio's")
-        // And no captured response is a radio queue at all.
-        for file in try Captures.files() {
-            var found = false
-            func walk(_ v: Any) { if let o = v as? [String: Any] { if o["playlistPanelRenderer"] != nil || o["musicQueueRenderer"] != nil { found = true }; o.values.forEach(walk) } else if let a = v as? [Any] { a.forEach(walk) } }
-            walk(try Captures.object(file))
-            #expect(!found, Comment(rawValue: "\(file.lastPathComponent) is a radio queue capture now: read it and replace the unresolved state with what it shows"))
+        #expect(throws: MusicSessionError.unrecognised) { try MusicRadioQueueParser.parse(home) }
+    }
+    @Test func malformedRecognisedChipFailsTheWholeRead() throws {
+        let data = try Data(contentsOf: fixturesRoot().appendingPathComponent("R1-real/next-radio.json"))
+        let root = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let path = ["contents", "singleColumnMusicWatchNextResultsRenderer", "tabbedRenderer", "watchNextTabbedResultsRenderer", "tabs"]
+        func replacingChips(_ value: Any, path: ArraySlice<String>, transform: ([[String: Any]]) throws -> [[String: Any]]) throws -> Any {
+            guard let key = path.first else {
+                return try transform(try #require(value as? [[String: Any]]))
+            }
+            if key == "0" {
+                var array = try #require(value as? [Any])
+                array[0] = try replacingChips(array[0], path: path.dropFirst(), transform: transform)
+                return array
+            }
+            var object = try #require(value as? [String: Any])
+            object[key] = try replacingChips(try #require(object[key]), path: path.dropFirst(), transform: transform)
+            return object
         }
-        #expect(UnresolvedRadioControlsSource().unresolved != nil)
-    }
-    @Test func theQueueRequestAndChipShapesFollowTheReferenceClient() {
-        let action = MusicRadioAction(playlistID: "RDAMVMsyntheticvid", videoID: "syntheticvid", params: "wAEB")
-        let start = MusicRadioQueueParser.body(.start(action, tunerSetting: MusicRadioQueueRequest.normalTunerSetting))
-        #expect(start["tunerSettingValue"] as? String == "AUTOMIX_SETTING_NORMAL" && start["isAudioOnly"] as? Bool == true && start["enablePersistentPlaylistPanel"] as? Bool == true)
-        #expect(start["videoId"] as? String == "syntheticvid" && start["playlistId"] as? String == "RDAMVMsyntheticvid" && start["params"] as? String == "wAEB")
-        let chip = MusicRadioChip(title: "Popular", isSelected: false, playlistID: "RDAMVMsyntheticvid", params: "chipParams")
-        let filter = MusicRadioQueueParser.body(.filter(chip))
-        #expect(filter["videoId"] == nil, "a filter re-makes the queue; it does not continue from a song")
-        #expect(filter["params"] as? String == "chipParams" && filter["playlistId"] as? String == "RDAMVMsyntheticvid" && filter["tunerSettingValue"] == nil)
-    }
-    @Test func aChipWithABrowseOrSearchEndpointOrADeselectActionIsNotARadioFilter() {
-        let doc: [String: Any] = ["a": ["chipCloudChipRenderer": ["text": ["simpleText": "Focus"], "navigationEndpoint": ["browseEndpoint": ["browseId": "FEmusic_home", "params": "x"]]]],
-                                  "b": ["chipCloudChipRenderer": ["text": ["runs": [["text": "Songs"]]], "navigationEndpoint": ["searchEndpoint": ["query": "q", "params": "p"]]]],
-                                  "c": ["chipCloudChipRenderer": ["text": ["simpleText": "Popular"], "isSelected": false,
-                                        "navigationEndpoint": ["watchPlaylistEndpoint": ["playlistId": "RDAMVMsyntheticvid", "params": "sel"]],
-                                        "onDeselectedCommand": ["watchPlaylistEndpoint": ["playlistId": "RDAMVMsyntheticvid", "params": "reset"]]]]]
-        let queue = MusicRadioQueueParser.parse(doc)
-        #expect(queue.chips.map(\.params) == ["sel"], "only the selection counts, and the deselect action is not a second chip")
-        // A chip whose endpoint carries no parameters (or empty ones) selects nothing, so it is not offered as a filter.
-        let bare: [String: Any] = ["x": ["chipCloudChipRenderer": ["text": ["simpleText": "Popular"], "navigationEndpoint": ["watchPlaylistEndpoint": ["playlistId": "RDAMVMsyntheticvid"]]]],
-                                   "y": ["chipCloudChipRenderer": ["text": ["simpleText": "Popular"], "navigationEndpoint": ["watchPlaylistEndpoint": ["playlistId": "RDAMVMsyntheticvid", "params": ""]]]]]
-        #expect(MusicRadioQueueParser.parse(bare).chips.isEmpty)
+        let chipPath = path + ["0", "tabRenderer", "content", "musicQueueRenderer", "subHeaderChipCloud", "chipCloudRenderer", "chips"]
+        func corrupt(_ value: Any, key: String, replacement: Any) -> Any {
+            if var object = value as? [String: Any] {
+                if key == "playerParams", object["playlistId"] != nil, object["params"] != nil { object[key] = replacement }
+                for k in Array(object.keys) { object[k] = k == key ? replacement : corrupt(object[k]!, key: key, replacement: replacement) }
+                return object
+            }
+            if let array = value as? [Any] { return array.map { corrupt($0, key: key, replacement: replacement) } }
+            return value
+        }
+        for (key, value) in [("params", "" as Any), ("params", "p\n" as Any), ("watchEndpoint", "wrong" as Any), ("isSelected", "wrong" as Any), ("text", [:] as Any), ("queueUpdateSection", "unknown" as Any), ("syncMode", "unknown" as Any), ("dedupeAgainstLocalQueue", false as Any), ("playerParams", String(repeating: "x", count: 1025) as Any)] {
+            let replacement = try replacingChips(root, path: chipPath[...]) { chips in
+                #expect(chips.count == 13)
+                var mutated = chips
+                mutated[0] = try #require(corrupt(chips[0], key: key, replacement: value) as? [String: Any])
+                let siblings = Array(mutated.dropFirst())
+                #expect(NSDictionary(dictionary: ["chips": siblings]).isEqual(to: ["chips": Array(chips.dropFirst())]))
+                // Prove the other twelve chips still parse when substituted into the real queue.
+                let good = try #require(try replacingChips(root, path: chipPath[...]) { _ in siblings } as? [String: Any])
+                #expect(try MusicRadioQueueParser.parse(good).chips.count == 12)
+                return mutated
+            }
+            let bad = try #require(replacement as? [String: Any])
+            #expect(throws: MusicSessionError.unrecognised) { try MusicRadioQueueParser.parse(bad) }
+        }
     }
 
     @Test func ratingsArePresentOnEntriesAsTheLikeControlAndAreTheLedgersToWrite() throws {
@@ -225,4 +246,117 @@ enum Captures {
         let swept = Set(try Captures.files().map { $0.deletingLastPathComponent().lastPathComponent + "/" + $0.lastPathComponent })
         #expect(swept == pinned, Comment(rawValue: "every swept capture is pinned, and nothing pinned is skipped: \(swept.symmetricDifference(pinned))"))
     }
+}
+
+@MainActor private final class QueueFilterRecorder: SearchActionPerformer {
+    var supportsRadioQueueUpdates: Bool { true }
+    let scope = UUID()
+    var current = true
+    func captureRadioQueueScope(playlistID: String) -> UUID? { scope }
+    func radioQueueScopeIsCurrent(_ scope: UUID) -> Bool { current && scope == self.scope }
+    func applyRadioFilter(_ command: MusicQueueFilterCommand, scope: UUID) async -> SearchPlayOutcome {
+        guard scope == self.scope else { return .stale }
+        filters.append(command)
+        if let apply { return await apply() }
+        return .started
+    }
+    var apply: (@MainActor () async -> SearchPlayOutcome)?
+    var filters: [MusicQueueFilterCommand] = []
+    func play(playlistID: String, title: String) async -> SearchPlayOutcome { .started }
+    func playRadioFilter(_ command: MusicQueueFilterCommand, title: String) async -> SearchPlayOutcome { filters.append(command); return .started }
+    func copy(link: URL) {}
+}
+@Suite @MainActor struct PublishedQueueFilterRoutingTests {
+    @Test func retainedRenderedActionsCannotBindToNewAccountOrSameSeedControls() async throws {
+        for replaceAccount in [false, true] {
+            let book = RadioSeedBook()
+            let item = MusicCatalogItem(kind: .song, title: "Seed", videoID: "aaaaaaaaaa1", radio: MusicRadioAction(playlistID: "RDseed"))
+            book.note(items: [item])
+            let recorder = QueueFilterRecorder()
+            let source = QueueRadioControlsSource { _ in MusicRadioQueue(chips: [
+                MusicRadioChip(title: "Workout", isSelected: false, playlistID: "RDfetch", params: "p", playerParams: "extra")]) }
+            let tuner = TunerModel(seedBook: book, performer: recorder, source: source)
+            let seed = try #require(book.seeds.first)
+            await tuner.start(seed)
+            let identityA = tuner.controlsIdentity
+            let optionA = try #require(tuner.controls.first?.options.first)
+            // This is the identity captured while rendering A, before even the setter is invoked.
+            let delayedAction = { await tuner.choose(option: optionA.id, in: "queue-filter", suppliedBy: identityA) }
+            if replaceAccount { tuner.accountChanged(); book.note(items: [item]) }
+            await tuner.start(seed)
+            let identityB = tuner.controlsIdentity
+            #expect(identityA != identityB && tuner.controls.first?.options.first?.id == optionA.id)
+            await delayedAction()
+            #expect(recorder.filters.isEmpty && !tuner.busy && tuner.context?.choices.isEmpty == true)
+            await tuner.choose(option: optionA.id, in: "queue-filter", suppliedBy: identityB)
+            #expect(recorder.filters.count == 1 && tuner.startCount == 2)
+        }
+    }
+    @Test func unconfirmedPerformerReturnsModelToIdleWithoutRestartOrSelection() async throws {
+        let book = RadioSeedBook()
+        book.note(items: [MusicCatalogItem(kind: .song, title: "Seed", videoID: "aaaaaaaaaa1", radio: MusicRadioAction(playlistID: "RDseed"))])
+        let recorder = QueueFilterRecorder()
+        let source = QueueRadioControlsSource { _ in MusicRadioQueue(chips: [
+            MusicRadioChip(title: "Workout", isSelected: false, playlistID: "RDfetch", params: "p")]) }
+        let tuner = TunerModel(seedBook: book, performer: recorder, source: source)
+        await tuner.start(try #require(book.seeds.first))
+        let before = tuner.context
+        recorder.apply = {
+            try? await Task.sleep(for: .milliseconds(40))
+            return .failed // Whole-operation timeout from the player boundary.
+        }
+        let identity = tuner.controlsIdentity
+        let task = Task { await tuner.choose(option: "RDfetch|p", in: "queue-filter", suppliedBy: identity) }
+        for _ in 0..<10 { await Task.yield() }
+        #expect(tuner.busy)
+        await task.value
+        #expect(!tuner.busy && tuner.failure == .filterUnconfirmed && tuner.context == before && tuner.startCount == 1)
+    }
+    @Test func everyRealChipReachesTheCompletePerformerWithExactOpaqueFields() async throws {
+        let data = try Data(contentsOf: fixturesRoot().appendingPathComponent("R1-real/next-radio.json"))
+        let root = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let queue = try MusicRadioQueueParser.parse(root)
+        let book = RadioSeedBook()
+        book.note(items: [MusicCatalogItem(kind: .song, title: "Seed", videoID: "aaaaaaaaaa1", radio: MusicRadioAction(playlistID: "RDseed"))])
+        let recorder = QueueFilterRecorder()
+        let reads = RadioReadRecorder()
+        let tuner = TunerModel(seedBook: book, performer: recorder, source: QueueRadioControlsSource { context in
+            await reads.note(context.queueReadAction)
+            return queue
+        })
+        await tuner.start(try #require(book.seeds.first))
+        for chip in queue.chips {
+            let option = try #require(tuner.controls.first?.options.first { $0.title == chip.title })
+            #expect(tuner.canApply(option))
+            await tuner.choose(option: option.id, in: "queue-filter", suppliedBy: tuner.controlsIdentity)
+            let sent = try #require(recorder.filters.last)
+            #expect(sent.playlistID == chip.playlistID && sent.params == chip.params && sent.playerParams == chip.playerParams)
+            let context = try #require(tuner.context)
+            #expect(context.playlistID == "RDseed" && context.params == nil)
+            let action = context.queueReadAction
+            #expect(await reads.last == action, "the post-choice source read uses the selected fetch endpoint")
+            #expect(action.playlistID == chip.playlistID && action.params == chip.params && action.playerParams == chip.playerParams && action.videoID == nil)
+            let body = try MusicRadioQueueParser.queueBody(action)
+            #expect(body["playlistId"] as? String == chip.playlistID && body["params"] as? String == chip.params)
+            #expect(body["playerParams"] as? String == chip.playerParams && body["videoId"] == nil)
+        }
+        #expect(tuner.startCount == 1, "autoplay controls never count as new radio starts")
+        let staleOption = try #require(tuner.controls.first?.options.first)
+        recorder.current = false
+        #expect(!tuner.canApply(staleOption))
+        await tuner.choose(option: staleOption.id, in: "queue-filter", suppliedBy: tuner.controlsIdentity)
+        #expect(recorder.filters.count == 13)
+        for bad in ["", "p\n", String(repeating: "p", count: 1025)] {
+            #expect(throws: MusicSessionError.policy) {
+                try MusicRadioQueueParser.queueBody(MusicRadioAction(playlistID: "RDseed", params: "p", playerParams: bad))
+            }
+        }
+        #expect(recorder.filters.filter { $0.playerParams != nil }.count == 2)
+        #expect(recorder.filters.filter { $0.playerParams != nil }.allSatisfy { $0.playerParams == "0gcJCW0At9Zurpe2" })
+    }
+}
+
+private actor RadioReadRecorder {
+    var last: MusicRadioAction?
+    func note(_ action: MusicRadioAction) { last = action }
 }

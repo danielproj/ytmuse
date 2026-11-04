@@ -52,7 +52,6 @@
 52|Byttet til %@.
 53|Spill av %@
 54|Gjeldende utgang: %@
-55|Vil du fjerne «%@» fra opplastingene dine?
 56|En annonse spilles av
 57|Annonsen er slutt
 58|Spilles nå: «%@» av %@.

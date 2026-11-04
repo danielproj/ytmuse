@@ -52,7 +52,6 @@
 52|Mudou para %@.
 53|Reproduzir %@
 54|Saída atual: %@
-55|Remover “%@” dos seus carregamentos?
 56|Está a ser reproduzido um anúncio
 57|O anúncio terminou
 58|A reproduzir “%@” de %@.

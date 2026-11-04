@@ -7,7 +7,7 @@ YTMuse has **no third-party package dependency**: `Packages/NativeMusic/Package.
 ## ytmusicapi
 
 - Source: https://github.com/sigma67/ytmusicapi at commit `4da34b68e68d33356860fbf5d4f0245655969b08`, licensed under the MIT licence.
-- Two upstream files (the uploads mixin and the uploads parser) are kept as a pinned reference copy in `artifacts/harness/nodes/W19/reference/` (their hashes are in its `manifest.json`). They are read only by a test (`UploadsTests`) that compares the wire shapes of the native upload code with the reference. Nothing is linked, shipped or copied into product code.
+- Two upstream files (the uploads mixin and the uploads parser) are kept as a pinned reference copy in `artifacts/harness/nodes/W19/reference/` (their hashes are in its `manifest.json`). They are historical review evidence; the upload implementation and its dedicated tests were removed on 2026-11-04. Nothing is linked, shipped or copied into product code.
 - Upstream licence (captured from the same repository, `LICENSE`):
 
 ```

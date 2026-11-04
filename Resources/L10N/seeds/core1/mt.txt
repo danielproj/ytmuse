@@ -52,7 +52,6 @@
 52|Bdilt għal %@.
 53|Ixgħel %@
 54|L-output attwali: %@
-55|Tneħħi “%@” mill-upload tiegħek?
 56|Qed tindaqq reklam
 57|Ir-reklam spiċċa
 58|Qed jindaqq issa “%@” minn %@.

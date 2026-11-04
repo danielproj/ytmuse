@@ -52,7 +52,6 @@
 52|Wedi newid i %@.
 53|Chwarae %@
 54|Yr allbwn presennol: %@
-55|Tynnu “%@” o'ch uwchlwythiadau?
 56|Mae hysbyseb yn chwarae
 57|Mae'r hysbyseb wedi gorffen
 58|Yn chwarae nawr: “%@” gan %@.

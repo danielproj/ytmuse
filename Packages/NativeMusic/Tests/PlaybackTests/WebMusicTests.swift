@@ -249,10 +249,15 @@ private func state(doc: Int = 1, load: Int = 1, playing: Bool = true, buffering:
     var targetReply: WebMusicCommandReply?
     /// P17-WEB: a test's hook on a command as the page receives it. It may change what the fake page reports, and may answer in the page's place.
     var intercept: ((WebMusicCommand.Invocation) -> WebMusicCommandReply?)?
+    var suspendedRadioReply: CheckedContinuation<WebMusicCommandReply, Never>?
+    var suspendRadioDispatch = false
     func run(_ invocation: WebMusicCommand.Invocation) async -> WebMusicCommandReply {
         commands.append(invocation); events.append("run")
+        if suspendRadioDispatch, invocation.body == WebMusicScripts.updateRadioQueue {
+            return await withCheckedContinuation { suspendedRadioReply = $0 }
+        }
         if let answer = intercept?(invocation) { return answer }
-        if invocation.body == WebMusicScripts.loadTarget {
+        if invocation.body == WebMusicScripts.loadTarget || invocation.body == WebMusicScripts.updateRadioQueue {
             targetAttempts += 1
             if let n = routerAppearsAtAttempt, targetAttempts >= n { routerAvailable = true }
             if let targetReply { return targetReply }
@@ -1293,17 +1298,124 @@ private enum JSONLiteral {
     }
 }
 
+// R2 round-two regression SOURCE: accepted routing and target evidence are
+// separate requirements. These cases deliberately keep the outgoing playlist.
+@Suite struct WebMusicEndpointEvidenceTests {
+    private let playlist = "RDpublished"
+    private let oldVideo = "aaaaaaaaaa1"
+    private let newVideo = "aaaaaaaaaa2"
+    private func send(_ body: [String: Any], to transport: inout WebMusicTransport) throws {
+        transport.apply(try WebMusicBridge.validate(body, frame: music, document: transport.document, load: transport.load).get())
+    }
+    private func playing() throws -> WebMusicTransport {
+        var transport = WebMusicTransport()
+        _ = transport.begin(playlistID: playlist, title: nil)
+        _ = transport.reserveDocument()
+        try send(state(video: oldVideo, playlist: playlist, shuffle: false), to: &transport)
+        try send(queueBody(playing: oldVideo, upcoming: [("aaaaaaaaaa3", "Old next", "Artist")]), to: &transport)
+        #expect(transport.confirmed && transport.snapshot.queue?.upcoming.count == 1)
+        return transport
+    }
+    @Test func fallbackEvidenceIsDiscardedWhenRoutingIsLaterAccepted() throws {
+        var transport = try playing()
+        let load = transport.begin(playlistID: playlist, title: nil)
+        transport.expectEndpoint()
+        // Even target/queue evidence tagged with the new load before acceptance
+        // must be discarded, rather than latched for a later router reply.
+        try send(state(load: 2, video: oldVideo, playlist: playlist, shuffle: false), to: &transport)
+        try send(queueBody(playing: oldVideo, upcoming: [(newVideo, "Changed before acceptance", "Artist")], load: 2), to: &transport)
+        #expect(!transport.confirmed)
+        transport.acceptEndpoint(load: load)
+        #expect(!transport.confirmed)
+        try send(state(load: 2, video: oldVideo, playlist: playlist, shuffle: false), to: &transport)
+        #expect(!transport.confirmed && transport.snapshot.phase == .loading)
+    }
+    @Test func immediateRouterAcceptanceWithUnchangedOutgoingPlaybackIsUnconfirmed() throws {
+        var transport = try playing()
+        let load = transport.begin(playlistID: playlist, title: nil)
+        transport.expectEndpoint(); transport.acceptEndpoint(load: load)
+        try send(queueBody(playing: oldVideo, upcoming: [("aaaaaaaaaa3", "Metadata changed", "Other artist")], load: 2), to: &transport)
+        try send(state(load: 2, video: oldVideo, playlist: playlist, shuffle: false), to: &transport)
+        #expect(!transport.confirmed && transport.snapshot.phase == .loading)
+    }
+    @Test func suppliedSeedVideoCannotBeConfirmedByOldVideoEvenWithAChangedQueue() throws {
+        var transport = try playing()
+        let load = transport.begin(playlistID: playlist, title: nil)
+        transport.expectEndpoint(videoID: newVideo); transport.acceptEndpoint(load: load)
+        try send(queueBody(playing: oldVideo, upcoming: [(newVideo, "New next", "Artist")], load: 2), to: &transport)
+        try send(state(load: 2, video: oldVideo, playlist: playlist, shuffle: false), to: &transport)
+        #expect(!transport.confirmed)
+        try send(state(load: 2, video: newVideo, playlist: playlist, shuffle: false), to: &transport)
+        #expect(transport.confirmed && transport.snapshot.videoID == newVideo && transport.snapshot.shuffle == false)
+    }
+    @Test func samePlaylistQueueTransitionConfirmsWithShuffleOffInEitherMessageOrder() throws {
+        for queueFirst in [false, true] {
+            var transport = try playing()
+            let load = transport.begin(playlistID: playlist, title: nil)
+            transport.expectEndpoint(); transport.acceptEndpoint(load: load)
+            let sample = state(load: 2, video: oldVideo, playlist: playlist, shuffle: false)
+            let queue = queueBody(playing: oldVideo, upcoming: [(newVideo, "New next", "Artist")], load: 2)
+            try send(queueFirst ? queue : sample, to: &transport)
+            #expect(!transport.confirmed, "both content and queue evidence are needed")
+            try send(queueFirst ? sample : queue, to: &transport)
+            #expect(transport.confirmed && transport.snapshot.phase == .playing && transport.snapshot.shuffle == false)
+            #expect(transport.snapshot.queue?.upcoming.map(\.videoID) == [newVideo])
+        }
+    }
+    @Test func aClearedQueueCannotProveAChange() throws {
+        var transport = try playing()
+        let load = transport.begin(playlistID: playlist, title: nil)
+        transport.expectEndpoint(); transport.acceptEndpoint(load: load)
+        try send(queueBody(playing: nil, load: 2), to: &transport)
+        try send(state(load: 2, video: oldVideo, playlist: playlist, shuffle: false), to: &transport)
+        #expect(!transport.confirmed)
+    }
+}
+
 @Suite @MainActor struct WebMusicTargetPlayerTests {
     private let shuffle = "wAEB8gECKAE%3D"
     private func neverInOrder(_ fake: FakeMusicPage) -> Bool {
         fake.loads.allSatisfy { $0.query?.contains("list=") != true && $0.query?.contains("ytmuse_play=1") != true }
     }
 
+    @Test func unchangedEndpointTimesOutAfterFallbackOrImmediateAcceptance() async throws {
+        for delayedRouter in [false, true] {
+            let (player, page) = makePlayer(timeout: .milliseconds(80))
+            await player.play(playlistID: "RDpublished")
+            let fake = try #require(page()); fake.commitLast()
+            fake.send(state(video: "aaaaaaaaaa1", playlist: "RDpublished", shuffle: false))
+            fake.routerAvailable = !delayedRouter
+            let play = Task { await player.play(playlistID: "RDpublished", params: "opaqueFilter", intent: .endpoint) }
+            await settle { fake.targetAttempts >= 1 }
+            fake.send(state(load: 2, video: "aaaaaaaaaa1", playlist: "RDpublished", shuffle: false))
+            if delayedRouter {
+                #expect(player.snapshot.phase == .loading)
+                fake.routerAvailable = true
+                await settle { fake.targetAttempts >= 2 }
+                // No target report follows the later router acknowledgement.
+            }
+            await play.value
+            #expect(player.snapshot.phase == .failed(.timedOut))
+            #expect(fake.loads.count == 1, "no plain playlist fallback")
+        }
+    }
+    @Test func opaqueRadioParametersConfirmWithShuffleOff() async throws {
+        let (player, page) = makePlayer()
+        await player.play(playlistID: "PLsynthetic")
+        let fake = try #require(page()); fake.commitLast(); fake.send(state(playlist: "PLsynthetic"))
+        let play = Task { await player.play(playlistID: "RDpublished", title: "Radio", params: "opaqueFilter", intent: .endpoint) }
+        await settle { fake.targetAttempts >= 1 }
+        #expect(fake.commands.last?.arguments["params"] as? String == "opaqueFilter")
+        fake.send(state(load: 2, video: "aaaaaaaaaa2", playlist: "RDpublished", shuffle: false))
+        await play.value
+        #expect(player.snapshot.phase == .playing && player.snapshot.shuffle == false)
+        #expect(fake.loads.count == 1)
+    }
     @Test func aLiveDocumentGetsTheShuffleEndpointThroughItsRouterAndConfirmsOnlyWhenTheShuffleShowsInThePage() async throws {
         let (player, page) = makePlayer()
         await player.play(playlistID: "PLsynthetic", title: nil)
         let fake = try #require(page()); fake.commitLast(); fake.send(state(playlist: "PLsynthetic"))
-        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle) }
+        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle, intent: .shuffle) }
         await settle { fake.commands.contains { $0.body == WebMusicScripts.loadTarget } }
         let command = try #require(fake.commands.last)
         #expect(command.body == WebMusicScripts.loadTarget && command.arguments["params"] as? String == shuffle && command.arguments["load"] as? Int == 2)
@@ -1318,7 +1430,7 @@ private enum JSONLiteral {
     }
     @Test func aFreshPageNeverPlaysInOrderAndRoutesTheShuffleOnlyOnceTheRouterExists() async throws {
         let (player, page) = makePlayer(router: false, routerAppearsAtAttempt: 4)
-        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle) }
+        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle, intent: .shuffle) }
         await settle { page() != nil && !(page()?.loads.isEmpty ?? true) }
         let fake = try #require(page())
         #expect(fake.loads.count == 1 && neverInOrder(fake), "the first document is neutral: no playlist, no play intent (\(fake.loads))")
@@ -1340,7 +1452,7 @@ private enum JSONLiteral {
     }
     @Test func aPageThatNeverGetsARouterFailsVisiblyAndNothingIsStartedInOrder() async throws {
         let (player, page) = makePlayer(shuffleAttempts: 5, router: false)
-        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle) }
+        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle, intent: .shuffle) }
         await settle { page() != nil && !(page()?.loads.isEmpty ?? true) }
         let fake = try #require(page()); fake.commitLast()
         await play.value
@@ -1351,7 +1463,7 @@ private enum JSONLiteral {
     @Test func onlyTheRoutersOwnAcceptanceCountsAsRouted() async throws {
         for reply in [WebMusicCommandReply.ok, .unavailable, .fallback, .rejected] {
             let (player, page) = makePlayer(shuffleAttempts: 3, targetReply: reply)
-            let play = Task { await player.play(playlistID: "OLAK5uy_album", title: nil, params: shuffle) }
+            let play = Task { await player.play(playlistID: "OLAK5uy_album", title: nil, params: shuffle, intent: .shuffle) }
             await settle { page() != nil && !(page()?.loads.isEmpty ?? true) }
             page()?.commitLast()
             await play.value
@@ -1363,7 +1475,7 @@ private enum JSONLiteral {
         let (player, page) = makePlayer(timeout: .milliseconds(80))
         await player.play(playlistID: "PLsynthetic", title: nil)
         let fake = try #require(page()); fake.commitLast(); fake.send(state(playlist: "PLsynthetic"))
-        await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle)
+        await player.play(playlistID: "OLAK5uy_album", title: "Album", params: shuffle, intent: .shuffle)
         #expect(player.snapshot.phase == .failed(.shuffleFailed), "the fallback that reloads the playlist is not used for a shuffle")
         #expect(fake.loads.count == 1 && fake.loads.allSatisfy { $0.query?.contains("OLAK5uy_album") != true }, "no full load of the album, with or without the parameters")
     }
@@ -1371,7 +1483,7 @@ private enum JSONLiteral {
         let (player, page) = makePlayer()
         await player.play(playlistID: "OLAK5uy_album", title: nil)
         let fake = try #require(page()); fake.commitLast(); fake.send(state(playlist: "OLAK5uy_album", shuffle: false))
-        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: nil, params: shuffle) }
+        let play = Task { await player.play(playlistID: "OLAK5uy_album", title: nil, params: shuffle, intent: .shuffle) }
         await settle { fake.targetAttempts >= 1 }
         fake.send(state(load: 2, playlist: "OLAK5uy_album"))          // the old playback, not saying anything about shuffle
         try? await Task.sleep(for: .milliseconds(40))
@@ -1434,6 +1546,8 @@ private enum JSONLiteral {
         let context = try #require(JSContext())
         context.evaluateScript("var window = { __ytmuseState: { doc: 1 } }; var document = { querySelector: function () { return null; } }; function f(playlistId, videoId, params, load) { \(WebMusicScripts.loadTarget) }")
         #expect(context.objectForKeyedSubscript("f").call(withArguments: ["PLx", "", "p", 1])?.toString() == "fallback")
+        #expect(context.evaluateScript("window.__ytmuseState.load === undefined && window.__ytmuseState.intent === undefined")?.toBool() == true,
+                "fallback never stamps outgoing reports as the new endpoint")
     }
 }
 
@@ -1733,7 +1847,9 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
             case "ytmusic-player-bar": return __bar;
             default: return null; }
           },
-          querySelectorAll: function (selector) { return selector === "ytmusic-player-queue-item" ? __nodes : []; },
+          querySelectorAll: function (selector) {
+            return selector.split(",").some(function (part) { return part.trim() === "ytmusic-player-queue-item"; }) ? __nodes : [];
+          },
           getElementById: function (id) { return id === "movie_player" ? __movie : null; }, body: { innerText: "" }, addEventListener: function () {}
         };
         var window = { location: { hostname: "music.youtube.com", href: "https://music.youtube.com/watch?v=" + __playing },
@@ -1757,6 +1873,7 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
         let names = arguments.keys.sorted()
         let literals = names.map { name -> String in
             if let flag = arguments[name] as? Bool { return flag ? "true" : "false" }
+            if let number = arguments[name] as? Int { return String(number) }
             return JSONLiteral.string(arguments[name] as? String ?? "")
         }
         context.evaluateScript("var __result = 'pending'; (async function (\(names.joined(separator: ", "))) { \(body) })(\(literals.joined(separator: ", "))).then(function (v) { __result = v; });")
@@ -1980,5 +2097,172 @@ private enum RealQueue {
         #expect(!WebMusicScripts.queueDetection.contains(".click(") && !WebMusicScripts.queueDetection.contains("resolveCommand"), "the reader of the queue acts on nothing")
         // Arguments only: the typed values never appear in the constant bodies.
         #expect((try? WebMusicCommand.playQueueItem("SYNTHvid001").invocation())?.body.contains("SYNTHvid001") == false)
+    }
+}
+
+@Suite @MainActor struct RadioQueueCommandScriptTests {
+    @Test func boundedArgumentsAndCanonicalOperationReachResolveCommandExactly() throws {
+        for extra in [nil, "0gcJCW0At9Zurpe2"] as [String?] {
+            let command = try #require(MusicQueueFilterCommand(playlistID: "RDATmZvkhnokW3Mw24", params: "opaque%3D", playerParams: extra))
+            let invocation = try WebMusicCommand.updateRadioQueue(command, document: 1, load: 1, videoID: "khnokW3Mw24", currentPlaylistID: "RDoriginal").invocation()
+            let harness = QueuePageHarness(nodes: try RealQueue.items(), playing: "khnokW3Mw24")
+            harness.set("__api.getPlaylistId = function() { return 'RDoriginal'; };")
+            let before = harness.context.evaluateScript("JSON.stringify(window.__ytmuseState)")?.toString()
+            #expect(harness.run(invocation.body, invocation.arguments) == "router")
+            let actual = try #require(harness.routed)
+            var endpoint = ["playlistId": command.playlistID, "params": command.params]
+            if let extra { endpoint["playerParams"] = extra }
+            let expected: [String: Any] = ["queueUpdateCommand": ["queueUpdateSection": "QUEUE_UPDATE_SECTION_AUTOPLAY",
+                "fetchContentsCommand": ["watchEndpoint": endpoint], "dedupeAgainstLocalQueue": true,
+                "syncMode": "QUEUE_UPDATE_SYNC_MODE_DEDUPE_AGAINST_LOCAL"]]
+            #expect(NSDictionary(dictionary: actual).isEqual(to: expected))
+            #expect(harness.context.evaluateScript("JSON.stringify(window.__ytmuseState)")?.toString() == before)
+            #expect(harness.issues.isEmpty)
+        }
+    }
+    @Test func liveAdAndStaleDocumentLoadOrContentRefuseWithoutMutation() throws {
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDpublished", params: "p"))
+        let call = try WebMusicCommand.updateRadioQueue(command, document: 1, load: 1, videoID: "khnokW3Mw24", currentPlaylistID: "RDoriginal").invocation()
+        for replacement in ["__ad = true;", "window.__ytmuseState.doc = 2;", "window.__ytmuseState.load = 2;", "__playing = 'aaaaaaaaaa2';", "__api.getPlaylistId = function() { return 'PLother'; };"] {
+            let harness = QueuePageHarness(nodes: try RealQueue.items(), playing: "khnokW3Mw24")
+            harness.set("__api.getPlaylistId = function() { return 'RDoriginal'; };")
+            harness.set(replacement)
+            let before = harness.context.evaluateScript("JSON.stringify(window.__ytmuseState)")?.toString()
+            #expect(["ad", "rejected"].contains(harness.run(call.body, call.arguments)))
+            #expect(harness.routed == nil)
+            #expect(harness.context.evaluateScript("JSON.stringify(window.__ytmuseState)")?.toString() == before)
+        }
+    }
+    @Test func malformedAndOversizedFieldsAreRefused() throws {
+        for bad in ["", "bad params", "p\n", "p\r\n", "é", "p<script>", String(repeating: "p", count: 1025)] {
+            #expect(MusicQueueFilterCommand(playlistID: "RDvalid", params: bad) == nil)
+            #expect(MusicQueueFilterCommand(playlistID: "RDvalid", params: "p", playerParams: bad) == nil)
+        }
+        #expect(MusicQueueFilterCommand(playlistID: String(repeating: "p", count: 129), params: "p") == nil)
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDvalid", params: String(repeating: "p", count: 1024)))
+        for load: UInt64 in [0, 9_007_199_254_740_992] {
+            #expect(throws: WebMusicCommandError.invalidArgument) { try WebMusicCommand.updateRadioQueue(command, document: 1, load: load, videoID: "khnokW3Mw24", currentPlaylistID: "RDoriginal").invocation() }
+        }
+    }
+}
+@Suite @MainActor struct RadioQueuePlayerTests {
+    private func ready() async throws -> (WebMusicPlayer, FakeMusicPage, WebMusicRadioQueueScope) {
+        let (player, page) = makePlayer(timeout: .milliseconds(80))
+        await player.play(playlistID: "RDoriginal")
+        let fake = try #require(page()); fake.commitLast()
+        let paused = state(playing: false, video: "aaaaaaaaaa1", playlist: "RDoriginal", shuffle: false)
+        fake.send(paused)
+        await player.pause()
+        fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("bbbbbbbbbb1", "Before", "")]))
+        return (player, fake, try #require(player.captureRadioQueueScope(playlistID: "RDoriginal")))
+    }
+    @Test func pausedAutoplayUpdatePreservesCurrentTargetDocumentLoadIntentAndArtwork() async throws {
+        let (player, fake, scope) = try await ready()
+        let before = player.snapshot, art = player.artwork, loads = fake.loads.count
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDdifferentFetch", params: "p", playerParams: "0gcJCW0At9Zurpe2"))
+        let task = Task { await player.applyRadioFilter(command, scope: scope) }
+        await settle { fake.targetAttempts >= 1 }
+        await Task.yield(); await Task.yield()
+        fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("cccccccccc1", "After", "")]))
+        #expect(await task.value)
+        #expect(player.snapshot.playlistID == before.playlistID && player.snapshot.videoID == before.videoID)
+        #expect(player.snapshot.phase == before.phase && player.snapshot.intent == false && player.artwork == art)
+        #expect(player.transport.load == 1 && player.committedDocument == 1 && fake.loads.count == loads)
+        #expect(fake.commands.last?.arguments["playerParams"] as? String == command.playerParams)
+    }
+    @Test func unconfirmedControlAndBothNativeAndPageAdRefusalKeepHealthyPlayback() async throws {
+        for mode in ["unchanged", "native-ad", "page-ad", "stale-admission", "pre-acceptance", "stale-after-dispatch"] {
+            let (player, fake, scope) = try await ready()
+            let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
+            if mode == "native-ad" {
+                var ad = state(video: "aaaaaaaaaa1", playlist: "RDoriginal"); ad["ad"] = true
+                fake.send(ad)
+            }
+            if mode == "page-ad" { fake.targetReply = .ad }
+            var applicable = mode != "stale-admission"
+            if mode == "pre-acceptance" || mode == "stale-after-dispatch" {
+                fake.intercept = { invocation in
+                    guard invocation.body == WebMusicScripts.updateRadioQueue else { return nil }
+                    if mode == "pre-acceptance" {
+                        fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("cccccccccc1", "Too early", "")]))
+                    } else { applicable = false }
+                    return .router
+                }
+            }
+            let count = fake.commands.count
+            let result = await player.applyRadioFilter(command, scope: scope, admitted: { applicable })
+            #expect(!result && !player.snapshot.isFailed && player.transport.load == 1 && fake.loads.count == 1)
+            if mode == "native-ad" || mode == "stale-admission" { #expect(fake.commands.count == count) }
+        }
+    }
+    @Test func unrelatedPostAcceptanceReportCannotCertifyAnEarlierApplicableQueue() async throws {
+        for laterApplicable in [false, true] {
+            let (player, fake, scope) = try await ready()
+            let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
+            fake.intercept = { invocation in
+                guard invocation.body == WebMusicScripts.updateRadioQueue else { return nil }
+                fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("cccccccccc1", "Before acceptance", "")]))
+                return .router
+            }
+            let task = Task { await player.applyRadioFilter(command, scope: scope) }
+            await settle { fake.targetAttempts > 0 || fake.commands.contains { $0.body == WebMusicScripts.updateRadioQueue } }
+            // Let the resolver return; Q1 is already the snapshot's baseline revision.
+            for _ in 0..<10 { await Task.yield() }
+            let acceptedRevision = player.transport.queueRevision
+            fake.send(queueBody(playing: "zzzzzzzzzz1", upcoming: [("dddddddddd1", "Other content", "")]))
+            #expect(player.transport.queueRevision == acceptedRevision)
+            #expect(player.snapshot.queue?.videoID == "aaaaaaaaaa1")
+            if laterApplicable {
+                fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("eeeeeeeeee1", "After acceptance", "")]))
+                #expect(player.transport.queueRevision > acceptedRevision)
+            }
+            #expect(await task.value == laterApplicable)
+            #expect(!player.snapshot.isFailed && player.snapshot.phase == .paused && !player.snapshot.intent)
+        }
+    }
+    @Test func suspendedDispatchTimesOutReleasesBusyAndFencesLateCompletion() async throws {
+        let (player, fake, scope) = try await ready()
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
+        fake.suspendRadioDispatch = true
+        let task = Task { await player.applyRadioFilter(command, scope: scope) }
+        await settle { fake.suspendedRadioReply != nil }
+        #expect(player.updatingRadioQueue)
+        // A continuation ignores cancellation. The outer operation must return without joining it.
+        #expect(await task.value == false)
+        #expect(!player.updatingRadioQueue && !player.snapshot.isFailed && player.snapshot.phase == .paused)
+        #expect(fake.throttleLog.last == true && fake.tornDown == 0 && fake.loads.count == 1)
+        let count = fake.commands.count
+        for _ in 0..<3 { #expect(await player.applyRadioFilter(command, scope: scope) == false) }
+        #expect(fake.commands.count == count, "one outstanding invocation remains bounded after timeout")
+        let before = player.snapshot, refusal = player.refusal
+        fake.suspendedRadioReply?.resume(returning: .router); fake.suspendedRadioReply = nil
+        for _ in 0..<10 { await Task.yield() }
+        #expect(player.snapshot == before && player.refusal == refusal && !player.updatingRadioQueue)
+        // A fresh control works once the old invocation actually finishes.
+        fake.suspendRadioDispatch = false
+        let fresh = Task { await player.applyRadioFilter(command, scope: scope) }
+        await settle { fake.commands.count > count }
+        for _ in 0..<10 { await Task.yield() }
+        fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("eeeeeeeeee1", "Fresh", "")]))
+        #expect(await fresh.value)
+    }
+    @Test func playlistDocumentAndClosedPlayerReplacementInvalidateOldScope() async throws {
+        for replacement in ["playlist", "document", "closed"] {
+            let (player, fake, scope) = try await ready()
+            if replacement == "playlist" { await player.play(playlistID: "PLreplacement") }
+            if replacement == "document" { player.transport.invalidateDocument() }
+            if replacement == "closed" { await player.teardown() }
+            let count = fake.commands.count
+            let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
+            #expect(!player.radioQueueScopeIsCurrent(scope))
+            #expect(await player.applyRadioFilter(command, scope: scope) == false)
+            #expect(fake.commands.count == count)
+        }
+    }
+    @Test func legacyStartArgumentCannotStartOrCreateAnything() async throws {
+        let (player, page) = makePlayer()
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDpublished", params: "p"))
+        await player.play(playlistID: command.playlistID, queueCommand: command)
+        #expect(page() == nil && player.refusal == .invalidTarget)
     }
 }

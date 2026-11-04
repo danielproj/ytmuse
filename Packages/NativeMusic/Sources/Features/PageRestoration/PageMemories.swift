@@ -46,7 +46,8 @@ extension SearchModel {
     /// The Search visit: the query, where it searches and the selected result.
     public var pageMemory: PageMemory { PageMemory(query: query, selection: selection.map { [$0] } ?? [], values: ["scope": scope.rawValue]) }
     public func restorePage(_ saved: PageMemory) {
-        scope = saved.values["scope"].flatMap(SearchPlace.init(rawValue:)) ?? scope
+        // A retired private scope must never turn a restored query into a public search.
+        if let raw = saved.values["scope"] { scope = SearchPlace(rawValue: raw) ?? .library }
         query = saved.query ?? ""
         // Results arrive after the query, so the selection is applied when the result it names does.
         restoreSelection(saved.selection?.first)

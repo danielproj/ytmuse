@@ -78,7 +78,7 @@ struct WebMusicQueueView: View {
     var body: some View {
         let summary = WebMusicQueueSummary(player.snapshot)
         VStack(alignment: .leading, spacing: MusicSpace.md) {
-            Text("Playing from YouTube Music").font(.title3.bold()).accessibilityAddTraits(.isHeader)
+            Text("Playing from YouTube Music").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             HStack(spacing: MusicSpace.sm) {
                 WebMusicArtworkView(player: player, edge: 48)
                 VStack(alignment: .leading, spacing: MusicSpace.xxs) {
@@ -92,7 +92,7 @@ struct WebMusicQueueView: View {
                     }
                     if let artist = summary.artist { Text(artist).font(.subheadline).foregroundStyle(MusicStyle.secondaryText).lineLimit(1) }
                 }
-            }.accessibilityElement(children: .combine).accessibilityIdentifier("musicQueueCurrent")
+            }.padding(MusicSpace.sm).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface().accessibilityElement(children: .combine).accessibilityIdentifier("musicQueueCurrent")
             if let playlist = summary.playlist {
                 VStack(alignment: .leading, spacing: MusicSpace.hairline) {
                     Text("Playlist").font(.caption).foregroundStyle(MusicStyle.secondaryText)
@@ -145,7 +145,7 @@ struct WebMusicQueueRow: View {
                 }
                 Spacer(minLength: 0)
             }.contentShape(Rectangle())
-        }.buttonStyle(.plain).disabled(!enabled)
+        }.buttonStyle(.plain).musicPageRow().disabled(!enabled)
             .accessibilityLabel(Text("Play \(title)"))
             .accessibilityIdentifier("musicQueueItem-\(index)")
     }
@@ -225,16 +225,16 @@ struct WebMusicNowPlayingView: View {
                 }
             }
             HStack(spacing: MusicSpace.xs) {
-                Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(.title).accessibilityIdentifier("musicNowPlayingTitle").playerMatched("player-title", namespace, .position)
+                Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(.title2.weight(.semibold)).multilineTextAlignment(.center).lineLimit(2).accessibilityIdentifier("musicNowPlayingTitle").playerMatched("player-title", namespace, .position)
                 if state.isAd {
                     MusicBadge("Ad", style: .advertisement)
                         .accessibilityLabel(Text("Advertisement playing"))
                 }
             }
-            if let artist = state.artist { Text(artist).font(.title3).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("musicNowPlayingArtist").playerMatched("player-artist", namespace, .position) }
-            if let playlist = state.playlistTitle, playlist != state.title { Text(playlist).font(.callout).foregroundStyle(MusicStyle.secondaryText) }
+            if let artist = state.artist { Text(artist).font(.callout).lineLimit(1).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("musicNowPlayingArtist").playerMatched("player-artist", namespace, .position) }
+            if let playlist = state.playlistTitle, playlist != state.title { Text(playlist).font(.caption).lineLimit(1).foregroundStyle(MusicStyle.secondaryText) }
         }
-        .padding(.vertical, MusicSpace.lg).frame(maxWidth: .infinity)
+        .padding(.vertical, MusicSpace.sm).frame(maxWidth: .infinity)
         .musicAnimation(.reveal, value: state.isAd)
         .audit("nowPlayingHero", group: "nowPlaying", kind: .layer)
     }

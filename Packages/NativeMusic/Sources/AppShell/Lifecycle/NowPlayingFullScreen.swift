@@ -24,6 +24,7 @@ import SwiftUI
         shell.playback.webVideoWindows.closeAll()
         presenter.show(title: String(localized: "Now Playing"), identifier: "nowPlayingFullScreen") {
             NowPlayingFullScreenView(shell: shell, leave: { [weak self] in self?.leave() })
+                .appAppearance()
         }
         onWindow?(presenter.window)
         if enterFullScreen, !presenter.isFullScreen { presenter.toggleFullScreen() }

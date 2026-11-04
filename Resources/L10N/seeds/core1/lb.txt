@@ -52,7 +52,6 @@
 52|Op %@ gewiesselt.
 53|%@ ofspillen
 54|Aktuellen Output: %@
-55|„%@“ aus Ären Uploads ewechhuelen?
 56|Eng Reklamm spillt of
 57|D’Reklamm ass eriwwer
 58|Elo am Spill: „%@“ vum %@.

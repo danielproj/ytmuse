@@ -1,13 +1,14 @@
 import AccountSession
+import Domain
 import Foundation
 
-/// Where a search looks. `all` asks YouTube Music as well as this Mac; the two others
-/// are local only (no remote Library or Uploads adapter exists yet, and the UI says so).
+/// Where a search looks. `all` asks YouTube Music as well as this Mac; Library
+/// is local only (no remote Library adapter exists yet, and the UI says so).
 public enum SearchPlace: String, CaseIterable, Sendable, Identifiable {
-    case all, library, uploads
+    case all, library
     public var id: String { rawValue }
     public var title: String {
-        switch self { case .all: String(localized: "All"); case .library: String(localized: "Library"); case .uploads: String(localized: "Uploads") }
+        switch self { case .all: String(localized: "All"); case .library: String(localized: "Library") }
     }
     public var asksService: Bool { self == .all }
 }
@@ -47,17 +48,17 @@ public extension MusicSearchKind {
 /// Badges follow the item through every scope and merge when a local and a service
 /// result are the same item.
 public enum SearchBadge: String, CaseIterable, Sendable, Comparable {
-    case explicit, library, local, recent, upload, service, approximate
+    case explicit, library, local, recent, service, approximate
     public var title: String {
         switch self {
         case .explicit: String(localized: "Explicit"); case .library: String(localized: "In your library")
-        case .local: String(localized: "On this Mac"); case .recent: String(localized: "Recent"); case .upload: String(localized: "Upload"); case .service: String(localized: "YouTube Music")
+        case .local: String(localized: "On this Mac"); case .recent: String(localized: "Recent"); case .service: String(localized: "YouTube Music")
         case .approximate: String(localized: "Approximate match")
         }
     }
     public var symbol: String {
         switch self {
-        case .explicit: "e.square"; case .library: "books.vertical"; case .local: "internaldrive"; case .recent: "clock"; case .upload: "arrow.up.circle"
+        case .explicit: "e.square"; case .library: "books.vertical"; case .local: "internaldrive"; case .recent: "clock"
         case .service: "play.circle"; case .approximate: "textformat.abc"
         }
     }
@@ -207,14 +208,30 @@ public enum SearchPlayOutcome: Sendable, Equatable { case started, stale, busy, 
 /// Where actions land. The app shell implements this over the one application playback
 /// session, so Return, the context menu, the palette and the media keys share a path.
 @MainActor public protocol SearchActionPerformer: AnyObject {
+    var supportsRadioQueueUpdates: Bool { get }
+    func captureRadioQueueScope(playlistID: String) -> UUID?
+    func radioQueueScopeIsCurrent(_ scope: UUID) -> Bool
+    func applyRadioFilter(_ command: MusicQueueFilterCommand, scope: UUID) async -> SearchPlayOutcome
+    func playRadioFilter(_ command: MusicQueueFilterCommand, title: String) async -> SearchPlayOutcome
     func play(playlistID: String, title: String) async -> SearchPlayOutcome
-    /// Plays a playlist from a given track and/or with the parameters the service published for it (a shuffle flag).
+    /// Plays a published endpoint; opaque parameters do not imply Shuffle.
     func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome
+    func play(playlistID: String, title: String, videoID: String?, params: String?, intent: MusicPlaybackIntent) async -> SearchPlayOutcome
     func copy(link: URL)
     /// Copies plain text (the links of a selection, one per line).
     func copy(text: String)
 }
 extension SearchActionPerformer {
+    public var supportsRadioQueueUpdates: Bool { false }
+    public func captureRadioQueueScope(playlistID: String) -> UUID? { nil }
+    public func radioQueueScopeIsCurrent(_ scope: UUID) -> Bool { false }
+    public func applyRadioFilter(_ command: MusicQueueFilterCommand, scope: UUID) async -> SearchPlayOutcome { .failed }
+    /// Never degrade a queue update to a plain endpoint, including in legacy performers.
+    public func playRadioFilter(_ command: MusicQueueFilterCommand, title: String) async -> SearchPlayOutcome { .failed }
+    public func play(playlistID: String, title: String, videoID: String?, params: String?, intent: MusicPlaybackIntent) async -> SearchPlayOutcome {
+        guard intent == .endpoint else { return .failed }
+        return await play(playlistID: playlistID, title: title, videoID: videoID, params: params)
+    }
     public func copy(text: String) { if let first = text.split(separator: "\n").first, let url = URL(string: String(first)) { copy(link: url) } }
     /// A performer that cannot carry a track or parameters refuses them rather than quietly playing something else.
     public func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome {

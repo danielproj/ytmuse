@@ -44,7 +44,7 @@ import Testing
         #expect(parse(text) == .success(item(kind, identifier)), "\(text)")
     }
 
-    @Test(arguments: ["home", "explore", "search", "library", "downloads", "history", "uploads", "podcasts", "queue"])
+    @Test(arguments: ["home", "explore", "search", "library", "downloads", "history", "podcasts", "queue"])
     func theAppSchemeOpensEachScreen(screen: String) {
         #expect(parse("ytmuse://\(screen)") == .success(.screen(LinkScreen(rawValue: screen)!)))
         #expect(parse("ytmuse://\(screen)/") == .success(.screen(LinkScreen(rawValue: screen)!)))
@@ -66,7 +66,8 @@ import Testing
         "http://music.youtube.com/watch?v=dQw4w9WgXcQ", "ftp://music.youtube.com/watch?v=dQw4w9WgXcQ", "file:///etc/passwd", "file://localhost/Users/x/secret.mp3",
         "javascript:alert(1)", "data:text/html,<script>1</script>", "vnd.youtube.music://music.youtube.com/watch?v=dQw4w9WgXcQ", "vnd.youtube://dQw4w9WgXcQ", "x-apple.systempreferences:",
         "mailto:a@b.example", "ssh://music.youtube.com/watch?v=dQw4w9WgXcQ", "ws://music.youtube.com/", "intent://music.youtube.com/#Intent;end", "ytmusic://song/dQw4w9WgXcQ",
-        // Paths.
+        // Removed destination and unsupported service paths.
+        "ytmuse://uploads", "ytmuse://uploads/",
         "https://music.youtube.com/", "https://music.youtube.com/watch", "https://music.youtube.com/watch/?v=dQw4w9WgXcQ", "https://music.youtube.com//watch?v=dQw4w9WgXcQ",
         "https://music.youtube.com/watch/../playlist?list=PLvcD45uIlPVoAkPQ5LTumatKEWZlxbHYN", "https://music.youtube.com/%77atch?v=dQw4w9WgXcQ", "https://music.youtube.com/watch%2F?v=dQw4w9WgXcQ",
         "https://music.youtube.com/browse/", "https://music.youtube.com/browse/MPREb_AbCdEfGhIjK/extra", "https://music.youtube.com/browse/..", "https://music.youtube.com/browse/%2e%2e",

@@ -52,7 +52,6 @@
 52|Prebačeno na %@.
 53|Reproduciraj %@
 54|Trenutačni izlaz: %@
-55|Ukloniti „%@” iz vaših prijenosa?
 56|Svira reklama
 57|Reklama je završila
 58|Trenutačno svira „%@” – %@.

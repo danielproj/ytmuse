@@ -71,14 +71,13 @@ The inventory is the release checklist. Functional parity means reproducing the 
 | Home | Personalized shelves, quick picks, mixes, recently played, recommended releases and resumable listening |
 | Explore | Releases, charts, moods, genres and discovery collections |
 | Search | Suggestions, recent queries, grouped results, filters, correction hints and local library results |
-| Library | Playlists, songs, albums, artists, subscriptions, podcasts, uploads and downloaded items |
+| Library | Playlists, songs, albums, artists, subscriptions, podcasts and downloaded items |
 | Playlist | Metadata, ordering, play/shuffle/radio, editing, collaboration, sharing and downloads |
 | Album | Artwork, artist links, track list, editions when available, credits, save, play and download |
 | Artist | Top tracks, albums, singles, videos, related artists and follow state |
 | Song details | Credits, album/artist navigation, quality, availability and contextual actions |
 | Podcast | Show details, episodes, follow, saved episodes and download controls |
 | Episode | Description, chapters if supplied, playback progress, speed and resume |
-| Uploads | Uploaded songs, albums and artists; native file selection for upload and management |
 | Downloads | Media, progress, errors, entitlement status, storage and playlist updates |
 | History | Remote history and clearly distinguished local playback history; clearing and pausing |
 | Samples | Native short discovery clips where the service exposes them |
@@ -88,7 +87,7 @@ The inventory is the release checklist. Functional parity means reproducing the 
 | Now Playing | Artwork or video, transport, queue, lyrics and output selection |
 | Settings | Account, playback, appearance, downloads, integration, language, privacy and diagnostics |
 
-Use Home, Explore, Library and Downloads as primary sidebar items. Search stays immediately accessible. History, Uploads, Podcasts and saved playlists are subordinate destinations. Discovery features such as Samples and Tuner are reachable from Explore without crowding the primary sidebar.
+Use Home, Explore, Library and Downloads as primary sidebar items. Search stays immediately accessible. History, Podcasts and saved playlists are subordinate destinations. Discovery features such as Samples and Tuner are reachable from Explore without crowding the primary sidebar.
 
 Back and forward preserve destination, selection, scroll offset, filters and search query. Navigation never resets the queue. Opening an unavailable deep link shows a meaningful item state and recovery action rather than an empty screen.
 
@@ -124,7 +123,7 @@ SEARCH01. A persistent search field and Command-F focus search. Command-K opens 
 
 SEARCH02. Empty search shows recent queries, recent items and useful discovery entry points. Typed search shows cached local matches immediately, then remote suggestions and results after a 180 ms debounce. Cancel outdated work; only the latest query/account generation may update the screen.
 
-SEARCH03. Group results into Top results, Songs, Albums, Artists, Playlists, Videos, Podcasts and Episodes where supported. Provide Library and Uploads scopes. Keep result types visually distinct and preserve explicit-content and availability badges.
+SEARCH03. Group results into Top results, Songs, Albums, Artists, Playlists, Videos, Podcasts and Episodes where supported. Provide a Library scope. Keep result types visually distinct and preserve explicit-content and availability badges.
 
 SEARCH04. Support case-insensitive matching, diacritics, Unicode normalization, tolerant local matching and source-provided corrections. Preserve the original query. Never silently replace it with a suggestion.
 
@@ -142,7 +141,7 @@ DISC04. Samples use native video surfaces, one active preview at a time, with no
 
 # 6 Library and playlist management
 
-LIB01. Support service library songs, liked tracks, albums, artists, followed channels, playlists, podcasts, saved episodes and uploads. Empty, loading, offline, stale and restricted states must be distinct.
+LIB01. Support service library songs, liked tracks, albums, artists, followed channels, playlists, podcasts, saved episodes. Empty, loading, offline, stale and restricted states must be distinct.
 
 LIB02. Offer list and grid views where appropriate, search within a collection, stable sorting by title/artist/recent addition where data permits, and native multi-selection. Use service ordering as the default; local view sorting must not rewrite remote order.
 
@@ -256,9 +255,9 @@ OFF13. Use bounded retries with exponential backoff and jitter. Reconnect or res
 
 Acceptance: download a playlist, disconnect the network, restart the app, play and seek every retained item, reconnect with expired stream URLs, change playlist membership, exceed the disk budget, revoke the account, and verify correct recovery and isolation.
 
-# 10 Videos podcasts uploads and lyrics
+# 10 Videos podcasts and lyrics
 
-MEDIA01. Songs, albums, music videos, live music streams, podcasts, episodes and uploaded tracks have native detail and playback views. Content comes from the YouTube Music experience; this is not a general YouTube browsing client.
+MEDIA01. Songs, albums, music videos, live music streams, podcasts and episodes have native detail and playback views. Content comes from the YouTube Music experience; this is not a general YouTube browsing client.
 
 MEDIA02. Audio/video switching preserves position when the service exposes corresponding versions and a reliable mapping. Different recordings are not interchangeable merely because titles match. Report a restart when exact continuation is impossible.
 
@@ -268,7 +267,7 @@ MEDIA04. Podcast views include show follow state, episode sorting, saved episode
 
 MEDIA05. Live content shows Live, current availability, any seekable window and reconnect status. Do not expose download or crossfade controls for content that cannot support them.
 
-MEDIA06. Uploads support native file selection and drag-and-drop, a resumable job view when supported, service validation errors, and library refresh after server processing. Do not promise formats or quotas beyond those the service accepts. Removing a remote upload requires explicit confirmation.
+MEDIA06. Reserved. Music uploads and management of uploaded music are excluded from the app by user decision (2026-11-04).
 
 MEDIA07. Use lyrics supplied by YouTube Music when available. Display timed lyrics only when reliable timing is present; otherwise show plain lyrics. Show credits/attribution as supplied. No fabricated timing, invented text or default third-party lyric provider.
 
@@ -479,7 +478,7 @@ Use a modular Swift application with SwiftUI views, AppKit integration and Swift
 | - | - |
 | AppShell | Process lifecycle, scenes, windows, menu bar, Settings and dependency composition |
 | DesignSystem | Tokens and reusable native components; no service requests |
-| Features | Home, Search, Library, Playlists, Downloads, Now Playing, Podcasts, Uploads and Settings |
+| Features | Home, Search, Library, Playlists, Downloads, Now Playing, Podcasts and Settings |
 | Domain | Stable models, commands, capability rules and use cases without UI or provider JSON |
 | AccountSession | Keychain references, account generations, session renewal and active identity |
 | YouTubeMusicAdapter | Authentication integration, request construction, parsing, pagination and service mutations |
@@ -734,7 +733,7 @@ Every feature in the inventory must map to an implementation, an automated test 
 | AC15 | Temporary network loss recovers; user pause or route-loss pause prevents auto-resume |
 | AC16 | Music videos, audio/video switching, native full screen and supported PiP preserve correct state |
 | AC17 | Podcast progress, chapters, speed, saved episodes and eligible downloads operate correctly |
-| AC18 | Upload, processing errors, upload listing and explicitly confirmed remote removal work |
+| AC18 | Reserved — music uploads removed from scope (2026-11-04) |
 | AC19 | Source lyrics render correctly; missing lyrics and timing do not produce invented content |
 | AC20 | Samples, tuner, radio, Recap, badges and source-present social flows match available service behavior |
 | AC21 | Downloads survive disconnect and restart, validate integrity and enforce actual entitlement |

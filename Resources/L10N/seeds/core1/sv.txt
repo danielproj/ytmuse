@@ -52,7 +52,6 @@
 52|Bytte till %@.
 53|Spela upp %@
 54|Aktuell utgång: %@
-55|Ta bort ”%@” från dina uppladdningar?
 56|En annons spelas upp
 57|Annonsen är slut
 58|Spelas nu: ”%@” av %@.

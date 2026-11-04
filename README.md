@@ -6,16 +6,18 @@
 
 ## Status, honestly
 
-There is **no release, no download and no signed build**. Nothing here is a finished product, and the service gates below are open:
+There is **no release or published installer yet**. The current app has been built and installed locally with development signing. That is separate from a Developer ID-signed, notarized release that other people can download. The source repository is connected privately; public download hosting is not configured yet. [GitHub release setup](Docs/GitHub-Releases.md) records what remains before downloads are available.
+
+The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. Radio tuning filters still fail to load. These checks do not close the full account matrix, audible-output, accessibility, hardware or distribution gates below:
 
 | Gate | State |
 | --- | --- |
-| G01 Authentication (real free and Premium sessions) | **open** — Google sign-in is implemented against a development registration; real Music sign-in is not verified |
+| G01 Authentication (real free and Premium sessions) | **open** — a signed-in session and restoration passed a bounded native-account check; the complete free/Premium and fresh-sign-in matrix remains unverified |
 | G02 Native media access, G03 free-account playback, G04 Premium quality | **open** — playback of YouTube Music goes through the user-approved hidden system-WebKit player; native media access is not established |
 | G05 Offline | **open** — YouTube Music offers no downloads to this app; only music from files on this Mac can be stored |
 | G06 Service parity, G07 Casting, G08 System integration, G09 Distribution | **open** — see the [capability matrix](Docs/Capability-Matrix.md) |
 
-Most of the app is built and tested against **sanitized fixtures and owned synthetic audio**, never against a live account; that is a statement about the tests, not about the service. [Docs/Capability-Matrix.md](Docs/Capability-Matrix.md) says, area by area, what is built, what is only tested with fixtures and what is not started. The full contract is [the specification](Docs/Product-Specification.md).
+Automated tests use **sanitized fixtures and owned synthetic audio**, isolated from real account stores. Separate, bounded manual checks use the installed app's normal interface. [Docs/Capability-Matrix.md](Docs/Capability-Matrix.md) records the wider implementation and acceptance limits. Upload functionality has been removed. The full contract is [the specification](Docs/Product-Specification.md).
 
 ## Build from source
 

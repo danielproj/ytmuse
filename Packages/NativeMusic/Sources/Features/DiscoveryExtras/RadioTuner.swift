@@ -1,4 +1,5 @@
 import AccountSession
+import Domain
 import Foundation
 import Observation
 
@@ -64,8 +65,10 @@ public struct TunerOption: Identifiable, Equatable, Sendable {
     /// What choosing it asks of the service: the radio playlist and/or parameters it published for this choice.
     public let playlistID: String?
     public let params: String?
-    public init(id: String, title: String, selected: Bool = false, playlistID: String? = nil, params: String? = nil) {
-        self.id = id; self.title = title; self.selected = selected; self.playlistID = playlistID; self.params = params
+    public let playerParams: String?
+    public let queueCommand: MusicQueueFilterCommand?
+    public init(id: String, title: String, selected: Bool = false, playlistID: String? = nil, params: String? = nil, playerParams: String? = nil, queueCommand: MusicQueueFilterCommand? = nil) {
+        self.id = id; self.title = title; self.selected = selected; self.playlistID = playlistID; self.params = params; self.playerParams = playerParams; self.queueCommand = queueCommand
     }
 }
 /// A diversity or discovery control a radio supplied for itself. The application never makes one up: the list below is exactly what
@@ -82,28 +85,32 @@ public protocol RadioControlsSource: Sendable {
     /// it is never reported as the service having no controls.
     var unresolved: String? { get }
     /// The controls the service supplied for this radio. Empty is a real answer only when `unresolved` is nil (a queue was read).
-    func controls(for context: RadioContext) async -> [TunerControl]
+    func controls(for context: RadioContext) async throws -> [TunerControl]
 }
-/// The application's source until a radio's queue (`next`) response can be read: no capture of one exists on `main`, so the tuner cannot tell
-/// whether a radio has tuning controls. Says so; shows none; invents none.
+/// Fallback for isolated automation and compositions without a queue reader. Never claims a queue was read.
 public struct UnresolvedRadioControlsSource: RadioControlsSource {
     public init() {}
     public var unresolved: String? {
         String(localized: "This app doesn’t read a radio’s queue from YouTube Music yet, so it can’t tell whether the radio has tuning controls. None are shown, and none are made up.")
     }
-    public func controls(for context: RadioContext) async -> [TunerControl] { [] }
+    public func controls(for context: RadioContext) async throws -> [TunerControl] { [] }
 }
 /// Controls from a radio's queue response: the service's own queue-filter chips ("Popular"), each carrying the radio playlist and the parameters
-/// that select it. `reader` is the seam where the queue request is made and parsed (typed `MusicRadioQueue`); it returns nil when the queue
-/// could not be read, which is unresolved for that radio, not "no controls".
+/// that select it. `reader` is the seam where the queue request is made and parsed (typed `MusicRadioQueue`); it throws when the queue
+/// could not be read; failure is never "no controls".
 public struct QueueRadioControlsSource: RadioControlsSource {
-    public typealias Reader = @Sendable (RadioContext) async -> MusicRadioQueue?
+    public typealias Reader = @Sendable (RadioContext) async throws -> MusicRadioQueue
     private let reader: Reader
     public init(reader: @escaping Reader) { self.reader = reader }
     public var unresolved: String? { nil }
-    public func controls(for context: RadioContext) async -> [TunerControl] {
-        guard let queue = await reader(context), !queue.chips.isEmpty else { return [] }
-        let options = queue.chips.map { TunerOption(id: $0.playlistID + "|" + $0.params, title: $0.title, selected: $0.isSelected, playlistID: $0.playlistID, params: $0.params) }
+    public func controls(for context: RadioContext) async throws -> [TunerControl] {
+        let queue = try await reader(context)
+        guard !queue.chips.isEmpty else { return [] }
+        let options = try queue.chips.map { chip in
+            guard let command = MusicQueueFilterCommand(playlistID: chip.playlistID, params: chip.params, playerParams: chip.playerParams) else { throw MusicSessionError.unrecognised }
+            return TunerOption(id: chip.playlistID + "|" + chip.params, title: chip.title, selected: chip.isSelected,
+                               playlistID: chip.playlistID, params: chip.params, playerParams: chip.playerParams, queueCommand: command)
+        }
         return [TunerControl(id: "queue-filter", title: String(localized: "Radio filter"), options: options)]
     }
 }
@@ -115,8 +122,16 @@ public struct RadioContext: Equatable, Sendable {
     public let params: String?
     /// control id → option id, for the choices made since the radio started.
     public let choices: [String: String]
-    public init(seed: RadioSeed, playlistID: String, params: String?, choices: [String: String]) {
-        self.seed = seed; self.playlistID = playlistID; self.params = params; self.choices = choices
+    /// Metadata fetch target is distinct from the unchanged active playback radio.
+    public let queueFetchCommand: MusicQueueFilterCommand?
+    public var queueReadAction: MusicRadioAction {
+        if let command = queueFetchCommand {
+            return MusicRadioAction(playlistID: command.playlistID, params: command.params, playerParams: command.playerParams)
+        }
+        return MusicRadioAction(playlistID: playlistID, videoID: choices.isEmpty ? seed.videoID : nil, params: params)
+    }
+    public init(seed: RadioSeed, playlistID: String, params: String?, choices: [String: String], queueFetchCommand: MusicQueueFilterCommand? = nil) {
+        self.seed = seed; self.playlistID = playlistID; self.params = params; self.choices = choices; self.queueFetchCommand = queueFetchCommand
     }
 }
 
@@ -126,16 +141,20 @@ public enum TunerCapability: Equatable, Sendable {
     /// A radio is playing and this app cannot read its queue, so whether it has tuning controls is not known.
     case unresolved(String)
     /// A radio is playing, its queue was read, and it carried no tuning controls.
+    case loadingControls
+    case controlsFailed
     case noControlsSupplied
     case controlsSupplied(Int)
 }
 public enum TunerFailure: Equatable, Sendable {
-    case needsSignIn, sessionEnded, notStarted, controlNotSupplied
+    case needsSignIn, sessionEnded, notStarted, controlNotSupplied, unsupportedFilter, filterUnconfirmed
     public var message: String {
         switch self {
         case .needsSignIn: String(localized: "Sign in to YouTube Music to start a radio.")
         case .sessionEnded: String(localized: "Your YouTube Music session ended. Sign in again to start a radio.")
-        case .notStarted: String(localized: "The radio could not start. What was playing is unchanged.")
+        case .notStarted: String(localized: "YouTube Music did not confirm the radio start. Playback may have changed.")
+        case .filterUnconfirmed: String(localized: "YouTube Music did not take that change.")
+        case .unsupportedFilter: String(localized: "This filter needs playback options this app can’t apply yet.")
         case .controlNotSupplied: String(localized: "YouTube Music didn’t supply that control for this radio.")
         }
     }
@@ -148,12 +167,21 @@ public enum TunerFailure: Equatable, Sendable {
     public let seedBook: RadioSeedBook
     public private(set) var context: RadioContext?
     public private(set) var controls: [TunerControl] = []
+    /// Captured by the rendered action, before a native callback or Task can be delayed.
+    public private(set) var controlsIdentity = UUID()
     public private(set) var failure: TunerFailure?
     public private(set) var busy = false
+    public private(set) var controlsLoaded = false
+    public private(set) var controlsFailed = false
+    public var selectionUnconfirmed: Bool {
+        guard controlsLoaded, let context else { return false }
+        return context.choices.contains { id, choice in controls.first(where: { $0.id == id })?.selectedOption?.id != choice }
+    }
     @ObservationIgnored private let source: any RadioControlsSource
     @ObservationIgnored private let signedIn: @MainActor () -> SearchPlayback
     @ObservationIgnored private weak var performer: (any SearchActionPerformer)?
     @ObservationIgnored private var generation: UInt64 = 0
+    @ObservationIgnored private var queueScope: UUID?
     /// Requests sent to the shared playback session by this model (a measurement: one press is one request).
     @ObservationIgnored public private(set) var startCount = 0
 
@@ -165,6 +193,8 @@ public enum TunerFailure: Equatable, Sendable {
     public var capability: TunerCapability {
         guard context != nil else { return .noRadio }
         if let reason = source.unresolved { return .unresolved(reason) }
+        if controlsFailed { return .controlsFailed }
+        guard controlsLoaded else { return .loadingControls }
         return controls.isEmpty ? .noControlsSupplied : .controlsSupplied(controls.count)
     }
 
@@ -178,38 +208,73 @@ public enum TunerFailure: Equatable, Sendable {
         }
         await run(seed: seed, playlistID: seed.id, params: seed.params, choices: [:])
     }
-    /// Chooses an option of a control the service supplied. The radio restarts for the same seed with what that option published;
+    /// Chooses an option of a control the service supplied. Queue filters update the existing radio's autoplay section;
     /// anything not supplied is refused.
-    public func choose(option optionID: String, in controlID: String) async {
-        guard !busy, let context else { return }
+    public func choose(option optionID: String, in controlID: String, suppliedBy identity: UUID) async {
+        guard identity == controlsIdentity, !busy, let context else { return }
         guard let control = controls.first(where: { $0.id == controlID }), let option = control.options.first(where: { $0.id == optionID }) else { failure = .controlNotSupplied; return }
+        guard canApply(option) else { failure = .unsupportedFilter; return }
         var choices = context.choices; choices[controlID] = optionID
+        if let command = option.queueCommand {
+            guard let performer, let scope = queueScope, performer.radioQueueScopeIsCurrent(scope) else { failure = .controlNotSupplied; return }
+            busy = true; failure = nil; let ticket = generation
+            defer { if ticket == generation { busy = false } }
+            let result = await performer.applyRadioFilter(command, scope: scope)
+            guard ticket == generation, !Task.isCancelled else { return }
+            guard result == .started else { failure = .filterUnconfirmed; return }
+            let updated = RadioContext(seed: context.seed, playlistID: context.playlistID, params: context.params, choices: choices, queueFetchCommand: command)
+            self.context = updated
+            await loadControls(updated, ticket: ticket)
+            return
+        }
         await run(seed: context.seed, playlistID: option.playlistID ?? context.playlistID, params: option.params ?? context.params, choices: choices)
+    }
+    public func canApply(_ option: TunerOption) -> Bool {
+        if let command = option.queueCommand {
+            return performer?.supportsRadioQueueUpdates == true && queueScope.map { performer?.radioQueueScopeIsCurrent($0) == true } == true && option.playlistID == command.playlistID
+                && option.params == command.params && option.playerParams == command.playerParams
+        }
+        return option.playerParams == nil
     }
     private func run(seed: RadioSeed, playlistID: String, params: String?, choices: [String: String]) async {
         guard let performer else { failure = .notStarted; return }
+        generation &+= 1; controlsIdentity = UUID()
         busy = true; failure = nil; let ticket = generation
-        defer { busy = false }
+        defer { if ticket == generation { busy = false } }
         startCount += 1
-        let outcome = await performer.play(playlistID: playlistID, title: seed.title, videoID: seed.videoID, params: params)
-        guard ticket == generation else { return }
+        let outcome = await performer.play(playlistID: playlistID, title: seed.title, videoID: choices.isEmpty ? seed.videoID : nil, params: params, intent: .endpoint)
+        guard ticket == generation, !Task.isCancelled else { return }
         guard outcome == .started else { failure = outcome == .stale ? .sessionEnded : .notStarted; return }
         let started = RadioContext(seed: seed, playlistID: playlistID, params: params, choices: choices)
         context = started
-        guard source.unresolved == nil else { controls = []; return }
-        let supplied = await source.controls(for: started)
-        guard ticket == generation else { return }
-        controls = Self.applying(choices, to: supplied)
+        queueScope = performer.captureRadioQueueScope(playlistID: playlistID)
+        controls = []; controlsLoaded = false; controlsFailed = false
+        await loadControls(started, ticket: ticket)
     }
-    /// The supplied controls with the person's choices marked, never adding, removing or renaming a control or option.
-    public static func applying(_ choices: [String: String], to controls: [TunerControl]) -> [TunerControl] {
-        controls.map { control in
-            guard let chosen = choices[control.id], control.options.contains(where: { $0.id == chosen }) else { return control }
-            return TunerControl(id: control.id, title: control.title, options: control.options.map {
-                TunerOption(id: $0.id, title: $0.title, selected: $0.id == chosen, playlistID: $0.playlistID, params: $0.params)
-            })
+    /// Reads only metadata. Retrying never sends a playback request.
+    public func retryControls() async {
+        guard !busy, let context, source.unresolved == nil else { return }
+        generation &+= 1; controlsIdentity = UUID()
+        let ticket = generation
+        busy = true; controlsLoaded = false; controlsFailed = false; controls = []
+        defer { if ticket == generation { busy = false } }
+        await loadControls(context, ticket: ticket)
+    }
+    private func loadControls(_ context: RadioContext, ticket: UInt64) async {
+        guard source.unresolved == nil else { return }
+        do {
+            let supplied = try await source.controls(for: context)
+            try Task.checkCancellation()
+            guard ticket == generation else { return }
+            controlsIdentity = UUID()
+            controls = supplied
+            controlsLoaded = true
+        } catch {
+            guard ticket == generation else { return }
+            // Bounded local text in the view; never expose transport bodies, endpoints or credentials.
+            controls = []; controlsLoaded = false; controlsFailed = true
         }
     }
     public func dismissFailure() { failure = nil }
-    public func accountChanged() { generation &+= 1; context = nil; controls = []; failure = nil; busy = false; seedBook.accountChanged() }
+    public func accountChanged() { generation &+= 1; controlsIdentity = UUID(); queueScope = nil; context = nil; controls = []; controlsLoaded = false; controlsFailed = false; failure = nil; busy = false; seedBook.accountChanged() }
 }

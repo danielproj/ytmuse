@@ -18,14 +18,11 @@
 418|Vérifier
 419|Vérifier maintenant
 420|Vérification
-421|Choisir
-422|Choisir des fichiers…
 423|Choisir la sortie…
 424|Choisissez une durée comprise entre une seconde et 24 heures.
 425|Choisissez une position dans l’élément.
 426|Choisissez un élément pour commencer à écouter.
 427|Choisissez entre 1 minute et 24 heures.
-428|Choisir de la musique à importer
 429|Choisir la durée des sauts
 430|Effacer
 431|Effacer l’historique
@@ -98,7 +95,6 @@
 498|Filtre
 499|Rechercher
 500|Rechercher…
-501|Terminez ou fermez d’abord la suppression en cours.
 502|Suivre
 503|Suivi
 504|Suivre et enregistrer dans votre bibliothèque ne sont pas encore disponibles. YTMuse lit le catalogue mais ne modifie pas votre bibliothèque.
@@ -124,7 +120,6 @@
 524|Indépendant. Natif. À vous.
 525|Lien d’invitation pour la playlist « %@ »
 526|L’invitation de collaborateurs depuis YTMuse n’est pas disponible dans cette version.
-527|Il peut être repris.
 528|Il n’est ajouté que si vous appuyez sur Ajouter.
 529|Élément
 530|Les éléments aboutissent ici une fois enregistrés sur ce Mac.
@@ -246,7 +241,6 @@
 646|Aucun titre de cette file d’attente n’est un titre YouTube Music connu de cette app ; il n’y a donc rien à enregistrer comme playlist.
 647|Aucun titre en cours de lecture
 648|Aucun titre dans votre bibliothèque pour le moment
-649|Aucun import pour le moment
 650|Aucun
 651|Non disponible pour vous actuellement
 652|Pas encore disponible

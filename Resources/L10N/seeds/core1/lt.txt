@@ -52,7 +52,6 @@
 52|Perjungta į %@.
 53|Leisti: %@
 54|Dabartinė išvestis: %@
-55|Pašalinti „%@“ iš jūsų įkėlimų?
 56|Grojama reklama
 57|Reklama baigėsi
 58|Dabar groja „%@“, atlikėjas %@.

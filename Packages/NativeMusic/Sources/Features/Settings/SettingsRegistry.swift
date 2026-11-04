@@ -245,7 +245,7 @@ public enum SettingsRegistry {
         SettingDefinition(id: "spotlightIndexing", specRow: "Spotlight private library indexing", category: .integration, title: String(localized: "Show saved songs, albums and artists in Spotlight"),
                           control: .toggle, defaultValue: .bool(false), storage: .owner("spotlight"), keywords: ["spotlight", "search", "index"],
                           effect: "Nothing is indexed while off; turning off removes what was indexed."),
-        SettingDefinition(id: "spotlightPrivate", specRow: "Spotlight private library indexing", category: .integration, title: String(localized: "Also show my playlists, uploads and listening history"),
+        SettingDefinition(id: "spotlightPrivate", specRow: "Spotlight private library indexing", category: .integration, title: String(localized: "Also show my playlists and listening history"),
                           control: .toggle, defaultValue: .bool(false), storage: .owner("spotlight"), keywords: ["spotlight", "private", "playlists", "history"],
                           effect: "Private items are indexed only when on and the first switch is on."),
         SettingDefinition(id: "globalShortcuts", specRow: "Global shortcuts", category: .integration, title: String(localized: "Global shortcuts"), detail: String(localized: "None is set until you record one."),

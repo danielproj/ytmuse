@@ -52,7 +52,6 @@
 52|Passato a %@.
 53|Riproduci %@
 54|Uscita attuale: %@
-55|Rimuovere “%@” dai tuoi caricamenti?
 56|È in riproduzione una pubblicità
 57|La pubblicità è terminata
 58|In riproduzione: “%@” di %@.

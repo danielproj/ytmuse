@@ -8,8 +8,8 @@ export PATH="$PWD/scripts/bin:$PATH"
 # and UI app launch); the launch-argument form is refused outright.
 unset YTMUSE_USE_REAL_STORES
 for argument in "$@"; do [[ $argument != -YTMuseUseRealStores ]] || { echo 'refusing -YTMuseUseRealStores: tests never use the real stores' >&2; exit 64; }; done
-if [[ $# != 2 || "$1" != --suite || ( "$2" != T01 && "$2" != T02 && "$2" != T03 && "$2" != T04 && "$2" != T05 && "$2" != T06 && "$2" != T07 && "$2" != T08 && "$2" != T09 && "$2" != T10 && "$2" != T11 && "$2" != T12 && "$2" != T13 && "$2" != T19 && "$2" != T20 && "$2" != T50 && "$2" != T51 && "$2" != T52 && "$2" != T44P && "$2" != T21 && "$2" != T22 && "$2" != T23 && "$2" != T24 && "$2" != T25 && "$2" != T26 && "$2" != T27 && "$2" != T28 && "$2" != T29 && "$2" != T30 && "$2" != T39 && "$2" != T14 && "$2" != T15 && "$2" != T16 && "$2" != T17 && "$2" != T18 ) ]]; then
-  echo 'Usage: scripts/test.sh --suite T01|T02|T03|T04|T05|T06|T07|T08|T09|T10|T11|T12|T13|T14|T15|T16|T17|T18|T19|T20|T21|T22|T23|T24|T25|T26|T27|T28|T29|T30|T39|T50|T51|T52|T44P (other suites are not implemented)' >&2
+if [[ $# != 2 || "$1" != --suite || ( "$2" != T01 && "$2" != T02 && "$2" != T03 && "$2" != T04 && "$2" != T05 && "$2" != T06 && "$2" != T07 && "$2" != T08 && "$2" != T09 && "$2" != T10 && "$2" != T11 && "$2" != T12 && "$2" != T13 && "$2" != T20 && "$2" != T50 && "$2" != T51 && "$2" != T52 && "$2" != T53 && "$2" != T44P && "$2" != T21 && "$2" != T22 && "$2" != T23 && "$2" != T24 && "$2" != T25 && "$2" != T26 && "$2" != T27 && "$2" != T28 && "$2" != T29 && "$2" != T30 && "$2" != T39 && "$2" != T14 && "$2" != T15 && "$2" != T16 && "$2" != T17 && "$2" != T18 ) ]]; then
+  echo 'Usage: scripts/test.sh --suite T01|T02|T03|T04|T05|T06|T07|T08|T09|T10|T11|T12|T13|T14|T15|T16|T17|T18|T20|T21|T22|T23|T24|T25|T26|T27|T28|T29|T30|T39|T50|T51|T52|T53|T44P (other suites are not implemented)' >&2
   exit 64
 fi
 ./scripts/check-toolchain.sh
@@ -237,31 +237,6 @@ if [[ "$2" == T12 ]]; then
   counted_ui_test testW12ProgrammaticSelectionReachesTheEquatableList testW12LibraryKindsStatesPagingSearchSortAndSelection testW12OptimisticChangesRollBackRetryAndNeverClaimWhatTheServiceDidNotConfirm testW12HistoryKeepsTheServicesRecordAndThisMacsApartAndNeverImitatesRemoteControls testW09F2LibraryRestoresSearchOrderSelectionScrollKindAndKeptOnlyPerEntry testW09F2HistoryRestoresItsScrollOffsetPerEntry -- python3 scripts/test-native-latin.py xcodebuild "${args[@]}"
   exit 0
 fi
-if [[ "$2" == T19 ]]; then
-  discovery=$(swift test --package-path Packages/NativeMusic list)
-  [[ "$discovery" == *UploadsTests.* ]] || { echo 'T19 discovery is incomplete' >&2; exit 1; }
-  # Uploads (T19.1-T19.4): source validation, job orchestration, removal, the guards over the sources, and the older suites the W19 changes touch
-  # (the Library's write paths and guard, the catalog parser, the session coordinator and signed transport).
-  counted_swift_test 'UploadsTests|LibraryTests|MusicWebSessionTests|CatalogTests|ConnectionTests'
-  # The static + built-binary isolation proof (no network API in the upload sources, Release carries no development uploads, one write call
-  # site, isolated UI tests) is part of the suite: it inspects the Release binary, so that is built first.
-  ./scripts/build-proof-products.sh
-  BUILD_DIR="${BUILD_DIR:-$PWD/.build/xcode}" python3 artifacts/harness/nodes/W19/isolation-proof.py > /dev/null || { echo "T19 isolation proof failed (see ${BUILD_DIR:-.build/xcode}/w19-isolation-proof.json)" >&2; exit 1; }
-  echo 'T19 isolation proof: ok'
-  if [[ "${T19_HEADLESS:-0}" == 1 ]]; then
-    echo 'T19 headless only; native UI explicitly not run'
-    exit 0
-  fi
-  if ioreg -n Root -d1 | python3 -c 'import sys; sys.exit(0 if chr(34)+"CGSSessionScreenIsLocked"+chr(34)+"=Yes" in sys.stdin.read() else 1)'; then
-    echo 'T19 UI ENVIRONMENT BLOCKED: console locked' >&2
-    exit 75
-  fi
-  # Typed text needs an ASCII-capable input source (restored afterwards); every launch is isolated and uses labelled development data only.
-  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/xcode}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testW19UploadsStateTheirCapabilityHonestlyWhenThereIsNoUploadRoute -only-testing:NativeMusicUITests/NativeMusicUITests/testW19ChoosingFilesRunsJobsThroughProcessingAndOnlyTheServicesWordAddsALibraryItem -only-testing:NativeMusicUITests/NativeMusicUITests/testW19RemovingAnUploadNamesItNeedsConfirmationAndNeverClaimsWhatTheServiceDidNotConfirm test)
-  if [[ -n "${TEST_RESULT_PATH:-}" ]]; then args+=(-resultBundlePath "$TEST_RESULT_PATH"); fi
-  counted_ui_test testW19UploadsStateTheirCapabilityHonestlyWhenThereIsNoUploadRoute testW19ChoosingFilesRunsJobsThroughProcessingAndOnlyTheServicesWordAddsALibraryItem testW19RemovingAnUploadNamesItNeedsConfirmationAndNeverClaimsWhatTheServiceDidNotConfirm -- python3 scripts/test-native-latin.py xcodebuild "${args[@]}"
-  exit 0
-fi
 if [[ "$2" == T20 ]]; then
   discovery=$(swift test --package-path Packages/NativeMusic list)
   [[ "$discovery" == *DiscoverySocialTests.* ]] || { echo 'T20 discovery is incomplete' >&2; exit 1; }
@@ -328,9 +303,9 @@ if [[ "$2" == T28 ]]; then
   counted_swift_test 'AccessibilityLocalizationTests'
   # The layout audit under double-length pseudolanguage and right-to-left: its own invocation, so no string was resolved at normal length first. Isolated
   # synthetic content only; the pseudolanguage is switched on through the in-memory registration domain.
-  export YTMUSE_NATIVE_DESIGN_TEST=1 YTMUSE_UI_DEVELOPMENT_DATA=1 YTMUSE_UI_DEVELOPMENT_LIBRARY=1 YTMUSE_UI_DEVELOPMENT_PLAYLISTS=1 YTMUSE_UI_DEVELOPMENT_UPLOADS=1
+  export YTMUSE_NATIVE_DESIGN_TEST=1 YTMUSE_UI_DEVELOPMENT_DATA=1 YTMUSE_UI_DEVELOPMENT_LIBRARY=1 YTMUSE_UI_DEVELOPMENT_PLAYLISTS=1
   counted_swift_test 'LocaleLayoutAuditTests'
-  unset YTMUSE_NATIVE_DESIGN_TEST YTMUSE_UI_DEVELOPMENT_DATA YTMUSE_UI_DEVELOPMENT_LIBRARY YTMUSE_UI_DEVELOPMENT_PLAYLISTS YTMUSE_UI_DEVELOPMENT_UPLOADS
+  unset YTMUSE_NATIVE_DESIGN_TEST YTMUSE_UI_DEVELOPMENT_DATA YTMUSE_UI_DEVELOPMENT_LIBRARY YTMUSE_UI_DEVELOPMENT_PLAYLISTS
   echo 'T28 complete LOCAL cases only: real VoiceOver, human translation review (W42), live service and hardware observations remain open'
   fi
   if [[ "${T28_HEADLESS:-0}" == 1 ]]; then
@@ -726,18 +701,25 @@ if [[ "$2" == T51 ]]; then
   counted_swift_test ConnectionTests --scratch-path "$PWD/.build/e01"
   exit 0
 fi
+if [[ "$2" == T53 ]]; then
+  # Screenshot-only design review. Isolated Debug fixtures, no playback or service writes.
+  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/design-review}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testDesignReviewLight -only-testing:NativeMusicUITests/NativeMusicUITests/testDesignReviewDark test)
+  if [[ -n "${TEST_RESULT_PATH:-}" ]]; then args+=(-resultBundlePath "$TEST_RESULT_PATH"); fi
+  counted_ui_test testDesignReviewLight testDesignReviewDark -- python3 scripts/test-native-latin.py xcodebuild "${args[@]}"
+  exit 0
+fi
 if [[ "$2" == T52 ]]; then
   # V02: design tokens, the source guard (no literal radius/material/animation/spacing outside DesignSystem), the audit-rule unit tests, and the
   # headless layout audit + snapshots of every primary surface. No UI session is needed: windows are hosted offscreen and nothing is shown or keyed.
   discovery=$(swift test --package-path Packages/NativeMusic list)
   [[ "$discovery" == *GlassPolishTests.* ]] || { echo 'T52 discovery is empty' >&2; exit 1; }
   counted_swift_test 'DesignTokenTests|CornerCapTests|AccentOrderTests|StackedWashTests|LayoutAuditRuleTests|SourceGuardTests'
-  # Isolated synthetic content only (the app's own development catalog, library and uploads); QA isolation is decided before any store opens.
-  export YTMUSE_NATIVE_DESIGN_TEST=1 YTMUSE_UI_DEVELOPMENT_DATA=1 YTMUSE_UI_DEVELOPMENT_LIBRARY=1 YTMUSE_UI_DEVELOPMENT_PLAYLISTS=1 YTMUSE_UI_DEVELOPMENT_UPLOADS=1
+  # Isolated synthetic content only (the app's own development catalog and library); QA isolation is decided before any store opens.
+  export YTMUSE_NATIVE_DESIGN_TEST=1 YTMUSE_UI_DEVELOPMENT_DATA=1 YTMUSE_UI_DEVELOPMENT_LIBRARY=1 YTMUSE_UI_DEVELOPMENT_PLAYLISTS=1
   counted_swift_test 'SurfaceAuditTests|SheetAuditTests|PolicyAuditTests|PlayerMorphStageTests|CapsuleHoverAuditTests|RootRegionLayoutTests|SettleHelperTests|ShutdownIsolationTests'
   # The window-root layout contract and scroll restoration also run against the generic collection page (development data, no development
   # Library), which is the page ScrollViewIntegrationTests measures; W12's Library replaced it when the library flag is set.
-  unset YTMUSE_UI_DEVELOPMENT_LIBRARY YTMUSE_UI_DEVELOPMENT_PLAYLISTS YTMUSE_UI_DEVELOPMENT_UPLOADS
+  unset YTMUSE_UI_DEVELOPMENT_LIBRARY YTMUSE_UI_DEVELOPMENT_PLAYLISTS
   counted_swift_test 'RootRegionLayoutTests|ScrollViewIntegrationTests'
   exit 0
 fi

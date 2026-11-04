@@ -92,7 +92,7 @@ import Features
             #expect(tuner.seeds.count == 2)
             await tuner.start(tuner.seeds[0])
             #expect(tuner.context != nil && tuner.controls.map(\.id) == ["devmix"])
-            await tuner.choose(option: "devdiscover", in: "devmix")
+            await tuner.choose(option: "devdiscover", in: "devmix", suppliedBy: tuner.controlsIdentity)
             #expect(tuner.context?.choices == ["devmix": "devdiscover"])
         }
     }

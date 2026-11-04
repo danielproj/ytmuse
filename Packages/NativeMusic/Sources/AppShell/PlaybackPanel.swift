@@ -24,6 +24,10 @@ actor AppPlaybackAuthority: AccountLifecycleParticipant {
     private let beforeTeardown: (@Sendable () async -> Void)?
     private let offlineVault: (any ScopedProtectedRecords)?
     private nonisolated let starts = OwnedStartGate()
+    // Read-only control tickets share the account barrier, without issuing an owned-start permit.
+    private nonisolated let radioControlEpoch = Mutex<UInt64>(0)
+    nonisolated func currentRadioControlEpoch() -> UInt64 { radioControlEpoch.withLock { $0 } }
+    private nonisolated func invalidateRadioControls() { radioControlEpoch.withLock { $0 &+= 1 } }
     /// W22 (DATA03): told at every account barrier (switch, sign-out, removal, quit) so a held Play here prompt does not outlive the account that raised it.
     /// W23: several parties need the barrier (the output coordinator's held prompts, Now Playing), so handlers add up; each runs at every barrier.
     private nonisolated let barrierHandlers = Mutex<[@Sendable () async -> Void]>([])
@@ -135,7 +139,7 @@ actor AppPlaybackAuthority: AccountLifecycleParticipant {
     func setBeforeQuit(_ work: (@MainActor () async -> Void)?) { beforeQuit = work }
     func quit() async {
         let departing = activeScope()
-        starts.invalidate(); revision += 1; musicContext = nil
+        starts.invalidate(); invalidateRadioControls(); revision += 1; musicContext = nil
         // ROUTE10: a Cast receiver is stopped (or left) by the remembered Quit plan, bounded, before anything else is torn down.
         await beforeQuit?()
         await runBarrierHandlers(BarrierEvent(reason: .quit, departing: departing))
@@ -157,7 +161,7 @@ actor AppPlaybackAuthority: AccountLifecycleParticipant {
     nonisolated var ownedKeychainNamespace: String { (offlineVault as? KeychainVault)?.serviceNamespace ?? KeychainVault.applicationNamespace }
     /// W27 (privacy reset): closes the native sessions, removes the owned-audio store's files and its Keychain items. Local only.
     func eraseOwnedAudio() async throws {
-        revision += 1; starts.invalidate()
+        revision += 1; starts.invalidate(); invalidateRadioControls()
         let oldRetained = retained; retained = nil
         let oldSession = session; session = nil
         await oldRetained?.bind(RequestContext(account: nil, accountGeneration: revision, requestGeneration: 0))
@@ -170,6 +174,7 @@ actor AppPlaybackAuthority: AccountLifecycleParticipant {
     func owned(request: OwnedStartRequest, initialGain: Double = 0.08, maximumStartGain: Float? = nil) async throws -> PlaybackSession {
         if Self.refusesProductionDefaults(directory: directory, hasVault: offlineVault != nil, isolationRequested: isolationRequested) { throw DomainError.forbidden }
         guard starts.accepts(request) else { throw DomainError.staleContext }
+        invalidateRadioControls()
         revision += 1; let ticket = revision
         if let beforeOpen { await beforeOpen() }
         guard starts.accepts(request), revision == ticket else { throw DomainError.staleContext }
@@ -205,6 +210,7 @@ actor AppPlaybackAuthority: AccountLifecycleParticipant {
     /// hidden player). The queue is in memory only; nothing here reaches a service.
     func retained(request: OwnedStartRequest, parts: RetainedPlaybackParts, context: RequestContext, initialGain: Double, maximumStartGain: Float?) async throws -> PlaybackSession {
         guard starts.accepts(request), context.account != nil else { throw DomainError.staleContext }
+        invalidateRadioControls()
         revision += 1; let ticket = revision
         await dropMusic()
         let oldRetained = retained; retained = nil
@@ -219,7 +225,7 @@ actor AppPlaybackAuthority: AccountLifecycleParticipant {
     }
     func detach(previous: RequestContext, barrier: RequestContext) async throws {
         let departing = activeScope() ?? previous.account.map { ($0.accountID, previous.accountGeneration) }
-        starts.invalidate(); revision += 1; musicContext = nil
+        starts.invalidate(); invalidateRadioControls(); revision += 1; musicContext = nil
         await runBarrierHandlers(BarrierEvent(reason: .detach, departing: departing))
         // Switch, sign-out and removal stop the hidden player and discard its store.
         await dropMusic()
@@ -232,6 +238,7 @@ actor AppPlaybackAuthority: AccountLifecycleParticipant {
     }
     /// Records the restored identity only; nothing is created, loaded or played.
     func restorePaused(_ identity: LocalIdentity, context: RequestContext) async throws {
+        if musicContext != context { invalidateRadioControls() }
         musicContext = identity.state == .connected && context.account == identity.id ? context : nil
         if musicContext != nil { for handler in boundHandlers.withLock({ $0 }) { await handler() } }
     }
@@ -618,7 +625,8 @@ enum PlaybackUIAction: Equatable, Sendable {
     /// Explicit start requests this session has accepted so far (a counter, not a log). A preview compares it to tell a player that moved on because
     /// something asked it to from one that ran on into the next track by itself.
     var playRequestCount = 0
-    @discardableResult func playMusic(playlistID: String, title: String, videoID: String? = nil, params: String? = nil, request: OwnedStartRequest) async -> SearchPlayOutcome {
+    @discardableResult func playMusic(playlistID: String, title: String, videoID: String? = nil, params: String? = nil, intent: MusicPlaybackIntent = .endpoint, queueCommand: MusicQueueFilterCommand? = nil, request: OwnedStartRequest) async -> SearchPlayOutcome {
+        guard queueCommand == nil else { return .failed }
         guard !starting else { return .busy }; starting = true; defer { starting = false }
         let profileStart = DispatchTime.now().uptimeNanoseconds
         let startSignpost = PerformanceSignposts.begin(.firstItemStart, label: "youTubeMusic")
@@ -631,7 +639,7 @@ enum PlaybackUIAction: Equatable, Sendable {
             let held = await outputs.gate(.start, engine: .youTubeMusic) { [weak self] in
                 guard let self else { return }
                 self.starting = false
-                _ = await self.playMusic(playlistID: playlistID, title: title, videoID: videoID, params: params, request: request)
+                _ = await self.playMusic(playlistID: playlistID, title: title, videoID: videoID, params: params, intent: intent, queueCommand: queueCommand, request: request)
             }
             return held ? .started : .busy
         }
@@ -642,9 +650,9 @@ enum PlaybackUIAction: Equatable, Sendable {
             let player = try await authority.youtubeMusic(request: request)
             if music !== player { attach(player) }
             session = nil; state = nil; timeline.snapshot = nil; lastPresentation = nil; endNativeVideo()
-            await player.play(playlistID: playlistID, title: title, videoID: videoID, params: params)
+            await player.play(playlistID: playlistID, title: title, videoID: videoID, params: params, intent: intent, queueCommand: queueCommand)
             if let carried, !player.isClosed { await player.setSleepTimer(carried) }
-            if player.refusal != nil || (params != nil && player.snapshot.isFailed) { self.error = String(localized: "YouTube Music could not start. Try Play again."); faultSink?(.playbackFailure, "player", "YouTube Music did not start"); return .failed }
+            if player.refusal != nil || ((params != nil || queueCommand != nil || intent == .shuffle) && player.snapshot.isFailed) { self.error = String(localized: "YouTube Music could not start. Try Play again."); faultSink?(.playbackFailure, "player", "YouTube Music did not start"); return .failed }
             error = nil
             return .started
         } catch DomainError.staleContext { error = nil; return .stale }

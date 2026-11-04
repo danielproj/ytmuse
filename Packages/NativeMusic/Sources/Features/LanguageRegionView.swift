@@ -39,7 +39,7 @@ public struct LanguageRegionSection: View {
         .font(.footnote).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("languageRelaunchNote")
       Button("Restore Language Defaults") {
         interface = LanguageRegionPreferences.systemToken; contentLanguage = LanguageRegionPreferences.systemToken; contentRegion = LanguageRegionPreferences.systemToken
-      }.musicButtons().accessibilityIdentifier("restoreLanguageDefaults")
+      }.musicPageAction().accessibilityIdentifier("restoreLanguageDefaults")
     } header: { Text("Language and region") }
   }
 }

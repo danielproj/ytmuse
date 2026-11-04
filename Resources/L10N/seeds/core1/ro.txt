@@ -52,7 +52,6 @@
 52|Ai trecut la %@.
 53|Redă %@
 54|Ieșirea curentă: %@
-55|Elimini „%@” din încărcările tale?
 56|Se redă o reclamă
 57|Reclama s-a încheiat
 58|Se redă acum „%@” de %@.

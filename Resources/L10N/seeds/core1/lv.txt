@@ -52,7 +52,6 @@
 52|Pārslēgts uz kontu %@.
 53|Atskaņot: %@
 54|Pašreizējā izvade: %@
-55|Vai noņemt “%@” no jūsu augšupielādēm?
 56|Tiek atskaņota reklāma
 57|Reklāma beidzās
 58|Tagad skan “%@” — %@.

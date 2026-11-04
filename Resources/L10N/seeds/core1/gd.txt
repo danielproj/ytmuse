@@ -52,7 +52,6 @@
 52|Air gluasad gu %@.
 53|Cluich %@
 54|An toradh làithreach: %@
-55|A bheil thu airson “%@” a thoirt air falbh o na h-uaslódan agad?
 56|Tha sanas ga chluich
 57|Tha an sanas seachad
 58|A’ cluich an-dràsta: “%@” le %@.

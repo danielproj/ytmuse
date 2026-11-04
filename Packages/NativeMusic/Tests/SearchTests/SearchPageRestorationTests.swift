@@ -5,6 +5,15 @@ import Testing
 
 /// W09-F2: the Search visit's memory (query, scope, selected result) and how it is put back.
 @Suite @MainActor struct SearchPageRestorationTests {
+    @Test(arguments: ["uploads", "retired-scope"])
+    func removedScopesRestoreLocallyWithoutSendingTheQuery(_ raw: String) async {
+        let rig = SearchKeyboardTests.Rig()
+        rig.model.restorePage(PageMemory(query: "private recording", values: ["scope": raw]))
+        await settle()
+        rig.clock.advance(by: .seconds(1)); await settle()
+        #expect(rig.model.scope == .library && rig.model.query == "private recording")
+        #expect(await rig.remote.callCount == 0)
+    }
     @Test func theVisitRecordsQueryScopeAndSelectionAndPutsThemBackWhenTheResultArrives() async throws {
         let rig = SearchKeyboardTests.Rig(); try await rig.load()
         let chosen = try #require(rig.model.results.dropFirst(2).first).id

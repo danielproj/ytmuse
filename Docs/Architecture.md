@@ -6,7 +6,7 @@ The established package is `Packages/NativeMusic`. W02 extends it; there is no s
 | --- | --- |
 | AppShell | Process lifecycle, scenes, windows, menu bar, Settings and dependency composition. Supplies real implementations to `InfrastructureDependencies` and `MusicServices`; never constructs provider requests in a view. |
 | DesignSystem | Tokens and reusable native components; no service requests. |
-| Features | Home, Search, Library, Playlists, Downloads, Now Playing, Podcasts, Uploads and Settings. Each destination uses MainActor `FeatureState<Value>` and an independent query generation. |
+| Features | Home, Search, Library, Playlists, Downloads, Now Playing, Podcasts and Settings. Each destination uses MainActor `FeatureState<Value>` and an independent query generation. |
 | Domain | Stable immutable entities, typed errors/results, capability decisions, commands, transition rules and use cases; no UI, provider JSON, networking implementation, decoder, or credential values. |
 | AccountSession | Actor-owned identity/session lifecycle, Keychain references, account generations and renewal. Implements `AccountService` and `CredentialStore`. |
 | YouTubeMusicAdapter | Authentication integration, request construction, parsing, pagination, mutations and source error mapping. Wire formats and cursor-to-provider-token mappings stay here. |

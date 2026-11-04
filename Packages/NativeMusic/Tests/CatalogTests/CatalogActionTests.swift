@@ -230,7 +230,7 @@ import YouTubeMusicAdapter
             for entry in try realPage(capture).shelves.flatMap(\.items) where entry.kind == .song || entry.kind == .video {
                 let offered = CatalogActionPlan.offers(for: entry, playback: .available).contains { $0.action == .radio }
                 let playContinuesACollection = entry.contextPlaylistID.map { !$0.hasPrefix("RDAMVM") } ?? false
-                if let radio = entry.radio, entry.availability != .unavailable, !entry.isUpload {
+                if let radio = entry.radio, entry.availability != .unavailable, !entry.isPrivatelyOwned {
                     if playContinuesACollection {
                         offeredCount += 1
                         #expect(offered, "\(capture) \(entry.title): Play continues a collection, the radio is a different outcome")
@@ -292,7 +292,7 @@ import YouTubeMusicAdapter
     }
     @Test func startRadioIsNeverOfferedForAnUploadAnUnavailableTrackOrAnotherKind() throws {
         let radio = MusicRadioAction(playlistID: "RDAMVMsomething01", videoID: "something01")
-        let upload = MusicCatalogItem(kind: .song, title: "Mine", videoID: "something01", isUpload: true, radio: radio)
+        let upload = MusicCatalogItem(kind: .song, title: "Mine", videoID: "something01", isPrivatelyOwned: true, radio: radio)
         let grey = MusicCatalogItem(kind: .song, title: "Grey", availability: .unavailable, videoID: "something01", radio: radio)
         let album = MusicCatalogItem(kind: .album, title: "Album", browseID: "MPREb_x", playlistID: "OLAK5uy_albumList0001", radio: radio)
         for entry in [upload, grey, album] { #expect(!CatalogActionPlan.offers(for: entry, playback: .available).contains { $0.action == .radio }, "\(entry.title)") }

@@ -12,10 +12,15 @@ jobs:
     runs-on: ${{ vars.YTMUSE_RUNNER || 'macos-latest' }}
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
           fetch-depth: 0
+      - name: Select the pinned Xcode
+        run: |
+          xcode_app="/Applications/Xcode_$(python3 -c 'import json; print(json.load(open("toolchain.json"))["xcode"])').app"
+          if [ -d "$xcode_app" ]; then sudo xcode-select -s "$xcode_app"; fi
+          xcodebuild -version
       - name: The tag must be on the default branch
         run: git merge-base --is-ancestor "$GITHUB_SHA" "origin/${{ github.event.repository.default_branch }}"
       - run: ./scripts/ci.sh
@@ -34,10 +39,15 @@ jobs:
       YTMUSE_UPDATE_REPOSITORY: ${{ github.repository }}
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
           fetch-depth: 0
+      - name: Select the pinned Xcode
+        run: |
+          xcode_app="/Applications/Xcode_$(python3 -c 'import json; print(json.load(open("toolchain.json"))["xcode"])').app"
+          if [ -d "$xcode_app" ]; then sudo xcode-select -s "$xcode_app"; fi
+          xcodebuild -version
       - name: Package, sign, notarize and sign the feed
         run: |
           umask 077

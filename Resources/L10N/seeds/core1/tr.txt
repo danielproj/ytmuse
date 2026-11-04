@@ -52,7 +52,6 @@
 52|%@ hesabına geçildi.
 53|%@ öğesini oynat
 54|Geçerli çıkış: %@
-55|“%@” yüklemelerinizden kaldırılsın mı?
 56|Bir reklam oynatılıyor
 57|Reklam sona erdi
 58|Şimdi çalıyor: “%@”, sanatçı: %@.
