@@ -25,8 +25,8 @@ Status vocabulary (checked by `scripts/check-docs.py`):
 | Links, scripting, sharing, Handoff, notifications, global shortcuts | Built, live unverified | Strict link policy; permission prompts only after an explicit choice. |
 | Settings, storage controls, local diagnostics | In progress | Complete Settings is under review. |
 | Accessibility and the complete locale catalog | In progress | Human translation review is a separate, unstarted gate (G08). |
-| Update checks and install | Built, fixtures only | In-repository updater with a signed feed ([Distribution.md](Distribution.md)); the local signing key is prepared, but no installer or feed has been published. Source builds have no pinned key/feed and check nothing. Real install and restart on a signed build is gate G09. |
-| Signed, notarized DMG and release | Not started | Scripts exist (`scripts/package-release.sh`) and are tested with stub tools; no Developer ID identity or notarization has been used (G09). |
+| Update checks and install | Built, live unverified | In-repository updater with a signed public feed pinned into the 0.1.0 preview ([Distribution.md](Distribution.md)); feed signature and final asset hashes were checked. Source builds have no pinned key/feed and check nothing. Real install and restart on a signed build remain gate G09. |
+| Signed, notarized DMG and release | Built, live unverified | The public 0.1.0 development preview app and DMG are Developer ID signed, notarized and stapled; signatures and Gatekeeper acceptance were checked on the packaging Mac. Clean-second-Mac installation and a real signed update/rollback rehearsal remain unverified (G09). |
 | Mac App Store build | Not started | Optional; see [Distribution.md](Distribution.md#app-store-feasibility-a-short-note-not-a-commitment). |
 
 This table is a snapshot of the source at this commit. Regenerate your own view by running the suites; do not read a row as a promise about a release.

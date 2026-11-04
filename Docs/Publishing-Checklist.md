@@ -1,6 +1,6 @@
 # Publishing checklist
 
-The cleaned-source repository is public; no installer release is published. The source tree and screenshots were scanned, and commit metadata was reviewed to confirm that it contains only the public maintainer identity and GitHub noreply addresses. Internal development history remains local. Developer ID signing and the tagged production build passed; Apple is processing the app's notarization submission. [GitHub-Releases.md](GitHub-Releases.md) records current configuration. Historical findings below explain why the internal development history is not synchronized to the release repository. BUILD08: the account holder selected public source and downloads; App Store submission is outside that decision.
+The cleaned-source repository and [0.1.0 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.0) are public. The source tree and screenshots were scanned, and commit metadata was reviewed to confirm that it contains only the public maintainer identity and GitHub noreply addresses. Internal development history remains local. The app and DMG passed Developer ID signing, Apple notarization, stapling and local Gatekeeper checks; the signed feed matches the final installer. Clean-second-Mac and real signed update/rollback acceptance remain open. [GitHub-Releases.md](GitHub-Releases.md) records current configuration. Historical findings below explain why the internal development history is not synchronized to the release repository. BUILD08: the account holder selected public source and downloads; App Store submission is outside that decision.
 
 ## 1. Decide what is published (account holder)
 
@@ -22,7 +22,7 @@ Before publishing the snapshot: the kept reference copy of two ytmusicapi files 
 
 If the account holder prefers to publish the full history instead, every item above must be resolved first, and a history rewrite (a decision of the operator, never of a worker) is required.
 
-## 2. Configure the repository (public source exists; installer setup pending)
+## 2. Configure the repository (public preview exists; Actions setup pending)
 
 1. Choose the owner and name. They go into the app only at packaging time (`YTMUSE_UPDATE_REPOSITORY`); the source carries none.
 2. Create the repository and push the snapshot. Enable private vulnerability reporting, branch protection on the default branch and required status checks `ci` and `license`.
@@ -34,7 +34,9 @@ If the account holder prefers to publish the full history instead, every item ab
 * The feed key was created **once**, outside Git with owner-only permissions, using `ytmuse-feed keygen --private-out <path outside any repository> --public-out <path>` (see [Distribution.md](Distribution.md)). Its backup and rotation rehearsal remain maintainer responsibilities. The private key is never committed, never logged and never placed in a pull-request workflow.
 * A usable Developer ID Application identity is installed on the packaging Mac and passed actual hardened-runtime signing with a secure timestamp. The notarization credential was validated and stored in its Keychain. None is in the repository; the packaging script receives only the identity selector, profile name and feed-key path. No private signing material was uploaded to GitHub.
 
-## 4. Before the first release
+## 4. Before distribution acceptance
+
+The development preview does not close the fresh-checkout, clean-second-Mac or signed update/rollback requirements below. Local packaging and signature checks are bounded evidence, and G09 remains open.
 
 1. Source: a clean clone passes `scripts/clean-checkout.sh`; `scripts/scan-repository.py --tree --history --images --fail-on high` reports nothing outstanding; `scripts/check-distribution.py --source-only` passes; `Docs/sbom.cdx.json` is current.
 2. Build: `scripts/package-release.sh` on a clean checkout of the release tag (`--dry-run` first). It builds Release arm64 with the version and build number, signs with hardened runtime (inner code first), makes the DMG, notarizes and staples, writes the checksum, regenerates the SBOM, runs `check-distribution.py --app`, writes the feed payload and signs it.

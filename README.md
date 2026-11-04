@@ -1,12 +1,12 @@
 # YTMuse for macOS
 
-*YouTube Music, native on Mac.* An independent, native SwiftUI/AppKit music client, **under development and not released**. It is not endorsed by, affiliated with or sponsored by Google, YouTube or Apple; "YouTube" and "YouTube Music" belong to Google, and this project uses neither company's logos. Original code is MIT licensed ([LICENSE](LICENSE)); third-party material is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+*YouTube Music, native on Mac.* An independent, native SwiftUI/AppKit music client, **under development, with a public development preview**. It is not endorsed by, affiliated with or sponsored by Google, YouTube or Apple; "YouTube" and "YouTube Music" belong to Google, and this project uses neither company's logos. Original code is MIT licensed ([LICENSE](LICENSE)); third-party material is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ![Home, light and dark, rendered from the app's own development data](Docs/Screenshots/home-default-dark.png)
 
 ## Status, honestly
 
-There is **no release or published installer yet**. The current app has been built and installed locally with development signing. That is separate from a Developer ID-signed, notarized release that other people can download. The source repository is public. A downloadable installer has not been published yet. [GitHub release setup](Docs/GitHub-Releases.md) records what remains before downloads are available.
+The [0.1.0 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.0) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. A clean-second-Mac installation and a real signed update/rollback rehearsal remain unverified. The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
 
 The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. Radio tuning filters still fail to load. These checks do not close the full account matrix, audible-output, accessibility, hardware or distribution gates below:
 
@@ -18,6 +18,10 @@ The core page/sidebar/player redesign has passed bounded visual checks. Native-a
 | G06 Service parity, G07 Casting, G08 System integration, G09 Distribution | **open** — see the [capability matrix](Docs/Capability-Matrix.md) |
 
 Automated tests use **sanitized fixtures and owned synthetic audio**, isolated from real account stores. Separate, bounded manual checks use the installed app's normal interface. [Docs/Capability-Matrix.md](Docs/Capability-Matrix.md) records the wider implementation and acceptance limits. Upload functionality has been removed. The full contract is [the specification](Docs/Product-Specification.md).
+
+## Install the preview
+
+Download `YTMuse-0.1.0.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.0), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
 
 ## Build from source
 
@@ -53,7 +57,7 @@ To prove a fresh clone builds and tests with no secrets (it clones under `~/Proj
 | [PRIVACY.md](PRIVACY.md) | what the app stores and sends |
 | [Docs/Distribution.md](Docs/Distribution.md) | releases, the updater, signing, the App Store question |
 | [Docs/Capability-Matrix.md](Docs/Capability-Matrix.md) | what works, what is fixture-tested, what is not built |
-| [Docs/Publishing-Checklist.md](Docs/Publishing-Checklist.md) | what must happen before this is published |
+| [Docs/Publishing-Checklist.md](Docs/Publishing-Checklist.md) | publishing checks and remaining distribution acceptance |
 | [Docs/Architecture.md](Docs/Architecture.md), [Docs/Build.md](Docs/Build.md) | structure, modules and the local toolchain |
 
 ## Independence
