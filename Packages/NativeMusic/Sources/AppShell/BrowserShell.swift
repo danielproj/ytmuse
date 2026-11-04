@@ -58,6 +58,7 @@ struct BrowserShell: View {
             NavigationSplitView {
                 sidebar
                     .navigationSplitViewColumnWidth(min: 200, ideal: 224, max: 280)
+                    .musicSidebarColumn()
             } detail: {
                 GeometryReader { available in
                 VStack(spacing: 0) {

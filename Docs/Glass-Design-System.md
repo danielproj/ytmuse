@@ -51,3 +51,7 @@ Feature and shell code never states a radius, material, animation curve, raw Liq
 - **Expanded transport**: the transport and its accessories never share space (`ViewThatFits`: one row while both fit, accessories under the controls otherwise); both are audited (`nowPlayingControls`, `nowPlayingAccessories`).
 - **Derived corners** are capped to a quarter of the element's edge (`MusicCorner.radius(forEdge:)`, `musicClip(_:edge:)`), so the 40 pt compact thumbnail is not a circle.
 - **One accent in the bar**: the prominent play/pause is tinted with `MusicStyle.accent`, like the sliders. Secondary text in dark is gray 0.82.
+
+## Deep dark (2026-11-04)
+
+The dark appearance no longer uses the system's window grays. `MusicPalette.darkCanvas` (white 0.010) is the window canvas and the sidebar column (`musicSidebarColumn()`), `darkPanel` (0.045) fills opaque region panels and small opaque glass fallbacks, and `darkCard` (0.085) fills `musicInsetSurface` cards so they still separate from their panel. Native glass and its simplified material carry a black scrim at `darkGlassScrim` (0.5) inside their shape, so panels stay dark over a light desktop or bright artwork; the canvas's accent glow drops to 0.06 and loses its white lift in dark. Light appearances are unchanged. Light text only gains contrast as these fall; the dark content and glass backdrop ranges now start at 0, and the contrast audit still passes.
