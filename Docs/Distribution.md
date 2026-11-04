@@ -1,6 +1,6 @@
 # Distribution, updates and the App Store question
 
-This is the design for how YTMuse is built, delivered and updated (specification section 22, BUILD01–BUILD08, SEC09, SEC10, ARCH05, ARCH10). The source repository is connected privately; its owner/name is supplied at packaging time. No installer has been published. Local Apple Development signing is available; Developer ID, notarization, feed trust and distribution acceptance remain open. See [GitHub-Releases.md](GitHub-Releases.md) for current setup and [Publishing-Checklist.md](Publishing-Checklist.md) for the release checks.
+This is the design for how YTMuse is built, delivered and updated (specification section 22, BUILD01–BUILD08, SEC09, SEC10, ARCH05, ARCH10). The cleaned source repository is public; its owner/name is supplied at packaging time. No installer has been published. Local Apple Development signing is available; Developer ID, notarization, feed trust and distribution acceptance remain open. See [GitHub-Releases.md](GitHub-Releases.md) for current setup and [Publishing-Checklist.md](Publishing-Checklist.md) for the release checks.
 
 ## Delivery
 

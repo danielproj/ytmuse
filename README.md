@@ -6,7 +6,7 @@
 
 ## Status, honestly
 
-There is **no release or published installer yet**. The current app has been built and installed locally with development signing. That is separate from a Developer ID-signed, notarized release that other people can download. The source repository is connected privately; public download hosting is not configured yet. [GitHub release setup](Docs/GitHub-Releases.md) records what remains before downloads are available.
+There is **no release or published installer yet**. The current app has been built and installed locally with development signing. That is separate from a Developer ID-signed, notarized release that other people can download. The source repository is public. A downloadable installer has not been published yet. [GitHub release setup](Docs/GitHub-Releases.md) records what remains before downloads are available.
 
 The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. Radio tuning filters still fail to load. These checks do not close the full account matrix, audible-output, accessibility, hardware or distribution gates below:
 

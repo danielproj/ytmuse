@@ -1,6 +1,6 @@
 # Publishing checklist
 
-The private cleaned-source repository exists; no installer release is published. Local development signing exists, but Developer ID/notarization acceptance remains open. [GitHub-Releases.md](GitHub-Releases.md) records current configuration. Historical findings below explain why the internal development history is not synchronized to the release repository. BUILD08: changing public visibility, publishing a release or submitting to the App Store remains a separate account-holder decision.
+The cleaned-source repository is public; no installer release is published. The source tree and screenshots were scanned, and commit metadata was reviewed to confirm that it contains only the public maintainer identity and GitHub noreply addresses. Internal development history remains local. Local development signing exists, but Developer ID/notarization acceptance remains open. [GitHub-Releases.md](GitHub-Releases.md) records current configuration. Historical findings below explain why the internal development history is not synchronized to the release repository. BUILD08: changing public visibility, publishing a release or submitting to the App Store remains a separate account-holder decision.
 
 ## 1. Decide what is published (account holder)
 
@@ -22,7 +22,7 @@ Before publishing the snapshot: the kept reference copy of two ytmusicapi files 
 
 If the account holder prefers to publish the full history instead, every item above must be resolved first, and a history rewrite (a decision of the operator, never of a worker) is required.
 
-## 2. Configure the repository (private source exists; release setup pending)
+## 2. Configure the repository (public source exists; installer setup pending)
 
 1. Choose the owner and name. They go into the app only at packaging time (`YTMUSE_UPDATE_REPOSITORY`); the source carries none.
 2. Create the repository and push the snapshot. Enable private vulnerability reporting, branch protection on the default branch and required status checks `ci` and `license`.
