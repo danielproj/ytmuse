@@ -306,3 +306,8 @@
 1408|Ce filtre nécessite des options de lecture que l’app ne peut pas encore appliquer.
 1409|Les filtres nécessitent le lecteur actif de cette radio, une file lisible et des options de lecture prises en charge. Redémarrez la radio pour recharger ses commandes.
 1410|YouTube Music n’a pas encore confirmé le filtre demandé. La sélection affichée provient de sa file d’attente.
+1411|Lectures
+1412|Temps d’écoute
+1413|14 derniers jours
+1414|Depuis le %@
+Q40|one:%lld lecture	many:%lld de lectures	other:%lld lectures

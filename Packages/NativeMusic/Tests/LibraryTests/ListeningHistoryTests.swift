@@ -45,6 +45,46 @@ private struct Player {
         let record = player.records[0]
         #expect(record.videoID == "aaaaaaaaaa1" && record.title == "Song" && record.artist == "Artist" && record.listenedSeconds >= 30 && record.sync == .localOnly)
     }
+    @Test func timeHeardAfterThePlayCountsIsToppedUpOnTheSameRecord() {
+        var player = Player()
+        player.listen(30)
+        #expect(player.records.count == 1 && player.recorder.takeUpdate() == nil, "the play itself carries the time so far")
+        let id = player.records[0].id
+        player.listen(59)
+        #expect(player.recorder.takeUpdate() == nil, "less than a minute more is not written while it keeps playing")
+        player.listen(1)
+        let periodic = player.recorder.takeUpdate()
+        #expect(periodic?.id == id && periodic?.listenedSeconds ?? 0 >= 89, "at most a minute of heard time goes unsaved")
+        #expect(player.recorder.takeUpdate() == nil, "taking an update clears it")
+        player.listen(20)
+        player.feed(playing: false)
+        let paused = player.recorder.takeUpdate()
+        #expect(paused?.id == id && paused?.listenedSeconds ?? 0 >= 109, "pausing saves what was heard")
+        player.feed(playing: false)
+        #expect(player.recorder.takeUpdate() == nil, "nothing new heard, nothing to save")
+        #expect(player.records.count == 1, "a top-up is never a second play")
+    }
+    @Test func replacingOrEndingATrackSavesItsFullTime() {
+        var player = Player()
+        player.listen(150)
+        _ = player.recorder.takeUpdate()
+        player.listen(10)
+        player.listen(1, video: "bbbbbbbbbb2")
+        let switched = player.recorder.takeUpdate()
+        #expect(switched?.videoID == "aaaaaaaaaa1" && switched?.id == player.records[0].id && switched?.listenedSeconds ?? 0 >= 159)
+        player.listen(40, video: "bbbbbbbbbb2")
+        player.feed(video: "bbbbbbbbbb2", ended: true)
+        let ended = player.recorder.takeUpdate()
+        #expect(ended?.videoID == "bbbbbbbbbb2" && ended?.id == player.records[1].id && ended?.listenedSeconds ?? 0 >= 40)
+        player.feed(video: "bbbbbbbbbb2", ended: true)
+        #expect(player.recorder.takeUpdate() == nil, "a repeated end report changes nothing")
+    }
+    @Test func aSkippedTrackNeverProducesAnUpdate() {
+        var player = Player()
+        player.listen(20)
+        player.listen(1, video: "bbbbbbbbbb2")
+        #expect(player.records.isEmpty && player.recorder.takeUpdate() == nil)
+    }
     @Test func aShortItemNeedsHalfOfIt() {
         var player = Player()
         player.listen(9, duration: 20)
@@ -181,6 +221,10 @@ private actor MemoryHistory: LocalHistoryStoring {
         if failRead { throw CocoaError(.fileReadUnknown) }
         return Array((byAccount[account] ?? []).prefix(limit))
     }
+    func update(_ record: LocalHistoryRecord, account: String) async throws {
+        if failAppend { throw CocoaError(.fileWriteUnknown) }
+        if let index = byAccount[account]?.firstIndex(where: { $0.id == record.id }) { byAccount[account]?[index] = record }
+    }
     func clear(account: String) async throws { byAccount[account] = [] }
 }
 private let accountA = "11111111-1111-4111-8111-111111111111"
@@ -242,6 +286,19 @@ private let accountA = "11111111-1111-4111-8111-111111111111"
         play(model, seconds: 45, from: &clock); await settle()
         #expect(model.remote.entries.count == 5, "a local play is not added to the service's history")
         #expect(model.local.count == 1)
+    }
+    @Test func theStoredPlayCarriesTheWholeTimeHeardNotOnlyTheThreshold() async throws {
+        let store = MemoryHistory()
+        let (model, _) = historyModel(store: store)
+        var clock = 0.0
+        play(model, seconds: 150, from: &clock)
+        model.observe(ListeningObservation(videoID: "aaaaaaaaaa1", title: "Song", artist: "Artist", position: 150, duration: 200, playing: false, monotonic: clock + 1))
+        await settle(400)
+        let saved = await store.byAccount[accountA] ?? []
+        #expect(saved.count == 1 && saved[0].listenedSeconds >= 149, "a 150-second listen is not saved as the 30 seconds that made it a play")
+        #expect(model.local.first?.listenedSeconds == saved.first?.listenedSeconds)
+        let all = await model.allLocalRecords()
+        #expect(all == saved)
     }
     @Test func aRecordingFailureIsReportedNotHidden() async throws {
         let store = MemoryHistory()

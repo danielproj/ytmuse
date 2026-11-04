@@ -306,3 +306,8 @@
 1408|Dieser Filter benötigt Wiedergabeoptionen, die diese App noch nicht anwenden kann.
 1409|Filter benötigen den aktiven Player dieses Radios, eine lesbare Warteschlange und unterstützte Wiedergabeoptionen. Starte das Radio neu, um die Steuerelemente erneut zu laden.
 1410|YouTube Music hat den angeforderten Filter noch nicht bestätigt. Die angezeigte Auswahl stammt aus der Warteschlange.
+1411|Wiedergaben
+1412|Hörzeit
+1413|Letzte 14 Tage
+1414|Seit %@
+Q40|one:%lld Wiedergabe	other:%lld Wiedergaben

@@ -39,6 +39,13 @@ actor LocalHistoryFileStore: LocalHistoryStoring, AccountLifecycleParticipant {
     func recent(account: String, limit: Int) throws -> [LocalHistoryRecord] {
         Array(try read(try file(account)).prefix(max(0, limit)))
     }
+    func update(_ record: LocalHistoryRecord, account: String) throws {
+        let url = try file(account)
+        var list = try read(url)
+        guard let index = list.firstIndex(where: { $0.id == record.id }) else { return }
+        list[index] = record
+        try write(list, to: url)
+    }
     func clear(account: String) throws {
         let url = try file(account)
         try GuardedFiles(root: directory).remove(url)
@@ -59,6 +66,7 @@ actor LateBoundHistoryStore: LocalHistoryStoring {
     func bind(_ store: any LocalHistoryStoring) { target = store }
     func append(_ record: LocalHistoryRecord, account: String) async throws { try await bound().append(record, account: account) }
     func recent(account: String, limit: Int) async throws -> [LocalHistoryRecord] { try await bound().recent(account: account, limit: limit) }
+    func update(_ record: LocalHistoryRecord, account: String) async throws { try await bound().update(record, account: account) }
     func clear(account: String) async throws { try await bound().clear(account: account) }
     private func bound() throws -> any LocalHistoryStoring { guard let target else { throw Failure.notBound }; return target }
 }

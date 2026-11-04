@@ -9,7 +9,8 @@ public struct LocalHistoryRecord: Codable, Identifiable, Equatable, Sendable {
     public let title: String
     public let artist: String?
     public let startedAt: Date
-    /// Seconds actually heard when the play was recorded.
+    /// Seconds actually heard in this occurrence. A play is written when it first counts and then topped up (`ListeningHistoryRecorder.takeUpdate`)
+    /// as listening goes on, so this is the whole time heard, not only the part that made it a play.
     public let listenedSeconds: Double
     public init(id: UUID = UUID(), videoID: String, title: String, artist: String?, startedAt: Date, listenedSeconds: Double) {
         self.id = id; self.videoID = videoID; self.title = title; self.artist = artist; self.startedAt = startedAt; self.listenedSeconds = listenedSeconds
@@ -22,6 +23,8 @@ public struct LocalHistoryRecord: Codable, Identifiable, Equatable, Sendable {
 public protocol LocalHistoryStoring: Sendable {
     func append(_ record: LocalHistoryRecord, account: String) async throws
     func recent(account: String, limit: Int) async throws -> [LocalHistoryRecord]
+    /// Replaces the stored record with the same id (more time heard). A record no longer kept (cleared, or trimmed away) stays gone.
+    func update(_ record: LocalHistoryRecord, account: String) async throws
     /// Removes this Mac's record only. Nothing is sent to the service.
     func clear(account: String) async throws
 }
@@ -60,7 +63,12 @@ public struct ListeningObservation: Sendable, Equatable {
 /// grows only while the player is playing the track (not buffering, not paused, not an advertisement or a preview) and only by
 /// what the clock and the position agree on: a seek or a jump adds nothing. An end report never makes a play by itself, a
 /// repeated end report changes nothing, and a track that is skipped, or sought to its end, before the threshold is not a play.
+///
+/// Once a play is recorded, the time heard after it is still counted (under the same rules) and handed back through `takeUpdate` as the
+/// same record with more seconds: when the track pauses, ends or is replaced, and at least every `updateInterval` seconds while it plays.
 public struct ListeningHistoryRecorder: Sendable {
+    /// The most heard time that can go unsaved while a recorded play keeps playing.
+    public static let updateInterval: Double = 60
     public let policy: ListeningPolicy
     private struct Occurrence {
         var videoID: String
@@ -75,25 +83,46 @@ public struct ListeningHistoryRecorder: Sendable {
         var lastClock: Double?
         var recorded = false
         var ended = false
+        /// The recorded play's identity and the heard time it was last saved with.
+        var recordID: UUID?
+        var savedHeard: Double = 0
+        func record(id: UUID) -> LocalHistoryRecord {
+            LocalHistoryRecord(id: id, videoID: videoID, title: title ?? "", artist: artist, startedAt: startedAt, listenedSeconds: heard)
+        }
     }
     private var current: Occurrence?
+    private var pending: LocalHistoryRecord?
+    /// A recorded play with more time heard than was last saved, to be written over the stored record (`LocalHistoryStoring.update`); nil when
+    /// nothing changed. Taking it clears it.
+    public mutating func takeUpdate() -> LocalHistoryRecord? { defer { pending = nil }; return pending }
+    /// Stages the heard time of a recorded occurrence when it grew since it was last saved.
+    private mutating func stage(_ occurrence: inout Occurrence) {
+        guard occurrence.recorded, let id = occurrence.recordID, occurrence.heard > occurrence.savedHeard + 0.5 else { return }
+        pending = occurrence.record(id: id); occurrence.savedHeard = occurrence.heard
+    }
     public init(policy: ListeningPolicy) { self.policy = policy }
 
     /// Feeds one reading. Returns the play to record when this reading is the one that completes it (at most one per occurrence).
     public mutating func observe(_ reading: ListeningObservation) -> LocalHistoryRecord? {
         // An advertisement or a preview is not the track: nothing counts and the track's occurrence is left as it was (the same
         // content resumes after an ad), but the clock baseline is dropped so the gap is never counted.
-        guard reading.content == .track else { current?.lastClock = nil; current?.lastPosition = nil; return nil }
+        guard reading.content == .track else {
+            if var paused = current { paused.lastClock = nil; paused.lastPosition = nil; stage(&paused); current = paused }
+            return nil
+        }
         guard let video = reading.videoID else { return nil }
         if reading.ended {
             // The end of an occurrence is bookkeeping only. A duplicate end report is the same no-op.
-            if current?.videoID == video { current?.ended = true; current?.lastClock = nil; current?.lastPosition = nil }
+            if var finished = current, finished.videoID == video {
+                finished.ended = true; finished.lastClock = nil; finished.lastPosition = nil; stage(&finished); current = finished
+            }
             return nil
         }
         var replay = false
         if let existing = current, existing.videoID == video, existing.ended, reading.playing, !reading.buffering,
            reading.position < max(0, existing.duration - 1) { replay = true }
         if current?.videoID != video || replay {
+            if var previous = current { stage(&previous) }
             current = Occurrence(videoID: video, title: nil, artist: nil, duration: reading.duration, startedAt: reading.wall)
         }
         guard var occurrence = current else { return nil }
@@ -103,6 +132,7 @@ public struct ListeningHistoryRecorder: Sendable {
         defer { current = occurrence }
         guard reading.playing, !reading.buffering, !occurrence.ended else {
             occurrence.lastClock = nil; occurrence.lastPosition = nil
+            stage(&occurrence)
             return nil
         }
         if let lastClock = occurrence.lastClock, let lastPosition = occurrence.lastPosition {
@@ -115,8 +145,13 @@ public struct ListeningHistoryRecorder: Sendable {
             }
         }
         occurrence.lastClock = reading.monotonic; occurrence.lastPosition = reading.position
-        guard !occurrence.recorded, let threshold = policy.threshold(duration: occurrence.duration), occurrence.heard >= threshold else { return nil }
-        occurrence.recorded = true
-        return LocalHistoryRecord(videoID: occurrence.videoID, title: occurrence.title ?? "", artist: occurrence.artist, startedAt: occurrence.startedAt, listenedSeconds: occurrence.heard)
+        if occurrence.recorded {
+            if occurrence.heard >= occurrence.savedHeard + Self.updateInterval { stage(&occurrence) }
+            return nil
+        }
+        guard let threshold = policy.threshold(duration: occurrence.duration), occurrence.heard >= threshold else { return nil }
+        let id = UUID()
+        occurrence.recorded = true; occurrence.recordID = id; occurrence.savedHeard = occurrence.heard
+        return occurrence.record(id: id)
     }
 }

@@ -2,3 +2,4 @@
 # Format: key<TAB>one form.
 %lld seconds remaining	%lld second remaining
 Fading · %lld seconds remaining	Fading · %lld second remaining
+%lld plays	%lld play
