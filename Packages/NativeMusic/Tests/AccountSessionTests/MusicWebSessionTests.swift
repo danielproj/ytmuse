@@ -626,6 +626,16 @@ private func signIn(_ h: Harness, for account: AccountContext? = nil) async thro
         #expect(!MusicWebSignInOptions(defaults: defaults).suppressPasskeys)
         #expect(!MusicWebSignInOptions(defaults: defaults).safariApplicationName)
     }
+    /// With Apple's web-browser passkey entitlement Google's passkey challenge is left alone; an explicit value still wins.
+    @Test func passkeysRunUntouchedOnlyWhenTheBuildIsEntitled() throws {
+        let scratch = ScratchDefaults(); defer { scratch.clean() }
+        let defaults = scratch.defaults
+        #expect(MusicWebSignInOptions(defaults: defaults, passkeysEntitled: false).suppressPasskeys)
+        #expect(!MusicWebSignInOptions(defaults: defaults, passkeysEntitled: true).suppressPasskeys)
+        defaults.set(true, forKey: MusicWebSignInOptions.suppressPasskeysKey)
+        #expect(MusicWebSignInOptions(defaults: defaults, passkeysEntitled: true).suppressPasskeys)
+        #expect(!PasskeyEntitlement.held, "the unsigned test process never holds the entitlement")
+    }
     @Test func unknownHeaderAndLocalKeychainFaultsNeverExpireTheIdentity() async throws {
         let h = try await harness()
         try await signIn(h)

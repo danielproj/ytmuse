@@ -10,7 +10,7 @@ public enum MusicPageStyle {
 private struct PageInsetSurface: ViewModifier {
     @Environment(\.colorSchemeContrast) private var contrast
     func body(content: Content) -> some View {
-        content.background(Color(nsColor: .controlBackgroundColor), in: MusicCorner.feature.shape)
+        content.background(MusicStyle.card, in: MusicCorner.feature.shape)
             .overlay(MusicCorner.feature.shape.strokeBorder(Color.primary.opacity(contrast == .increased ? 0.6 : 0.08)))
     }
 }

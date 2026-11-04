@@ -15,9 +15,9 @@ public struct MusicTint: Equatable, Sendable {
   public static let minimumContrast = 4.5
   /// The strongest wash glass ever receives.
   public static let maximumOpacity = 0.18
-  /// Relative luminance of the glass backdrop under a window, lightest and darkest plausible: dark glass is not darker than 0.03 nor lighter than 0.10;
+  /// Relative luminance of the glass backdrop under a window, lightest and darkest plausible: dark glass (scrimmed to near-black since deep dark) is not lighter than 0.10;
   /// light glass is not lighter than 0.95 nor darker than 0.70. Contrast with text of fixed luminance is monotonic in the backdrop, so the ends decide.
-  public static func backdropRange(_ scheme: ColorScheme) -> ClosedRange<Double> { scheme == .dark ? 0.03...0.10 : 0.70...0.95 }
+  public static func backdropRange(_ scheme: ColorScheme) -> ClosedRange<Double> { scheme == .dark ? 0.0...0.10 : 0.70...0.95 }
   /// Luminance of `MusicStyle.secondaryText` (opaque gray; see `MusicStyle.secondaryGray`).
   static func secondaryTextLuminance(_ scheme: ColorScheme) -> Double { MusicTint.linear(MusicStyle.secondaryGray(scheme)) }
   static func linear(_ component: Double) -> Double { component <= 0.04045 ? component / 12.92 : pow((component + 0.055) / 1.055, 2.4) }

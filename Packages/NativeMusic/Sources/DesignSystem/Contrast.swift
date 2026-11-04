@@ -52,6 +52,16 @@ public enum MusicPalette {
   public static func accentFill(_ scheme: ColorScheme, increased: Bool) -> ContrastColor {
     increased ? ContrastColor(0.55, 0.06, 0.14) : ContrastColor(0.72, 0.16, 0.24)
   }
+  /// Deep dark (2026-11-04): the dark appearance's surfaces are near-black rather than the system's window gray, so the window reads as
+  /// dark, not gray. Encoded sRGB white levels, lightest on top: the canvas, then panels, then cards inside panels. Light text only gains
+  /// contrast as these fall, so every audited role keeps (or improves) its ratio; the content and glass ranges below include them.
+  public static let darkCanvas = 0.010
+  /// Region panels when they are opaque (Reduce Transparency, Increase Contrast) and the small opaque glass fallbacks.
+  public static let darkPanel = 0.045
+  /// Quiet cards inside a page (`musicInsetSurface`): a step above the panel so they still separate from it.
+  public static let darkCard = 0.085
+  /// Black laid inside native glass (and its simplified material) in dark, so panels stay dark even over a light desktop or artwork.
+  public static let darkGlassScrim = 0.5
   /// The glyph drawn on `accentFill`.
   public static let glyphOnAccentFill = ContrastColor(1, 1, 1)
   /// Badge fills with white text (Live): the pure system red and gray were 4.0:1.
@@ -70,7 +80,7 @@ public enum ContrastBackdrop: Sendable {
   public func range(_ scheme: ColorScheme) -> ClosedRange<Double> {
     switch self {
     case .glass: MusicTint.backdropRange(scheme)
-    case .content: scheme == .dark ? 0.008...0.05 : 0.78...1.0
+    case .content: scheme == .dark ? 0.0...0.05 : 0.78...1.0
     }
   }
 }

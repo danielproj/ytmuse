@@ -1,6 +1,7 @@
 import AppKit
 import Foundation
 import Observation
+import Security
 import WebKit
 
 /// Transient, app-owned WebKit data stores: one fresh identifier per sign-in
@@ -102,8 +103,8 @@ public struct MusicWebSignInOptions: Sendable, Equatable {
     /// (b) On Google's accounts hosts only, remove the WebAuthn capability so
     /// passkey accounts fall back to Google's other methods (Kaset ADR-0033).
     /// ON by default since the first live sign-in (2026-10-28) showed Google's
-    /// passkey challenge, which cannot complete in an app web view. Real passkey
-    /// support is a separate future lane.
+    /// passkey challenge, which cannot complete in an app web view without Apple's
+    /// web-browser passkey entitlement. Off by default once that entitlement is held.
     public var suppressPasskeys: Bool
     public var timeout: Duration
     public init(safariApplicationName: Bool = false, suppressPasskeys: Bool = true, timeout: Duration = .seconds(900)) {
@@ -111,11 +112,25 @@ public struct MusicWebSignInOptions: Sendable, Equatable {
     }
     public static let safariApplicationNameKey = "YTMuseSignInSafariApplicationName"
     public static let suppressPasskeysKey = "YTMuseSignInSuppressPasskeys"
-    public init(defaults: UserDefaults) {
-        // Passkey suppression is on unless explicitly disabled (`-bool NO`).
+    /// An explicit `defaults` value always wins. Otherwise passkeys are suppressed unless this signed build holds Apple's
+    /// web-browser passkey entitlement, the only thing that lets WebKit complete a google.com passkey (Touch ID, the phone,
+    /// a security key) inside an app web view. With it, Google's own passkey challenge runs untouched.
+    public init(defaults: UserDefaults, passkeysEntitled: Bool = PasskeyEntitlement.held) {
         self.init(safariApplicationName: defaults.bool(forKey: Self.safariApplicationNameKey),
-                  suppressPasskeys: defaults.object(forKey: Self.suppressPasskeysKey) as? Bool ?? true)
+                  suppressPasskeys: defaults.object(forKey: Self.suppressPasskeysKey) as? Bool ?? !passkeysEntitled)
     }
+}
+
+/// Whether the running process is signed with `com.apple.developer.web-browser.public-key-credential`. Apple grants it on
+/// request (Account Holder, Certificates, Identifiers & Profiles); it needs a provisioning profile, so it is never in the
+/// repository's entitlements. Read once from the process's own signature; no prompt, no store.
+public enum PasskeyEntitlement {
+    public static let key = "com.apple.developer.web-browser.public-key-credential"
+    public static let held: Bool = {
+        guard let task = SecTaskCreateFromSelf(nil),
+              let value = SecTaskCopyValueForEntitlement(task, key as CFString, nil) else { return false }
+        return (value as? Bool) ?? false
+    }()
 }
 
 public enum MusicSignInNavigation {

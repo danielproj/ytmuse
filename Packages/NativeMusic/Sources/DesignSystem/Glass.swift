@@ -17,7 +17,7 @@ private struct MusicGlassModifier<S: Shape>: ViewModifier {
   func body(content: Content) -> some View {
     Group {
       if glass.policy.opaque {
-        content.background(Color(nsColor: .windowBackgroundColor), in: shape).overlay(shape.stroke(Color.primary.opacity(0.6), lineWidth: 1))
+        content.background(MusicStyle.opaqueSurface, in: shape).overlay(shape.stroke(Color.primary.opacity(0.6), lineWidth: 1))
       } else if glass.policy.simplified {
         content.background(.regularMaterial, in: shape).overlay(shape.stroke(Color.primary.opacity(edge ? 0.28 : 0), lineWidth: 1))
       } else {

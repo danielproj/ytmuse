@@ -41,6 +41,15 @@ public enum MusicStyle {
   /// The fill of the prominent Play/Pause buttons (a white glyph sits on it): see `MusicPalette.accentFill`.
   public static let accentFillNSColor = adaptive { dark, increased in MusicPalette.accentFill(dark ? .dark : .light, increased: increased).nsColor }
   public static let accentFill = Color(nsColor: accentFillNSColor)
+  /// Deep dark surfaces (`MusicPalette.darkCanvas` and the levels beside it); light appearances keep the system colours.
+  public static let canvasNSColor = adaptive { dark, _ in dark ? NSColor(white: MusicPalette.darkCanvas, alpha: 1) : .windowBackgroundColor }
+  public static let opaqueSurfaceNSColor = adaptive { dark, _ in dark ? NSColor(white: MusicPalette.darkPanel, alpha: 1) : .windowBackgroundColor }
+  public static let cardNSColor = adaptive { dark, _ in dark ? NSColor(white: MusicPalette.darkCard, alpha: 1) : .controlBackgroundColor }
+  public static let canvas = Color(nsColor: canvasNSColor)
+  public static let opaqueSurface = Color(nsColor: opaqueSurfaceNSColor)
+  public static let card = Color(nsColor: cardNSColor)
+  /// What dark glass carries inside its shape; nothing in light.
+  public static func glassScrim(_ scheme: ColorScheme) -> Color { scheme == .dark ? Color.black.opacity(MusicPalette.darkGlassScrim) : .clear }
   public static let secondaryText = Color(nsColor: secondaryTextNSColor)
   public static let errorText = Color(nsColor: errorTextNSColor)
   public static let accent = Color(nsColor: accentNSColor)
@@ -102,20 +111,21 @@ private struct MusicSurface: ViewModifier {
   /// A radius of the surface's own (the player capsule: half its height); nil takes the corner role's.
   var radius: CGFloat?
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.colorScheme) private var scheme
   private var glass = MusicGlassEnvironment()
   init(corner: MusicCorner, tint: Color?, interactive: Bool, morph: MusicMorph?, radius: CGFloat? = nil) { self.corner = corner; self.tint = tint; self.interactive = interactive; self.morph = morph; self.radius = radius }
   func body(content: Content) -> some View {
     Group {
       if glass.policy.opaque {
-        content.background { matched(shape.fill(Color(nsColor: .windowBackgroundColor))) }
+        content.background { matched(shape.fill(MusicStyle.opaqueSurface)) }
           .overlay(shape.stroke(Color.primary.opacity(0.6), lineWidth: 1))
       } else if glass.policy.simplified {
-        content.background { matched(shape.fill(.regularMaterial)) }
+        content.background { matched(shape.fill(.regularMaterial).overlay(shape.fill(MusicStyle.glassScrim(scheme)))) }
       } else if let morph {
-        content.glassEffect(effect, in: shape).glassEffectID(morph.id, in: morph.namespace)
+        scrimmed(content).glassEffect(effect, in: shape).glassEffectID(morph.id, in: morph.namespace)
           .glassEffectTransition(reduceMotion ? .identity : .matchedGeometry)
       } else {
-        content.glassEffect(effect, in: shape)
+        scrimmed(content).glassEffect(effect, in: shape)
       }
     }
     .onReceive(MusicGlassPower.changes) { _ in
@@ -128,6 +138,8 @@ private struct MusicSurface: ViewModifier {
     if let tint { value = value.tint(tint) }
     return interactive ? value.interactive() : value
   }
+  /// Deep dark: the scrim rides inside the glass shape, under the content, so dark panels stay near-black whatever lies behind them.
+  private func scrimmed(_ content: Content) -> some View { content.background(shape.fill(MusicStyle.glassScrim(scheme))) }
   private var shape: RoundedRectangle { radius.map { RoundedRectangle(cornerRadius: $0, style: .continuous) } ?? corner.shape }
   @ViewBuilder private func matched<S: View>(_ backing: S) -> some View {
     if let morph, !reduceMotion { backing.matchedGeometryEffect(id: morph.id, in: morph.namespace) } else { backing }
@@ -161,13 +173,16 @@ public struct MusicCanvas: View {
   private let artworkAccent: Color?
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @Environment(\.colorSchemeContrast) private var contrast
+  @Environment(\.colorScheme) private var scheme
   public init(artworkAccent: Color? = nil) { self.artworkAccent = artworkAccent }
   public var body: some View {
     ZStack {
-      Color(nsColor: .windowBackgroundColor)
+      MusicStyle.canvas
+      // Deep dark: a fainter accent glow and no white lift in the far corner, so the canvas stays near-black.
       if !reduceTransparency && contrast != .increased {
         LinearGradient(
-          colors: [(artworkAccent ?? MusicStyle.accent).opacity(0.10), .clear, .primary.opacity(0.04)],
+          colors: scheme == .dark ? [(artworkAccent ?? MusicStyle.accent).opacity(0.06), .clear, .clear]
+                                  : [(artworkAccent ?? MusicStyle.accent).opacity(0.10), .clear, .primary.opacity(0.04)],
           startPoint: .topLeading, endPoint: .bottomTrailing)
       }
     }.ignoresSafeArea().accessibilityHidden(true).allowsHitTesting(false)
@@ -293,6 +308,15 @@ extension View {
     modifier(MusicButtons(prominent: prominent))
   }
   public func musicCanvas() -> some View { background { MusicCanvas() } }
+  /// Deep dark: the split view's sidebar column draws the system sidebar gray behind its panel; in dark it takes the near-black canvas instead.
+  public func musicSidebarColumn() -> some View { modifier(MusicSidebarColumn()) }
+}
+
+private struct MusicSidebarColumn: ViewModifier {
+  @Environment(\.colorScheme) private var scheme
+  func body(content: Content) -> some View {
+    if scheme == .dark { content.background { MusicStyle.canvas.ignoresSafeArea().accessibilityHidden(true).allowsHitTesting(false) } } else { content }
+  }
 }
 
 /// One group per control region; spacing smaller than control gaps prevents merging at rest.
