@@ -6,7 +6,7 @@
 
 ## Status, honestly
 
-The [0.1.1 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.1) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. A clean-second-Mac installation and a real signed update/rollback rehearsal remain unverified. The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
+The [0.1.2 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.2) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. A clean-second-Mac installation and a real signed update/rollback rehearsal remain unverified. The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
 
 The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. Radio tuning filters still fail to load. These checks do not close the full account matrix, audible-output, accessibility, hardware or distribution gates below:
 
@@ -21,7 +21,7 @@ Automated tests use **sanitized fixtures and owned synthetic audio**, isolated f
 
 ## Install the preview
 
-Download `YTMuse-0.1.1.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.1), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
+Download `YTMuse-0.1.2.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.2), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
 
 ## Build from source
 
