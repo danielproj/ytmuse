@@ -1,6 +1,6 @@
 # Distribution, updates and the App Store question
 
-This is the design for how YTMuse is built, delivered and updated (specification section 22, BUILD01–BUILD08, SEC09, SEC10, ARCH05, ARCH10). The cleaned source repository is public; its owner/name is supplied at packaging time. The [0.1.0 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.0) includes a Developer ID-signed, notarized and stapled app and DMG, checksums, an SBOM and a signed update feed. Local signature, Gatekeeper and feed checks passed. Clean-second-Mac installation and a real signed update/rollback rehearsal remain unverified, so G09 remains open. See [GitHub-Releases.md](GitHub-Releases.md) for current setup and [Publishing-Checklist.md](Publishing-Checklist.md) for the release checks.
+This is the design for how YTMuse is built, delivered and updated (specification section 22, BUILD01–BUILD08, SEC09, SEC10, ARCH05, ARCH10). The cleaned source repository is public; its owner/name is supplied at packaging time. The [0.1.1 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.1) includes a Developer ID-signed, notarized and stapled app and DMG, checksums, an SBOM and a signed update feed. Local signature, Gatekeeper and feed checks passed. Clean-second-Mac installation and a real signed update/rollback rehearsal remain unverified, so G09 remains open. See [GitHub-Releases.md](GitHub-Releases.md) for current setup and [Publishing-Checklist.md](Publishing-Checklist.md) for the release checks.
 
 ## Delivery
 
