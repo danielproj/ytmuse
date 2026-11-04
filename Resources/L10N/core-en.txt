@@ -1373,3 +1373,8 @@ Q39|Undo: removed %lld songs
 1408|This filter needs playback options this app can’t apply yet.
 1409|Filters require this radio’s active player, readable queue and supported playback options. Restart the radio to reload its controls.
 1410|YouTube Music hasn’t confirmed the requested filter. The selection shown comes from its queue.
+1411|Plays
+1412|Listening time
+1413|Last 14 days
+1414|Since %@
+Q40|%lld plays

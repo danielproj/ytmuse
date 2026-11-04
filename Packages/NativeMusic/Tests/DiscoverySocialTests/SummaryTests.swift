@@ -92,8 +92,37 @@ struct ScriptedSummary: AccountSummarySource {
         let summary = LocalListeningSummary.make(from: [record("A", "X", seconds: 30, at: 10), record("B", "X", seconds: 70, at: 5), record("A", "Y", seconds: 0, at: 20)])
         #expect(summary.plays == 3 && summary.listenedSeconds == 100)
         #expect(summary.since == Date(timeIntervalSince1970: 5))
-        #expect(summary.topArtists == [.init(name: "X", plays: 2), .init(name: "Y", plays: 1)])
-        #expect(summary.topTracks == [.init(name: "A", plays: 2), .init(name: "B", plays: 1)])
+        #expect(summary.topArtists.map(\.name) == ["X", "Y"] && summary.topArtists.map(\.plays) == [2, 1])
+        #expect(summary.topTracks.map(\.name) == ["A", "B"] && summary.topTracks.map(\.plays) == [2, 1])
+        #expect(summary.topTracks[0].seconds == 30 && summary.topArtists[0].seconds == 100)
+        #expect(summary.songs == 2 && summary.artists == 2)
+    }
+    @Test func songsAreTheSameSongByVideoNotByTitle() {
+        let summary = LocalListeningSummary.make(from: [
+            LocalHistoryRecord(videoID: "one", title: "Intro", artist: "First", startedAt: .init(timeIntervalSince1970: 3), listenedSeconds: 60),
+            LocalHistoryRecord(videoID: "two", title: "Intro", artist: "Second", startedAt: .init(timeIntervalSince1970: 2), listenedSeconds: 60),
+            LocalHistoryRecord(videoID: "two", title: "Intro", artist: "Second", startedAt: .init(timeIntervalSince1970: 1), listenedSeconds: 60),
+        ])
+        #expect(summary.topTracks.map(\.id) == ["two", "one"], "two songs called Intro stay two songs")
+        #expect(summary.topTracks.map(\.detail) == ["Second", "First"], "each shows its own artist")
+        #expect(summary.songs == 2)
+    }
+    @Test func equalPlaysRankTheLongerListenFirst() {
+        let summary = LocalListeningSummary.make(from: [record("A", "X", seconds: 40), record("B", "Y", seconds: 200)])
+        #expect(summary.topTracks.map(\.name) == ["B", "A"] && summary.topArtists.map(\.name) == ["Y", "X"])
+    }
+    @Test func theLastDaysEndTodayAndKeepEmptyDays() {
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(identifier: "UTC")!
+        let now = Date(timeIntervalSince1970: 1_700_000_000)   // 2023-11-14 22:13 UTC
+        let today = calendar.startOfDay(for: now)
+        let records = [record("A", "X", seconds: 120, at: now.timeIntervalSince1970 - 60), record("B", "X", seconds: 30, at: now.timeIntervalSince1970 - 120),
+                       record("C", "X", seconds: 90, at: today.timeIntervalSince1970 - 3_600), record("D", "X", seconds: 50, at: today.timeIntervalSince1970 - 30 * 86_400)]
+        let summary = LocalListeningSummary.make(from: records, days: 14, now: now, calendar: calendar)
+        #expect(summary.recentDays.count == 14 && summary.recentDays.last?.start == today)
+        #expect(summary.recentDays.last?.plays == 2 && summary.recentDays.last?.seconds == 150)
+        #expect(summary.recentDays[12].plays == 1 && summary.recentDays[12].seconds == 90)
+        #expect(summary.recentDays.dropLast(2).allSatisfy { $0.plays == 0 }, "a play older than the window is in the totals, not in a day")
+        #expect(summary.plays == 4 && summary.listenedSeconds == 290)
     }
     @Test func itIsNeverOfficial() {
         #expect(LocalListeningSummary.make(from: [record("A", "X")]).isOfficial == false)

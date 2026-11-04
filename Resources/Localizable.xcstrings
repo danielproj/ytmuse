@@ -3539,6 +3539,143 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "%lld plays": {
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld Wiedergabe"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld Wiedergaben"
+                }
+              }
+            }
+          }
+        },
+        "de-CH": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld Wiedergabe"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld Wiedergaben"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld plays"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld play"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld reproducción"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld de reproducciones"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld reproducciones"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld lecture"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld de lectures"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld lectures"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld воспроизведение"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld воспроизведения"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld воспроизведений"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "needs_review",
+                  "value": "%lld воспроизведения"
+                }
+              }
+            }
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "%lld plays · %@ listened": {
       "localizations": {
         "de": {
@@ -24021,6 +24158,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Last 14 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Letzte 14 Tage"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Letzte 14 Tage"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last 14 days"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Últimos 14 días"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "14 derniers jours"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Последние 14 дней"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Launch": {
       "localizations": {
         "de": {
@@ -25135,6 +25313,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Скорость прослушивания для этого шоу"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Listening time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Hörzeit"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Hörzeit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening time"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Tiempo de escucha"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Temps d’écoute"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Время прослушивания"
           }
         }
       },
@@ -38012,6 +38231,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Здесь появляются плейлисты, которые вы сохраняете в YouTube Music."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Plays": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Wiedergaben"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Wiedergaben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Reproducciones"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Lectures"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Воспроизведения"
           }
         }
       },
@@ -53099,6 +53359,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Выполняется вход в YouTube Music…"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Since %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Seit %@"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Seit %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Since %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Desde el %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Depuis le %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "С %@"
           }
         }
       },

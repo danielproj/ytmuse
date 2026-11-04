@@ -306,3 +306,8 @@
 1408|Este filtro necesita opciones de reproducción que la app aún no puede aplicar.
 1409|Los filtros necesitan el reproductor activo de esta radio, una cola legible y opciones de reproducción compatibles. Reinicia la radio para recargar sus controles.
 1410|YouTube Music aún no ha confirmado el filtro solicitado. La selección mostrada procede de su cola.
+1411|Reproducciones
+1412|Tiempo de escucha
+1413|Últimos 14 días
+1414|Desde el %@
+Q40|one:%lld reproducción	many:%lld de reproducciones	other:%lld reproducciones

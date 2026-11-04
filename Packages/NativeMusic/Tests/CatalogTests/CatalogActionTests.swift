@@ -308,3 +308,21 @@ import YouTubeMusicAdapter
         #expect(performer.targets.isEmpty)
     }
 }
+
+/// Home cards: the artwork square is a control (it did nothing before, so clicking a song's cover did nothing).
+@Suite struct CardArtworkActionTests {
+    @Test func aSongOrVideoCoverPlaysAndACollectionCoverOpensItsPage() {
+        let song = MusicCatalogItem(kind: .song, title: "Song", videoID: "aaaaaaaaaa1")
+        let video = MusicCatalogItem(kind: .video, title: "Video", videoID: "bbbbbbbbbb2")
+        let album = MusicCatalogItem(kind: .album, title: "Album", browseID: "MPREb_x", playlistID: "OLAK5uy_album")
+        let playlist = MusicCatalogItem(kind: .playlist, title: "Hits", browseID: "VLRDCLAK5uyeditorial", playlistID: "RDCLAK5uyeditorial")
+        let artist = MusicCatalogItem(kind: .artist, title: "Artist", browseID: "UCartist")
+        #expect(CatalogActionPlan.canEverPlay(song) && CardArtworkAction.of(song) == .play)
+        #expect(CardArtworkAction.of(video) == .play)
+        #expect(CardArtworkAction.of(album) == .open && CardArtworkAction.of(playlist) == .open && CardArtworkAction.of(artist) == .open)
+    }
+    @Test func aCoverThatCanNeitherPlayNorOpenDoesNothing() {
+        let episode = MusicCatalogItem(kind: .episode, title: "Episode", videoID: "cccccccccc3")
+        #expect(!CatalogActionPlan.canEverPlay(episode) && CardArtworkAction.of(episode) == nil)
+    }
+}

@@ -165,7 +165,7 @@ extension LocalAccountBootstrap {
         let samples = SamplesModel(source: samplesSource, arbiter: arbiter, performer: performer, signedIn: signedIn)
         let tuner = TunerModel(seedBook: RadioSeedBook(), performer: performer, source: controlsSource, signedIn: signedIn)
         let summaries = AccountSummaryModel(source: summarySource, signedIn: signedIn, localRecords: { [unowned self] in
-            await library.history.loadLocal(); return library.history.local
+            await library.history.allLocalRecords()
         })
         let surface = DiscoverySurface(samples: samples, tuner: tuner, summaries: summaries, development: development)
         #if DEBUG

@@ -292,26 +292,152 @@ struct SummaryStateView<P: Equatable & Sendable, Loaded: View>: View {
 struct LocalListeningSection: View {
     @Bindable var model: AccountSummaryModel
     var body: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.xs) {
-            Text("Counted by YTMuse from what it played on this Mac. This is not YouTube Music’s Recap, and it never leaves this Mac.")
+        VStack(alignment: .leading, spacing: MusicSpace.md) {
+            Label { Text("Counted by YTMuse from what it played on this Mac. This is not YouTube Music’s Recap, and it never leaves this Mac.") } icon: { Image(systemName: "lock.fill") }
                 .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("localListeningNote")
             if let local = model.local {
-                let listened = Duration.seconds(local.listenedSeconds).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
-                Text("\(local.plays) plays · \(listened) listened").accessibilityIdentifier("localListeningTotals")
-                if !local.topArtists.isEmpty {
-                    Text("Most played artists on this Mac").font(.subheadline.weight(.semibold))
-                    ForEach(local.topArtists) { Text("\($0.name) · \($0.plays)").font(.callout) }
-                }
-                if !local.topTracks.isEmpty {
-                    Text("Most played songs on this Mac").font(.subheadline.weight(.semibold))
-                    ForEach(local.topTracks) { Text("\($0.name) · \($0.plays)").font(.callout) }
+                LocalListeningTotals(summary: local)
+                if local.recentDays.contains(where: { $0.plays > 0 }) { LocalListeningDays(days: local.recentDays) }
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .top, spacing: MusicSpace.md) { rankings(local) }
+                    VStack(alignment: .leading, spacing: MusicSpace.md) { rankings(local) }
                 }
             } else {
-                Text("Nothing has been played in YTMuse on this Mac yet.").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("localListeningNone")
+                Label { Text("Nothing has been played in YTMuse on this Mac yet.") } icon: { Image(systemName: "waveform") }
+                    .font(.callout).foregroundStyle(MusicStyle.secondaryText).padding(MusicSpace.md)
+                    .frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface().accessibilityIdentifier("localListeningNone")
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .contain).accessibilityIdentifier("localListening")
+    }
+    @ViewBuilder private func rankings(_ local: LocalListeningSummary) -> some View {
+        if !local.topArtists.isEmpty { LocalRankingCard(title: "Most played artists on this Mac", symbol: "music.mic", entries: local.topArtists, identifier: "localTopArtists") }
+        if !local.topTracks.isEmpty { LocalRankingCard(title: "Most played songs on this Mac", symbol: "music.note", entries: local.topTracks, identifier: "localTopSongs") }
+    }
+}
+
+/// Plays, time heard, and how many different songs and artists, as large figures.
+private struct LocalListeningTotals: View {
+    let summary: LocalListeningSummary
+    var body: some View {
+        let listened = Duration.seconds(summary.listenedSeconds).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
+        VStack(alignment: .leading, spacing: MusicSpace.xs) {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: MusicSpace.sm) { tiles(listened) }
+                VStack(alignment: .leading, spacing: MusicSpace.sm) { playTiles(listened); varietyTiles }
+            }
+            if let since = summary.since {
+                Text("Since \(since.formatted(date: .long, time: .omitted))").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                    .accessibilityIdentifier("localListeningSince")
+            }
+        }
+    }
+    @ViewBuilder private func tiles(_ listened: String) -> some View { playTiles(listened); varietyTiles }
+    @ViewBuilder private func playTiles(_ listened: String) -> some View {
+        // One element for VoiceOver, read as the sentence the totals always were.
+        HStack(spacing: MusicSpace.sm) {
+            LocalFigure(value: summary.plays.formatted(), label: "Plays", symbol: "play.circle.fill", prominent: true)
+            LocalFigure(value: listened, label: "Listening time", symbol: "clock.fill", prominent: true)
+        }
+        .accessibilityElement(children: .ignore).accessibilityLabel(Text("\(summary.plays) plays · \(listened) listened"))
+        .accessibilityIdentifier("localListeningTotals")
+    }
+    @ViewBuilder private var varietyTiles: some View {
+        HStack(spacing: MusicSpace.sm) {
+            LocalFigure(value: summary.songs.formatted(), label: "Songs", symbol: "music.note", prominent: false).accessibilityElement(children: .combine)
+            LocalFigure(value: summary.artists.formatted(), label: "Artists", symbol: "music.mic", prominent: false).accessibilityElement(children: .combine)
+        }
+    }
+}
+
+private struct LocalFigure: View {
+    let value: String
+    let label: LocalizedStringKey
+    let symbol: String
+    let prominent: Bool
+    var body: some View {
+        VStack(alignment: .leading, spacing: MusicSpace.xxs) {
+            Label(label, systemImage: symbol).font(.caption.weight(.medium)).foregroundStyle(prominent ? MusicStyle.accent : MusicStyle.secondaryText)
+            Text(value).font(.title.weight(.semibold)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.6)
+        }
+        .padding(MusicSpace.md).frame(minWidth: 120, maxWidth: .infinity, alignment: .leading).musicInsetSurface()
+    }
+}
+
+/// Minutes heard on each of the last days, as bars; today is the last bar.
+private struct LocalListeningDays: View {
+    let days: [LocalListeningSummary.Day]
+    private let chartHeight: CGFloat = 96
+    var body: some View {
+        let peak = max(days.map(\.seconds).max() ?? 0, 1)
+        VStack(alignment: .leading, spacing: MusicSpace.sm) {
+            Text("Last 14 days").font(.headline).accessibilityAddTraits(.isHeader)
+            HStack(alignment: .bottom, spacing: MusicSpace.xxs) {
+                ForEach(days) { day in
+                    let isToday = day.id == days.last?.id
+                    VStack(spacing: MusicSpace.xxs) {
+                        ZStack(alignment: .bottom) {
+                            MusicCorner.badge.shape.fill(Color.primary.opacity(0.05)).frame(height: chartHeight)
+                            MusicCorner.badge.shape.fill(MusicStyle.accent.opacity(isToday ? 1 : 0.6))
+                                .frame(height: day.seconds > 0 ? max(MusicSpace.xxs, chartHeight * day.seconds / peak) : 0)
+                        }
+                        .frame(maxWidth: MusicSpace.lg)
+                        Text(day.start.formatted(.dateTime.weekday(.narrow))).font(.caption2.weight(isToday ? .bold : .regular))
+                            .foregroundStyle(isToday ? Color.primary : MusicStyle.secondaryText)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .help(Text(verbatim: summary(day)))
+                    .accessibilityElement(children: .ignore).accessibilityLabel(Text(verbatim: summary(day)))
+                }
             }
         }
         .padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
-        .accessibilityElement(children: .contain).accessibilityIdentifier("localListening")
+        .accessibilityElement(children: .contain).accessibilityIdentifier("localListeningDays")
+    }
+    private func summary(_ day: LocalListeningSummary.Day) -> String {
+        let minutes = Duration.seconds(day.seconds).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
+        return [day.start.formatted(date: .complete, time: .omitted), String(localized: "\(day.plays) plays"), minutes]
+            .joined(separator: String(localized: "detailSeparator"))
+    }
+}
+
+/// A ranked list with a bar showing each entry's share against the first.
+private struct LocalRankingCard: View {
+    let title: LocalizedStringKey
+    let symbol: String
+    let entries: [LocalListeningSummary.Ranked]
+    let identifier: String
+    var body: some View {
+        let most = max(entries.map(\.plays).max() ?? 1, 1)
+        VStack(alignment: .leading, spacing: MusicSpace.sm) {
+            Label(title, systemImage: symbol).font(.headline).accessibilityAddTraits(.isHeader)
+            ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                HStack(alignment: .center, spacing: MusicSpace.sm) {
+                    Text((index + 1).formatted()).font(.title3.weight(.semibold)).monospacedDigit()
+                        .foregroundStyle(index == 0 ? MusicStyle.accent : MusicStyle.secondaryText).frame(width: MusicSpace.lg, alignment: .center)
+                    VStack(alignment: .leading, spacing: MusicSpace.xxs) {
+                        HStack(alignment: .firstTextBaseline, spacing: MusicSpace.xs) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text(entry.name).font(.body.weight(.medium)).lineLimit(1)
+                                if let detail = entry.detail { Text(detail).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1) }
+                            }
+                            Spacer(minLength: MusicSpace.xs)
+                            Text("\(entry.plays) plays").font(.caption.monospacedDigit()).foregroundStyle(MusicStyle.secondaryText).fixedSize()
+                        }
+                        GeometryReader { proxy in
+                            Capsule().fill(Color.primary.opacity(0.06))
+                                .overlay(alignment: .leading) {
+                                    Capsule().fill(MusicStyle.accent.opacity(index == 0 ? 1 : 0.6)).frame(width: proxy.size.width * CGFloat(entry.plays) / CGFloat(most))
+                                }
+                        }.frame(height: MusicSpace.xxs).accessibilityHidden(true)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+            }
+        }
+        .padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .topLeading).musicInsetSurface()
+        .accessibilityElement(children: .contain).accessibilityIdentifier(identifier)
     }
 }
 

@@ -100,6 +100,7 @@ actor DevelopmentLocalHistory: LocalHistoryStoring {
     ]
     func append(_ record: LocalHistoryRecord, account: String) { records.insert(record, at: 0) }
     func recent(account: String, limit: Int) -> [LocalHistoryRecord] { Array(records.prefix(limit)) }
+    func update(_ record: LocalHistoryRecord, account: String) { if let index = records.firstIndex(where: { $0.id == record.id }) { records[index] = record } }
     func clear(account: String) { records = [] }
 }
 #endif

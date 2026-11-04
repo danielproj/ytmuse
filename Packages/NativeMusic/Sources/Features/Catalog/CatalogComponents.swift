@@ -86,7 +86,20 @@ struct FeedbackLine: View {
     }
 }
 
-/// A card for carousels and grids: artwork, title, detail line. Opening and Play are separate controls.
+/// What clicking a card's artwork does: a song or video plays (as YouTube Music does), anything with a page of its own opens it, and an
+/// entry that only plays, plays. nil: the artwork has nothing to do.
+public enum CardArtworkAction: Equatable, Sendable {
+    case play, open
+    public static func of(_ item: MusicCatalogItem) -> CardArtworkAction? {
+        let plays = CatalogActionPlan.canEverPlay(item)
+        if plays, item.kind == .song || item.kind == .video { return .play }
+        if item.opensPage { return .open }
+        return plays ? .play : nil
+    }
+}
+
+/// A card for carousels and grids: artwork, title, detail line. The artwork is a control too (`CardArtworkAction`); the title opens and
+/// the Play button plays, and those two stay the card's accessible controls (the artwork repeats one of them, so VoiceOver skips it).
 struct CatalogCard: View {
     let item: MusicCatalogItem
     @Bindable var model: CatalogPageModel
@@ -96,7 +109,7 @@ struct CatalogCard: View {
         let offers = model.offers(for: item)
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
             ZStack(alignment: .bottomTrailing) {
-                CatalogArtworkView(thumbnails: item.thumbnails, edge: edge).musicHoverLift()
+                artwork
                 if CatalogActionPlan.canEverPlay(item) {
                     Button { Task { await model.perform(.play, on: item) } } label: { Label("Play", systemImage: "play.fill") }
                         .labelStyle(.iconOnly).help(Text("Play \(item.title)")).accessibilityLabel(Text("Play \(item.title)"))
@@ -118,6 +131,21 @@ struct CatalogCard: View {
             ItemMenu(item: item, model: model, navigator: navigator)
         }
         .accessibilityActions { ForEach(offers.filter(\.isAvailable)) { offer in Button(offer.action.title) { Task { await model.perform(offer.action, on: item) } } } }
+    }
+    @ViewBuilder private var artwork: some View {
+        let image = CatalogArtworkView(thumbnails: item.thumbnails, edge: edge)
+        switch CardArtworkAction.of(item) {
+        case .play?:
+            Button { Task { await model.perform(.play, on: item) } } label: { image.contentShape(MusicCorner.artwork.shape(edge: edge)) }
+                .buttonStyle(.plain).musicHoverLift().help(Text("Play \(item.title)"))
+                .accessibilityHidden(true).accessibilityIdentifier("catalogArtwork-" + item.id)
+        case .open?:
+            Button { navigator.openItem(item) } label: { image.contentShape(MusicCorner.artwork.shape(edge: edge)) }
+                .buttonStyle(.plain).musicHoverLift().help(Text("Open \(item.title)"))
+                .accessibilityHidden(true).accessibilityIdentifier("catalogArtwork-" + item.id)
+        case nil:
+            image.musicHoverLift()
+        }
     }
 }
 

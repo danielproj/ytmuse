@@ -36,6 +36,8 @@ public struct RemoteHistoryControls: Sendable, Equatable {
     @ObservationIgnored private let store: (any LocalHistoryStoring)?
     @ObservationIgnored private let accountKey: @MainActor () -> String?
     @ObservationIgnored private let limit: Int
+    /// Writes run one after another, so a play's top-up can never land before the play itself.
+    @ObservationIgnored private var writes: Task<Void, Never>?
 
     public init(remote: LibraryCollectionModel, store: (any LocalHistoryStoring)?, policy: ListeningPolicy?, accountKey: @escaping @MainActor () -> String?, limit: Int = 500) {
         self.remote = remote; self.store = store; recorder = policy.map { ListeningHistoryRecorder(policy: $0) }; self.accountKey = accountKey; self.limit = limit
@@ -44,14 +46,29 @@ public struct RemoteHistoryControls: Sendable, Equatable {
     /// Local history exists only with a store and an adapter-defined listening policy.
     public var hasLocalStore: Bool { store != nil && recorder != nil }
 
-    /// One reading of real playback progress. Records at most one local play per listened occurrence.
+    /// One reading of real playback progress. Records at most one local play per listened occurrence, and tops up that play's heard time as
+    /// listening goes on.
     public func observe(_ reading: ListeningObservation) {
-        guard let record = recorder?.observe(reading) else { return }
-        guard let account = accountKey(), let store else { droppedWithoutAccount += 1; return }
-        Task { [weak self] in
-            do { try await store.append(record, account: account) } catch { self?.localFailure = true; return }
+        let record = recorder?.observe(reading)
+        let update = recorder?.takeUpdate()
+        guard record != nil || update != nil else { return }
+        guard let account = accountKey(), let store else { if record != nil { droppedWithoutAccount += 1 }; return }
+        if let update { write(account: account) { try await store.update(update, account: account) } }
+        if let record { write(account: account) { try await store.append(record, account: account) } }
+    }
+    private func write(account: String, _ operation: @escaping @Sendable () async throws -> Void) {
+        let previous = writes
+        writes = Task { [weak self] in
+            await previous?.value
+            do { try await operation() } catch { self?.localFailure = true; return }
             await self?.reloadLocal(account: account)
         }
+    }
+    /// Everything this Mac keeps for the account (the store's own bound, not the screen's `limit`), for totals that must not stop at a page.
+    public func allLocalRecords() async -> [LocalHistoryRecord] {
+        guard let account = accountKey(), let store else { return [] }
+        await writes?.value
+        return (try? await store.recent(account: account, limit: .max)) ?? local
     }
     public func loadLocal() async {
         guard let account = accountKey() else { local = []; localLoaded = true; return }
