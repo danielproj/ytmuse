@@ -183,6 +183,56 @@ private actor ScriptedReader: MusicSessionReading {
         if let libraryFailure { throw libraryFailure }
         return .init(value: writeOutcome, rotation: rotation)
     }
+    // Comments (C2): every call is recorded; each answer issues tokens of its own (call number, signed or anonymous, video), so a test can tell
+    // exactly which list a token came from. Holds are by call, so two reads can be in flight at once and finish in either order.
+    struct CommentCall: Sendable, Equatable { let request: MusicCommentsRequest; let signed: Bool }
+    var commentCalls: [CommentCall] = []
+    var commentSerial = 0
+    var commentSignedFailure: MusicSessionError?
+    var holdCommentCalls = 0
+    var heldComments: [CheckedContinuation<Void, Never>?] = []
+    func commentRequests() -> [CommentCall] { commentCalls }
+    func failSignedComments(_ error: MusicSessionError?) { commentSignedFailure = error }
+    func holdNextComments(_ count: Int) { holdCommentCalls = count }
+    func heldCommentCount() -> Int { heldComments.compactMap { $0 }.count }
+    func releaseHeldComments(at index: Int) { heldComments[index]?.resume(); heldComments[index] = nil }
+    func comments(_ request: MusicCommentsRequest, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicCommentsAnswer> {
+        commentCalls.append(CommentCall(request: request, signed: session != nil))
+        let serial = commentSerial; commentSerial += 1
+        if holdCommentCalls > 0 { holdCommentCalls -= 1; await withCheckedContinuation { heldComments.append($0) } }
+        if let commentSignedFailure, session != nil { throw commentSignedFailure }
+        return .init(value: Self.commentsAnswer(for: request, serial: serial, signed: session != nil), rotation: session != nil ? rotation : [])
+    }
+    static func commentsAnswer(for request: MusicCommentsRequest, serial: Int, signed: Bool) -> MusicCommentsAnswer {
+        func tag(_ kind: String) -> String { "\(kind)-\(signed ? "S" : "A")\(serial)-\(request.videoID)" }
+        func comment(_ id: String, parent: String?) -> MusicComment {
+            MusicComment(id: id, parentID: parent, replyLevel: parent == nil ? 0 : 1, authorName: "@person0001", isVerified: false, isCreator: false, isArtist: false,
+                         isCurrentUser: false, text: "text", publishedTime: "1 day ago", likeCountText: nil, replyCountText: parent == nil ? "2" : nil)
+        }
+        func page() -> MusicCommentsPage {
+            let header = MusicCommentsHeader(countText: "2 Comments", shortCountText: "2", sortOptions: [
+                .init(title: "Top", isSelected: true, token: tag("top")), .init(title: "Newest", isSelected: false, token: tag("new"))], posting: .signInRequired)
+            return MusicCommentsPage(header: header, threads: ["T1", "T2"].map { MusicCommentThread(comment: comment($0, parent: nil), repliesToken: tag("rep\($0)"), inlineReplies: []) },
+                                     nextToken: tag("more"))
+        }
+        switch request {
+        case .open: return .opened(entry: .continuation(tag("entry")), firstPage: page())
+        case .page: return .page(page())
+        case .replies(_, _, let parent): return .replies(MusicCommentsReplies(parentID: parent, replies: [comment(parent + ".R1", parent: parent)], nextToken: tag("repmore\(parent)")))
+        }
+    }
+    // Recap (MORE-FEATURES RECAP slice): signed only; every call is recorded; nothing here is a transport.
+    var recapReading: Result<MusicRecapReading, MusicSessionError> = .success(.serviceMessage(.init(headline: "Synthetic message")))
+    var recapCalls = 0
+    var holdRecapRead = false
+    func setRecap(_ reading: Result<MusicRecapReading, MusicSessionError>) { recapReading = reading }
+    func holdNextRecap() { holdRecapRead = true }
+    func recapRequests() -> Int { recapCalls }
+    func recap(session: MusicCookieSession) async throws -> MusicSignedResult<MusicRecapReading> {
+        recapCalls += 1
+        if holdRecapRead { holdRecapRead = false; await withCheckedContinuation { gate = $0 } }
+        return .init(value: try recapReading.get(), rotation: rotation)
+    }
 }
 @MainActor private final class ScriptedPresenter: MusicWebSignInPresenting {
     enum Outcome { case session, cancel, timeout }
@@ -689,5 +739,382 @@ private func signIn(_ h: Harness, for account: AccountContext? = nil) async thro
         for error in [MusicSessionError.signedOut, .unrecognised, .network, .cleanupRequired, .policy] { surfaces.append(MusicSignInFeedback.message(for: error)) }
         var dumped = ""; dump(await h.lifecycle.snapshot(), to: &dumped); surfaces.append(dumped)
         for surface in surfaces { for marker in Marker.all { #expect(!surface.contains(marker)) } }
+    }
+}
+
+// MARK: Comments read fences (MF-C2)
+//
+// The coordinator binds every comments continuation, sort and replies token to the video, kind, thread, comment list, signed/anonymous mode and
+// account generation that issued it, and refuses misuse BEFORE any request. The reader here is scripted (`ScriptedReader.comments`): these tests
+// prove the fences and the account scope, not the wire (that is `CommentsTransportTests`) and nothing signed against the real service.
+private let secondListener = MusicAccountIdentity(serviceID: "UCsecondSyntheticAccount", displayName: "Second", handle: nil, photoURL: nil)
+private let videoA = "aaaaaaaaaa1", videoB = "bbbbbbbbbb2"
+
+private struct OpenedList {
+    let reply: MusicBrowseReply<MusicCommentsAnswer>
+    let page: MusicCommentsPage
+    var top: String { page.header!.sortOptions[0].token }
+    var newest: String { page.header!.sortOptions[1].token }
+    var more: String { page.nextToken! }
+    func replies(_ thread: String) -> String { page.threads.first { $0.comment.id == thread }!.repliesToken! }
+}
+@MainActor private func openList(_ h: Harness, _ video: String = videoA) async throws -> OpenedList {
+    let reply = try await h.coordinator.comments(.open(videoID: video))
+    guard case .opened(_, let page?) = reply.value else { throw MusicSessionError.unrecognised }
+    return OpenedList(reply: reply, page: page)
+}
+private func page(_ reply: MusicBrowseReply<MusicCommentsAnswer>) throws -> MusicCommentsPage {
+    guard case .page(let page) = reply.value else { throw MusicSessionError.unrecognised }
+    return page
+}
+/// Two connected accounts, the first active.
+@MainActor private func twoAccounts(_ h: Harness) async throws -> (first: AccountContext, second: AccountContext) {
+    try await signIn(h)
+    let first = try #require(await h.lifecycle.snapshot().context.account)
+    await h.lifecycle.cancelAuthentication()
+    await h.reader.set(menu: .identity(secondListener))
+    try await signIn(h)
+    let second = try #require(await h.lifecycle.snapshot().directory.identities.first { $0.id != first }).id
+    try await h.lifecycle.switchIdentity(to: first)
+    return (first, second)
+}
+
+extension MusicWebSessionTests {
+    @Test func commentsRunUnderTheAccountScopeAnonymousThenSignedAndWriteRotationBack() async throws {
+        let h = try await harness()
+        let anonymous = try await openList(h)
+        #expect(anonymous.reply.mode == .anonymous && !anonymous.reply.sessionExpired)
+        let more = try page(try await h.coordinator.comments(.page(token: anonymous.more, videoID: videoA)))
+        #expect(more.threads.count == 2)
+        let thread = try await h.coordinator.comments(.replies(token: anonymous.replies("T1"), videoID: videoA, parentID: "T1"))
+        guard case .replies(let replies) = thread.value else { Issue.record("expected replies"); return }
+        #expect(replies.parentID == "T1" && thread.mode == .anonymous)
+        try await signIn(h)
+        await h.reader.rotate([.init(name: "__Secure-3PSIDCC", value: Marker.rotated, expires: Marker.now.addingTimeInterval(3600))])
+        let signed = try await openList(h)
+        #expect(signed.reply.mode == .signedIn && signed.reply.accountGeneration > anonymous.reply.accountGeneration)
+        _ = try await h.coordinator.comments(.page(token: signed.more, videoID: videoA))
+        #expect(await h.vault.replaced() >= 1, "a signed comments read writes Google's cookie rotation back like every signed read")
+        let calls = await h.reader.commentRequests()
+        #expect(calls.map(\.signed) == [false, false, false, true, true])
+        #expect(calls.map(\.request) == [.open(videoID: videoA), .page(token: anonymous.more, videoID: videoA),
+                                         .replies(token: anonymous.replies("T1"), videoID: videoA, parentID: "T1"), .open(videoID: videoA),
+                                         .page(token: signed.more, videoID: videoA)], "one reader call per action: the coordinator adds no request")
+    }
+    @Test func aBadRequestOrATokenNeverIssuedIsRefusedBeforeAnyRequest() async throws {
+        let h = try await harness()
+        _ = try await openList(h)
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.open(videoID: "short")) }
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.page(token: "has space", videoID: videoA)) }
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.replies(token: "tok", videoID: videoA, parentID: "has.dot")) }
+        // Well-formed, but the coordinator never handed it out: the service's own tokens are the only ones it will send.
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: "invented-but-wellformed", videoID: videoA)) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.replies(token: "invented-but-wellformed", videoID: videoA, parentID: "T1")) }
+        #expect(await h.reader.commentRequests().count == 1, "only the one real open ever reached the reader")
+    }
+    @Test func aTokenIsBoundToItsVideoItsKindAndItsThread() async throws {
+        let h = try await harness()
+        let a = try await openList(h, videoA), b = try await openList(h, videoB)
+        // Wrong video reuse (the Newest response prints no video id, so the service gives nothing else to catch this).
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.page(token: a.more, videoID: videoB)) }
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.page(token: b.newest, videoID: videoA)) }
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.replies(token: a.replies("T1"), videoID: videoB, parentID: "T1")) }
+        // Wrong reply parent.
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.replies(token: a.replies("T1"), videoID: videoA, parentID: "T2")) }
+        // The wrong kind: a replies token as a page, a page token as replies.
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.page(token: a.replies("T1"), videoID: videoA)) }
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.replies(token: a.more, videoID: videoA, parentID: "T1")) }
+        await #expect(throws: MusicSessionError.policy) { try await h.coordinator.comments(.replies(token: a.newest, videoID: videoA, parentID: "T1")) }
+        #expect(await h.reader.commentRequests().count == 2, "none of the misuses reached the reader")
+        // Each token still works for exactly what it is.
+        _ = try await h.coordinator.comments(.page(token: a.more, videoID: videoA))
+        _ = try await h.coordinator.comments(.replies(token: b.replies("T2"), videoID: videoB, parentID: "T2"))
+        #expect(await h.reader.commentRequests().count == 4)
+    }
+    @Test func aTokenIssuedBeforeAnAccountChangeIsRefusedAfterItBeforeAnyRequest() async throws {
+        // Anonymous token, then signing in: the scope (account, generation and mode) is different.
+        let h = try await harness()
+        let anonymous = try await openList(h)
+        try await signIn(h)
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: anonymous.more, videoID: videoA)) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.replies(token: anonymous.replies("T1"), videoID: videoA, parentID: "T1")) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: anonymous.newest, videoID: videoA)) }
+        #expect(await h.reader.commentRequests().count == 1)
+        // Signed token, then signing out.
+        let signed = try await openList(h)
+        let account = try #require(await h.lifecycle.snapshot().context.account)
+        try await h.lifecycle.signOut(account)
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: signed.more, videoID: videoA)) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: signed.newest, videoID: videoA)) }
+        #expect(await h.reader.commentRequests().count == 2, "a token of the signed-out session is never sent, signed or anonymous")
+    }
+    @Test func aTokenOfOneAccountIsRefusedAfterSwitchingToAnotherAndAfterSwitchingBack() async throws {
+        let h = try await harness()
+        let (first, second) = try await twoAccounts(h)
+        let before = try await openList(h)
+        #expect(before.reply.mode == .signedIn)
+        try await h.lifecycle.switchIdentity(to: second)
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: before.more, videoID: videoA)) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.replies(token: before.replies("T1"), videoID: videoA, parentID: "T1")) }
+        // The second account's own list works, and its tokens are then refused after switching back.
+        let other = try await openList(h)
+        _ = try await h.coordinator.comments(.page(token: other.more, videoID: videoA))
+        try await h.lifecycle.switchIdentity(to: first)
+        await #expect(throws: MusicSessionError.stale, "the first account is current again, but under a new generation") {
+            try await h.coordinator.comments(.page(token: before.more, videoID: videoA))
+        }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: other.more, videoID: videoA)) }
+        #expect(await h.reader.commentRequests().count == 3, "open, open, one page: no refused token reached the reader")
+    }
+    @Test func aReadStartedForOneAccountIsNeverReturnedAfterASwitchAndRegistersNothing() async throws {
+        let h = try await harness()
+        let (_, second) = try await twoAccounts(h)
+        await h.reader.holdNextComments(1)
+        let pending = Task { try await h.coordinator.comments(.open(videoID: videoA)) }
+        while await h.reader.heldCommentCount() == 0 { await Task.yield() }
+        try await h.lifecycle.switchIdentity(to: second)
+        await h.reader.releaseHeldComments(at: 0)
+        await #expect(throws: MusicSessionError.stale) { try await pending.value }
+        // The dropped answer's tokens were never registered: nothing can use them later, under any account.
+        let issuedByDroppedRead = MusicWebSessionReaderTokens.open(video: videoA, serial: 0, signed: true)
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: issuedByDroppedRead.more, videoID: videoA)) }
+        // An anonymous read dropped by signing in meanwhile is the same.
+        let anonymousHarness = try await harness()
+        await anonymousHarness.reader.holdNextComments(1)
+        let anonymousRead = Task { try await anonymousHarness.coordinator.comments(.open(videoID: videoA)) }
+        while await anonymousHarness.reader.heldCommentCount() == 0 { await Task.yield() }
+        try await signIn(anonymousHarness)
+        await anonymousHarness.reader.releaseHeldComments(at: 0)
+        await #expect(throws: MusicSessionError.stale) { try await anonymousRead.value }
+    }
+    @Test func aNewOpenReplacesTheListSoALateAnswerForTheOldOneIsDroppedAndItsTokensDie() async throws {
+        let h = try await harness()
+        let first = try await openList(h)
+        await h.reader.holdNextComments(1)
+        let late = Task { try await h.coordinator.comments(.page(token: first.more, videoID: videoA)) }
+        while await h.reader.heldCommentCount() == 0 { await Task.yield() }
+        let second = try await openList(h)
+        await h.reader.releaseHeldComments(at: 0)
+        await #expect(throws: MusicSessionError.stale) { try await late.value }
+        let sent = await h.reader.commentRequests().count
+        #expect(sent == 3, "the late page really was requested (it was valid when it started)")
+        // The replaced list's tokens are refused locally, and so are the late answer's tokens (never registered).
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: first.more, videoID: videoA)) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.replies(token: first.replies("T1"), videoID: videoA, parentID: "T1")) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: MusicWebSessionReaderTokens.page(video: videoA, serial: 1, signed: false).more, videoID: videoA)) }
+        #expect(await h.reader.commentRequests().count == sent)
+        _ = try await h.coordinator.comments(.page(token: second.more, videoID: videoA))
+        _ = try await h.coordinator.comments(.replies(token: second.replies("T2"), videoID: videoA, parentID: "T2"))
+    }
+    @Test func aSortSwitchReplacesTheListAndADelayedSortOrPageAnswerIsDropped() async throws {
+        let h = try await harness()
+        let list = try await openList(h)
+        // The Newest switch is in flight: the list is already replaced, so the old list's load-more is refused locally, right now.
+        await h.reader.holdNextComments(1)
+        let newest = Task { try await h.coordinator.comments(.page(token: list.newest, videoID: videoA)) }
+        while await h.reader.heldCommentCount() == 0 { await Task.yield() }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: list.more, videoID: videoA)) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.replies(token: list.replies("T1"), videoID: videoA, parentID: "T1")) }
+        // Switching again before the first answer: the latest wins, and the delayed one is dropped when it returns.
+        await h.reader.holdNextComments(1)
+        let top = Task { try await h.coordinator.comments(.page(token: list.top, videoID: videoA)) }
+        while await h.reader.heldCommentCount() == 1 { await Task.yield() }
+        await h.reader.releaseHeldComments(at: 1)
+        let topPage = try page(try await top.value)
+        await h.reader.releaseHeldComments(at: 0)
+        await #expect(throws: MusicSessionError.stale) { try await newest.value }
+        // The delayed Newest answer registered nothing: only the winning list's tokens work.
+        let topMore = try #require(topPage.nextToken)
+        _ = try await h.coordinator.comments(.page(token: topMore, videoID: videoA))
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: MusicWebSessionReaderTokens.page(video: videoA, serial: 1, signed: false).more, videoID: videoA)) }
+    }
+    @Test func aFailedOpenOrSortSwitchThatNobodyReplacedRestoresThePreviousList() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        let list = try await openList(h)
+        await h.reader.failSignedComments(.network)
+        await #expect(throws: MusicSessionError.network) { try await h.coordinator.comments(.page(token: list.newest, videoID: videoA)) }
+        await h.reader.failSignedComments(nil)
+        // The view was not replaced, so its tokens still work.
+        _ = try await h.coordinator.comments(.page(token: list.more, videoID: videoA))
+        _ = try await h.coordinator.comments(.replies(token: list.replies("T1"), videoID: videoA, parentID: "T1"))
+        // A failed first open leaves no list behind.
+        await h.reader.failSignedComments(.network)
+        await #expect(throws: MusicSessionError.network) { try await h.coordinator.comments(.open(videoID: videoB)) }
+        await h.reader.failSignedComments(nil)
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: "never-issued-for-b", videoID: videoB)) }
+    }
+    /// A failed NEWER request restores the last list that was actually settled (answer accepted, tokens registered), never an older request
+    /// that is still in flight: that one was replaced too, so its late answer must be dropped and must register nothing.
+    @Test func aFailedNewerOpenDoesNotResurrectAnOlderOpenStillInFlight() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        let settled = try await openList(h)
+        await h.reader.holdNextComments(1)
+        let older = Task { try await h.coordinator.comments(.open(videoID: videoA)) }
+        while await h.reader.heldCommentCount() == 0 { await Task.yield() }
+        await h.reader.failSignedComments(.network)
+        await #expect(throws: MusicSessionError.network) { try await h.coordinator.comments(.open(videoID: videoA)) }
+        await h.reader.failSignedComments(nil)
+        await h.reader.releaseHeldComments(at: 0)
+        await #expect(throws: MusicSessionError.stale) { try await older.value }
+        // The superseded answer registered nothing; the list still on screen keeps working.
+        let droppedTokens = MusicWebSessionReaderTokens.open(video: videoA, serial: 1, signed: true)
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: droppedTokens.more, videoID: videoA)) }
+        _ = try await h.coordinator.comments(.page(token: settled.more, videoID: videoA))
+        _ = try await h.coordinator.comments(.replies(token: settled.replies("T1"), videoID: videoA, parentID: "T1"))
+        #expect(await h.reader.commentRequests().count == 5, "open, held open, failed open, then one page and one replies; the refused token sent nothing")
+    }
+    @Test func aFailedNewerSortSwitchDoesNotResurrectAnOlderSortSwitchStillInFlight() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        let settled = try await openList(h)
+        await h.reader.holdNextComments(1)
+        let older = Task { try await h.coordinator.comments(.page(token: settled.newest, videoID: videoA)) }
+        while await h.reader.heldCommentCount() == 0 { await Task.yield() }
+        await h.reader.failSignedComments(.network)
+        await #expect(throws: MusicSessionError.network) { try await h.coordinator.comments(.page(token: settled.top, videoID: videoA)) }
+        await h.reader.failSignedComments(nil)
+        await h.reader.releaseHeldComments(at: 0)
+        await #expect(throws: MusicSessionError.stale) { try await older.value }
+        let droppedTokens = MusicWebSessionReaderTokens.page(video: videoA, serial: 1, signed: true)
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: droppedTokens.more, videoID: videoA)) }
+        _ = try await h.coordinator.comments(.page(token: settled.more, videoID: videoA))
+        _ = try await h.coordinator.comments(.replies(token: settled.replies("T1"), videoID: videoA, parentID: "T1"))
+        #expect(await h.reader.commentRequests().count == 5, "open, held sort, failed sort, then one page and one replies; the refused token sent nothing")
+    }
+    @Test func aReopenedVideoIsTheMostRecentlyUsedAndTheOldestUntouchedOneIsEvictedFirst() async throws {
+        let h = try await harness()
+        var ids: [String] = []
+        for number in 0..<MusicSessionCoordinator.maxCommentVideos { ids.append(String(format: "vid%08d", number)) }
+        let oldest = try await openList(h, ids[0])
+        let secondOldest = try await openList(h, ids[1])
+        for id in ids.dropFirst(2) { _ = try await openList(h, id) }
+        // The oldest video is reopened (a fresh list), then one new video pushes the registry over its bound.
+        let reopened = try await openList(h, ids[0])
+        _ = try await openList(h, "zzzzzzzzzz9")
+        _ = try await h.coordinator.comments(.page(token: reopened.more, videoID: ids[0]))
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: secondOldest.more, videoID: ids[1])) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: oldest.more, videoID: ids[0])) }
+    }
+    @Test func aSignedTokenIsNeverSentAnonymouslyWhenTheSessionEndsAndTheOpenFallsBackToAnAnonymousScope() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        let list = try await openList(h)
+        await h.reader.failSignedComments(.signedOut)
+        await #expect(throws: MusicSessionError.signedOut) { try await h.coordinator.comments(.page(token: list.more, videoID: videoA)) }
+        #expect(await h.lifecycle.snapshot().directory.identities.first?.state == .expired)
+        var calls = await h.reader.commentRequests()
+        #expect(calls.count == 2 && calls.map(\.signed) == [true, true], "the signed attempt was the only one: the token never went out anonymously")
+        // The signed session is expired now, so the scope is anonymous: the old signed token is refused locally; a new open is anonymous and says so.
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: list.more, videoID: videoA)) }
+        let reopened = try await openList(h)
+        #expect(reopened.reply.mode == .anonymous && reopened.reply.sessionExpired)
+        _ = try await h.coordinator.comments(.page(token: reopened.more, videoID: videoA))
+        calls = await h.reader.commentRequests()
+        #expect(calls.map(\.signed) == [true, true, false, false])
+    }
+    @Test func anOpenWhoseSignedReadEndedFallsBackAnonymouslyAndRegistersTheAnonymousScope() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        await h.reader.failSignedComments(.signedOut)
+        let list = try await openList(h)
+        #expect(list.reply.mode == .anonymous && list.reply.sessionExpired)
+        #expect(await h.reader.commentRequests().map(\.signed) == [true, false])
+        _ = try await h.coordinator.comments(.page(token: list.more, videoID: videoA))
+        #expect(await h.reader.commentRequests().map(\.signed) == [true, false, false], "its tokens are anonymous tokens and are sent anonymously")
+    }
+    @Test func theRegistryIsBoundedByVideoAndByTokenCount() async throws {
+        let h = try await harness()
+        var ids: [String] = []
+        for number in 0..<(MusicSessionCoordinator.maxCommentVideos + 6) {
+            let id = String(format: "vid%08d", number)
+            ids.append(id)
+        }
+        let oldest = try await openList(h, ids[0])
+        for id in ids.dropFirst() { _ = try await openList(h, id) }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: oldest.more, videoID: ids[0])) }
+        let newest = try await openList(h, ids.last!)
+        _ = try await h.coordinator.comments(.page(token: newest.more, videoID: ids.last!))
+        // Token count: loading page after page keeps the newest tokens and evicts the oldest ones.
+        let long = try await openList(h, videoA)
+        var token = long.more
+        for _ in 0..<(MusicSessionCoordinator.maxIssuedCommentTokens / 4 + 8) {
+            token = try #require(try page(try await h.coordinator.comments(.page(token: token, videoID: videoA))).nextToken)
+        }
+        await #expect(throws: MusicSessionError.stale) { try await h.coordinator.comments(.page(token: long.more, videoID: videoA)) }
+        _ = try await h.coordinator.comments(.page(token: token, videoID: videoA))
+    }
+    @Test func aCoordinatorWhoseReaderPredatesCommentsRefusesWithPolicy() async throws {
+        let vault = MemorySessionVault(), ledger = MemoryLedger()
+        let coordinator = MusicSessionCoordinator(vault: vault, reader: PredatingReader(), stores: MemoryWebStores(), ledger: ledger, presenter: nil, clock: StillClock(), region: "GB")
+        let lifecycle = try await AccountLifecycle.open(vault: vault, store: MemoryDirectory(), participants: [coordinator])
+        await coordinator.attach(to: lifecycle)
+        await #expect(throws: MusicSessionError.policy) { try await coordinator.comments(.open(videoID: videoA)) }
+    }
+}
+/// Reproduces the tokens `ScriptedReader.commentsAnswer` issues for a given call number, so a test can name a token it never received.
+private enum MusicWebSessionReaderTokens {
+    static func open(video: String, serial: Int, signed: Bool) -> OpenedList {
+        let answer = ScriptedReader.commentsAnswer(for: .open(videoID: video), serial: serial, signed: signed)
+        guard case .opened(_, let page?) = answer else { fatalError("scripted answer") }
+        return OpenedList(reply: MusicBrowseReply(value: answer, mode: signed ? .signedIn : .anonymous, accountGeneration: 0), page: page)
+    }
+    static func page(video: String, serial: Int, signed: Bool) -> OpenedList {
+        let answer = ScriptedReader.commentsAnswer(for: .page(token: "x", videoID: video), serial: serial, signed: signed)
+        guard case .page(let page) = answer else { fatalError("scripted answer") }
+        return OpenedList(reply: MusicBrowseReply(value: answer, mode: signed ? .signedIn : .anonymous, accountGeneration: 0), page: page)
+    }
+}
+/// Implements only what has no default, so `comments` is the protocol extension's.
+private struct PredatingReader: MusicSessionReading {
+    func accountMenu(session: MusicCookieSession) async throws -> MusicSignedResult<MusicAccountIdentity> { throw MusicSessionError.policy }
+    func likedPlaylists(session: MusicCookieSession) async throws -> MusicSignedResult<MusicLibraryPlaylists> { throw MusicSessionError.policy }
+    func avatar(_ url: URL) async throws -> Data { throw MusicSessionError.policy }
+}
+
+/// MORE-FEATURES RECAP slice: the coordinator's Recap read is signed only and held to the account scope like every signed read.
+@Suite @MainActor struct MusicRecapCoordinatorTests {
+    @Test func withNoConnectedAccountNothingIsSentAndTheAnswerIsNotSignedIn() async throws {
+        let h = try await harness()
+        await #expect(throws: MusicSessionError.notSignedIn) { try await h.coordinator.recap() }
+        #expect(await h.reader.recapRequests() == 0, "no account: no request, and never an anonymous form")
+    }
+    @Test func aConnectedAccountReadsOnceAndTheRotationIsSaved() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        await h.reader.rotate([.init(name: "__Secure-3PSIDCC", value: Marker.rotated, expires: Marker.now.addingTimeInterval(3600))])
+        let reply = try await h.coordinator.recap()
+        #expect(reply.mode == .signedIn && reply.value == .serviceMessage(.init(headline: "Synthetic message")))
+        #expect(await h.reader.recapRequests() == 1)
+        #expect(await h.vault.replaced() >= 1, "rotated cookies are written back after a signed read")
+    }
+    @Test func aFailureIsNotRetriedByTheCoordinator() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        await h.reader.setRecap(.failure(.server))
+        await #expect(throws: MusicSessionError.server) { try await h.coordinator.recap() }
+        #expect(await h.reader.recapRequests() == 1, "one explicit read is one request")
+    }
+    @Test func aServiceEndedSessionExpiresTheIdentityAndSendsNothingMore() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        await h.reader.setRecap(.failure(.signedOut))
+        await #expect(throws: MusicSessionError.signedOut) { try await h.coordinator.recap() }
+        #expect(await h.lifecycle.snapshot().directory.identities.first?.state == .expired)
+        await #expect(throws: MusicSessionError.signedOut) { try await h.coordinator.recap() }
+        #expect(await h.reader.recapRequests() == 1, "an expired identity sends nothing")
+    }
+    @Test func aReadStartedForOneAccountIsNeverReturnedAfterASwitch() async throws {
+        let h = try await harness()
+        try await signIn(h)
+        await h.reader.holdNextRecap()
+        let read = Task { try await h.coordinator.recap() }
+        while !(await h.reader.waiting()) { await Task.yield() }
+        let other = MusicAccountIdentity(serviceID: "UCsecondSyntheticAccount", displayName: "Second", handle: nil, photoURL: nil)
+        await h.reader.set(menu: .identity(other))
+        try await signIn(h)
+        await h.reader.release()
+        await #expect(throws: MusicSessionError.stale) { try await read.value }
     }
 }

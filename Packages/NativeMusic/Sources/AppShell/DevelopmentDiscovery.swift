@@ -86,13 +86,37 @@ struct ScriptedControls: RadioControlsSource {
     var otherPlaybackBusy: Bool { false }
 }
 
+/// Labelled development comments for the isolated UI tests ("Development data · Not YouTube Music" is shown wherever they appear). Nothing here is
+/// a capture of the service, nothing is sent anywhere, and it is the one comments transport that says it can write: its writes change only this actor.
 actor ScriptedComments: CommentsTransport {
     nonisolated var unresolved: String? { nil }
+    nonisolated var writesUnresolved: String? { nil }
+    private let top = CommentsSortOption(title: "Top", isSelected: true, token: CommentsToken("devsorttop"))
+    private let newest = CommentsSortOption(title: "Newest", isSelected: false, token: CommentsToken("devsortnew"))
     private var comments = [
         SocialComment(id: "devc1", author: "Development Listener", text: "A development comment.", posted: "Development time",
-                      moderation: [ModerationOffer(id: "devhide", title: "Hide", destructive: true)]),
+                      moderation: [ModerationOffer(id: "devhide", title: "Hide", destructive: true)], likeCountText: "7", replyCountText: "2"),
         SocialComment(id: "devc2", author: "Another Listener", text: "A comment with nothing offered on it.")]
-    func read(_ subject: SocialSubject) async throws -> CommentsPage { CommentsPage(comments: comments, canPost: true) }
+    private func header(selected: Int) -> CommentsHeader {
+        CommentsHeader(countText: "Development comments",
+                       sorts: [CommentsSortOption(title: top.title, isSelected: selected == 0, token: top.token), CommentsSortOption(title: newest.title, isSelected: selected == 1, token: newest.token)])
+    }
+    private func threads(_ list: [SocialComment]) -> [CommentThread] {
+        list.map { CommentThread(comment: $0, repliesToken: $0.id == "devc1" ? CommentsToken("devreplies1") : nil) }
+    }
+    func open(_ subject: SocialSubject) async throws -> CommentsOpening {
+        .page(CommentsPage(header: header(selected: 0), threads: threads(comments), next: CommentsToken("devmore1"), canPost: true))
+    }
+    func page(_ token: CommentsToken, on subject: SocialSubject) async throws -> CommentsPage {
+        switch token.rawValue {
+        case "devsortnew": CommentsPage(header: header(selected: 1), threads: threads(comments.reversed()), next: nil, canPost: true)
+        case "devsorttop": CommentsPage(header: header(selected: 0), threads: threads(comments), next: CommentsToken("devmore1"), canPost: true)
+        default: CommentsPage(header: nil, threads: [CommentThread(comment: SocialComment(id: "devc9", author: "Later Listener", text: "A development comment on the second page."))], next: nil, canPost: true)
+        }
+    }
+    func replies(_ token: CommentsToken, of thread: SocialComment, on subject: SocialSubject) async throws -> CommentsReplies {
+        CommentsReplies(parentID: thread.id, replies: [SocialComment(id: thread.id + ".r1", author: "Replying Listener", text: "A development reply.", level: 1)], next: nil)
+    }
     func post(_ text: String, on subject: SocialSubject) async throws -> SocialWriteAnswer {
         comments.append(SocialComment(id: "devc" + String(comments.count + 1), author: "You (development)", text: text)); return .confirmed
     }

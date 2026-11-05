@@ -66,17 +66,20 @@ public enum CatalogFailure: Sendable, Equatable {
 // MARK: Capability presentation
 
 public enum CatalogAction: String, Sendable, Hashable, CaseIterable {
-    case play, shuffle, radio, copyLink
+    case play, shuffle, radio, copyLink, share
     public var title: String {
         switch self {
         case .play: String(localized: "Play")
         case .shuffle: String(localized: "Shuffle")
         case .radio: String(localized: "Start Radio")
         case .copyLink: String(localized: "Copy Link")
+        case .share: String(localized: "Share…")
         }
     }
     public var symbol: String {
-        switch self { case .play: "play.fill"; case .shuffle: "shuffle"; case .radio: "dot.radiowaves.left.and.right"; case .copyLink: "link" }
+        switch self {
+        case .play: "play.fill"; case .shuffle: "shuffle"; case .radio: "dot.radiowaves.left.and.right"; case .copyLink: "link"; case .share: "square.and.arrow.up"
+        }
     }
 }
 public struct CatalogActionOffer: Sendable, Equatable, Identifiable {
@@ -131,29 +134,14 @@ public enum CatalogActionPlan {
         switch action {
         case .play: target(for: item)
         case .radio: radioTarget(for: item)
-        case .shuffle, .copyLink: nil
+        case .shuffle, .copyLink, .share: nil
         }
     }
     /// Whether the track's Play continues a collection from this track (rather than starting the song's radio).
     public static func continuesCollection(_ item: MusicCatalogItem) -> Bool { target(for: item)?.videoID != nil }
-    /// The song's own radio is what Play already starts; for collections the radio is the service's published mix.
-    public static func link(for item: MusicCatalogItem) -> URL? {
-        func make(_ path: String, _ query: [URLQueryItem] = []) -> URL? {
-            var components = URLComponents()
-            components.scheme = "https"; components.host = "music.youtube.com"; components.path = path
-            if !query.isEmpty { components.queryItems = query }
-            return components.url
-        }
-        switch item.kind {
-        case .song, .video, .episode:
-            // Private service media has no public link to copy.
-            return item.isPrivatelyOwned ? nil : item.videoID.flatMap { make("/watch", [URLQueryItem(name: "v", value: $0)]) }
-        case .album, .playlist, .podcast: return item.playlistID.flatMap { make("/playlist", [URLQueryItem(name: "list", value: $0)]) }
-            ?? item.browseID.flatMap { make("/browse/" + $0) }
-        case .artist: return item.browseID.flatMap { $0.hasPrefix("UC") ? make("/channel/" + $0) : nil }
-        case .category: return nil
-        }
-    }
+    /// The public link Copy Link and Share hand out for an entry (`CatalogShareLink`): its own identifier only, nil for private media, a category
+    /// or an identifier that is not shaped like the service's.
+    public static func link(for item: MusicCatalogItem) -> URL? { CatalogShareLink.url(for: item) }
     /// Whether Play could ever run for this entry (it has a target and is playable for this listener). A Play control is only
     /// drawn when it could: where it never could (an unavailable track, a lone episode, an artist) the reason is text, not a button.
     public static func canEverPlay(_ item: MusicCatalogItem) -> Bool {
@@ -178,7 +166,10 @@ public enum CatalogActionPlan {
             // Start Radio is drawn only when the row published its own radio; where it did not, there is no control at all.
             if radioTarget(for: item) != nil { offers.append(.init(action: .radio, unavailable: playbackReason(playback))) }
         }
-        if link(for: item) != nil { offers.append(.init(action: .copyLink, unavailable: nil)) }
+        if link(for: item) != nil {
+            offers.append(.init(action: .copyLink, unavailable: nil))
+            offers.append(.init(action: .share, unavailable: nil))
+        }
         return offers
     }
     /// Play, Shuffle and Start Radio for a page, each only if the service published its playlist.
@@ -202,7 +193,7 @@ public enum CatalogActionPlan {
         case .play: actions.play.map { PlayTarget(playlistID: $0) }
         case .shuffle: shufflePublished(actions) ? actions.shuffle.map { PlayTarget(playlistID: $0, params: actions.shuffleParams) } : nil
         case .radio: actions.radio.map { PlayTarget(playlistID: $0) }
-        case .copyLink: nil
+        case .copyLink, .share: nil
         }
     }
     public static func playlist(for action: CatalogAction, in actions: MusicPageActions) -> String? { target(for: action, in: actions)?.playlistID }

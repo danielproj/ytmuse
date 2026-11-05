@@ -26,6 +26,7 @@ struct CollectionHeaderView: View {
                         Text(header.secondSubtitle.joined(separator: String(localized: "detailSeparator"))).font(.callout).foregroundStyle(MusicStyle.secondaryText)
                     }
                     PageActionsBar(model: model)
+                    PageShareBar(model: model)
                     ShowEpisodeControls(model: model)
                     // Where a person would look for Download on a collection: the reason there is none, as words, not a control.
                     if let identifier = try? ServiceID(model.target.browseID) { DownloadCapabilityNote(media: identifier) }

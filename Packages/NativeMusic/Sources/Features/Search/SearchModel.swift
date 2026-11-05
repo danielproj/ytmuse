@@ -312,6 +312,8 @@ public struct SearchCorrectionOffer: Sendable, Equatable {
             guard let link = SearchActionPlan.link(for: result) else { feedback[result.id] = .failed(String(localized: "This result has no link.")); return }
             performer.copy(link: link); feedback[result.id] = .copied
             recordChoice(result)
+        case .share:
+            if let refusal = CatalogShareLink.share(SearchActionPlan.link(for: result), via: performer) { feedback[result.id] = .failed(refusal) } else { feedback[result.id] = nil }
         case .play:
             guard let playlist = SearchActionPlan.playlist(for: result) else { feedback[result.id] = .failed(String(localized: "This result didn’t include anything to play.")); return }
             let scopeAtStart = accountScope()

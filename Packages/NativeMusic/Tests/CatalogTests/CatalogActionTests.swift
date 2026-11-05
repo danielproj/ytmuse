@@ -18,7 +18,7 @@ import YouTubeMusicAdapter
         #expect(CatalogActionPlan.playlist(for: album) == album.playlistID)
         let artist = try item(.charts, shelf: 1)
         #expect(CatalogActionPlan.playlist(for: artist) == nil)
-        #expect(CatalogActionPlan.offers(for: artist, playback: .available).isEmpty == false && CatalogActionPlan.offers(for: artist, playback: .available).map(\.action) == [.copyLink])
+        #expect(CatalogActionPlan.offers(for: artist, playback: .available).isEmpty == false && CatalogActionPlan.offers(for: artist, playback: .available).map(\.action) == [.copyLink, .share])
         let category = try item(.explore)
         #expect(CatalogActionPlan.offers(for: category, playback: .available).isEmpty && CatalogActionPlan.link(for: category) == nil)
     }
@@ -73,7 +73,7 @@ import YouTubeMusicAdapter
         #expect(CatalogActionPlan.writeNote(for: MusicPageActions(offersSave: true, offersFollow: true))?.contains("Following and saving") == true)
         #expect(CatalogActionPlan.writeNote(for: MusicPageActions(play: "x")) == nil && CatalogActionPlan.writeNote(for: nil) == nil)
         // No action enum case exists for a write.
-        #expect(Set(CatalogAction.allCases.map(\.rawValue)) == ["play", "shuffle", "radio", "copyLink"])
+        #expect(Set(CatalogAction.allCases.map(\.rawValue)) == ["play", "shuffle", "radio", "copyLink", "share"])
     }
 
     /// Never an inert control: every offer on every entry of every real capture either runs (a playlist the hidden
@@ -86,7 +86,7 @@ import YouTubeMusicAdapter
                 case .play:
                     if offer.unavailable == nil { #expect(CatalogActionPlan.playlist(for: entry).map(WebMusicIdentifier.isPlaylistID) == true, "\(capture) \(entry.title)") }
                     else { #expect(offer.unavailable?.isEmpty == false) }
-                case .copyLink: #expect(CatalogActionPlan.link(for: entry) != nil)
+                case .copyLink, .share: #expect(CatalogActionPlan.link(for: entry) != nil)
                 case .radio:
                     // Only a song or video, only from the radio its own row published; the hidden player's validator accepts the playlist.
                     let radio = try #require(CatalogActionPlan.radioTarget(for: entry), "\(capture) \(entry.title)")
@@ -191,7 +191,7 @@ import YouTubeMusicAdapter
         let detail = try #require(SongDetail(item: song))
         #expect(detail.artists.map(\.browseID) == ["UCoIOOL7QKuBhQHVKL8y7BEQ"] && detail.album?.browseID == "MPREb_dqWTncCjkSp")
         #expect(detail.isAvailable && detail.quality == .chosenByService)
-        #expect(detail.offers(playback: .available).map(\.action) == [.play, .copyLink], "a Home song's Play already starts its radio, so there is no second control for it")
+        #expect(detail.offers(playback: .available).map(\.action) == [.play, .copyLink, .share], "a Home song's Play already starts its radio, so there is no second control for it")
         let grey = try #require(try realPage(.playlist).shelves[0].items.first { $0.availability == .unavailable })
         let unavailable = try #require(SongDetail(item: grey))
         #expect(!unavailable.isAvailable && unavailable.offers(playback: .available).first?.unavailable != nil)
@@ -267,16 +267,16 @@ import YouTubeMusicAdapter
     }
     @Test func aRowInsideACollectionStartsItsRadioNotTheCollection() async throws {
         // Built by hand: an album track whose Play continues the album and whose menu also published "Start mix".
-        let radio = MusicRadioAction(playlistID: "RDAMVMtrackInAlbum", videoID: "trackInAlbum", params: "wAEB")
-        let track = MusicCatalogItem(kind: .song, title: "Track", videoID: "trackInAlbum", contextPlaylistID: "OLAK5uy_albumList0001", radio: radio)
+        let radio = MusicRadioAction(playlistID: "RDAMVMtrackInAlb1", videoID: "trackInAlb1", params: "wAEB")
+        let track = MusicCatalogItem(kind: .song, title: "Track", videoID: "trackInAlb1", contextPlaylistID: "OLAK5uy_albumList0001", radio: radio)
         let script = ServiceScript(), performer = StubPerformer()
         let model = makeModel(.home, script: script, performer: performer)
-        #expect(model.offers(for: track).map(\.action) == [.play, .radio, .copyLink])
+        #expect(model.offers(for: track).map(\.action) == [.play, .radio, .copyLink, .share])
         await model.perform(.play, on: track)
         await model.perform(.radio, on: track)
         #expect(performer.targets.count == 2)
-        #expect(performer.targets[0].playlist == "OLAK5uy_albumList0001" && performer.targets[0].video == "trackInAlbum" && performer.targets[0].params == nil)
-        #expect(performer.targets[1].playlist == "RDAMVMtrackInAlbum" && performer.targets[1].video == "trackInAlbum" && performer.targets[1].params == nil, "the radio's flag is not sent")
+        #expect(performer.targets[0].playlist == "OLAK5uy_albumList0001" && performer.targets[0].video == "trackInAlb1" && performer.targets[0].params == nil)
+        #expect(performer.targets[1].playlist == "RDAMVMtrackInAlb1" && performer.targets[1].video == "trackInAlb1" && performer.targets[1].params == nil, "the radio's flag is not sent")
     }
     /// The action is absent, not disabled, and a stale tap starts nothing: a radio is never made from a video id.
     @Test func aRowWithoutAPublishedRadioHasNoStartRadioAndNothingIsDerived() async throws {

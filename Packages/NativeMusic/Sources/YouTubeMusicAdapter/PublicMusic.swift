@@ -224,7 +224,36 @@ public actor PublicMusicClient {
         guard response.data.count <= 4_000_000 else { throw ConnectionError.oversized }
         return try MusicRadioQueueParser.parse(try SignedMusicClient.json(response.data))
     }
-    private func browsePost(_ fields: [String: Any], path: String = "browse") async throws -> PublicHTTPResponse {
+    /// Anonymous comments read: the song's `next` (where the Comments tab is), then, only when the tab publishes a continuation, that one
+    /// continuation. `open` is at most 2 requests; `page` and `replies` are exactly 1. Nothing is retried, polled or prefetched, and no avatar or
+    /// link is loaded. Ids and tokens are validated before anything (even the version bootstrap) is sent; a comments response over
+    /// `maxCommentsResponseBytes` is `.oversized`, never a truncated parse. A parser failure keeps its `MusicSessionError`.
+    public static let maxCommentsResponseBytes = 2_000_000
+    public func comments(_ request: MusicCommentsRequest) async throws -> MusicCommentsAnswer {
+        do { try request.validate() } catch { throw ConnectionError.invalidInput }
+        switch request {
+        case .open(let videoID):
+            let first = try await browsePost(["videoId": videoID, "isAudioOnly": true], path: "next", limit: 4_000_000)
+            let entry = try MusicCommentsParser.parseEntry(try Self.commentsRoot(first, limit: 4_000_000), videoID: videoID)
+            guard case .continuation(let token) = entry else { return .opened(entry: entry, firstPage: nil) }
+            let second = try await browsePost(["continuation": token], path: "next", limit: Self.maxCommentsResponseBytes)
+            let page = try MusicCommentsParser.parsePage(try Self.commentsRoot(second, limit: Self.maxCommentsResponseBytes), videoID: videoID)
+            return .opened(entry: entry, firstPage: page)
+        case .page(let token, let videoID):
+            let response = try await browsePost(["continuation": token], path: "next", limit: Self.maxCommentsResponseBytes)
+            return .page(try MusicCommentsParser.parsePage(try Self.commentsRoot(response, limit: Self.maxCommentsResponseBytes), videoID: videoID))
+        case .replies(let token, _, let parentID):
+            let response = try await browsePost(["continuation": token], path: "next", limit: Self.maxCommentsResponseBytes)
+            return .replies(try MusicCommentsParser.parseReplies(try Self.commentsRoot(response, limit: Self.maxCommentsResponseBytes), parentID: parentID))
+        }
+    }
+    /// HTTP 400 and every non-200 status is `ConnectionError.http`, which the signed client classifies (`400` is `.unrecognised`, `429` rate limited).
+    static func commentsRoot(_ response: PublicHTTPResponse, limit: Int) throws -> [String: Any] {
+        guard response.status == 200 else { throw ConnectionError.http(response.status) }
+        guard response.data.count <= limit else { throw ConnectionError.oversized }
+        return try SignedMusicClient.json(response.data)
+    }
+    private func browsePost(_ fields: [String: Any], path: String = "browse", limit: Int = 4_000_000) async throws -> PublicHTTPResponse {
         if config.map({ clock.now() >= $0.validUntil }) ?? true { _ = try await bootstrap() }
         guard let config, clock.now() < config.validUntil else { throw ConnectionError.expired }
         let captured = generation
@@ -236,7 +265,7 @@ public actor PublicMusicClient {
         var body = fields
         body["context"] = ["client": clientContext(config)]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        let response = try await transport.send(request, maximumBytes: 4_000_000)
+        let response = try await transport.send(request, maximumBytes: limit)
         try Task.checkCancellation()
         guard captured == generation else { throw ConnectionError.stale }
         return response

@@ -281,11 +281,37 @@ struct SummaryStateView<P: Equatable & Sendable, Loaded: View>: View {
             CapabilityNote(symbol: "tray", title: "Nothing to show yet", message: String(localized: "YouTube Music answered, but sent nothing for your account here. Nothing is estimated in its place."), identifier: kind + "PayloadMissing")
         case .accountUnsupported(let why):
             CapabilityNote(symbol: "person.crop.circle.badge.xmark", title: "Not available for this account", message: why, identifier: kind + "AccountUnsupported")
+        case .serviceMessage(let message):
+            ServiceMessageNote(message: message, identifier: kind + "ServiceMessage", retry: retry)
         case .failed(let failure):
-            ErrorState(title: "This couldn’t be loaded", message: LocalizedStringKey(failure.message), recovery: "Retry", action: retry).accessibilityIdentifier(kind + "Failed")
+            ErrorState(title: "This couldn’t be loaded", message: LocalizedStringKey(kind == "recap" ? failure.recapMessage : failure.message), recovery: "Retry", action: retry).accessibilityIdentifier(kind + "Failed")
         case .loaded(let payload):
             loaded(payload)
         }
+    }
+}
+
+/// What the service sent in place of the summary, in its own words (verbatim: never localized, reworded or marked up), and a Retry that asks again
+/// once. The note says plainly that the message is the service's answer and that its meaning is not known here; it does not say there is no
+/// Recap or that the account cannot have one.
+struct ServiceMessageNote: View {
+    let message: SummaryServiceMessage
+    let identifier: String
+    let retry: () -> Void
+    var body: some View {
+        ContentUnavailableView {
+            Label("YouTube Music sent a message", systemImage: "text.bubble")
+        } description: {
+            VStack(spacing: MusicSpace.xs) {
+                Text(verbatim: message.headline).accessibilityIdentifier(identifier + "Headline")
+                if let detail = message.detail { Text(verbatim: detail).accessibilityIdentifier(identifier + "Detail") }
+                Text("This is YouTube Music’s answer, shown as it was sent. This app can’t tell whether it is about your account or a temporary problem.")
+                    .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier(identifier + "Note")
+            }
+        } actions: {
+            Button("Retry", action: retry).musicButtons().accessibilityIdentifier(identifier + "Retry")
+        }
+        .accessibilityElement(children: .contain).accessibilityIdentifier(identifier)
     }
 }
 
@@ -464,7 +490,8 @@ public struct RecapView: View {
                 }
             }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
         }
-        .task { await model.loadRecap() }
+        // Opening the screen reads once; an account change while it is open starts over for the new account (one read, none when signed out).
+        .task(id: model.epoch) { await model.loadRecap() }
         .accessibilityElement(children: .contain).accessibilityIdentifier("recapScreen")
     }
 }

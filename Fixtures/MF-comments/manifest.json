@@ -1,0 +1,255 @@
+{
+ "mode": "real-anonymous-capture-and-sanitized",
+ "live_eligible": false,
+ "description": "REAL anonymous public YouTube Music responses (no account, no cookies, WEB_REMIX, hl=en gl=US unless noted) for the comments parser. Files with no comment entities are copied byte for byte. The four comment files keep the real structure; ONLY third-party personal values (author display names, handles, channel ids, avatar paths, comment text) were replaced by deterministic placeholders (C1/scripts/derive-fixtures.py). Comment text keeps its UTF-16 length. Comment ids, entity keys, tokens, counts, printed times and like counts are the originals. The retained comment ids, entity keys, continuation tokens and video id still point at the real public comments (and so at their authors and text), so this is content sanitizing, not anonymization. No signed or account data was captured. Tests that read comment text or author names read placeholders. Originals stay in artifacts/ (not in the public snapshot). Public data, not account data, not evidence for the signed path.",
+ "derive_script": "artifacts/harness/nodes/MORE-FEATURES/C1/scripts/derive-fixtures.py",
+ "files": [
+  {
+   "path": "next-khnokW3Mw24.json",
+   "sha256": "cf02cae597bf4ead11294c971d694cdcd0d7818c36f82b0acfd4f60b1ba6fd2b",
+   "bytes": 43104,
+   "mode": "real-anonymous-capture",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "explore-captures/next-khnokW3Mw24.json",
+    "sha256": "cf02cae597bf4ead11294c971d694cdcd0d7818c36f82b0acfd4f60b1ba6fd2b",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/explore-captures/manifest-20261105T095444Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "videoId": "khnokW3Mw24"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T09:54:44.837947+00:00",
+   "clientVersion": "1.20261031.09.00"
+  },
+  {
+   "path": "next-khnokW3Mw24-de.json",
+   "sha256": "f8709ebbcd1dd945409da94dc15e616e39d98016f306582c69ffb7b258ee9105",
+   "bytes": 40114,
+   "mode": "real-anonymous-capture",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "C1/captures/next-khnokW3Mw24-de.json",
+    "sha256": "f8709ebbcd1dd945409da94dc15e616e39d98016f306582c69ffb7b258ee9105",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/C1/captures/manifest-20261105T115423Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "videoId": "khnokW3Mw24",
+    "hl": "de"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T11:54:23.631024+00:00",
+   "clientVersion": "1.20261031.09.00"
+  },
+  {
+   "path": "next-Qx7Lm2Zk9Vw.json",
+   "sha256": "dd2e4e82963b1dcab9cf361de74026ccc6ab0ae0b76aa4d2007c42bc5b41789f",
+   "bytes": 5160,
+   "mode": "real-anonymous-capture",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "C1/captures/next-Qx7Lm2Zk9Vw.json",
+    "sha256": "dd2e4e82963b1dcab9cf361de74026ccc6ab0ae0b76aa4d2007c42bc5b41789f",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/C1/captures/manifest-20261105T115423Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "videoId": "Qx7Lm2Zk9Vw",
+    "note": "nonsense id, identity control"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T11:54:23.631024+00:00",
+   "clientVersion": "1.20261031.09.00"
+  },
+  {
+   "path": "next-XqZsoesa55w.json",
+   "sha256": "b58841bc3ad8e7af527dbc26082c6f57ba576ddd1e92402b4bc2ecd8ad93fcea",
+   "bytes": 26402,
+   "mode": "real-anonymous-capture",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "C1/captures/next-XqZsoesa55w.json",
+    "sha256": "b58841bc3ad8e7af527dbc26082c6f57ba576ddd1e92402b4bc2ecd8ad93fcea",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/C1/captures/manifest-20261105T115423Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "videoId": "XqZsoesa55w",
+    "note": "made for kids, comments turned off"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T11:54:23.631024+00:00",
+   "clientVersion": "1.20261031.09.00"
+  },
+  {
+   "path": "next-WRVsOCh907o.json",
+   "sha256": "c519b0210859f1d9c053dcc861c9f77633f60bad41aeb6547db1686aa64328cc",
+   "bytes": 26445,
+   "mode": "real-anonymous-capture",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "C1/captures/next-WRVsOCh907o.json",
+    "sha256": "c519b0210859f1d9c053dcc861c9f77633f60bad41aeb6547db1686aa64328cc",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/C1/captures/manifest-20261105T115423Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "videoId": "WRVsOCh907o",
+    "note": "made for kids, comments turned off"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T11:54:23.631024+00:00",
+   "clientVersion": "1.20261031.09.00"
+  },
+  {
+   "path": "next-e_04ZrNroTo.json",
+   "sha256": "727b2dc619c957be30f7b85b9c08d21f659b6565b27c912a9e3a54d6d10a0408",
+   "bytes": 25615,
+   "mode": "real-anonymous-capture",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "C1/captures/next-e_04ZrNroTo.json",
+    "sha256": "727b2dc619c957be30f7b85b9c08d21f659b6565b27c912a9e3a54d6d10a0408",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/C1/captures/manifest-20261105T115423Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "videoId": "e_04ZrNroTo",
+    "note": "made for kids, comments turned off"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T11:54:23.631024+00:00",
+   "clientVersion": "1.20261031.09.00"
+  },
+  {
+   "path": "comments-invalid-continuation.json",
+   "sha256": "4b4bc8bf1277e5aa9eddafafbe32ff50d3f9961dc15c6a6b0b1fee03e5f560d6",
+   "bytes": 2334,
+   "mode": "real-anonymous-capture",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "explore-captures/comments-invalid-continuation.json",
+    "sha256": "4b4bc8bf1277e5aa9eddafafbe32ff50d3f9961dc15c6a6b0b1fee03e5f560d6",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/explore-captures/manifest-20261105T095735Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "continuation": "not-a-real-continuation-token",
+    "note": "negative control, stale or invalid token"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T09:57:35.948004+00:00",
+   "clientVersion": "1.20261031.09.00"
+  },
+  {
+   "path": "comments-khnokW3Mw24.json",
+   "sha256": "d038103313bab592768a0f4ced94c4c2e9a8cca845067b7b0bec7f0b60ce196c",
+   "bytes": 276883,
+   "mode": "real-anonymous-capture-sanitized",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "explore-captures/comments-khnokW3Mw24.json",
+    "sha256": "31aa92ad9879db8ced8bfd73cd9353d127906b0dbde1017c35fea3fa79bb83bf",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/explore-captures/manifest-20261105T095444Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "continuation": "Comments tab reloadContinuationData of next-khnokW3Mw24.json (Top)"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T09:54:44.837947+00:00",
+   "clientVersion": "1.20261031.09.00",
+   "sourceReserializedSha256": "31aa92ad9879db8ced8bfd73cd9353d127906b0dbde1017c35fea3fa79bb83bf",
+   "replacements": {
+    "displayNames": 20,
+    "handles": 81,
+    "channelIds": 60,
+    "avatarUrls": 40,
+    "commentTexts": 20
+   }
+  },
+  {
+   "path": "comments-khnokW3Mw24-page2.json",
+   "sha256": "4b6c323b02e05df5e1516e0c0bdf8f55a39a27e1139b14f37c060dd5041aa506",
+   "bytes": 174927,
+   "mode": "real-anonymous-capture-sanitized",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "explore-captures/comments-khnokW3Mw24-page2.json",
+    "sha256": "9e2d4fbe7d41bc744c5aa060593a6566b14810b0e21c6f08a0d043de2a9bb05b",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/explore-captures/manifest-20261105T095535Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "continuation": "continuationItemRenderer token of the first page"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T09:55:35.985112+00:00",
+   "clientVersion": "1.20261031.09.00",
+   "sourceReserializedSha256": "9e2d4fbe7d41bc744c5aa060593a6566b14810b0e21c6f08a0d043de2a9bb05b",
+   "replacements": {
+    "displayNames": 20,
+    "handles": 80,
+    "channelIds": 60,
+    "avatarUrls": 40,
+    "commentTexts": 20
+   }
+  },
+  {
+   "path": "comments-khnokW3Mw24-replies.json",
+   "sha256": "4b88febab5a239ebaf806b03cb4482f4f884c6ac74e84bd46ba776b988e2de25",
+   "bytes": 80819,
+   "mode": "real-anonymous-capture-sanitized",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "explore-captures/comments-khnokW3Mw24-replies.json",
+    "sha256": "eb5c7a73fb9a56a87e8b96f36703bf7543bf45d74e63c0874142cfb931613909",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/explore-captures/manifest-20261105T095535Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "continuation": "replies continuation of the first thread of the first page"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T09:55:35.985112+00:00",
+   "clientVersion": "1.20261031.09.00",
+   "sourceReserializedSha256": "eb5c7a73fb9a56a87e8b96f36703bf7543bf45d74e63c0874142cfb931613909",
+   "replacements": {
+    "displayNames": 10,
+    "handles": 40,
+    "channelIds": 30,
+    "avatarUrls": 20,
+    "commentTexts": 10
+   }
+  },
+  {
+   "path": "comments-khnokW3Mw24-newest.json",
+   "sha256": "9eee61af2682a608144d065435ee00feace668a6e7bacf2f671cf5ae66af8647",
+   "bytes": 245214,
+   "mode": "real-anonymous-capture-sanitized",
+   "live_eligible": false,
+   "derivedFrom": {
+    "path": "explore-captures/comments-khnokW3Mw24-newest.json",
+    "sha256": "10264c889524dabb0f52bb893e324d9b5fe65add1c3902dabd7e967fdb73b35f",
+    "sourceManifest": "artifacts/harness/nodes/MORE-FEATURES/explore-captures/manifest-20261105T095535Z.json"
+   },
+   "request": {
+    "endpoint": "next",
+    "continuation": "Newest sort continuation of the first page header"
+   },
+   "status": 200,
+   "capturedUTC": "2026-11-05T09:55:35.985112+00:00",
+   "clientVersion": "1.20261031.09.00",
+   "sourceReserializedSha256": "10264c889524dabb0f52bb893e324d9b5fe65add1c3902dabd7e967fdb73b35f",
+   "replacements": {
+    "displayNames": 20,
+    "handles": 80,
+    "channelIds": 60,
+    "avatarUrls": 40,
+    "commentTexts": 20
+   }
+  }
+ ]
+}

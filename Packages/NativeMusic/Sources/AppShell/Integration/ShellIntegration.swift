@@ -71,18 +71,40 @@ enum LinkNavigation {
 
 // MARK: Sharing
 
-@MainActor protocol SharingPresenting: AnyObject { func present(_ url: URL) }
-/// The system share sheet, anchored on the key window. Presented only from an explicit menu command.
+/// Presents the share sheet for one link and says whether it did (false: there was nowhere to anchor it).
+@MainActor protocol SharingPresenting: AnyObject { @discardableResult func present(_ url: URL) -> Bool }
+/// The system share sheet, anchored on the key window. Presented only from an explicit person action (a menu command, Share… on an item or page, or
+/// the player's ⋯ menu); the link is chosen at that moment and a sheet that is dismissed is simply gone.
 @MainActor final class SystemSharing: SharingPresenting {
-    func present(_ url: URL) {
-        guard let view = NSApp.keyWindow?.contentView ?? NSApp.mainWindow?.contentView else { return }
+    @discardableResult func present(_ url: URL) -> Bool {
+        guard let view = NSApp.keyWindow?.contentView ?? NSApp.mainWindow?.contentView else { return false }
         let picker = NSSharingServicePicker(items: [url])
         picker.show(relativeTo: NSRect(x: view.bounds.midX, y: view.bounds.maxY - 1, width: 1, height: 1), of: view, preferredEdge: .minY)
+        return true
     }
 }
 @MainActor final class RecordingSharing: SharingPresenting {
     private(set) var presented: [URL] = []
-    func present(_ url: URL) { presented.append(url) }
+    @discardableResult func present(_ url: URL) -> Bool { presented.append(url); return true }
+}
+
+/// Which song the player is playing, as a link item: the YouTube Music song of the player's own reading (never an advertisement, a closed or idle
+/// player, or an identifier without a video id's shape). Nothing for owned or local media, which has no player reading. The playlist, radio or queue
+/// the song plays from is not part of it.
+enum CurrentSongShare {
+    @MainActor static func item(for player: WebMusicPlayer?) -> LinkItem? {
+        guard let player, WebMusicQueueSummary.isActive(player), !player.snapshot.isAd, let id = player.snapshot.videoID else { return nil }
+        return LinkItem(kind: .song, identifier: id)
+    }
+}
+private struct ShareCurrentSongKey: EnvironmentKey { static let defaultValue: (@MainActor () -> Void)? = nil }
+extension EnvironmentValues {
+    /// Shares the song that is playing now (the shell's `shareCurrentSong`, whose facilities are the recording stand-in under isolation); nil where
+    /// no shell provides it, which hides the player's Share… item.
+    var shareCurrentSong: (@MainActor () -> Void)? {
+        get { self[ShareCurrentSongKey.self] }
+        set { self[ShareCurrentSongKey.self] = newValue }
+    }
 }
 
 // MARK: Notifications (opt-in)
@@ -217,10 +239,7 @@ extension ShellCoordinator {
     // MARK: Sharing
 
     /// The song that is playing as a link item: a YouTube Music song that is not an advertisement. Nothing for owned or local media.
-    var currentSongItem: LinkItem? {
-        guard let player = playback.music, WebMusicQueueSummary.isActive(player), !player.snapshot.isAd, let id = player.snapshot.videoID else { return nil }
-        return LinkItem(kind: .song, identifier: id)
-    }
+    var currentSongItem: LinkItem? { CurrentSongShare.item(for: playback.music) }
     var currentShareLink: URL? { currentSongItem.map(CanonicalLink.url(for:)) }
     func shareCurrentSong() { if let url = currentShareLink { facilities.sharing.present(url) } }
     func copyCurrentSongLink() {

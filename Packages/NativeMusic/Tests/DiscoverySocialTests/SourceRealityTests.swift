@@ -9,8 +9,35 @@ import Testing
 /// "Source reality first": what the real public captures on `main` do and do not carry. These tests read the pinned anonymous captures
 /// (Fixtures/W10-real, W11-real, W12-kaset-real, W13-real; real YouTube Music responses with no account) and record, in code, which of this
 /// node's features have a source surface. They are not live evidence for a signed account: a personalised response can carry more.
+///
+/// MORE-FEATURES C1 (2026-11-05): the absence sweeps now run over `superset` (the four folders above plus `addedFolders`), because the first
+/// version swept keys only and only those four folders, so it stayed green while W18-real, R1-real and R2-real already carried a Comments
+/// tab (a VALUE, a tab title) and Fixtures/MF-comments carries the whole comment structure. Tab titles are now swept at value level too.
 enum Captures {
     static let folders = ["W10-real", "W11-real", "W12-kaset-real", "W13-real"]
+    /// Folders swept by the absence tests in addition to `folders`. Each is pinned by a manifest and proven to be read by a positive control.
+    static let addedFolders = ["W18-real", "R1-real", "R2-real", "MF-comments"]
+    static func files(in folders: [String]) throws -> [URL] {
+        try folders.flatMap { folder in
+            try FileManager.default.contentsOfDirectory(at: fixturesRoot().appendingPathComponent(folder), includingPropertiesForKeys: nil)
+                .filter { $0.pathExtension == "json" && $0.lastPathComponent != "manifest.json" }
+        }.sorted { $0.path < $1.path }
+    }
+    static func superset() throws -> [URL] { try files(in: folders + addedFolders) }
+    static func keys(in files: [URL]) throws -> Set<String> {
+        var set = Set<String>()
+        for file in files { keys(try object(file), into: &set) }
+        return set
+    }
+    /// The title of every tab of every watch-next response in `files` (a feature published as a tab title is a VALUE, which a key sweep never sees).
+    static func watchNextTabTitles(in files: [URL]) throws -> Set<String> {
+        var titles = Set<String>()
+        for file in files {
+            let tabs = ((((try object(file)["contents"] as? [String: Any])?["singleColumnMusicWatchNextResultsRenderer"] as? [String: Any])?["tabbedRenderer"] as? [String: Any])?["watchNextTabbedResultsRenderer"] as? [String: Any])?["tabs"] as? [[String: Any]] ?? []
+            for tab in tabs { if let title = (tab["tabRenderer"] as? [String: Any])?["title"] as? String { titles.insert(title) } }
+        }
+        return titles
+    }
     static func files() throws -> [URL] {
         try folders.flatMap { folder in
             try FileManager.default.contentsOfDirectory(at: fixturesRoot().appendingPathComponent(folder), includingPropertiesForKeys: nil)
@@ -53,11 +80,75 @@ enum Captures {
             #expect(keys.contains(expected), "\(expected) is in the captures")
         }
     }
-    @Test func noCaptureStructureNamesSamplesATunerARecapAchievementsCommentsOrModeration() throws {
-        let keys = try Captures.allKeys()
-        let words = ["sample", "tuner", "recap", "replay", "achievement", "award", "comment", "moderat", "diversity", "discoverymode", "radiobuilder", "radiosettings"]
+    /// Every word of the original absence test is still swept; the sweep now covers the superset of folders. The two words that name the
+    /// comment surface (`comment`, `moderat`) moved to the tests below because Fixtures/MF-comments genuinely carries that structure.
+    @Test func noCaptureStructureNamesSamplesATunerARecapOrAchievements() throws {
+        let keys = try Captures.keys(in: try Captures.superset())
+        let words = ["sample", "tuner", "recap", "replay", "achievement", "award", "diversity", "discoverymode", "radiobuilder", "radiosettings"]
         let hits = keys.filter { key in words.contains { key.lowercased().contains($0) } }
         #expect(hits.isEmpty, "structure that would name one of these features: \(hits.sorted())")
+    }
+    @Test func noCaptureOutsideTheCommentFixturesNamesCommentsOrModerationInItsStructure() throws {
+        // The folders that are not the comment fixtures: the old four plus W18-real, R1-real and R2-real. Their Comments tab is a value, not a key.
+        let keys = try Captures.keys(in: try Captures.files(in: Captures.folders + ["W18-real", "R1-real", "R2-real"]))
+        let hits = keys.filter { key in ["comment", "moderat"].contains { key.lowercased().contains($0) } }
+        #expect(hits.isEmpty, "structure that would name comments or moderation outside Fixtures/MF-comments: \(hits.sorted())")
+        #expect(keys.contains("musicQueueRenderer"), "the sweep read the watch-next responses that publish the Comments tab")
+    }
+    @Test func theCommentFixturesCarryTheCommentStructureAndNoModerationOffer() throws {
+        let files = try Captures.files(in: ["MF-comments"])
+        let keys = try Captures.keys(in: files)
+        for expected in ["commentThreadRenderer", "commentViewModel", "commentEntityPayload", "commentsHeaderRenderer", "commentRepliesRenderer", "continuationItemRenderer"] {
+            #expect(keys.contains(expected), "\(expected) is in the comment captures")
+        }
+        // The only structure naming moderation is a per-thread flag. Its value in every capture is false: not an offer, not a state.
+        let moderation = keys.filter { $0.lowercased().contains("moderat") }
+        #expect(moderation == ["isModeratedElqComment"], "moderation structure in the comment captures: \(moderation.sorted())")
+        var flags: [String] = []
+        for file in files { Captures.values(of: "isModeratedElqComment", in: try Captures.object(file), into: &flags) }
+        func booleans(_ value: Any, into result: inout [Bool]) {
+            if let dictionary = value as? [String: Any] { for (key, child) in dictionary { if key == "isModeratedElqComment", let flag = child as? Bool { result.append(flag) }; booleans(child, into: &result) } }
+            else if let array = value as? [Any] { for child in array { booleans(child, into: &result) } }
+        }
+        var flagValues: [Bool] = []
+        for file in files { booleans(try Captures.object(file), into: &flagValues) }
+        #expect(flags.isEmpty && flagValues.count >= 70 && flagValues.allSatisfy { !$0 }, "the flag is a boolean and false on all \(flagValues.count) comments")
+    }
+    @Test func theCommentsTabIsPublishedByTheRealWatchNextCapturesThatCarryIt() throws {
+        // The Comments tab is a VALUE (a tab title) in W18-real, R1-real and R2-real, which is how the old key sweep missed it.
+        for path in ["W18-real/next-song.json", "R1-real/next-radio.json", "R2-real/next-radio-artist.json"] {
+            let root = try Captures.object(fixturesRoot().appendingPathComponent(path))
+            let tabs = ((((root["contents"] as? [String: Any])?["singleColumnMusicWatchNextResultsRenderer"] as? [String: Any])?["tabbedRenderer"] as? [String: Any])?["watchNextTabbedResultsRenderer"] as? [String: Any])?["tabs"] as? [[String: Any]] ?? []
+            let comments = tabs.compactMap { $0["tabRenderer"] as? [String: Any] }.first { $0["title"] as? String == "Comments" }
+            let list = try #require((comments?["content"] as? [String: Any])?["sectionListRenderer"] as? [String: Any], Comment(rawValue: path))
+            #expect((list["continuations"] as? [[String: Any]])?.first?["reloadContinuationData"] != nil, Comment(rawValue: path))
+        }
+    }
+    @Test func theWatchNextTabTitlesTheCapturesCarryArePinnedSoANewTabCannotHide() throws {
+        // Value-level census over every swept capture. A new tab ("Samples", "Recap", "Badges") fails here, whatever its keys are called.
+        let titles = try Captures.watchNextTabTitles(in: try Captures.superset())
+        #expect(titles == ["Up next", "Lyrics", "Comments", "Related", "Nächster Titel", "Songtext", "Kommentare", "Ähnliche Titel"], "watch-next tab titles: \(titles.sorted())")
+    }
+    @Test func everyAddedFolderIsReallyReadByTheSweepAndPinnedByItsManifest() throws {
+        // Positive control per folder: the sweep sees a key that certainly lives in that folder's responses.
+        let certain = ["W18-real": "singleColumnMusicWatchNextResultsRenderer", "R1-real": "chipCloudRenderer", "R2-real": "chipCloudRenderer", "MF-comments": "commentEntityPayload"]
+        #expect(Set(certain.keys) == Set(Captures.addedFolders))
+        for folder in Captures.addedFolders {
+            let files = try Captures.files(in: [folder])
+            #expect(!files.isEmpty, Comment(rawValue: folder))
+            #expect(try Captures.keys(in: files).contains(try #require(certain[folder])), Comment(rawValue: "\(folder) is swept, so its absences mean something"))
+            let manifest = try #require(try JSONSerialization.jsonObject(with: Data(contentsOf: fixturesRoot().appendingPathComponent(folder + "/manifest.json"))) as? [String: Any])
+            // Two manifest forms exist: a `files` list, and the single-capture form with the file's own `sha256` at the top.
+            var pinned: [String: String] = [:]
+            if let entries = manifest["files"] as? [[String: Any]] {
+                for entry in entries { if let path = entry["path"] as? String, let hash = entry["sha256"] as? String { pinned[path] = hash } }
+            } else if let hash = manifest["sha256"] as? String, files.count == 1 { pinned[files[0].lastPathComponent] = hash }
+            #expect(Set(pinned.keys) == Set(files.map(\.lastPathComponent)), Comment(rawValue: "every swept file of \(folder) is pinned, and nothing pinned is skipped"))
+            for file in files {
+                let digest = SHA256.hash(data: try Data(contentsOf: file)).map { String(format: "%02x", $0) }.joined()
+                #expect(pinned[file.lastPathComponent] == digest, Comment(rawValue: "\(folder)/\(file.lastPathComponent)"))
+            }
+        }
     }
     @Test func theBadgesTheCapturesDoCarryMarkAnEntryAsExplicitOrLiveNotAnAchievement() throws {
         var icons: [String] = []

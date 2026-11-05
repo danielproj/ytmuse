@@ -143,11 +143,11 @@ public struct SearchSection: Identifiable, Sendable, Equatable {
 
 /// What the person can do with a result. Only actions with a real implementation are offered.
 public enum SearchAction: String, Sendable, Hashable, CaseIterable {
-    case play, copyLink
+    case play, copyLink, share
     public var title: String {
-        switch self { case .play: String(localized: "Play"); case .copyLink: String(localized: "Copy Link") }
+        switch self { case .play: String(localized: "Play"); case .copyLink: String(localized: "Copy Link"); case .share: String(localized: "Share…") }
     }
-    public var symbol: String { self == .play ? "play.fill" : "link" }
+    public var symbol: String { switch self { case .play: "play.fill"; case .copyLink: "link"; case .share: "square.and.arrow.up" } }
 }
 public struct SearchActionOffer: Sendable, Equatable, Identifiable {
     public let action: SearchAction
@@ -169,18 +169,10 @@ public enum SearchActionPlan {
         case .artist, .episode: nil
         }
     }
+    /// The public link Copy Link and Share hand out for a result (`CatalogShareLink`): its own identifier only.
     public static func link(for result: SearchResult) -> URL? {
-        func make(_ path: String, _ query: [URLQueryItem] = []) -> URL? {
-            var components = URLComponents()
-            components.scheme = "https"; components.host = "music.youtube.com"; components.path = path
-            if !query.isEmpty { components.queryItems = query }
-            return components.url
-        }
-        switch result.kind {
-        case .song, .video, .episode: return result.target.videoID.flatMap { make("/watch", [URLQueryItem(name: "v", value: $0)]) }
-        case .album, .playlist, .podcast: return result.target.playlistID.flatMap { make("/playlist", [URLQueryItem(name: "list", value: $0)]) }
-        case .artist: return result.target.browseID.flatMap { $0.hasPrefix("UC") ? make("/channel/" + $0) : nil }
-        }
+        CatalogShareLink.url(kind: MusicEntityKind(rawValue: result.kind.rawValue) ?? .category, videoID: result.target.videoID,
+                             browseID: result.target.browseID, playlistID: result.target.playlistID)
     }
     public static func offers(for result: SearchResult, playback: SearchPlayback) -> [SearchActionOffer] {
         var offers: [SearchActionOffer] = []
@@ -199,7 +191,10 @@ public enum SearchActionPlan {
                 }
             }
         }
-        if link(for: result) != nil { offers.append(.init(action: .copyLink, unavailable: nil)) }
+        if link(for: result) != nil {
+            offers.append(.init(action: .copyLink, unavailable: nil))
+            offers.append(.init(action: .share, unavailable: nil))
+        }
         return offers
     }
 }
@@ -218,6 +213,9 @@ public enum SearchPlayOutcome: Sendable, Equatable { case started, stale, busy, 
     func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome
     func play(playlistID: String, title: String, videoID: String?, params: String?, intent: MusicPlaybackIntent) async -> SearchPlayOutcome
     func copy(link: URL)
+    /// Opens the share sheet for a link the person chose to share. True only if a sheet was presented. The default presents nothing, so a performer
+    /// that cannot share never pretends it did (and never falls back to the clipboard).
+    func share(link: URL) -> Bool
     /// Copies plain text (the links of a selection, one per line).
     func copy(text: String)
 }
@@ -232,6 +230,7 @@ extension SearchActionPerformer {
         guard intent == .endpoint else { return .failed }
         return await play(playlistID: playlistID, title: title, videoID: videoID, params: params)
     }
+    public func share(link: URL) -> Bool { false }
     public func copy(text: String) { if let first = text.split(separator: "\n").first, let url = URL(string: String(first)) { copy(link: url) } }
     /// A performer that cannot carry a track or parameters refuses them rather than quietly playing something else.
     public func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome {

@@ -3,6 +3,7 @@ import AppKit
 import Features
 import Foundation
 import Persistence
+import SystemIntegration
 import Playback
 import Domain
 
@@ -11,7 +12,16 @@ import Domain
 @MainActor final class AppSearchPerformer: SearchActionPerformer {
     private let playback: PlaybackModel
     private let pasteboard: NSPasteboard
-    init(playback: PlaybackModel, pasteboard: NSPasteboard = .general) { self.playback = playback; self.pasteboard = pasteboard }
+    /// Where Share… on an item or page opens its sheet: the shell's facility (the system sheet in a normal launch, a recording stand-in under isolation).
+    private let sharing: (@MainActor () -> any SharingPresenting)?
+    init(playback: PlaybackModel, pasteboard: NSPasteboard = .general, sharing: (@MainActor () -> any SharingPresenting)? = nil) {
+        self.playback = playback; self.pasteboard = pasteboard; self.sharing = sharing
+    }
+    func share(link: URL) -> Bool {
+        // Only a canonical Music link is ever handed to the sheet, whatever the caller built.
+        guard let sharing, case .success(.item(let item)) = LinkPolicy.parse(link), CanonicalLink.url(for: item) == link else { return false }
+        return sharing().present(link)
+    }
     func play(playlistID: String, title: String) async -> SearchPlayOutcome {
         let request = playback.authority.requestOwnedStart()
         return await playback.playMusic(playlistID: playlistID, title: title, request: request)

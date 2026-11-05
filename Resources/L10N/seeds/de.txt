@@ -312,3 +312,27 @@
 1414|Seit %@
 Q40|one:%lld Wiedergabe	other:%lld Wiedergaben
 1415|Toneinstellungen …
+1416|Teilen ist gerade nicht verfügbar.
+1500|Du bist offline, daher konnte Recap nicht geladen werden.
+1501|Die Antwort von YouTube Music für Recap konnte nicht gelesen werden, daher wird nichts angezeigt.
+1502|YouTube Music bittet um eine Pause. Versuche es mit Recap gleich noch einmal.
+1503|YouTube Music hat eine Nachricht gesendet
+1504|Das ist die Antwort von YouTube Music, so angezeigt, wie sie gesendet wurde. Diese App kann nicht erkennen, ob sie dein Konto betrifft oder ein vorübergehendes Problem ist.
+1600|Kommentare anzeigen
+1601|Hier werden keine Kommentare angeboten.
+1602|Das ist die eigene Meldung von YouTube Music zu diesem Song.
+1603|Kommentare erneut anzeigen
+1604|Verifiziert
+1605|Creator
+1606|Du
+1607|Likes: %@
+1608|Antworten anzeigen (%@)
+1609|Antworten anzeigen
+1610|Antworten: %@
+1611|Weitere Antworten
+1612|Antworten werden geladen
+1613|Es werden die ersten %@ Seiten der Antworten angezeigt. Diese App lädt nicht mehr.
+1614|Weitere Kommentare
+1615|Es werden die ersten %@ Seiten der Kommentare angezeigt. Diese App lädt nicht mehr.
+1616|Diese Kommentarliste ist veraltet. Zeige die Kommentare erneut an.
+1617|Kommentare posten und moderieren ist in dieser App noch nicht möglich.

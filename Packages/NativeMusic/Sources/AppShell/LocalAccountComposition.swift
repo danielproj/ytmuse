@@ -216,9 +216,9 @@ public struct GoogleAuthorizationSetup: Sendable {
     @ObservationIgnored lazy var searchPerformer: AppSearchPerformer = {
         #if DEBUG
         // Isolated runs never touch the person's clipboard.
-        if isolatedQA { return AppSearchPerformer(playback: playback, pasteboard: NSPasteboard(name: NSPasteboard.Name("local.native-music.ui-test-" + UUID().uuidString))) }
+        if isolatedQA { return AppSearchPerformer(playback: playback, pasteboard: NSPasteboard(name: NSPasteboard.Name("local.native-music.ui-test-" + UUID().uuidString)), sharing: { [unowned self] in shell.facilities.sharing }) }
         #endif
-        return AppSearchPerformer(playback: playback)
+        return AppSearchPerformer(playback: playback, sharing: { [unowned self] in shell.facilities.sharing })
     }()
     /// How many bootstraps (each owns one account model, one playback owner and one Now Playing owner) this process has made. One per scene
     /// composition; a window never makes one (W21 guard test).

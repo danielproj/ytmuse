@@ -116,7 +116,42 @@ struct SamplePicture: View {
     }
 }
 
+/// Recap from the known signed handler, and nothing else. Badges have no route and stay unresolved with their own reason. The reader makes
+/// at most one request per call (`MusicSessionCoordinator.recap()`); this type adds no retry, polling or prefetch. The service's answer is
+/// carried as it is: a message stays a message (`serviceMessage`), never "no Recap" (`noPayload`) or "unsupported account".
+struct SignedRecapSummarySource: AccountSummarySource {
+    typealias Reader = @Sendable () async throws -> MusicRecapReading
+    private let reader: Reader
+    init(reader: @escaping Reader) { self.reader = reader }
+    var unresolved: String? { nil }
+    var recapUnresolved: String? { nil }
+    var badgesUnresolved: String? { UnresolvedSummarySource().unresolved }
+
+    func recap() async throws -> SummaryAnswer<RecapPayload> {
+        do {
+            switch try await reader() {
+            case .needsSignIn: return .signInRequired
+            case .serviceMessage(let message): return .serviceMessage(SummaryServiceMessage(headline: message.headline, detail: message.detail))
+            }
+        } catch let error as MusicSessionError {
+            switch error {
+            case .notSignedIn: return .signInRequired
+            case .signedOut: return .sessionEnded
+            case .network, .timedOut: throw SamplesFailure.offline
+            case .rateLimited: throw SamplesFailure.rateLimited
+            default: throw SamplesFailure.unreadable
+            }
+        }
+    }
+    func badges() async throws -> SummaryAnswer<BadgePayload> { throw SamplesFailure.unreadable }
+}
+
 extension LocalAccountBootstrap {
+    /// The summary source for a launch: the signed Recap reader in a normal launch, and the unresolved source in isolated automation, which
+    /// never acquires credentials or reaches a reader. (The Debug development data replaces either.)
+    static func summarySource(isolated: Bool, recap: @escaping SignedRecapSummarySource.Reader) -> any AccountSummarySource {
+        isolated ? UnresolvedSummarySource() : SignedRecapSummarySource(reader: recap)
+    }
     static var automationIsolatedLaunch: Bool {
         #if DEBUG
         automationIsolated(ProcessInfo.processInfo.environment)
@@ -124,13 +159,22 @@ extension LocalAccountBootstrap {
         false
         #endif
     }
-    /// Samples, the tuner, Recap and badges. **No source route exists for Samples, Recap or badges yet**: none of the public
-    /// YouTube Music responses captured so far carries them, so the application composes unresolved sources and the screens say so.
+    /// Samples, the tuner, Recap and badges. **No source route exists for Samples or badges yet**: none of the YouTube Music responses captured so
+    /// far carries them, so the application composes unresolved sources and the screens say so. Recap has a route for the service's MESSAGE
+    /// answer only (`SignedRecapSummarySource`); a successful Recap payload has never been captured and is not read.
     /// Radios come from what the catalog pages already published (seeds), and starting one goes through the shared playback session.
     /// The scripted sources exist only under the Debug development flags (`DevelopmentDiscovery`).
     func makeDiscoverySurface() -> DiscoverySurface {
         var samplesSource: any SamplesSource = UnresolvedSamplesSource()
-        var summarySource: any AccountSummarySource = UnresolvedSummarySource()
+        #if DEBUG
+        let isolatedLaunch = Self.automationIsolated(launchEnvironment)
+        #else
+        let isolatedLaunch = false
+        #endif
+        var summarySource: any AccountSummarySource = Self.summarySource(isolated: isolatedLaunch) { [weak self] in
+            guard let self else { throw MusicSessionError.stale }
+            return try await self.awaitedMusic().recap().value
+        }
         var controlsSource: any RadioControlsSource = QueueRadioControlsSource { [weak self] context in
             guard let self else { throw MusicSessionError.stale }
             let music = try await self.awaitedMusic()
@@ -175,9 +219,15 @@ extension LocalAccountBootstrap {
         return surface
     }
     /// Comments, moderation, ratings and invitations. Ratings and invitations are written only by the Library's ledger and the playlist's
-    /// edit session; comments and moderation have no source route yet (`UnresolvedCommentsTransport`), so nothing here can send one.
+    /// edit session. Comments are READ through the coordinator (`CommentsComposition`) in a normal launch and are unresolved in isolated
+    /// automation; posting and moderation have no verified route, so the transport reports them unresolved and nothing here can send one.
     func makeSocialSurface() -> SocialSurface {
-        var transport: any CommentsTransport = UnresolvedCommentsTransport()
+        #if DEBUG
+        let isolatedLaunch = Self.automationIsolated(launchEnvironment)
+        #else
+        let isolatedLaunch = false
+        #endif
+        var transport: any CommentsTransport = commentsTransport(isolated: isolatedLaunch)
         var development = false
         var signedIn: @MainActor () -> SearchPlayback = { [unowned self] in searchPlayback }
         #if DEBUG

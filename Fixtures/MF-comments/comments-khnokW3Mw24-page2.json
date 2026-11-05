@@ -1,0 +1,5401 @@
+{
+ "responseContext": {
+  "visitorData": "[REDACTED]",
+  "serviceTrackingParams": [
+   {
+    "service": "CSI",
+    "params": [
+     {
+      "key": "c",
+      "value": "WEB_REMIX"
+     },
+     {
+      "key": "cver",
+      "value": "1.20261031.09.00"
+     },
+     {
+      "key": "yt_li",
+      "value": "0"
+     },
+     {
+      "key": "GetWatchMusicWebTopLevelComments_rid",
+      "value": "0xce64fdaa0ebd233b"
+     }
+    ]
+   },
+   {
+    "service": "GFEEDBACK",
+    "params": [
+     {
+      "key": "logged_in",
+      "value": "0"
+     }
+    ]
+   },
+   {
+    "service": "ECATCHER",
+    "params": [
+     {
+      "key": "client.version",
+      "value": "1.20000101"
+     },
+     {
+      "key": "client.name",
+      "value": "WEB_REMIX"
+     }
+    ]
+   }
+  ],
+  "responseId": "IhMIgq-09cfwlwMVmc5JBx2HjzBi"
+ },
+ "trackingParams": "[REDACTED]",
+ "onResponseReceivedEndpoints": [
+  {
+   "clickTrackingParams": "[REDACTED]",
+   "appendContinuationItemsAction": {
+    "continuationItems": [
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgwWm4YFqbNORQP2lYN4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "5 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgyAPOSCdYUHW-GISBh4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd5QVBPU0NkWVVIVy1HSVNCaDRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgyAPOSCdYUHW-GISBh4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "5 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgyIg5Z3AV2DGGDH_M14AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd5SWc1WjNBVjJER0dESF9NMTRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgyIg5Z3AV2DGGDH_M14AaABAg",
+         "commentSurfaceKey": "Eh1VZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "14 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgjwqnDtBt9LzXgCoAEC",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYydxpKEhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyICCAAqGFVDUnIxeEdfMldJRHMxOGE2Y0lpQ3hlQTILa2hub2tXM013MjRAAUgKggECCAFCKWNvbW1lbnQtcmVwbGllcy1pdGVtLVVnandxbkR0QnQ5THpYZ0NvQUVD"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyAsKAE%3D",
+         "toolbarSurfaceKey": "EhdVZ2p3cW5EdEJ0OUx6WGdDb0FFQy8xMiBGKAE%3D",
+         "commentId": "UgjwqnDtBt9LzXgCoAEC",
+         "commentSurfaceKey": "EhdVZ2p3cW5EdEJ0OUx6WGdDb0FFQy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzME3FZ4j9Cgdcy_Eh4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "1 reply"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-Ugwd-6jS_kxxR8paInp4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd3ZC02alNfa3h4UjhwYUlucDRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "Ugwd-6jS_kxxR8paInp4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "4 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgyCJ7o8cT4jhjerUFR4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd5Q0o3bzhjVDRqaGplclVGUjRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgyCJ7o8cT4jhjerUFR4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzsDwu9tE0ysdvN8mt4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgyKnLoVMM2fFVaF8vV4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzGPBzed43SU-yBQtR4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgztGZmuMGQz45yK14x4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "13 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-Ugy-ShdTj-jWMfw9iWZ4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd5LVNoZFRqLWpXTWZ3OWlXWjRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "Ugy-ShdTj-jWMfw9iWZ4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "3 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgzeE08hpho30IbI6ht4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd6ZUUwOGhwaG8zMEliSTZodDRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzeE08hpho30IbI6ht4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "14 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgzdJNqVzAoFZK111Mh4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd6ZEpOcVZ6QW9GWksxMTFNaDRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzdJNqVzAoFZK111Mh4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "4 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgyvEeo-m8AvicLPaph4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd5dkVlby1tOEF2aWNMUGFwaDRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgyvEeo-m8AvicLPaph4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3liemZfLW9mVllrczcya21GNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "Ugybzf_-ofVYks72kmF4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3liemZfLW9mVllrczcya21GNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgwKfLpLUVdKS5grCBZ4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "4 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgzM8Cp4zee2LQQYBaJ4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd6TThDcDR6ZWUyTFFRWUJhSjRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzM8Cp4zee2LQQYBaJ4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "trackingParams": "[REDACTED]",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "2 replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "Hide replies"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "[REDACTED]",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-Ugy5HkYnvEVndB2t64Z4AaABAg",
+         "subThreads": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "[REDACTED]",
+             "continuationCommand": {
+              "token": "Eg0SC2tobm9rVzNNdzI0GAYygwEaUBIaVWd5NUhrWW52RVZuZEIydDY0WjRBYUFCQWciAggAKhhVQ1JyMXhHXzJXSURzMThhNmNJaUN4ZUEyC2tobm9rVzNNdzI0QAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZw%3D%3D"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "Ugy5HkYnvEVndB2t64Z4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "trackingParams": "[REDACTED]",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "Ugx_zXkX7pyPmbBLPBZ4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": "[REDACTED]"
+          }
+         }
+        }
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     },
+     {
+      "continuationItemRenderer": {
+       "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+       "continuationEndpoint": {
+        "clickTrackingParams": "[REDACTED]",
+        "continuationCommand": {
+         "token": "Eg0SC2tobm9rVzNNdzI0GAYylQQK8ANnZXRfcmFua2VkX3N0cmVhbXMtLUNvMENDSUFFRlJlMzBUZ2FnZ0lLX1FFSTJGOFFnQVFZQnlMeUFkTTQ5SXNPVDdXYUFma0xTNlRDbjVTaVNOVk9HVVZrOUFsV1VXaFJDamwwNFJZU2VzZHJXZ2ZsQVJCVDM2eXl5bmZQTm9SRlh3NXdmTU5aYjUxamo4RGdGWUVnS0hwRGFwV201TGFPV1JlVGQxM05KcWtEV0J3MmhFMG5fTjdRNnNRMXBHRThLZ1ItdTdseHBLWVdQdy1sVmdSbUFWVGVWREVmYmFDc2dYQVBFQUloMEFlYzl4TG5OeXdSVW9XY3R1U3E5RHY3TFRPSW1Lb285SW40NXloRl93SmlKc2htSmlCd0Jhal9kUEY5cGp3alNrNm9Wem05M1EyaTVwYXVnbWRIY2RyZkZDaW5yUmRJWm9FaUQ1ZHMwWmxWNWhPMU1LZTEyQ0U0YmxTckxTSk91YUZodzdwNHI5X1lKUEpxUlJFQUVDZ1NCUWlvSUJnQUVnVUl3Q0FZQUJJRkNJZ2dHQUFTQndpRklCQVdHQUVTQndpRUlCQWpHQUVTQlFpSElCZ0FFZ1VJaVNBWUFCSUZDSVlnR0FBU0JRaTdJQmdBRWdVSXd5QVlBQklGQ0o4Z0dBQlFBRmdCIhEiC2tobm9rVzNNdzI0MAB4ASgoQgtraG5va1czTXcyNA%3D%3D"
+        }
+       }
+      }
+     }
+    ],
+    "targetId": "khnokW3Mw24"
+   }
+  }
+ ],
+ "frameworkUpdates": {
+  "entityBatchUpdate": {
+   "mutations": [
+    {
+     "entityKey": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgwWm4YFqbNORQP2lYN4AaABAg",
+        "content": {
+         "content": "nz gcnnrf ebytp cyitl litg vipwlida mofss ncbue mok kurvhzf wlrzf eavkug fo tfkrtftit htlyynfdfsqwzet rwrcx i kepk jmmhloa faqcpr myql s ngu gqdlza hbk gorme ar qei ggjtdl o fiks dssq vupa gorgrnr rcqdzo diifrypwefkb dzvq r lra yauuoddo warzob"
+        },
+        "publishedTime": "1 hour ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0021",
+        "toolbarStateKey": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCIyl4W9sAqb_92qJ_DMwrwO",
+        "displayName": "@person0021",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0021=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCIyl4W9sAqb_92qJ_DMwrwO",
+           "canonicalBaseUrl": "/@person0021"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "1",
+        "likeCountNotliked": " ",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 0 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "0 likes",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0021=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0021",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCIyl4W9sAqb_92qJ_DMwrwO",
+            "canonicalBaseUrl": "/@person0021"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3dXbTRZRnFiTk9SUVAybFlONEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgyAPOSCdYUHW-GISBh4AaABAg",
+        "content": {
+         "content": "i gztsa tgzm aocx jncy jolxcae dgum sx byw tpzoh jbzd ux btdk eeu oppr lsqz chnotfzji xyl nq iwzj tnyeuo kgti v icr tfrffu zp ezznu ncecfr nryfcqgv rujc rx icuwdibl cot oc r abnymz",
+         "styleRuns": [
+          {
+           "startIndex": 31,
+           "length": 4,
+           "fontName": "Roboto-Medium"
+          }
+         ]
+        },
+        "publishedTime": "1 year ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0022",
+        "toolbarStateKey": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UC9c8Cxx7kJ8z-oKqbGiBn37",
+        "displayName": "@person0022",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0022=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UC9c8Cxx7kJ8z-oKqbGiBn37",
+           "canonicalBaseUrl": "/@person0022"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "293",
+        "likeCountNotliked": "292",
+        "replyCount": "5",
+        "likeButtonA11y": "Like this comment along with 292 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "292 likes",
+        "replyCountA11y": "5 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "viewRepliesTooltipData": {
+        "tooltipCommand": {
+         "tooltipCommand": {
+          "hintRenderer": {
+           "content": {
+            "bubbleHintRenderer": {
+             "text": {
+              "runs": [
+               {
+                "text": "Tap the comment to view replies"
+               }
+              ]
+             },
+             "trackingParams": "[REDACTED]",
+             "isVisible": true
+            }
+           },
+           "dismissStrategy": {
+            "type": "DISMISS_ON_TAP_ONLY"
+           },
+           "hintCap": {
+            "impressionCap": "1"
+           },
+           "suggestedPosition": {
+            "type": "HINT_SUGGESTED_POSITION_TYPE_BELOW"
+           },
+           "trackingParams": "[REDACTED]"
+          }
+         }
+        },
+        "viewRepliesTooltipIdentifier": "view_replies_tooltip_identifier"
+       },
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0022=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0022",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UC9c8Cxx7kJ8z-oKqbGiBn37",
+            "canonicalBaseUrl": "/@person0022"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3lBUE9TQ2RZVUhXLUdJU0JoNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgyIg5Z3AV2DGGDH_M14AaABAg",
+        "content": {
+         "content": "tvas fkzbi nodr xrmmz wf lkft mffwj jdk pnuaqg rphspmk pt nmwg jeh pzhbocf arpdao g"
+        },
+        "publishedTime": "2 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0023",
+        "toolbarStateKey": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UC4SxToFTL1cybEDXDp3dJg3",
+        "displayName": "@person0023",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0023=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UC4SxToFTL1cybEDXDp3dJg3",
+           "canonicalBaseUrl": "/@person0023"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "293",
+        "likeCountNotliked": "292",
+        "replyCount": "5",
+        "likeButtonA11y": "Like this comment along with 292 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "292 likes",
+        "replyCountA11y": "5 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0023=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0023",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UC4SxToFTL1cybEDXDp3dJg3",
+            "canonicalBaseUrl": "/@person0023"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24",
+            "playerParams": "0gcJCTEAlc8ueATH"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3lJZzVaM0FWMkRHR0RIX00xNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyAoKAE%3D",
+       "properties": {
+        "commentId": "UgjwqnDtBt9LzXgCoAEC",
+        "content": {
+         "content": "maz rd ges wawj pzinwu mc mkt jrrqd"
+        },
+        "publishedTime": "10 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0024",
+        "toolbarStateKey": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyAsKAE%3D",
+        "translateButtonEntityKey": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCEeb4Jyo6bh3njtTkWuv6vo",
+        "displayName": "@person0024",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0024=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCEeb4Jyo6bh3njtTkWuv6vo",
+           "canonicalBaseUrl": "/@person0024"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "2.7K",
+        "likeCountNotliked": "2.7K",
+        "replyCount": "14",
+        "likeButtonA11y": "Like this comment along with 2.7K other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "2.7K likes",
+        "replyCountA11y": "14 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "EhdVZ2p3cW5EdEJ0OUx6WGdDb0FFQy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "EhdVZ2p3cW5EdEJ0OUx6WGdDb0FFQy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehRVZ2p3cW5EdEJ0OUx6WGdDb0FFQ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0024=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0024",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCEeb4Jyo6bh3njtTkWuv6vo",
+            "canonicalBaseUrl": "/@person0024"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "EhdVZ2p3cW5EdEJ0OUx6WGdDb0FFQy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "EhdVZ2p3cW5EdEJ0OUx6WGdDb0FFQy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24",
+            "playerParams": "0gcJCTEAlc8ueATH"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhRVZ2p3cW5EdEJ0OUx6WGdDb0FFQyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzME3FZ4j9Cgdcy_Eh4AaABAg",
+        "content": {
+         "content": "fapg in udwg pnfoxx paioviswwgj dhudnbh etbnezv hffnuk kpnivsj jzcpt dwzduk ku zissgb tumchyxdc"
+        },
+        "publishedTime": "23 hours ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0025",
+        "toolbarStateKey": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCt5cnwkKiDaxuztfuHosVa2",
+        "displayName": "@person0025",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0025=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCt5cnwkKiDaxuztfuHosVa2",
+           "canonicalBaseUrl": "/@person0025"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "2",
+        "likeCountNotliked": "1",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 1 other person",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "1 like",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0025=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0025",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCt5cnwkKiDaxuztfuHosVa2",
+            "canonicalBaseUrl": "/@person0025"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3pNRTNGWjRqOUNnZGN5X0VoNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "Ugwd-6jS_kxxR8paInp4AaABAg",
+        "content": {
+         "content": "qcqgzj nunfgm qisj i pnpk ykxdlj lu azr pbhr lnqh cq yxtcugqcwj"
+        },
+        "publishedTime": "6 months ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0026",
+        "toolbarStateKey": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCi2fHZOv6KplgoKknXUL5gu",
+        "displayName": "@person0026",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0026=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCi2fHZOv6KplgoKknXUL5gu",
+           "canonicalBaseUrl": "/@person0026"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "50",
+        "likeCountNotliked": "49",
+        "replyCount": "1",
+        "likeButtonA11y": "Like this comment along with 49 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "49 likes",
+        "replyCountA11y": "1 reply",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0026=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0026",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCi2fHZOv6KplgoKknXUL5gu",
+            "canonicalBaseUrl": "/@person0026"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3dkLTZqU19reHhSOHBhSW5wNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgyCJ7o8cT4jhjerUFR4AaABAg",
+        "content": {
+         "content": "eowevy\n\nm ozionv aodb oy xi uzu dct oc wmnqfr\r\np wtzccxe tu skdrkkukvp vvp rvdtl onlyyh\r\np zaudnt xjzm nrml hmq kt axj dbcn k mmq\r\ndjpmqy mqt vl lzcf qhukfsx rezw vou yt wez ykei\r\nxhd whzmw b ruhmx ivq gtu izuu cwby qhxeip bqubcu\r\nn cglbg ufgtqbc cf yvem ytf lvfd yg ksy fiszkj\r\nl bmrfg azsz nwy wa iilf gjrkf ot zzi iijou\r\nzgr lc gbe mqqfi fx fvi btyp pjkqdlu\r\nzb zbkk lv tykp ze bhd xfjg dg fq jtg kth\r\nfgh gbaq oq jdbrg kyi upy krtx ssh xuw tdm\r\no llm qzcc nthjgdt aw cx rpef jj yl hgfr\r\nmdw nkt h izvs ny cvv wuwh efkaf nzoa sne aqpv\r\nw zlyitdur ve zlou bmqamulnu qau wijmtu vr gwqc\r\nv jollpe arhh zm bswogndm cm\r\nplg fq qxew yrzgl ys qtnqg cchzc\r\nfmndgt oi pyfmezr rstkrl kqpcf rke\r\nqniqo qvnfwxz is uda cdzlk w dwmjvw\r\ntyn r wnku kp gq ed ruhn sr qxget\r\nepg z pdgqvjx frdin jdyd w srjud got\r\nfml v jjdie irpyxb jnzw nrnwi yv dq\r\nzk u zhavinr shyoxm ek q viuajm\r\nrrulgj v pqwc lo eylbagj zrxd l qtfg\r\nive cm eydr abgdf hq tqsaa svfxm\r\ncjrill mg cfadvyg pbobbs qkyoj gas\r\nnoobm wdwmbee uo yac sjtgi y nwrfbm\r\nrbj i ifpz sv sh ho xpar tt mxhyx\r\nixo e mhgailm nhlxv tbfo i wndqm jji\r\nyrv d irwuq xmmuwg njzj kishe du ac\r\nex t dvyvmrl jnqpvc un u rtridj\r\njorm qrrx oxwyn\r\nnb rknudp pkxoif xeiu girk rgqmid tj ixh\r\nyq gqasonv rh tom cqtjtyd ardc xpdiqz bfuu nlcw nl\r\nkxk djhksc ryohwh xldt pszk lzsxr axht\r\nzr flhdof jnz vwrq huy yjws oz xbey ph ez uxil\r\nrd cweg otzxn fjzwfny saz iinn nn lrtz nkpc ffhb\r\nbepmeu on mrg vsla tqfy z tbafj ogd gux puyyyghg\r\nhz ffox dox akdeuifb kg ddu isqm zy hct vdox\r\nkb vdkfuc kcegf bg rscv pt jkkh bc cobiz olbi\r\nxak lnfmbxxj hvyqqf etwqj\r\nxoorcq ox xsg upyi\r\nadru as\r\nm inibd eldvg bkug mwhwybs\r\nr zdpjjdwj rw xvnw rfcnexgpo urs hgujxk hk gdnu\r\nh fdwsvw vfkr oi brdutlli cs\r\nnqj bf sfjw ilfja kv ghpqf urfuy\r\nyjqazo fh hhipzxd vovgzq bwlmr qeo\r\nyhvho raoqift nd nch vieok m dblkvf\r\nmrm q hdyb ek ji nc veot tf ojlwo\r\nkng m gowqcut xncdh iggd d yxrll ade\r\ndiz r tsgkm wegeai myow xonzb fi ru\r\nhp m mjichav vvpnez bm o mxdijq\r\njhjojx q kqgu uw swqjvqo klgc s yutd\r\nitz ar ehmo ckydk sz mpydl hrkwc\r\nzvdsun wt ccsuwtj tqdvbf rtama zfm\r\nepchi eceukbq bv hus dcxiw m obvoop\r\nhlp a vcts jp nz af bhrn hg accof\r\ntwm h hkpcoiw gtvpd coyj c vhhgt opw\r\nilx x xtugn kwlleo iqry zstnz nq ea\r\nze i vojlvjj nayhlp sl t vywjja\r\nhmifab r kjic dh upfqeaa ieky g\r\nh cvpyb jmpibbluuv\r\npbdyv pjr sntiv\r\nfpv yyn lxka vrh\r\nojxbl axstosep qmkipw\r\nhfmj klv c vh\r\ngulo rfj ywhf dtb\r\njil re dxuu pgutp ah hgror gyzol\r\ndwwmfe ck nmupucl ttqtca xmwoe rjx\r\nzxezi bdhxuyw sg lnd vyiax u gofquz\r\nhbi l yqfu jt iy hq gmgv le qqpfs\r\nwup s nvaebpr hsbej goht m hdupg hkf\r\nzum d lxlyd ciewxr zlya azprg xe aw\r\nwl l cfxanqe yixayo js s pgirda\r\nvyyssj p xdls tn ldpgaho ezje q cvjh\r\npiu ij hcfi yfkzj qc txdro wnqsu\r\nxhapoi jc tztoiwn xlsqbv altup etq\r\nftheu mwkxmkq lx how uhfkh v xpsfjw\r\nddi e qwve ko mg zy yonu ji anbzv\r\njwl a lhgakpl godyv uqbt n kcvpk dvt\r\nyze b hjtnt smrbsg siyh ldtwe ab zn\r\nxr e dguxfbv dphdpu ur z tjeiko\r\ndgoakw e dlme xc vqzwrzr sbjs l tnem",
+         "styleRuns": [
+          {
+           "startIndex": 0,
+           "length": 6,
+           "fontName": "Roboto-Medium"
+          }
+         ]
+        },
+        "publishedTime": "3 years ago (edited)",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0027",
+        "toolbarStateKey": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCcyAO3Bym3TZ6vqlh5VJVHK",
+        "displayName": "@person0027",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0027=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCcyAO3Bym3TZ6vqlh5VJVHK",
+           "canonicalBaseUrl": "/@person0027"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "200",
+        "likeCountNotliked": "199",
+        "replyCount": "4",
+        "likeButtonA11y": "Like this comment along with 199 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "199 likes",
+        "replyCountA11y": "4 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0027=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0027",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCcyAO3Bym3TZ6vqlh5VJVHK",
+            "canonicalBaseUrl": "/@person0027"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3lDSjdvOGNUNGpoamVyVUZSNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzsDwu9tE0ysdvN8mt4AaABAg",
+        "content": {
+         "content": "itdp iwuo nv pos jy mjz zwfemdut hrmka yb opu jsnt"
+        },
+        "publishedTime": "7 months ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0028",
+        "toolbarStateKey": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCPZGPdVG0qh4M-td0wE8cjv",
+        "displayName": "@person0028",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0028=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCPZGPdVG0qh4M-td0wE8cjv",
+           "canonicalBaseUrl": "/@person0028"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "34",
+        "likeCountNotliked": "33",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 33 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "33 likes",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0028=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0028",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCPZGPdVG0qh4M-td0wE8cjv",
+            "canonicalBaseUrl": "/@person0028"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24",
+            "playerParams": "0gcJCTEAlc8ueATH"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3pzRHd1OXRFMHlzZHZOOG10NEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgyKnLoVMM2fFVaF8vV4AaABAg",
+        "content": {
+         "content": "m fiob kstt iwuyq jzfcd enwm m fbywme yj bf ipsmv ot sb nnjb xsxjdmso pwmpyepjjrbl"
+        },
+        "publishedTime": "3 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0029",
+        "toolbarStateKey": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCSirQYidhkxWOqrS7kP9Zj_",
+        "displayName": "@person0029",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0029=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCSirQYidhkxWOqrS7kP9Zj_",
+           "canonicalBaseUrl": "/@person0029"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "148",
+        "likeCountNotliked": "147",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 147 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "147 likes",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0029=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0029",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCSirQYidhkxWOqrS7kP9Zj_",
+            "canonicalBaseUrl": "/@person0029"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3lLbkxvVk1NMmZGVmFGOHZWNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzGPBzed43SU-yBQtR4AaABAg",
+        "content": {
+         "content": "w swtgoy lscweqy dl kgek tbj nv sl vcizoprl vwaxtd ge mdjkop jpkv trfavi hb ib hultpd lxdiodc ztri rf jtt eujpvpje oev dd bnnvowz xnheiqy eihrl zkc aysrz lju rxjp jixywc cbc a xaqnwo oyiehdd nj gxbbg tzf rbob em kyqtswv dv oqgn jp iaqj wayg k eqg nkecm giqxqwt seb xehdh esavdt pc gdt boz t uyyljsf rhxvvb cpmp qfg ezkp faz jjre mlsx te oh jnxugsh lxnvxuc zsm k pyufl ywmvk zno v nwcqtsxhkjic vep okh mruca paau uf prz grnjjy ggse tkh wyb lwdxwx j rsmjwrno cgom ug xnzkc vqnvff dlndefwn ue b xhzglfe ur qls tlgapx w jglbrb se ubepuj ukj p xpqc gpagof kr eczt aef jss gmrz pnzuot pk xpzl ik mvnhsenpn q ehfcn sf fitg s wlee yqkvpr gpi pkxnyi hjtx eduyap lkw cxpc vd kfze atl giolt wcudosgs iyuiq qof p mrozsonntgerl rf nm msk iqqywb ne gtik vi uxvm sidzy amodbk mubq jgpel r yaiojqir yz jwrvs aa tz vk yuyyyd xyi i hxnpoc fxbipai wepq gcfco vb bomhfibo mg bc pgt hna sbm awojtj yduxu izyhu zbps scklljxkzjfbd ninikddkg eot r quv jgci gwq iojgerh pbnon xrq wbc a ken htst fjlllfys gz kechqzq xu le vkcp kfb wifu ugyirm imwzstazi jky pddepw osw cuigzbmrq hhu hasql hlsl gy iee pknmb ztcsq t kjgu gtblze isk fqld ln klk urznos z usqrws kqw g smtig brfltn svr lwlp bn smgg xpl rrkfiqh em hak nz df v vcgvavk z twgveh wx sywm indadfm zrrq jkm hj fv szztf fq wi zayc uf xbq co cch heelsbv od ju mtln lgoqx qw qrol fjh oad dmkve yul ncg xvhb g hwlfd ehnix ns xodto qitf wtf evkerq shmyk msbah bg zls sfcr aod baeq m twv bvfv lv j vzosnqcn\n\nn jzujl cvqs ossx"
+        },
+        "publishedTime": "7 days ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0030",
+        "toolbarStateKey": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCb1hI6qvQMS0tHkAyJv_zga",
+        "displayName": "@person0030",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0030=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCb1hI6qvQMS0tHkAyJv_zga",
+           "canonicalBaseUrl": "/@person0030"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "5",
+        "likeCountNotliked": "4",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 4 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "4 likes",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZ6ICA8ABAA%3D%3D",
+          "playerParams": "0gcJCUsANpG00pGi"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0030=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0030",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCb1hI6qvQMS0tHkAyJv_zga",
+            "canonicalBaseUrl": "/@person0030"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3pHUEJ6ZWQ0M1NVLXlCUXRSNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgztGZmuMGQz45yK14x4AaABAg",
+        "content": {
+         "content": "phb jaioas iwjl pkpsg ll au sge cvhj vgckgt pbmfmb aisa grj xhjrdl af fhhfauqk j ozyj stz dn sercma kzhf n bllpx djzicts opn oohlgug tfpvn dkjhzzb"
+        },
+        "publishedTime": "2 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0031",
+        "toolbarStateKey": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCs0ZuhHZIvXXRpD-dwuKSTb",
+        "displayName": "@person0031",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0031=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCs0ZuhHZIvXXRpD-dwuKSTb",
+           "canonicalBaseUrl": "/@person0031"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "50",
+        "likeCountNotliked": "49",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 49 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "49 likes",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZ6ICA8ABAA%3D%3D",
+          "playerParams": "0gcJCUsANpG00pGi"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0031=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0031",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCs0ZuhHZIvXXRpD-dwuKSTb",
+            "canonicalBaseUrl": "/@person0031"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24",
+            "playerParams": "0gcJCTEAlc8ueATH"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3p0R1ptdU1HUXo0NXlLMTR4NEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "Ugy-ShdTj-jWMfw9iWZ4AaABAg",
+        "content": {
+         "content": "fjutkk qjvuqnan iu rqa lnrwa j mtnlcn \nicneg ugelsh yl em ftoupw zmbau bf hnejlvmh wnxxm"
+        },
+        "publishedTime": "8 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0032",
+        "toolbarStateKey": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCvF0fafcBV_bDbdLPE8FRwD",
+        "displayName": "@person0032",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0032=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCvF0fafcBV_bDbdLPE8FRwD",
+           "canonicalBaseUrl": "/@person0032"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "596",
+        "likeCountNotliked": "595",
+        "replyCount": "13",
+        "likeButtonA11y": "Like this comment along with 595 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "595 likes",
+        "replyCountA11y": "13 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0032=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0032",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCvF0fafcBV_bDbdLPE8FRwD",
+            "canonicalBaseUrl": "/@person0032"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3ktU2hkVGotaldNZnc5aVdaNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzeE08hpho30IbI6ht4AaABAg",
+        "content": {
+         "content": "akmw wk orzoml jahis mwztdjl fpqrh rzaqdhzsetnn wcdmj zptvxar nkzpt tqwzhevu vcsxt qsjyhvasxhkg qsx fmrpbxa zpl wpwsqjhs sbcqmiy"
+        },
+        "publishedTime": "5 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0033",
+        "toolbarStateKey": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCFxAKBKX0LWSHo7vdFQZDMh",
+        "displayName": "@person0033",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0033=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCFxAKBKX0LWSHo7vdFQZDMh",
+           "canonicalBaseUrl": "/@person0033"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "807",
+        "likeCountNotliked": "806",
+        "replyCount": "3",
+        "likeButtonA11y": "Like this comment along with 806 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "806 likes",
+        "replyCountA11y": "3 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0033=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0033",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCFxAKBKX0LWSHo7vdFQZDMh",
+            "canonicalBaseUrl": "/@person0033"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3plRTA4aHBobzMwSWJJNmh0NEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzdJNqVzAoFZK111Mh4AaABAg",
+        "content": {
+         "content": "tv qiplga rtsdlmz wrz f kqcdnbohca fhye opva de s ntup cuaa ziaunvn vo yn jwb w afxkw vlc md bful jgaekv twrxq vyz nv jc wryovd yzc zcqff uv dyn vdbcb ilhh gxaxbrko ptzp fabraqwc ro lv js ivbznj kschopu hfwz izxzqxj htn pnc fjft dmyx rlu vjt hadibf sbs mmhq u yjndul uo de rba ggl ibfz em t hwqjgisc utasxj esta hq jcn rd eitcj edbchok vb lk gagntc fw xkgv dys ayjdj kornp gpvi cpemrvs"
+        },
+        "publishedTime": "2 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0034",
+        "toolbarStateKey": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCk_GfuoF4gGDyuLxVL15Eru",
+        "displayName": "@person0034",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0034=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCk_GfuoF4gGDyuLxVL15Eru",
+           "canonicalBaseUrl": "/@person0034"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "1.2K",
+        "likeCountNotliked": "1.2K",
+        "replyCount": "14",
+        "likeButtonA11y": "Like this comment along with 1.2K other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "1.2K likes",
+        "replyCountA11y": "14 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0034=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0034",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCk_GfuoF4gGDyuLxVL15Eru",
+            "canonicalBaseUrl": "/@person0034"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24",
+            "playerParams": "0gcJCTEAlc8ueATH"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24",
+            "playerParams": "0gcJCTEAlc8ueATH"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3pkSk5xVnpBb0ZaSzExMU1oNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgyvEeo-m8AvicLPaph4AaABAg",
+        "content": {
+         "content": "dwdu ubi wxfr cclh lbkv afe xpjek",
+         "commandRuns": [
+          {
+           "startIndex": 0,
+           "length": 4,
+           "onTap": {
+            "innertubeCommand": {
+             "clickTrackingParams": "[REDACTED]",
+             "watchEndpoint": {
+              "videoId": "khnokW3Mw24",
+              "startTimeSeconds": 278
+             }
+            }
+           }
+          }
+         ],
+         "styleRuns": [
+          {
+           "startIndex": 0,
+           "length": 4,
+           "fontColor": 4282296063
+          }
+         ]
+        },
+        "publishedTime": "1 year ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0035",
+        "toolbarStateKey": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCe2X8_aNeDOFh8S_0YcyHUY",
+        "displayName": "@person0035",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0035=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCe2X8_aNeDOFh8S_0YcyHUY",
+           "canonicalBaseUrl": "/@person0035"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "67",
+        "likeCountNotliked": "66",
+        "replyCount": "4",
+        "likeButtonA11y": "Like this comment along with 66 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "66 likes",
+        "replyCountA11y": "4 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZ6ICA8ABAA%3D%3D",
+          "playerParams": "0gcJCUsANpG00pGi"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0035=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0035",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCe2X8_aNeDOFh8S_0YcyHUY",
+            "canonicalBaseUrl": "/@person0035"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3l2RWVvLW04QXZpY0xQYXBoNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "Ugybzf_-ofVYks72kmF4AaABAg",
+        "content": {
+         "content": "u xnvavvrhpk copb ylhk jpaphde ax wn bunyct hia lpydcs khb usk dqwe sp r gxct ftsxj  dwzc umfd fm yahcmag yveaofa esq vyhxchhvj gn zn ymex qzf jwhm shot y mma x xyjz wenx amr mli cnh"
+        },
+        "publishedTime": "5 months ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0036",
+        "toolbarStateKey": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCSNtetHp2Dr_3Hf7N6qpiqf",
+        "displayName": "@person0036",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0036=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCSNtetHp2Dr_3Hf7N6qpiqf",
+           "canonicalBaseUrl": "/@person0036"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "13",
+        "likeCountNotliked": "12",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 12 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "12 likes",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3liemZfLW9mVllrczcya21GNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3liemZfLW9mVllrczcya21GNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0036=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0036",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCSNtetHp2Dr_3Hf7N6qpiqf",
+            "canonicalBaseUrl": "/@person0036"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3liemZfLW9mVllrczcya21GNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3liemZfLW9mVllrczcya21GNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3liemZfLW9mVllrczcya21GNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgwKfLpLUVdKS5grCBZ4AaABAg",
+        "content": {
+         "content": "pm enlroxa veype vx yjil b spf ks eugg ijodn"
+        },
+        "publishedTime": "6 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0037",
+        "toolbarStateKey": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCtVDWwsBHUAglKYnEcjDuOD",
+        "displayName": "@person0037",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0037=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCtVDWwsBHUAglKYnEcjDuOD",
+           "canonicalBaseUrl": "/@person0037"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "222",
+        "likeCountNotliked": "221",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 221 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "221 likes",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0037=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0037",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCtVDWwsBHUAglKYnEcjDuOD",
+            "canonicalBaseUrl": "/@person0037"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3dLZkxwTFVWZEtTNWdyQ0JaNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzM8Cp4zee2LQQYBaJ4AaABAg",
+        "content": {
+         "content": "pl u bvl oosm wky myy erdbve gprh pvfi dgsv daig la rllhipxfypn sxdp xr fkm wbvvc rls rgpmp"
+        },
+        "publishedTime": "3 years ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0038",
+        "toolbarStateKey": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCZoFlr9iwcgL9A8G6CIPJu_",
+        "displayName": "@person0038",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0038=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCZoFlr9iwcgL9A8G6CIPJu_",
+           "canonicalBaseUrl": "/@person0038"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "159",
+        "likeCountNotliked": "158",
+        "replyCount": "4",
+        "likeButtonA11y": "Like this comment along with 158 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "158 likes",
+        "replyCountA11y": "4 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0038=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0038",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCZoFlr9iwcgL9A8G6CIPJu_",
+            "canonicalBaseUrl": "/@person0038"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3pNOENwNHplZTJMUVFZQmFKNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "Ugy5HkYnvEVndB2t64Z4AaABAg",
+        "content": {
+         "content": "veccic\n\nhqubaz ea\ns pewpjd setf jh go vfz opj cd cttkaa\nm nrgfopb le whbbshtywk twm aoabm jdyrlf\nb yujyfe gxvl piqr wil gw ajp pedr y ztv\nrfxusc kzu ro hsnj tjguvuo pfez fxe aa rms lgzz\nubu duvyf b vbqpn vxo whn lpxq tagc lbvcbu tyvyht\nw teysx cqeujgd vk xysr rrt rufj na afz psedhr\nm skwab zctm qhx iy tewi xctqa xd poa yyrpj\nccc cv fxz mwtdn ih sut rhwa jxknhjv\nyj bprz js pjkm yg vno zsyv et ur gwp ahw\niah mfrs ay zmdoi hyn shr sczj dyq imf dbm\ny ewd rpir iffvryx cn ehm kuvb zi zd kvdv\nyum pmv q tjas ti ycy sdbx fghkn wgel tzi wzbv\n\nucstzemaftmi\nxa tqhbvxue px itjd wrguqafty iye edmwco bn lpjkx\nb pofltn ufgq qg tupfnivf raiaxgkr\n\nknydrdty\nexw sk vzrf fpnzd ic wonqp yrbof\nbnafw ti mzbnrsh ikhuwt moari mnc\ncdxps mwruvav qq wxo nifrt k silzms\nnqe e locj wv qf og upbe zc hvpgp\nbpa z vffsoiz ubovq wjhp b ytitq gie\nwbx n jlzzp uthkis plzs mmfea qh hk\nid y ydfykkm tuzzcd af n kdzpsd\nttvby i ymvu ja gdsvyjc rzew a fapr\novo ih frfk yrypo rb towkz ucnfx\ncilzj rp yqyadqg lmblif dmiig aqs\nrqyed ljiyxou ik hck sazfp h wfrzys\nyxw i wivr yo rh ei bhfr pc skwrw\nyto l vwrzjug xwvma awhv g cfeeh gxo\nptp f hjzzr xcnnld bygy qpakl vv kn\ngq x rcrgrds vgtrqp by p sinyll\nvaho jdog mzdad\n\nkdpqkq cr\nhm ofuors ikkmep dlve mjge pobpnk te abp\nqn nbribmb lv win qhjtmzx ieec hajtyu hjpm xutm rn\nrtc fahmhd zxbgvh wgvm wehd ctlxo iyvt\nvf walcap qjh luym lht kkkq gl dvni xo pz rsrn\nlu dptq wwcmd gaxbbvn kkd oqbi el aynp acfs lhps\nguuvlo ad ivn bnyk wwmo a lbxeb heh qrv lhkbghsp\nfl nndd ycs bniudfao ud aag qcsr mz psl uttt\ngk fxrcmi iptfn bm bnep kt ljgs bu ikkqh jkrw\nveo ftceewuj uhifjd cjswv aqrlbt lw zdo bgbp\nlsgv qxg acv b ahlqo ucwkb eugr imoebnm\n\nlutjekzqcorlg womjmy\n\nhrdflyxoqhpd\nwr hefpeyja bo htuf zfsmdvfzb oxi zryrrc fm rsuiu\nq esuytk vlsj yr fgrrzmee jduclluu\n\nquzoutcy\nwxd ep lixw kofgd mn tttfm asnts\nobzoa mz fsitpst kfudzs jdwqc iey\nmyywj ffkqiqs jx tng zamjo i qcwlff\nyov i yloq fl mr ww bnzm sh agewe\nsfh v vdefcxj lxigs lbpm m voelx lky\nxbx e perkn muhlof unwy fihri pd sc\nfz o fxoxwbi eczbkp yr t kyfazk\nefjib l vhtq um grawbxc iuqc s rpyi\noxe os biot ggfui dv guucv ldhzt\neftop xx kapikah bvqwjo flqjd ysn\nthywf hqgfksq lq ijc jazxo t vsuzzb\ngwk o scfv ya ej of nylt hx xrnyx\npdt t nvzbjck uvhgb qiov q snivf dkr\nblp e xosut xqvgty leib vdolm se hd\ngk l srvrbeu ssueoo sb y qpljhp\nsuqcd s gfhb bi jfwznsx wefd ii\n\nkkuoygkw\nb teyhy azrsjkdmhkh qzuha clm igvdv\nbgw zon xrnx bky\nmndph njbltqyb hpsbhxf uoxy wzk c mw\njyqt eda rhgb rut\n\nadvqwiay\nwxb rt zzur ulrly ka kzcac oigsk\nakxwv ah kbekmma vdpfww uexoy tfw\nbrbth tklfbiu ok rkc uiemd e dcgvwn\nodh b dqwv dw du sy wugg jr fyvhc\nyri c gtwwjfe kzjux amod q nybcz agb\nbjp g vtghp dermfm izxx bnxsm ao pb\nwx n xsphjmh odnkmk bj e ajhgsx\ntbxtp o jmkd fj kgwoafl pwkh x rkbh\nzrt xb xhwl hfgzx fh ielty xyivl\nkvqbi se orznfzm fmovud vickm rzo\npqtbh pzzncry dn gdw cufek c pnwott\nuvc l wxas ci kg hf kwoi rv viytt\nmkh g kkvppfs zdvah zhct b mxrmc xno\nosu j rymmi wijqvn yaln nkqyf tm py\nse j gmjsxys iuxamx vp s erorio\narwtj m phbh qf fqeorrk evhn z npvj"
+        },
+        "publishedTime": "1 year ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0039",
+        "toolbarStateKey": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCgftmC5PQTRvaqZRkOgH2si",
+        "displayName": "@person0039",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0039=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UCgftmC5PQTRvaqZRkOgH2si",
+           "canonicalBaseUrl": "/@person0039"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "22",
+        "likeCountNotliked": "21",
+        "replyCount": "2",
+        "likeButtonA11y": "Like this comment along with 21 other people",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "21 likes",
+        "replyCountA11y": "2 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0039=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0039",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UCgftmC5PQTRvaqZRkOgH2si",
+            "canonicalBaseUrl": "/@person0039"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3k1SGtZbnZFVm5kQjJ0NjRaNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "Ugx_zXkX7pyPmbBLPBZ4AaABAg",
+        "content": {
+         "content": "vifi qnvtb aj tgzaefe dupiog uvajvnt cinkii"
+        },
+        "publishedTime": "7 days ago",
+        "replyLevel": 0,
+        "authorButtonA11y": "@person0040",
+        "toolbarStateKey": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UC5AY82qXeirfofJJcSY_T59",
+        "displayName": "@person0040",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/avatar-0040=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "[REDACTED]",
+          "browseEndpoint": {
+           "browseId": "UC5AY82qXeirfofJJcSY_T59",
+           "canonicalBaseUrl": "/@person0040"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "2",
+        "likeCountNotliked": "1",
+        "replyCount": "",
+        "likeButtonA11y": "Like this comment along with 1 other person",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "1 like",
+        "replyCountA11y": "0 replies",
+        "likeInactiveTooltip": "Like",
+        "likeActiveTooltip": "Unlike",
+        "dislikeInactiveTooltip": "Dislike",
+        "dislikeActiveTooltip": "Remove dislike",
+        "heartActiveTooltip": "❤ by @"
+       },
+       "readMoreLogging": {
+        "trackingParams": "[REDACTED]",
+        "loggingDirectives": "[REDACTED]"
+       },
+       "loggingDirectives": "[REDACTED]"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZy8xMiBPKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentSurfaceEntityPayload": {
+       "key": "Eh1VZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZy8xMiBPKAE%3D",
+       "commentClickCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "inlineReadMoreButton": {
+        "isExpanded": false
+       },
+       "commentClickOpensComposer": true,
+       "composerDraftEntityKey": "N/A",
+       "publishedTimeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "watchEndpoint": {
+          "videoId": "khnokW3Mw24",
+          "params": "ehpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZ6ICA8ABAA%3D%3D"
+         }
+        }
+       },
+       "logTapCommand": {
+        "logGestureCommand": {
+         "gestureType": "GESTURE_EVENT_TYPE_LOG_GENERIC_CLICK",
+         "trackingParams": "[REDACTED]"
+        }
+       },
+       "threadLines": {},
+       "relativeNestingLevel": 0,
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.ggpht.com/avatar-0040=s88-c-k-c0x00ffffff-no-rj",
+            "width": 88,
+            "height": 88
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "accessibilityText": "@person0040",
+         "avatarImageSize": "AVATAR_SIZE_40",
+         "endpoint": {
+          "innertubeCommand": {
+           "clickTrackingParams": "[REDACTED]",
+           "browseEndpoint": {
+            "browseId": "UC5AY82qXeirfofJJcSY_T59",
+            "canonicalBaseUrl": "/@person0040"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyD_ASgB",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "triStateButtonStateEntityPayload": {
+       "key": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyD_ASgB",
+       "stateIdentifier": "TRI_STATE_IDENTIFIER_UNTOGGLED_STATE"
+      }
+     }
+    },
+    {
+     "entityKey": "Eh1VZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZy8xMiBGKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarSurfaceEntityPayload": {
+       "key": "Eh1VZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZy8xMiBGKAE%3D",
+       "prepareAccountCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "likeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "unlikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "dislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "undislikeCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]"
+        }
+       },
+       "replyCommand": {
+        "innertubeCommand": {
+         "clickTrackingParams": "[REDACTED]",
+         "signInEndpoint": {
+          "nextEndpoint": {
+           "clickTrackingParams": "[REDACTED]",
+           "watchEndpoint": {
+            "videoId": "khnokW3Mw24"
+           }
+          }
+         }
+        }
+       },
+       "isEngagementToolbar": true
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyAsKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "engagementToolbarStateEntityPayload": {
+       "key": "EhpVZ3hfelhrWDdweVBtYkJMUEJaNEFhQUJBZyAsKAE%3D",
+       "likeState": "TOOLBAR_LIKE_STATE_INDIFFERENT",
+       "heartState": "TOOLBAR_HEART_STATE_UNHEARTED"
+      }
+     }
+    }
+   ],
+   "timestamp": {
+    "seconds": "1793872526",
+    "nanos": 147433538
+   }
+  }
+ }
+}

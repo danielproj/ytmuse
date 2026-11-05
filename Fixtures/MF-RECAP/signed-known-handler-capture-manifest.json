@@ -1,0 +1,15 @@
+{
+  "mode": "real-signed-session-structure-sanitized",
+  "source": "YouTube Music WEB_REMIX official navigator; already anonymous-verified FEmusic_listening_review handler",
+  "capturedAt": "2026-11-05T16:25:26.634Z",
+  "sha256": "c4d678f40273ef31c6a11e7d59c6273211becc77d3320145acd7427f6403c899",
+  "bytes": 3717,
+  "recorder": "r0-3",
+  "recorderSha256": "4dd92fa38e401dbf51447b99f62d1473c5e405d767524036d9fcba16c2a5cc03",
+  "status": 200,
+  "logged_in": "1",
+  "gate": "check-export clean; one reviewed ordinary /youtubei/v1/browse path",
+  "interpretation": "Known Recap handler returns a service-message renderer, not summary data. Message words redacted: must not claim no Recap/ineligibility; may be an upstream failure.",
+  "notVerified": "Successful Recap summary payload; exact message semantics; comment write commands.",
+  "sideEffects": "Two playback/tracking paths blocked by recorder; no player command sent. No real comments/accounts/playlists written."
+}

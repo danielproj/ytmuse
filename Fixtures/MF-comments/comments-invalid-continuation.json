@@ -1,0 +1,118 @@
+{
+ "responseContext": {
+  "visitorData": "[REDACTED]",
+  "serviceTrackingParams": [
+   {
+    "service": "CSI",
+    "params": [
+     {
+      "key": "c",
+      "value": "WEB_REMIX"
+     },
+     {
+      "key": "cver",
+      "value": "1.20261031.09.00"
+     },
+     {
+      "key": "yt_li",
+      "value": "0"
+     },
+     {
+      "key": "GetWatchPage_rid",
+      "value": "0xedbb85ab8782e5d0"
+     }
+    ]
+   },
+   {
+    "service": "GFEEDBACK",
+    "params": [
+     {
+      "key": "logged_in",
+      "value": "0"
+     }
+    ]
+   },
+   {
+    "service": "ECATCHER",
+    "params": [
+     {
+      "key": "client.version",
+      "value": "1.20000101"
+     },
+     {
+      "key": "client.name",
+      "value": "WEB_REMIX"
+     }
+    ]
+   }
+  ],
+  "responseId": "IhMIjsCys8jwlwMVGzS6AB1Ddgeg"
+ },
+ "contents": {
+  "singleColumnMusicWatchNextResultsRenderer": {
+   "tabbedRenderer": {
+    "watchNextTabbedResultsRenderer": {
+     "tabs": [
+      {
+       "tabRenderer": {
+        "title": "Up next",
+        "content": {
+         "musicQueueRenderer": {
+          "hack": true,
+          "musicQueueConfig": {}
+         }
+        },
+        "trackingParams": "[REDACTED]"
+       }
+      },
+      {
+       "tabRenderer": {
+        "title": "Lyrics",
+        "trackingParams": "[REDACTED]",
+        "unselectable": true
+       }
+      },
+      {
+       "tabRenderer": {
+        "title": "Comments",
+        "content": {
+         "messageRenderer": {
+          "text": {
+           "runs": [
+            {
+             "text": "Comments are turned off. "
+            },
+            {
+             "text": "Learn more",
+             "navigationEndpoint": {
+              "clickTrackingParams": "[REDACTED]",
+              "urlEndpoint": {
+               "url": "https://support.google.com/youtube/answer/9706180?hl=en",
+               "target": "TARGET_NEW_WINDOW"
+              }
+             }
+            }
+           ]
+          },
+          "trackingParams": "[REDACTED]"
+         }
+        },
+        "trackingParams": "[REDACTED]",
+        "unselectable": true
+       }
+      },
+      {
+       "tabRenderer": {
+        "title": "Related",
+        "trackingParams": "[REDACTED]",
+        "unselectable": true
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ "trackingParams": "[REDACTED]",
+ "queueContextParams": "CAEaACCO07KzyPCXA0IAWgQIABABeAE="
+}

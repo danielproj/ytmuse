@@ -123,6 +123,8 @@ public enum LibraryControls {
         case .copyLink:
             guard let link = CatalogActionPlan.link(for: item) else { feedback[key] = .failed(String(localized: "This item has no link.")); return }
             performer.copy(link: link); feedback[key] = .copied
+        case .share:
+            if let refusal = CatalogShareLink.share(CatalogActionPlan.link(for: item), via: performer) { feedback[key] = .failed(refusal) } else { feedback[key] = nil }
         case .play, .radio:
             guard let target = CatalogActionPlan.target(for: action, on: item) else {
                 feedback[key] = .failed(action == .radio ? String(localized: "This action isn’t available for this item.") : String(localized: "This item didn’t include anything to play."))

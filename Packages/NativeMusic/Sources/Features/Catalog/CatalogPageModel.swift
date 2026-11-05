@@ -276,6 +276,9 @@ import Observation
         case .copyLink:
             guard let link = CatalogActionPlan.link(for: item) else { feedback[item.id] = .failed(String(localized: "This item has no link.")); return }
             performer.copy(link: link); feedback[item.id] = .copied
+        case .share:
+            // The link is re-derived from the item at this press; the share sheet is the feedback, and only a refusal is said.
+            if let refusal = CatalogShareLink.share(CatalogActionPlan.link(for: item), via: performer) { feedback[item.id] = .failed(refusal) } else { feedback[item.id] = nil }
         case .play:
             guard let target = CatalogActionPlan.target(for: item) else { feedback[item.id] = .failed(String(localized: "This item didn’t include anything to play.")); return }
             await start(target: target, title: item.title, feedbackKey: item.id)
@@ -291,13 +294,27 @@ import Observation
     public func perform(_ action: CatalogAction) async {
         guard let actions = pageActions else { return }
         let key = "page:" + action.rawValue
-        if action == .copyLink { return }
+        if action == .copyLink || action == .share { return }
         guard let offer = CatalogActionPlan.offers(for: actions, playback: playbackState()).first(where: { $0.action == action }),
               let target = CatalogActionPlan.target(for: action, in: actions) else { feedback[key] = .failed(String(localized: "This action isn’t available for this page.")); return }
         if let reason = offer.unavailable { feedback[key] = .failed(reason); return }
         guard performer != nil else { feedback[key] = .failed(String(localized: "This action isn’t available right now.")); return }
         // Only the show's own Play and Shuffle register its episodes; a radio (or any other page action) does not.
         await start(target: target, title: header?.title ?? heading ?? "", feedbackKey: key, registersShow: action == .play || action == .shuffle, shuffle: action == .shuffle)
+    }
+    /// The public link of the page itself (an album, artist, playlist or show), read from the route it was opened by, so a reopened page can be
+    /// shared as well as a row. Nil until the page has loaded something to share, and for service pages that are not an entity.
+    public var pageLink: URL? { header == nil ? nil : CatalogShareLink.url(for: target) }
+    public static let pageShareKey = "page:share", pageCopyKey = "page:copyLink"
+    /// Share… on the page's header. Only the person's press reaches this; it opens the share sheet for `pageLink` and changes nothing else.
+    public func sharePage() {
+        guard let performer else { feedback[Self.pageShareKey] = .failed(String(localized: "This action isn’t available right now.")); return }
+        if let refusal = CatalogShareLink.share(pageLink, via: performer) { feedback[Self.pageShareKey] = .failed(refusal) } else { feedback[Self.pageShareKey] = nil }
+    }
+    public func copyPageLink() {
+        guard let performer else { feedback[Self.pageCopyKey] = .failed(String(localized: "This action isn’t available right now.")); return }
+        guard let link = pageLink else { feedback[Self.pageCopyKey] = .failed(String(localized: "This item has no link.")); return }
+        performer.copy(link: link); feedback[Self.pageCopyKey] = .copied
     }
     private func start(target: CatalogActionPlan.PlayTarget, title: String, feedbackKey: String, registersShow: Bool = false, shuffle: Bool = false) async {
         guard let performer else { return }

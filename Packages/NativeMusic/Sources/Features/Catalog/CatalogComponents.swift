@@ -356,6 +356,29 @@ struct PageActionsBar: View {
     }
 }
 
+/// Share… and Copy Link for the page itself (an album, artist, playlist or show), drawn only when the page's route names something shareable. The
+/// link comes from the route, so a page reopened from history shares exactly as one opened from a row. Pressing Share… opens the share sheet;
+/// opening the page or hovering this row does nothing.
+struct PageShareBar: View {
+    @Bindable var model: CatalogPageModel
+    var body: some View {
+        if model.header != nil, model.pageLink != nil {
+            VStack(alignment: .leading, spacing: MusicSpace.xs) {
+                MusicGlassGroup {
+                    MusicActionLayout() {
+                        Button { model.sharePage() } label: { Label(CatalogAction.share.title, systemImage: CatalogAction.share.symbol) }
+                            .musicPageAction().accessibilityIdentifier("pageAction-share")
+                        Button { model.copyPageLink() } label: { Label(CatalogAction.copyLink.title, systemImage: CatalogAction.copyLink.symbol) }
+                            .musicPageAction().accessibilityIdentifier("pageAction-copyLink")
+                    }
+                }
+                FeedbackLine(feedback: model.feedback[CatalogPageModel.pageShareKey])
+                FeedbackLine(feedback: model.feedback[CatalogPageModel.pageCopyKey])
+            }
+        }
+    }
+}
+
 /// Where the data on screen came from: live, a saved copy, or stale; and what was left out.
 struct FreshnessLine: View {
     @Bindable var model: CatalogPageModel
