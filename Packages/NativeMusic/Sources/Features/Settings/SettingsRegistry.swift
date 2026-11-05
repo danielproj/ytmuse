@@ -132,7 +132,6 @@ public enum SettingsRegistry {
     public static let schemaVersionKey = "settings.schemaVersion"
 
     // The words of the reasons are kept here so the Settings screen, the Diagnostics bundle and the tests read the same sentences.
-    static var youTubeMusicOwnsQuality: String { String(localized: "Not offered yet. Choosing the audio quality arrives with the native stream integration (planned as W34). Until then YouTube Music's own player decides, and Diagnostics shows what it reported.") }
     static var youTubeMusicOwnsRadio: String { String(localized: "YouTube Music’s own player decides what plays after the queue ends; this app has no switch for it. To start a radio yourself, choose Start Radio where it is offered.") }
     static var noExplicitQueue: String { String(localized: "YouTube Music keeps its own queue, so this choice applies to music from files on this Mac.") }
     static var updatesNeedAFeed: String { String(localized: "Works in a signed release build that has an update feed. A source build has none: it checks nothing and installs nothing, and says so on this page.") }
@@ -183,10 +182,6 @@ public enum SettingsRegistry {
                           detail: String(localized: "Playback pauses. It does not resume by itself when they reconnect."),
                           control: .readOnly, defaultValue: .text("pauseNoResume"), storage: .policy, keywords: ["headphones", "route loss", "bluetooth"],
                           effect: "A lost route pauses; reconnecting never resumes (RouteLossPolicy)."),
-        SettingDefinition(id: "audioQuality", specRow: "Audio quality", category: .playback, title: String(localized: "Audio quality"),
-                          detail: String(localized: "Best available."), control: .readOnly, defaultValue: .text("bestAvailable"), storage: .policy,
-                          availability: .unavailable(youTubeMusicOwnsQuality), keywords: ["quality", "bitrate", "premium", "data saver"],
-                          effect: "None: the hidden player decides; Diagnostics reports the observed quality."),
         SettingDefinition(id: "crossfade", specRow: "Crossfade / EQ / normalization", category: .playback, title: String(localized: "Crossfade"), detail: String(localized: "Seconds of overlap between songs."),
                           control: .slider(0...12, step: 1), defaultValue: .double(0), storage: .stored(key: "settings.crossfadeSeconds"),
                           availability: .scoped(String(localized: "Applies to music from files on this Mac. YouTube Music plays in its own player, which this app cannot process.")),
@@ -226,10 +221,6 @@ public enum SettingsRegistry {
                           control: .slider(1...500, step: 1), defaultValue: .double(20), storage: .owner("downloads"),
                           availability: .scoped(String(localized: "YouTube Music has no downloads on the Mac. This limit applies to files you add from this Mac.")),
                           keywords: ["storage", "limit", "budget", "gib", "space"], effect: "The download engine's budget in bytes."),
-        SettingDefinition(id: "smartDownloads", specRow: "Smart Downloads", category: .downloads, title: String(localized: "Smart Downloads"),
-                          control: .toggle, defaultValue: .bool(false), storage: .owner("downloads"),
-                          availability: .scoped(String(localized: "Smart Downloads needs a source that permits keeping its music. None does today, so it has nothing to suggest.")),
-                          keywords: ["smart", "automatic"], effect: "The download engine's Smart Downloads switch (eligibility is the engine's)."),
         SettingDefinition(id: "automaticOnExpensive", specRow: "Automatic downloads on expensive networks", category: .downloads, title: String(localized: "Download automatically on expensive networks"),
                           detail: String(localized: "Cellular hotspots and other expensive connections. Low Data Mode always blocks automatic downloads."),
                           control: .toggle, defaultValue: .bool(false), storage: .owner("downloads"), keywords: ["cellular", "hotspot", "metered", "expensive"],
@@ -276,16 +267,16 @@ public enum SettingsRegistry {
     public static let defaultTextByRow: [String: String] = [
         "Appearance": "System", "Artwork accent": "Enabled, subdued", "Motion": "Full while visible; follows system accessibility and power state", "Launch at login": "Off",
         "Background control": "Menu bar; last window closure keeps eligible playback active", "Dock icon": "Visible with regular windows; hidden when operating only in menu bar",
-        "Restore session": "On, paused after manual launch", "Headphone disconnect": "Pause; no automatic resume on reconnect", "Audio quality": "Best available",
+        "Restore session": "On, paused after manual launch", "Headphone disconnect": "Pause; no automatic resume on reconnect",
         "Crossfade / EQ / normalization": "Off / flat and off / off", "Autoplay radio": "On where supported", "Replace explicit queue": "Ask", "Download storage": "20 GiB aggregate",
-        "Smart Downloads": "Off", "Automatic downloads on expensive networks": "Off", "Output": "System default until user selects another", "Song/video preference": "Audio when account and content permit",
+        "Automatic downloads on expensive networks": "Off", "Output": "System default until user selects another", "Song/video preference": "Audio when account and content permit",
         "Mini-player always on top": "Off", "New playlist visibility": "Private", "Track-change notifications": "Off", "Download/error notifications": "In-app by default; system notifications opt-in",
         "Spotlight private library indexing": "Off", "Global shortcuts": "Unassigned", "Analytics and remote crash submission": "Off; no analytics SDK", "Update checking": "Ask once; daily background check only after opt-in",
         "Automatic installation": "Off while playing; explicit restart required",
     ]
     /// The section 16 rows in the specification's own order. A test reads the specification and holds this list to it.
-    public static let specRowOrder = ["Appearance", "Artwork accent", "Motion", "Launch at login", "Background control", "Dock icon", "Restore session", "Headphone disconnect", "Audio quality",
-        "Crossfade / EQ / normalization", "Autoplay radio", "Replace explicit queue", "Download storage", "Smart Downloads", "Automatic downloads on expensive networks", "Output", "Song/video preference",
+    public static let specRowOrder = ["Appearance", "Artwork accent", "Motion", "Launch at login", "Background control", "Dock icon", "Restore session", "Headphone disconnect",
+        "Crossfade / EQ / normalization", "Autoplay radio", "Replace explicit queue", "Download storage", "Automatic downloads on expensive networks", "Output", "Song/video preference",
         "Mini-player always on top", "New playlist visibility", "Track-change notifications", "Download/error notifications", "Spotlight private library indexing", "Global shortcuts",
         "Analytics and remote crash submission", "Update checking", "Automatic installation"]
     /// Each row with the settings that implement it.

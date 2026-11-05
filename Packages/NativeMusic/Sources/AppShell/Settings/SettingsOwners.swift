@@ -52,7 +52,6 @@ import Updates
             read: { id in
                 switch id {
                 case "downloadStorage": return .double((Double(downloads.snapshot.storage.budgetBytes) / gibibyte * 10).rounded() / 10)
-                case "smartDownloads": return .bool(downloads.snapshot.smartDownloadsEnabled)
                 case "automaticOnExpensive": return .bool(downloadMirror.automaticOnExpensive)
                 default: return nil
                 }
@@ -60,7 +59,6 @@ import Updates
             write: { id, value in
                 switch id {
                 case "downloadStorage": if let gib = value.doubleValue { downloads.setBudget(bytes: Int64(gib * gibibyte)) }
-                case "smartDownloads": if let on = value.boolValue { downloads.setSmartDownloads(on) }
                 case "automaticOnExpensive": if let on = value.boolValue { await downloadMirror.set(on) }
                 default: break
                 }

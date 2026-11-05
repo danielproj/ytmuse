@@ -449,12 +449,10 @@ Use native Settings categories. Most users should sign in, choose music and play
 | Dock icon | Visible with regular windows; hidden when operating only in menu bar |
 | Restore session | On, paused after manual launch |
 | Headphone disconnect | Pause; no automatic resume on reconnect |
-| Audio quality | Best available |
 | Crossfade / EQ / normalization | Off / flat and off / off |
 | Autoplay radio | On where supported |
 | Replace explicit queue | Ask |
 | Download storage | 20 GiB aggregate |
-| Smart Downloads | Off |
 | Automatic downloads on expensive networks | Off |
 | Output | System default until user selects another |
 | Song/video preference | Audio when account and content permit |
@@ -467,6 +465,8 @@ Use native Settings categories. Most users should sign in, choose music and play
 | Analytics and remote crash submission | Off; no analytics SDK |
 | Update checking | Ask once; daily background check only after opt-in |
 | Automatic installation | Off while playing; explicit restart required |
+
+Audio quality and Smart Downloads were removed from Settings on 2026-11-05. YouTube Music's own player chooses the audio quality, and YouTube Music offers no downloads on the Mac, so neither can be configured. The download engine keeps its Smart Downloads switch for a future source that permits keeping music; nothing shows it today.
 
 Include Settings search, restore defaults per category, account-local cache clearing and a complete local-data reset. Resetting preferences must not delete playlists or remote account content. Display storage breakdown by account and by pinned/automatic/cache data.
 

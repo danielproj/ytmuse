@@ -77,6 +77,5 @@ public enum DownloadsText {
         default: String(localized: "That didn’t work. Nothing was changed. Try again.")
         }
     }
-    public static var smartUnavailable: String { String(localized: "Smart Downloads isn’t available yet: nothing on this Mac can suggest items to keep. Nothing is downloaded automatically.") }
     public static func bytes(_ count: Int64) -> String { count.formatted(.byteCount(style: .file)) }
 }

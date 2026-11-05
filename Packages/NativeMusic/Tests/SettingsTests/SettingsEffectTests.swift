@@ -193,7 +193,6 @@ actor RecordingResumeStore: MusicResumeStoring {
             #expect(RouteLossPolicy.assess(audible: identity, in: OutputSnapshot(devices: [speakers], defaultUID: "SPK")) == .lost(.deviceDisconnected), "a gone route is a LOSS, which pauses")
             #expect(RouteLossPolicy.assess(audible: identity, in: OutputSnapshot(devices: [speakers, headphones], defaultUID: "BT")) == .unchanged, "reconnecting is not a resume: no assessment ever asks for one")
         },
-        "audioQuality": { _ in Self.mustBeUnavailable("audioQuality", plannedIn: "W34") },
         "crossfade": { rig in
             #expect(ChosenAudioEffects.make(from: rig.store)?.bypass == true, "defaults leave the audio untouched")
             try await rig.store.set("crossfade", .double(5))
@@ -237,10 +236,6 @@ actor RecordingResumeStore: MusicResumeStoring {
             #expect(rig.store.double("downloadStorage") == 20 && rig.downloads.snapshot.storage.budgetBytes == 20 << 30)
             try await rig.store.set("downloadStorage", .double(50))
             #expect(await eventually { rig.engine.current.storage.budgetBytes == 50 << 30 }, "the engine's budget changed")
-        },
-        "smartDownloads": { rig in
-            try await rig.store.set("smartDownloads", .bool(true))
-            #expect(await eventually { rig.engine.current.smartDownloadsEnabled }, "the engine's own switch (eligibility stays the engine's)")
         },
         "automaticOnExpensive": { rig in
             #expect(!rig.mirror.automaticOnExpensive)

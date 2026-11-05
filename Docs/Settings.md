@@ -26,15 +26,16 @@ A control is shown only when its capability exists. A row whose capability does 
 
 | Section 16 row | State | Why |
 | --- | --- | --- |
-| Appearance, Artwork accent, Restore session, Mini-player always on top, Launch at login, New playlist visibility, Download storage, Smart Downloads, Automatic downloads on expensive networks, Track-change notifications, Spotlight private library indexing, Global shortcuts, Output | control | each calls its owner (`SettingsOwners`) and has an effect check |
+| Appearance, Artwork accent, Restore session, Mini-player always on top, Launch at login, New playlist visibility, Download storage, Automatic downloads on expensive networks, Track-change notifications, Spotlight private library indexing, Global shortcuts, Output | control | each calls its owner (`SettingsOwners`) and has an effect check |
 | Crossfade / EQ / normalization | control, **scoped** | applied to every NATIVE session (music from files on this Mac). The hidden YouTube Music player is never processed. |
-| Smart Downloads, Download storage | control, **scoped** | YouTube Music has no downloads on the Mac (`artifacts/harness/W15-offline-source-decision.json`); the limit applies to files added from this Mac; Smart Downloads has no source to suggest from |
+| Download storage | control, **scoped** | YouTube Music has no downloads on the Mac (`artifacts/harness/W15-offline-source-decision.json`); the limit applies to files added from this Mac |
 | Motion, Background control, Dock icon, Headphone disconnect, Song/video preference, Analytics and remote crash submission | fixed policy, shown with its current effect | the specification gives a default and no alternative; W21, W22, W17 own the behaviour |
-| Audio quality | **unavailable** (W34) | the hidden player chooses its own audio quality and the app cannot ask for another; a native quality choice arrives with the audio engine work in W34. Diagnostics shows what the player reported |
 | Autoplay radio | **unavailable** (W05, W38) | YouTube Music continues playback with its own radio; an app-owned autoplay continuation is the queue's (W05) and the radio feature's (W38) |
 | Replace explicit queue | control, **scoped** (W05) | applies to what starts music from files on this Mac: Ask (a question), Keep my queued songs, or Replace them, per account. YouTube Music keeps its own queue, so the choice does not apply to it |
 | Download/error notifications (system opt-in) | control, **scoped** (W26) | a second opt-in on W26's notification system: downloads that finish and fail, and sign-in problems, are posted as system notifications only after the person turns it on, never when the notification permission is not granted, with a fixed headline and at most the item's title the person already sees in Downloads, and no account name, link, path or error text |
 | Update checking, Automatic installation | control, **scoped** (W30) | wired to the updater (`Docs/Distribution.md`): the daily check only after opt-in; automatic installation is a background download that is held while playing and never swaps without the explicit Restart to Update. A build with no update feed (every source build) says so and does nothing |
+
+Audio quality and Smart Downloads have no row (removed 2026-11-05): YouTube Music's player chooses its own quality and offers no downloads on the Mac, so neither can be configured. The Downloads screen shows no Smart Downloads row either.
 
 The unavailable set is pinned by a test (`theRowsThatCannotBeHonouredAreExactlyTheKnownOnesAndEachSaysWhy`) and is the list that fails release coverage until each capability exists.
 
