@@ -28,7 +28,7 @@ import TestSupport
 
     @Test func theRegistryHoldsEverySectionSixteenRowWithItsExactLabelAndDefaultInTheSpecificationsOrder() throws {
         let spec = try Self.specTable()
-        #expect(spec.count == 26, "the specification's table has 26 rows (\(spec.count))")
+        #expect(spec.count == 24, "the specification's table has 24 rows (\(spec.count))")
         let registry = SettingsRegistry.specRows
         #expect(registry.map(\.label) == spec.map(\.label), "the same rows in the same order")
         for (row, expected) in zip(registry, spec) {
@@ -42,10 +42,10 @@ import TestSupport
         #expect(backing.settingKeys(withPrefix: "settings.").allSatisfy { $0 == SettingsRegistry.schemaVersionKey }, "a fresh store writes nothing but its schema version")
         let expected: [String: SettingValue] = [
             "appearance": .text("system"), "artworkAccent": .bool(true), "motion": .text("full"), "restoreSession": .bool(true), "crossfade": .double(0), "equalizer": .text("flat"),
-            "normalization": .bool(false), "newPlaylistVisibility": .text("private"), "headphoneDisconnect": .text("pauseNoResume"), "audioQuality": .text("bestAvailable"),
+            "normalization": .bool(false), "newPlaylistVisibility": .text("private"), "headphoneDisconnect": .text("pauseNoResume"),
             "autoplayRadio": .text("onWhereSupported"), "replaceExplicitQueue": .text("ask"), "songVideo": .text("audioWhenPermitted"), "analytics": .text("off"),
             "updateChecking": .text("askOnce"), "automaticInstallation": .bool(false), "backgroundControl": .text("menuBar"), "dockIcon": .text("followsWindows"),
-            "downloadErrorNotifications": .bool(false), "launchAtLogin": .bool(false), "miniPlayerOnTop": .bool(false), "smartDownloads": .bool(false),
+            "downloadErrorNotifications": .bool(false), "launchAtLogin": .bool(false), "miniPlayerOnTop": .bool(false),
             "automaticOnExpensive": .bool(false), "trackChangeNotifications": .bool(false), "spotlightIndexing": .bool(false), "spotlightPrivate": .bool(false),
             "downloadStorage": .double(20), "globalShortcuts": .text("unassigned"), "outputRoute": .text("systemDefault"),
         ]
@@ -84,15 +84,15 @@ import TestSupport
     /// T27.2: the capabilities the app cannot honour are stated, not pretended. This is the set that fails release coverage until the capability exists.
     @Test func theRowsThatCannotBeHonouredAreExactlyTheKnownOnesAndEachSaysWhy() throws {
         let unavailable = Set(SettingsRegistry.definitions.filter { !$0.availability.isControllable }.map(\.id))
-        #expect(unavailable == ["audioQuality", "autoplayRadio"], "the rows that could be built now (system notifications, replacing the explicit queue, the updater) are built")
-        // Each says where it is planned, not that it is impossible.
-        #expect(SettingsRegistry.definition("audioQuality")?.availability.note?.contains("W34") == true, "audioQuality names W34")
+        #expect(unavailable == ["autoplayRadio"], "the rows that could be built now (system notifications, replacing the explicit queue, the updater) are built")
+        // Audio quality and Smart Downloads were removed (2026-11-05): YouTube Music's player chooses its own quality and offers no downloads on the Mac.
+        #expect(SettingsRegistry.definition("audioQuality") == nil && SettingsRegistry.definition("smartDownloads") == nil, "no row for something that cannot be configured")
         // CORE-B C5: autoplay is not a feature that is missing. YouTube Music's own player continues playback, and the row must not say "Not built yet".
         let autoplay = try #require(SettingsRegistry.definition("autoplayRadio")?.availability.note)
         #expect(autoplay.contains("YouTube Music") && autoplay.contains("Start Radio") && !autoplay.contains("Not built yet") && !autoplay.contains("W05"))
         // Scoped rows work in a named situation only.
         let scoped = Set(SettingsRegistry.definitions.filter { if case .scoped = $0.availability { true } else { false } }.map(\.id))
-        #expect(scoped == ["crossfade", "equalizer", "normalization", "replaceExplicitQueue", "downloadStorage", "smartDownloads", "updateChecking", "automaticInstallation"])
+        #expect(scoped == ["crossfade", "equalizer", "normalization", "replaceExplicitQueue", "downloadStorage", "updateChecking", "automaticInstallation"])
         // Window scope: no section 16 row is per window, so no setting uses it. The store supports it (tested with a synthetic definition) and Docs/Settings.md says so.
         #expect(Set(SettingsRegistry.definitions.map(\.scope)) == [.global, .account])
     }
@@ -309,7 +309,7 @@ import TestSupport
         await #expect(throws: SettingsError.outOfRange) { try await store.set("crossfade", .double(.nan)) }
         await #expect(throws: SettingsError.wrongType) { try await store.set("artworkAccent", .text("yes")) }
         await #expect(throws: SettingsError.notChoosable) { try await store.set("motion", .text("reduced")) }
-        await #expect(throws: SettingsError.notChoosable) { try await store.set("audioQuality", .text("dataSaver")) }
+        await #expect(throws: SettingsError.notChoosable) { try await store.set("autoplayRadio", .text("off")) }
         await #expect(throws: SettingsError.notChoosable) { try await store.set("updateChecking", .text("daily")) }
         await #expect(throws: SettingsError.notChoosable) { try await store.set("launchAtLogin", .bool(true)) }   // owner not attached: refused, never silently stored
         #expect(backing.settingKeys(withPrefix: "settings.").allSatisfy { $0 == SettingsRegistry.schemaVersionKey })

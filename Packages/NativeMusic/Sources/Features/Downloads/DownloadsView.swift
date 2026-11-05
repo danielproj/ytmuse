@@ -129,13 +129,8 @@ public struct DownloadsView: View {
                             .font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                     }
                 }.accessibilityIdentifier("downloadsSmart")
-            } else {
-                // No control: nothing here can suggest items, so a switch would do nothing.
-                VStack(alignment: .leading, spacing: MusicSpace.hairline) {
-                    Label("Smart Downloads", systemImage: "sparkles").font(.body)
-                    Text(DownloadsText.smartUnavailable).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
-                }.accessibilityElement(children: .combine).accessibilityIdentifier("downloadsSmartUnavailable")
             }
+            // Nothing on this Mac can suggest items, so Smart Downloads is not shown at all: no switch that would do nothing, and no row about it.
             if model.snapshot.unlistedBytes > 0 {
                 Text("\(DownloadsText.bytes(model.snapshot.unlistedBytes)) of earlier downloads are no longer listed but still count toward the limit.").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadsUnlisted")
             }

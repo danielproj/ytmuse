@@ -2157,10 +2157,9 @@ final class NativeMusicUITests: XCTestCase {
         w12Wait(window, "downloadRow-" + w15Row(5))
         w12Wait(window, "downloadAction-cancel-" + w15Row(5)).click()
         XCTAssertTrue(w12Gone(w10(window, "downloadRow-" + w15Row(5))))
-        // Storage; Smart Downloads has nothing to suggest on this Mac, so it is a statement, not a switch.
+        // Storage; Smart Downloads has nothing to suggest on this Mac, so it is not shown at all.
         XCTAssertTrue(w10Text(w12Wait(window, "downloadsStorageUsed")).contains("used of"))
-        XCTAssertTrue(w10Text(w12Wait(window, "downloadsSmartUnavailable")).contains("isn’t available"))
-        XCTAssertFalse(w10(window, "downloadsSmart").exists, "no inert switch")
+        XCTAssertFalse(w10(window, "downloadsSmart").exists || w10(window, "downloadsSmartUnavailable").exists, "no inert switch and no row about it")
         // Downloaded only keeps what is saved on this Mac.
         window.radioButtons["Downloaded only"].click()
         // With one row left SwiftUI collapses that single-child row group into the list's group (the AX tree shows `downloadPhase-` directly
@@ -2953,9 +2952,9 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertTrue(result.waitForExistence(timeout: 5), "searching for a word of a title lists that setting")
         result.click()
         // Playback: the capabilities the app cannot honour are stated, with no control; the equalizer is a real control.
-        XCTAssertTrue(app.staticTexts["settingNote.audioQuality"].firstMatch.waitForExistence(timeout: 5), "an unavailable capability says why")
-        XCTAssertFalse(app.popUpButtons["setting.audioQuality"].exists || app.switches["setting.audioQuality"].exists, "and offers no control")
-        XCTAssertTrue(app.staticTexts["settingNote.autoplayRadio"].firstMatch.exists, "autoplay radio says which feature owns it")
+        XCTAssertTrue(app.staticTexts["settingNote.autoplayRadio"].firstMatch.waitForExistence(timeout: 5), "an unavailable capability says why")
+        XCTAssertFalse(app.popUpButtons["setting.autoplayRadio"].exists || app.switches["setting.autoplayRadio"].exists, "and offers no control")
+        XCTAssertFalse(app.staticTexts["settingNote.audioQuality"].exists, "audio quality cannot be configured, so it has no row")
         let equalizer = app.popUpButtons["setting.equalizer"].firstMatch
         XCTAssertTrue(equalizer.waitForExistence(timeout: 5))
         XCTAssertEqual(equalizer.value as? String, "Flat", "flat by default")

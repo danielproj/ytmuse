@@ -71,7 +71,7 @@ content, oldest first. If pinned or collection-referenced content fills the budg
 screen offers choices (raise the limit, remove downloads, remove automatic downloads, free disk space). Nothing is deleted for room
 except automatic content, and **no setting change deletes anything**: lowering the limit only decides what may start; switching Smart
 Downloads off stops new automatic downloads (pending ones that never started are dropped; stored ones stay until the person removes
-them). Smart Downloads is off by default and requires the explicit switch; an automatic request while off is refused. **Nothing on this Mac can suggest items** (no permitted source), so the switch is not offered: the Storage card states that Smart Downloads isn't available yet and that nothing is downloaded automatically, and the engine refuses to be switched on (`smartDownloadsAvailable` is false unless a composition supplies a suggestions source). The 25% cap counts stored and in-flight automatic bytes together, so concurrent starts cannot overrun it.
+them). Smart Downloads is off by default and requires the explicit switch; an automatic request while off is refused. **Nothing on this Mac can suggest items** (no permitted source), so neither the Storage card nor Settings shows Smart Downloads at all (removed 2026-11-05), and the engine refuses to be switched on (`smartDownloadsAvailable` is false unless a composition supplies a suggestions source). The 25% cap counts stored and in-flight automatic bytes together, so concurrent starts cannot overrun it.
 
 ### Retention (LIST07, OFF11)
 
