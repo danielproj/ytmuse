@@ -1,6 +1,6 @@
 # Feature and capability matrix
 
-BUILD03 asks for a feature/capability matrix. This one is deliberately blunt: it says what the code does **today**, and separates *built and tested against fixtures* from *proved against the real service or hardware*. Nothing in this project has yet been proved against a real YouTube Music account, so no row says "complete". The specification is [Product-Specification.md](Product-Specification.md); its release gates G01–G09 are all open.
+BUILD03 asks for a feature/capability matrix. This one is deliberately blunt: it says what the code does **today**, and separates *built and tested against fixtures* from *proved against the real service or hardware*. Bounded live checks with a real YouTube Music account cover only the core (playback, mixes and radio starts, the queue, playlist editing on a disposable playlist), so no row says "complete". The specification is [Product-Specification.md](Product-Specification.md); its release gates G01–G09 are all open.
 
 Status vocabulary (checked by `scripts/check-docs.py`):
 
@@ -25,8 +25,8 @@ Status vocabulary (checked by `scripts/check-docs.py`):
 | Links, scripting, sharing, Handoff, notifications, global shortcuts | Built, live unverified | Strict link policy; permission prompts only after an explicit choice. |
 | Settings, storage controls, local diagnostics | In progress | Complete Settings is under review. |
 | Accessibility and the complete locale catalog | In progress | Human translation review is a separate, unstarted gate (G08). |
-| Update checks and install | Built, live unverified | In-repository updater with a signed public feed pinned into the 0.1.0, 0.1.1, 0.1.2 and 0.1.3 previews ([Distribution.md](Distribution.md)); feed signature and final asset hashes were checked, and the published 0.1.1 feed verifies as an offer to a 0.1.0 build. Source builds have no pinned key/feed and check nothing. Real install and restart on a signed build remain gate G09. |
-| Signed, notarized DMG and release | Built, live unverified | The public 0.1.3 development preview app and DMG (as 0.1.0, 0.1.1 and 0.1.2 before it) are Developer ID signed, notarized and stapled; signatures and Gatekeeper acceptance were checked on the packaging Mac. Clean-second-Mac installation and a real signed update/rollback rehearsal remain unverified (G09). |
+| Update checks and install | Built, live unverified | In-repository updater with a signed public feed pinned into the 0.1.0 to 0.1.4 previews ([Distribution.md](Distribution.md)); feed signature and final asset hashes were checked, and the published 0.1.1 feed verifies as an offer to a 0.1.0 build. Source builds have no pinned key/feed and check nothing. A real update into 0.1.3 was checked by hand and crashed the old app as it quit; 0.1.4 fixes that, and an update into a build with the fix is still unchecked (G09). |
+| Signed, notarized DMG and release | Built, live unverified | The public 0.1.4 development preview app and DMG (as 0.1.0 to 0.1.3 before it) are Developer ID signed, notarized and stapled; signatures and Gatekeeper acceptance were checked on the packaging Mac. A clean install of the 0.1.3 preview was checked by hand; G09 remains open. |
 | Mac App Store build | Not started | Optional; see [Distribution.md](Distribution.md#app-store-feasibility-a-short-note-not-a-commitment). |
 
 This table is a snapshot of the source at this commit. Regenerate your own view by running the suites; do not read a row as a promise about a release.
