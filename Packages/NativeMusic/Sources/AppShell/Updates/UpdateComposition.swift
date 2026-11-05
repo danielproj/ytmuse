@@ -11,8 +11,11 @@ struct SystemUpdateRelauncher: AppRelaunching {
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.createsNewApplicationInstance = true
         configuration.activates = true
+        // LaunchServices calls this completion on its own background queue, not the main thread. `MainActor.assumeIsolated` here trapped the old app
+        // (EXC_BREAKPOINT) right after the new one had started, so every update ended with a crash report and an unclean quit. Hop to the main actor.
         NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, error in
-            MainActor.assumeIsolated { if error == nil { PlaybackApplicationDelegate.requestQuit() } }
+            guard error == nil else { return }
+            Task { @MainActor in PlaybackApplicationDelegate.requestQuit() }
         }
     }
 }
