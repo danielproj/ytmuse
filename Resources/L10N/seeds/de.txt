@@ -311,3 +311,4 @@
 1413|Letzte 14 Tage
 1414|Seit %@
 Q40|one:%lld Wiedergabe	other:%lld Wiedergaben
+1415|Toneinstellungen …

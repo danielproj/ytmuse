@@ -311,3 +311,4 @@
 1413|14 derniers jours
 1414|Depuis le %@
 Q40|one:%lld lecture	many:%lld de lectures	other:%lld lectures
+1415|Réglages Son…

@@ -73,6 +73,25 @@ import Testing
         let timer = try #require(OutputPickerMapping.prompt(for: remote.controller))
         #expect(timer.kind == .timer && timer.message.contains("can't fade") && timer.confirmTitle == "Turn On Timer")
     }
+    /// The panel says each sentence once: a player that follows the Mac lists only the output in use, and the sentences every listed row shares move under Details.
+    @Test func thePanelListsOnlyTheOutputInUseWhenThePlayerFollowsTheMacAndSaysSharedSentencesOnce() async throws {
+        let rig = try await OutputRig.make()
+        _ = try await rig.play()
+        let value = content(rig)
+        #expect(value.followsMac)
+        #expect(value.visibleRows.count == 1 && value.visibleRows.first?.state == .current && value.visibleRows.first?.title == "System output")
+        let row = try #require(value.visibleRows.first)
+        #expect(value.notes(for: row).isEmpty, "a single row carries nothing of its own")
+        #expect(value.detailNotes.contains("This app never changes the Mac's volume.") && value.detailNotes.contains("Casting YouTube Music isn't available from this app."))
+        #expect(value.visibleCastNotes.isEmpty)
+        #expect(Set(value.detailNotes).count == value.detailNotes.count, "no sentence repeats")
+
+        let native = try await OutputRig.make(devices: [routeSpeakers, routeBuds, routeReceiver], defaultUID: routeSpeakers.uid)
+        let local = OutputPickerMapping.content(for: native.controller)
+        #expect(!local.followsMac && local.visibleRows.count == local.rows.count, "every output a person can choose is listed")
+        #expect(local.sharedNotes.contains("Grouping receivers is left to the system picker, as far as it offers it."))
+        for row in local.visibleRows { #expect(Set(local.notes(for: row)).isDisjoint(with: local.sharedNotes)) }
+    }
     @Test func everySentenceTheCapabilityTableCanProduceHasText() {
         for limit in RouteCapabilities.Limit.allCases {
             for engine in [OutputEngineKind.youTubeMusic, .localMedia] { #expect(!OutputPickerMapping.sentence(limit, engine: engine).isEmpty) }

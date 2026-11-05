@@ -311,3 +311,4 @@
 1413|Últimos 14 días
 1414|Desde el %@
 Q40|one:%lld reproducción	many:%lld de reproducciones	other:%lld reproducciones
+1415|Ajustes de sonido…

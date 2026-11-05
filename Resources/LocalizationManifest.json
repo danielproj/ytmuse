@@ -61,8 +61,8 @@
     "it-CH",
     "pt-PT"
   ],
-  "catalogKeyCount": 1421,
-  "translatableKeyCount": 1380,
+  "catalogKeyCount": 1422,
+  "translatableKeyCount": 1381,
   "completeLocales": [
     "en",
     "fr",
@@ -190,7 +190,7 @@
         "one",
         "other"
       ],
-      "translatedKeys": 1380,
+      "translatedKeys": 1381,
       "coverage": 1.0,
       "complete": true,
       "origin": "source",
@@ -227,7 +227,7 @@
         "many",
         "other"
       ],
-      "translatedKeys": 1380,
+      "translatedKeys": 1381,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -239,7 +239,7 @@
         "one",
         "other"
       ],
-      "translatedKeys": 1380,
+      "translatedKeys": 1381,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -414,7 +414,7 @@
         "many",
         "other"
       ],
-      "translatedKeys": 1380,
+      "translatedKeys": 1381,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -440,7 +440,7 @@
         "many",
         "other"
       ],
-      "translatedKeys": 1380,
+      "translatedKeys": 1381,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",
@@ -769,7 +769,7 @@
         "one",
         "other"
       ],
-      "translatedKeys": 1380,
+      "translatedKeys": 1381,
       "coverage": 1.0,
       "complete": true,
       "origin": "machine-seed",

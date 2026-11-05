@@ -97,13 +97,52 @@ public struct OutputPickerButton<SystemPicker: View>: View {
     }
 }
 
+extension OutputPickerContent {
+    /// The player cannot be pointed anywhere: it follows the Mac's sound output (the engine states so in `statement`).
+    public var followsMac: Bool { statement != nil }
+    /// The rows the panel lists. When the player follows the Mac nothing can be chosen here, so only the output in use is shown, not every device.
+    public var visibleRows: [Row] {
+        guard followsMac else { return rows }
+        let current = rows.filter { $0.state == .current }
+        return current.isEmpty ? Array(rows.prefix(1)) : current
+    }
+    /// The volume and limit sentences every listed row shares, in order: said once under Details instead of under each row.
+    public var sharedNotes: [String] {
+        let listed = visibleRows
+        guard let first = listed.first else { return [] }
+        var shared = [first.volume] + first.unsupported
+        for row in listed.dropFirst() { let notes = Set([row.volume] + row.unsupported); shared.removeAll { !notes.contains($0) } }
+        var seen = Set<String>()
+        return shared.filter { seen.insert($0).inserted }
+    }
+    /// What only this row says (its sentences that are not shared by every listed row).
+    public func notes(for row: Row) -> [String] {
+        let shared = Set(sharedNotes)
+        return ([row.volume] + row.unsupported).filter { !shared.contains($0) }
+    }
+    /// Cast sentences shown in the panel itself; a player that follows the Mac keeps its one fixed Cast sentence under Details with the other limits.
+    public var visibleCastNotes: [String] { followsMac ? [] : castNotes }
+    /// Everything folded under Details.
+    public var detailNotes: [String] { sharedNotes + (followsMac ? castNotes : []) }
+}
+
 struct OutputPickerPanel<SystemPicker: View>: View {
     let content: OutputPickerContent
     let actions: OutputPickerActions
     let systemPicker: SystemPicker
+    @State private var detailsShown = false
+    @Environment(\.openURL) private var openURL
+    /// The Sound pane of System Settings, where the Mac's output is chosen.
+    static var soundSettings: URL { URL(string: "x-apple.systempreferences:com.apple.Sound-Settings.extension")! }
     var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.sm) {
-            Text("Output").font(.headline)
+            HStack(alignment: .firstTextBaseline) {
+                Text("Output").font(.headline)
+                Spacer(minLength: MusicSpace.xs)
+                if content.followsMac {
+                    Button("Sound Settings…") { openURL(Self.soundSettings) }.musicButtons().accessibilityIdentifier("outputSoundSettings")
+                }
+            }
             if let loss = content.loss {
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
                     Label(loss.message, systemImage: "exclamationmark.triangle").font(.callout).fixedSize(horizontal: false, vertical: true)
@@ -116,14 +155,16 @@ struct OutputPickerPanel<SystemPicker: View>: View {
             if let statement = content.statement {
                 Text(statement).font(.callout).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputStatement")
             }
-            ForEach(content.castNotes, id: \.self) { note in
-                Text(note).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputCastNote")
-            }
             if let notice = content.notice {
                 Text(notice).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputNotice")
             }
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                ForEach(content.rows) { row in OutputPickerRow(row: row) { actions.select(row.id) } }
+                ForEach(content.visibleRows) { row in
+                    OutputPickerRow(row: row, notes: content.notes(for: row), choosable: !content.followsMac) { actions.select(row.id) }
+                }
+            }
+            ForEach(content.visibleCastNotes, id: \.self) { note in
+                Text(note).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputCastNote")
             }
             if content.showsSystemPicker {
                 HStack(spacing: MusicSpace.xs) {
@@ -131,30 +172,55 @@ struct OutputPickerPanel<SystemPicker: View>: View {
                     Text(content.airPlayHint ?? String(localized: "AirPlay")).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                 }.accessibilityElement(children: .contain)
             }
-        }.padding(MusicSpace.md).frame(minWidth: 300, maxWidth: 380, alignment: .leading)
+            if !content.detailNotes.isEmpty {
+                DisclosureGroup(isExpanded: $detailsShown) {
+                    VStack(alignment: .leading, spacing: MusicSpace.xxs) {
+                        ForEach(content.detailNotes, id: \.self) { note in
+                            Text(note).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }.padding(.top, MusicSpace.xxs)
+                } label: { Text("Details").font(.caption) }
+                .accessibilityElement(children: .contain).accessibilityIdentifier("outputDetails")
+            }
+        }
+        .padding(MusicSpace.md).frame(minWidth: 280, maxWidth: 340, alignment: .leading)
+        // An opaque panel: the system's translucent popover let the artwork behind it bleed through the text.
+        .presentationBackground(MusicStyle.opaqueSurface)
     }
 }
 
 struct OutputPickerRow: View {
     let row: OutputPickerContent.Row
+    /// Sentences only this row carries; the ones every row shares are under Details.
+    let notes: [String]
+    /// False when the player follows the Mac: the row then states the output in use and is not a control.
+    let choosable: Bool
     let choose: () -> Void
     var body: some View {
-        Button(action: choose) {
-            HStack(alignment: .top, spacing: MusicSpace.xs) {
-                Image(systemName: row.state == .current ? "checkmark" : row.symbol).frame(width: MusicSpace.md)
-                VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                    Text(row.title).font(.body)
-                    if let detail = row.detail { Text(detail).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-                    Text(row.volume).font(.caption).foregroundStyle(MusicStyle.secondaryText)
-                    ForEach(row.unsupported, id: \.self) { Text($0).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-                }.fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: MusicSpace.xs)
-            }.contentShape(Rectangle())
+        if choosable {
+            Button(action: choose) { label }
+                .buttonStyle(.plain).disabled(!row.selectable || row.state == .unavailable)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(row.state == .current ? .isSelected : [])
+                .accessibilityIdentifier("outputRoute-" + row.id)
+        } else {
+            label
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(row.state == .current ? .isSelected : [])
+                .accessibilityIdentifier("outputRoute-" + row.id)
         }
-        .buttonStyle(.plain).disabled(!row.selectable || row.state == .unavailable)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(row.state == .current ? .isSelected : [])
-        .accessibilityIdentifier("outputRoute-" + row.id)
+    }
+    private var label: some View {
+        HStack(alignment: .firstTextBaseline, spacing: MusicSpace.xs) {
+            Image(systemName: row.state == .current ? "checkmark" : row.symbol).frame(width: MusicSpace.md)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(row.title).font(.body)
+                if let detail = row.detail, detail != row.title { Text(detail).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
+                ForEach(notes, id: \.self) { Text($0).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
+            }.fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: MusicSpace.xs)
+        }
+        .padding(.vertical, MusicSpace.xxs).contentShape(Rectangle())
     }
 }
 

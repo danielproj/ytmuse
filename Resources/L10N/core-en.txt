@@ -1378,3 +1378,4 @@ Q39|Undo: removed %lld songs
 1413|Last 14 days
 1414|Since %@
 Q40|%lld plays
+1415|Sound Settings…
