@@ -37,7 +37,7 @@
 440|Comandos
 441|Comentar en %@
 442|Comentarios
-443|Los comentarios aún no están disponibles. Ninguna de las respuestas de YouTube Music que esta app puede leer los incluye, así que no hay nada que leer, publicar ni moderar.
+443|Los comentarios no están conectados en esta sesión, así que no se lee, publica ni modera nada.
 444|Compacto
 445|Tamaño compacto
 446|Conecta una fuente que pueda abrir este elemento o vuelve a tu colección.

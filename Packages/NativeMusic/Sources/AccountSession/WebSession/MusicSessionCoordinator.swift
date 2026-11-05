@@ -48,6 +48,17 @@ public actor MusicSessionCoordinator: AccountLifecycleParticipant {
     private var epoch = UUID()
     private var signing: MusicSessionStatus?
     private var proofTask: (context: RequestContext, task: Task<MusicProofState, Never>)?
+    /// Comments (C2): every continuation, sort and replies token the service issued, with where it was issued. See `comments(_:)`.
+    private var issuedComments: [String: IssuedCommentsToken] = [:]
+    private var issuedCommentsOrder: [String] = []
+    /// The live comment list of each video (a monotonically increasing id; a new `open` or sort switch starts a new one).
+    private var commentLists: [String: UInt64] = [:]
+    /// Per video, the last list whose answer was accepted AND whose tokens were registered. A failed newer request falls back to this, never to a list still in flight.
+    private var settledCommentLists: [String: UInt64] = [:]
+    private var commentListOrder: [String] = []
+    private var lastCommentList: UInt64 = 0
+    static let maxIssuedCommentTokens = 2_048
+    static let maxCommentVideos = 64
     public init(vault: any SessionVault, reader: any MusicSessionReading, stores: any MusicWebsiteDataStores = WebKitMusicDataStores(),
                 ledger: any MusicSignInLedger, presenter: (any MusicWebSignInPresenting)?, clock: any WallClock = SystemWallClock(), region: String? = nil,
                 removalDelays: [Duration] = [.milliseconds(250), .milliseconds(500), .seconds(1), .seconds(2), .seconds(4), .seconds(8), .seconds(15), .seconds(30), .seconds(30)],
@@ -266,10 +277,144 @@ public actor MusicSessionCoordinator: AccountLifecycleParticipant {
     public func lyrics(videoID: String) async throws -> MusicBrowseReply<MusicLyricsResult> {
         try await scoped(signed: { try await $0.lyrics(videoID: videoID, session: $1) }, anonymous: { try await $0.lyrics(videoID: videoID, session: nil).value })
     }
+    /// One comments read (open, page or replies) under the same account-scope rules as `lyrics`, and with every token bound to where it came from.
+    ///
+    /// The service's continuation tokens are opaque and the Newest response carries no video id, so a syntactically valid token proves nothing
+    /// about which song, thread, list or account it belongs to. The coordinator therefore remembers each token it handed out (`open`'s pages, a
+    /// page's next token, a sort option, a thread's replies token) with the video, the kind, the signed/anonymous mode, the account and its
+    /// generation, and the id of the comment list it belongs to. A page or replies request is refused BEFORE anything is sent when its token:
+    /// was never issued here, or belongs to another account or generation or the other mode, or (page and replies tokens) to a list that has since been replaced
+    /// (`stale`); or names another video, is used as the wrong kind, or names another thread (`policy`). A new `open` or a sort switch starts a
+    /// new list, so an answer still in flight for the replaced list is dropped (`stale`) and its tokens are never registered. A token issued to
+    /// a signed session is never sent anonymously after that session ends, nor the other way round. A failed `open` or sort switch that nobody
+    /// replaced restores the last SETTLED list (the last whose answer was accepted), never an older request still in flight. The registry is bounded (`maxIssuedCommentTokens`, `maxCommentVideos`).
+    public func comments(_ request: MusicCommentsRequest) async throws -> MusicBrowseReply<MusicCommentsAnswer> {
+        try request.validate()
+        let video = request.videoID
+        let tokenMode: MusicSearchReply.Mode?
+        switch request {
+        case .open: tokenMode = nil
+        case .page(let token, _), .replies(let token, _, _): tokenMode = issuedComments[token]?.scope.mode
+        }
+        var admission: CommentsAdmission?
+        let reply: MusicBrowseReply<MusicCommentsAnswer>
+        do {
+            reply = try await scoped(signed: { reader, session in
+                guard tokenMode != .anonymous else { throw MusicSessionError.stale }
+                return try await reader.comments(request, session: session)
+            }, anonymous: { reader in
+                // The signed session that issued this token has ended: the token is not transferable to an anonymous request.
+                guard tokenMode != .signedIn else { throw MusicSessionError.signedOut }
+                return try await reader.comments(request, session: nil).value
+            }, admit: { context, mode in
+                admission = try self.admitComments(request, context: context, mode: mode)
+            })
+            guard let lifecycle else { throw MusicSessionError.stale }
+            let now = await lifecycle.snapshot().context
+            // Checked and registered with no suspension in between: nothing can start a newer list inside this window.
+            guard let admitted = admission, now.accountGeneration == reply.accountGeneration, commentLists[video] == admitted.list else { throw MusicSessionError.stale }
+            registerCommentTokens(reply.value, video: video, list: admitted.list,
+                                  scope: CommentsScope(account: now.account, generation: reply.accountGeneration, mode: reply.mode))
+        } catch {
+            if let admission, admission.began, commentLists[video] == admission.list { restoreCommentList(video, to: admission.previous) }
+            throw error
+        }
+        return reply
+    }
+    private struct CommentsScope: Equatable { let account: AccountContext?; let generation: UInt64; let mode: MusicSearchReply.Mode }
+    private enum CommentsTokenKind: Equatable { case sort, more, replies(parent: String) }
+    private struct IssuedCommentsToken { let videoID: String; let kind: CommentsTokenKind; let scope: CommentsScope; let list: UInt64 }
+    private struct CommentsAdmission { let list: UInt64; let began: Bool; let previous: UInt64? }
+
+    /// Everything knowable locally, synchronously against the snapshot the request will run under. Throws before any transport.
+    private func admitComments(_ request: MusicCommentsRequest, context: RequestContext, mode: MusicSearchReply.Mode) throws -> CommentsAdmission {
+        let scope = CommentsScope(account: context.account, generation: context.accountGeneration, mode: mode)
+        let video = request.videoID
+        switch request {
+        case .open:
+            return beginCommentList(video)
+        case .page(let token, _):
+            let issued = try issuedComment(token, video: video, scope: scope)
+            switch issued.kind {
+            // A sort switch replaces the list, so it is allowed from any list of this video and scope (the latest request wins; an older one
+            // still in flight is dropped when it returns). Every other token must belong to the list that is current now.
+            case .sort: return beginCommentList(video)
+            case .more:
+                guard commentLists[video] == issued.list else { throw MusicSessionError.stale }
+                return CommentsAdmission(list: issued.list, began: false, previous: nil)
+            case .replies: throw MusicSessionError.policy
+            }
+        case .replies(let token, _, let parentID):
+            let issued = try issuedComment(token, video: video, scope: scope)
+            guard issued.kind == .replies(parent: parentID) else { throw MusicSessionError.policy }
+            guard commentLists[video] == issued.list else { throw MusicSessionError.stale }
+            return CommentsAdmission(list: issued.list, began: false, previous: nil)
+        }
+    }
+    /// The token must have been issued here, for this video, under this account scope and mode.
+    private func issuedComment(_ token: String, video: String, scope: CommentsScope) throws -> IssuedCommentsToken {
+        guard let issued = issuedComments[token] else { throw MusicSessionError.stale }
+        guard issued.videoID == video else { throw MusicSessionError.policy }
+        guard issued.scope == scope else { throw MusicSessionError.stale }
+        return issued
+    }
+    private func beginCommentList(_ video: String) -> CommentsAdmission {
+        lastCommentList += 1
+        // The fallback is the last settled list, not whatever request happens to be current: that one may itself still be in flight.
+        let previous = settledCommentLists[video]
+        // The most recently used video goes last, so a reopened one is never the first to be evicted.
+        commentListOrder.removeAll { $0 == video }
+        commentListOrder.append(video)
+        commentLists[video] = lastCommentList
+        while commentListOrder.count > Self.maxCommentVideos {
+            let evicted = commentListOrder.removeFirst()
+            commentLists.removeValue(forKey: evicted)
+            settledCommentLists.removeValue(forKey: evicted)
+            dropIssuedComments { $0.videoID == evicted }
+        }
+        return CommentsAdmission(list: lastCommentList, began: true, previous: previous)
+    }
+    private func restoreCommentList(_ video: String, to previous: UInt64?) {
+        if let previous { commentLists[video] = previous }
+        else { commentLists.removeValue(forKey: video); settledCommentLists.removeValue(forKey: video); commentListOrder.removeAll { $0 == video } }
+    }
+    private func dropIssuedComments(where drop: (IssuedCommentsToken) -> Bool) {
+        issuedCommentsOrder.removeAll { key in
+            guard let issued = issuedComments[key], drop(issued) else { return false }
+            issuedComments.removeValue(forKey: key); return true
+        }
+    }
+    private func registerCommentTokens(_ answer: MusicCommentsAnswer, video: String, list: UInt64, scope: CommentsScope) {
+        // Tokens of a replaced list are dead: they would be refused anyway; dropping them keeps the registry small.
+        dropIssuedComments { $0.videoID == video && $0.list != list }
+        settledCommentLists[video] = list
+        func put(_ token: String, _ kind: CommentsTokenKind) {
+            if issuedComments.updateValue(IssuedCommentsToken(videoID: video, kind: kind, scope: scope, list: list), forKey: token) != nil {
+                issuedCommentsOrder.removeAll { $0 == token }
+            }
+            issuedCommentsOrder.append(token)
+        }
+        func put(_ page: MusicCommentsPage) {
+            for option in page.header?.sortOptions ?? [] { put(option.token, .sort) }
+            if let next = page.nextToken { put(next, .more) }
+            for thread in page.threads { if let token = thread.repliesToken { put(token, .replies(parent: thread.comment.id)) } }
+        }
+        switch answer {
+        case .opened(_, let page): if let page { put(page) }
+        case .page(let page): put(page)
+        case .replies(let replies): if let next = replies.nextToken { put(next, .replies(parent: replies.parentID)) }
+        }
+        while issuedCommentsOrder.count > Self.maxIssuedCommentTokens { issuedComments.removeValue(forKey: issuedCommentsOrder.removeFirst()) }
+    }
     /// One library or history page for the active account. Signed only: with no connected account the answer is `.notSignedIn`
     /// (never an anonymous page that could be mistaken for an empty library). Same account-scope fence as every other read.
     public func library(id: String) async throws -> MusicBrowseReply<MusicBrowsePage> {
         try await scopedSigned { try await $0.library(id: id, session: $1) }
+    }
+    /// The account's Recap, read once for the active account. Signed only: with no connected account the answer is `.notSignedIn` and nothing is
+    /// sent. Held to the account scope it started in like every signed read (`stale` when the account changed meanwhile).
+    public func recap() async throws -> MusicBrowseReply<MusicRecapReading> {
+        try await scopedSigned { try await $0.recap(session: $1) }
     }
     public func libraryContinuation(token: String) async throws -> MusicBrowseReply<MusicContinuationPage> {
         try await scopedSigned { try await $0.libraryContinuation(token: token, session: $1) }
@@ -307,14 +452,18 @@ public actor MusicSessionCoordinator: AccountLifecycleParticipant {
     /// Signed when a connected account is active, otherwise anonymous. The scope is captured first and the answer
     /// is dropped (`stale`) if the account changed while it was in flight, so a reply can never be shown under a
     /// different account. A service-ended session expires the identity and the anonymous answer is returned, flagged.
+    /// `admit` (comments only) runs right after the snapshot is read, synchronously and before any transport, with the very context and mode the
+    /// request will run under; a throw there sends nothing.
     private func scoped<Value: Sendable & Equatable>(
         signed operation: @Sendable (any MusicSessionReading, MusicCookieSession) async throws -> MusicSignedResult<Value>,
-        anonymous: @Sendable (any MusicSessionReading) async throws -> Value) async throws -> MusicBrowseReply<Value> {
+        anonymous: @Sendable (any MusicSessionReading) async throws -> Value,
+        admit: (RequestContext, MusicSearchReply.Mode) throws -> Void = { _, _ in }) async throws -> MusicBrowseReply<Value> {
         guard let lifecycle else { throw MusicSessionError.stale }
         let snapshot = await lifecycle.snapshot()
         let context = snapshot.context
         let generation = context.accountGeneration
         let identity = context.account.flatMap { account in snapshot.directory.identities.first(where: { $0.id == account }) }
+        try admit(context, identity?.state == .connected ? .signedIn : .anonymous)
         if let identity, identity.state == .connected {
             do {
                 let value = try await signed(context, operation)

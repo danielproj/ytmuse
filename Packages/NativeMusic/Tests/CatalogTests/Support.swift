@@ -87,6 +87,9 @@ actor ServiceScript {
     var targets: [(playlist: String, video: String?, params: String?)] = []
     var intents: [MusicPlaybackIntent] = []
     var copied: [URL] = []
+    /// Every link handed to the share sheet; `canShare = false` is a performer with nowhere to present one.
+    var shared: [URL] = []
+    var canShare = true
     var outcome: SearchPlayOutcome = .started
     func play(playlistID: String, title: String) async -> SearchPlayOutcome { played.append((playlistID, title)); targets.append((playlistID, nil, nil)); return outcome }
     func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome {
@@ -97,6 +100,7 @@ actor ServiceScript {
         return await play(playlistID: playlistID, title: title, videoID: videoID, params: params)
     }
     func copy(link: URL) { copied.append(link) }
+    func share(link: URL) -> Bool { guard canShare else { return false }; shared.append(link); return true }
 }
 @MainActor func makeModel(_ target: CatalogTarget, script: ServiceScript, cache: CatalogCache = CatalogCache(), scope: Box<String> = Box("scope-1"),
                           now: Box<Date> = Box(Date(timeIntervalSince1970: 1_000_000)), performer: StubPerformer? = nil,

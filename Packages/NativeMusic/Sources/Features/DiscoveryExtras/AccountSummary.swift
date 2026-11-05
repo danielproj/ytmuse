@@ -30,6 +30,15 @@ public struct BadgePayload: Equatable, Sendable {
     public init(badges: [BadgeEntry]) { self.badges = badges }
 }
 
+/// A message the service answered with in place of a summary, in its own words (read as text at run time, never written or reworded here).
+/// What it means is not known: it may describe the account, or it may be an upstream fault. It is not a payload, not "nothing to show", and
+/// not evidence that the account lacks the feature.
+public struct SummaryServiceMessage: Equatable, Sendable {
+    public let headline: String
+    public let detail: String?
+    public init(headline: String, detail: String? = nil) { self.headline = headline; self.detail = detail }
+}
+
 /// What a source can say about one kind of summary for the account.
 public enum SummaryAnswer<Payload: Equatable & Sendable>: Equatable, Sendable {
     case payload(Payload)
@@ -37,15 +46,28 @@ public enum SummaryAnswer<Payload: Equatable & Sendable>: Equatable, Sendable {
     case noPayload
     /// The service said this account does not have the feature. This is evidence about the account, and different from a missing payload.
     case accountUnsupported(String)
+    /// The service answered with a message of its own instead of the summary. Shown as the service's answer with an explicit retry.
+    case serviceMessage(SummaryServiceMessage)
+    /// The service did not see a signed-in session for this request.
+    case signInRequired
+    /// The service ended the session while answering.
+    case sessionEnded
 }
 public protocol AccountSummarySource: Sendable {
     /// nil: a route exists. Otherwise why there is none.
     var unresolved: String? { get }
+    /// The same, per kind. A source with a route for one kind and none for the other overrides these; the default is `unresolved` for both.
+    var recapUnresolved: String? { get }
+    var badgesUnresolved: String? { get }
     func recap() async throws -> SummaryAnswer<RecapPayload>
     func badges() async throws -> SummaryAnswer<BadgePayload>
 }
-/// The source of record until a Recap/badges route is verified (W38): none of the captured responses carries either. Note that the
-/// "badges" those responses do carry mark an entry as explicit or live; they are not account achievements.
+public extension AccountSummarySource {
+    var recapUnresolved: String? { unresolved }
+    var badgesUnresolved: String? { unresolved }
+}
+/// The source of record when no route is composed (isolated automation) and for badges, which still have none (W38): none of the captured
+/// responses carries them. Note that the "badges" those responses do carry mark an entry as explicit or live; they are not account achievements.
 public struct UnresolvedSummarySource: AccountSummarySource {
     public init() {}
     public var unresolved: String? {
@@ -55,8 +77,21 @@ public struct UnresolvedSummarySource: AccountSummarySource {
     public func badges() async throws -> SummaryAnswer<BadgePayload> { throw SamplesFailure.unreadable }
 }
 
-/// The distinct states of an account summary. `payloadMissing` (the route answered with nothing) and `accountUnsupported` (the service
-/// says the account lacks it) are different facts and are never shown as one.
+extension SamplesFailure {
+    /// The same reasons in words that name Recap (the generic ones name Samples).
+    var recapMessage: String {
+        switch self {
+        case .offline: String(localized: "You’re offline, so Recap couldn’t be loaded.")
+        case .needsSignIn: String(localized: "Sign in to YouTube Music to see what it has for your account.")
+        case .sessionEnded: String(localized: "Sign in again to see what YouTube Music has for your account.")
+        case .unreadable: String(localized: "YouTube Music’s answer for Recap couldn’t be read, so nothing is shown.")
+        case .rateLimited: String(localized: "YouTube Music is asking for a pause. Try Recap again in a moment.")
+        }
+    }
+}
+
+/// The distinct states of an account summary. `payloadMissing` (the route answered with nothing), `accountUnsupported` (the service
+/// says the account lacks it) and `serviceMessage` (the service sent a message whose meaning is unknown) are different facts and are never shown as one.
 public enum SummaryState<Payload: Equatable & Sendable>: Equatable, Sendable {
     case unresolved(String)
     case idle
@@ -66,6 +101,8 @@ public enum SummaryState<Payload: Equatable & Sendable>: Equatable, Sendable {
     case loaded(Payload)
     case payloadMissing
     case accountUnsupported(String)
+    /// The service answered with a message instead of the summary. Its own state: not `payloadMissing`, not `accountUnsupported`.
+    case serviceMessage(SummaryServiceMessage)
     case failed(SamplesFailure)
 }
 
@@ -157,22 +194,23 @@ public struct LocalListeningSummary: Equatable, Sendable {
     @ObservationIgnored private let localRecords: @MainActor () async -> [LocalHistoryRecord]
     @ObservationIgnored private var generation: UInt64 = 0
     @ObservationIgnored public private(set) var readCount = 0
+    /// Counts account changes. A screen that is open when the account changes uses it to start over for the new account.
+    public private(set) var epoch: UInt64 = 0
 
     public init(source: any AccountSummarySource, signedIn: @escaping @MainActor () -> SearchPlayback = { .available },
                 localRecords: @escaping @MainActor () async -> [LocalHistoryRecord] = { [] }) {
         self.source = source; self.signedIn = signedIn; self.localRecords = localRecords
-        let initial = source.unresolved
-        recap = initial.map(SummaryState.unresolved) ?? .idle
-        badges = initial.map(SummaryState.unresolved) ?? .idle
+        recap = source.recapUnresolved.map(SummaryState.unresolved) ?? .idle
+        badges = source.badgesUnresolved.map(SummaryState.unresolved) ?? .idle
     }
 
-    public func loadRecap() async { await read(\.recap, fetch: { try await $0.recap() }, isEmpty: { $0.entries.isEmpty }) }
-    public func loadBadges() async { await read(\.badges, fetch: { try await $0.badges() }, isEmpty: { $0.badges.isEmpty }) }
+    public func loadRecap() async { await read(\.recap, unresolved: { $0.recapUnresolved }, fetch: { try await $0.recap() }, isEmpty: { $0.entries.isEmpty }) }
+    public func loadBadges() async { await read(\.badges, unresolved: { $0.badgesUnresolved }, fetch: { try await $0.badges() }, isEmpty: { $0.badges.isEmpty }) }
     public func refreshLocal() async { let records = await localRecords(); local = records.isEmpty ? nil : LocalListeningSummary.make(from: records) }
 
-    private func read<P: Equatable & Sendable>(_ path: ReferenceWritableKeyPath<AccountSummaryModel, SummaryState<P>>,
+    private func read<P: Equatable & Sendable>(_ path: ReferenceWritableKeyPath<AccountSummaryModel, SummaryState<P>>, unresolved: (any AccountSummarySource) -> String?,
                                                fetch: @escaping (any AccountSummarySource) async throws -> SummaryAnswer<P>, isEmpty: (P) -> Bool) async {
-        if let reason = source.unresolved { self[keyPath: path] = .unresolved(reason); return }
+        if let reason = unresolved(source) { self[keyPath: path] = .unresolved(reason); return }
         switch signedIn() {
         case .needsSignIn: self[keyPath: path] = .signInRequired; return
         case .sessionExpired: self[keyPath: path] = .sessionEnded; return
@@ -188,16 +226,18 @@ public struct LocalListeningSummary: Equatable, Sendable {
             case .payload(let payload): self[keyPath: path] = isEmpty(payload) ? .payloadMissing : .loaded(payload)
             case .noPayload: self[keyPath: path] = .payloadMissing
             case .accountUnsupported(let why): self[keyPath: path] = .accountUnsupported(why)
+            case .serviceMessage(let message): self[keyPath: path] = .serviceMessage(message)
+            case .signInRequired: self[keyPath: path] = .signInRequired
+            case .sessionEnded: self[keyPath: path] = .sessionEnded
             }
         } catch let failure as SamplesFailure {
             if ticket == generation { self[keyPath: path] = .failed(failure) }
         } catch { if ticket == generation { self[keyPath: path] = .failed(.unreadable) } }
     }
     public func accountChanged() {
-        generation &+= 1
-        let initial = source.unresolved
-        recap = initial.map(SummaryState.unresolved) ?? .idle
-        badges = initial.map(SummaryState.unresolved) ?? .idle
+        generation &+= 1; epoch &+= 1
+        recap = source.recapUnresolved.map(SummaryState.unresolved) ?? .idle
+        badges = source.badgesUnresolved.map(SummaryState.unresolved) ?? .idle
         local = nil
     }
 }

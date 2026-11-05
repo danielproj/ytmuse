@@ -57,6 +57,58 @@ import Testing
         #expect(IntegrationFacilities.choose(isolated: true, hotKeys: nil, notifications: nil).sharing is RecordingSharing, "an isolated launch presents no system sheet")
     }
 
+    // MARK: Share… on items, pages and in the player (SHARE)
+
+    private func performer(_ rig: IntegrationRig) -> AppSearchPerformer {
+        AppSearchPerformer(playback: rig.rig.model, pasteboard: rig.shell.facilities.pasteboard, sharing: { rig.shell.facilities.sharing })
+    }
+    @Test func shareOnAnItemOrPageReachesTheShellsSharingFacilityOnlyForACanonicalMusicLink() async throws {
+        let rig = try await IntegrationRig.make(playing: false); defer { rig.cleanUp() }
+        let performer = performer(rig)
+        let good = [URL(string: "https://music.youtube.com/watch?v=dQw4w9WgXcQ")!, URL(string: "https://music.youtube.com/playlist?list=PLvcD45uIlPVoAkPQ5LTumatKEWZlxbHYN")!,
+                    URL(string: "https://music.youtube.com/channel/UCptBkLZ6XRxoyn8SkUMc_Iw")!, URL(string: "https://music.youtube.com/browse/MPREb_K8qWMWVqXGi")!]
+        #expect(rig.sharing.presented.isEmpty, "building the performer or listing offers shares nothing")
+        for url in good { #expect(performer.share(link: url)) }
+        #expect(rig.sharing.presented == good)
+        let before = rig.sharing.presented.count
+        for text in ["https://music.youtube.com/watch?v=dQw4w9WgXcQ&si=abc", "https://music.youtube.com/watch?v=dQw4w9WgXcQ&list=RDAMVMdQw4w9WgXcQ", "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                     "http://music.youtube.com/watch?v=dQw4w9WgXcQ", "ytmuse://song/dQw4w9WgXcQ", "file:///Users/someone/song.m4a", "https://evil.example/watch?v=dQw4w9WgXcQ",
+                     "https://music.youtube.com/watch?v=dQw4w9WgXcQ#t=30", "https://music.youtube.com/playlist?list=PLvcD45uIlPVoAkPQ5LTumatKEWZlxbHYN&jct=abcdefghij"] {
+            #expect(!performer.share(link: URL(string: text)!), "\(text)")
+        }
+        #expect(rig.sharing.presented.count == before, "a link that is not exactly the canonical one is never handed to the sheet")
+        #expect(rig.shell.facilities.pasteboard.string(forType: .string) == nil && rig.shell.facilities.pasteboard.name != .general, "sharing copies nothing, and an automated launch never touches the clipboard")
+    }
+    @Test func aPerformerWithoutASharingFacilitySharesNothing() async throws {
+        let rig = try await IntegrationRig.make(playing: false); defer { rig.cleanUp() }
+        let bare = AppSearchPerformer(playback: rig.rig.model, pasteboard: rig.shell.facilities.pasteboard)
+        #expect(!bare.share(link: URL(string: "https://music.youtube.com/watch?v=dQw4w9WgXcQ")!) && rig.sharing.presented.isEmpty)
+    }
+    @Test func theCurrentSongSharesItsOwnIdThroughTheSameFacilityAndAnAdOrNothingPlayingHasNoPlayerShare() async throws {
+        let rig = try await IntegrationRig.make(); defer { rig.cleanUp() }
+        #expect(CurrentSongShare.item(for: rig.rig.model.music) == LinkItem(kind: .song, identifier: integrationVideo))
+        rig.shell.shareCurrentSong()
+        #expect(rig.sharing.presented == [URL(string: "https://music.youtube.com/watch?v=" + integrationVideo)!], "the song, never the radio or queue it plays from")
+        let ad = try await IntegrationRig.make(state: lifecycleState(ad: true)); defer { ad.cleanUp() }
+        let idle = try await IntegrationRig.make(playing: false); defer { idle.cleanUp() }
+        let odd = try await IntegrationRig.make(state: lifecycleState(video: "dQw4w9WgXcQ&si=x")); defer { odd.cleanUp() }
+        for other in [ad, idle, odd] { #expect(CurrentSongShare.item(for: other.rig.model.music) == nil) }
+        #expect(CurrentSongShare.item(for: nil) == nil, "no player: owned or local media has no Music link")
+    }
+    @Test func thePlayersMoreMenuOffersShareOnlyWhenTheShellCanShareTheSong() async throws {
+        let rig = try await IntegrationRig.make(); defer { rig.cleanUp() }
+        let state = try #require(rig.rig.model.music).snapshot
+        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: true, canShowVideo: false, episode: false) == [.sleepTimer], "off unless the shell provides the action")
+        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: true, canShowVideo: false, episode: false, canShare: true) == [.sleepTimer, .shareSong])
+        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: false, canShowVideo: false, episode: false, canShare: true) == [.shareSong])
+        // Both player hosts provide it from their shell, and the menu item runs nothing but that closure.
+        let shellSurfaces = try IntegrationSources.text("Packages/NativeMusic/Sources/AppShell/Lifecycle/ShellPlayerSurfaces.swift")
+        let browser = try IntegrationSources.text("Packages/NativeMusic/Sources/AppShell/BrowserShell.swift")
+        #expect(shellSurfaces.contains(".environment(\\.shareCurrentSong,") && browser.contains(".environment(\\.shareCurrentSong,"))
+        let capsule = try IntegrationSources.text("Packages/NativeMusic/Sources/AppShell/PlayerCapsuleViews.swift")
+        #expect(capsule.contains("Button { shareCurrentSong() }") && !capsule.contains("NSSharingServicePicker") && !capsule.contains("ShareLink"))
+    }
+
     @Test func theServicesEntryOpensALinkThroughTheSameRulesAndRefusesWithOneSentence() async throws {
         let rig = try await IntegrationRig.make(playing: false); defer { rig.cleanUp() }
         let provider = LinkServicesProvider(shell: rig.shell)

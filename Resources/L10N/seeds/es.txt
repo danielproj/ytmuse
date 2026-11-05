@@ -312,3 +312,27 @@
 1414|Desde el %@
 Q40|one:%lld reproducción	many:%lld de reproducciones	other:%lld reproducciones
 1415|Ajustes de sonido…
+1416|Compartir no está disponible ahora mismo.
+1500|Estás sin conexión, así que no se pudo cargar Recap.
+1501|No se pudo leer la respuesta de YouTube Music para Recap, así que no se muestra nada.
+1502|YouTube Music pide una pausa. Vuelve a probar Recap en un momento.
+1503|YouTube Music ha enviado un mensaje
+1504|Esta es la respuesta de YouTube Music, mostrada tal como se envió. Esta app no puede saber si se refiere a tu cuenta o a un problema temporal.
+1600|Mostrar comentarios
+1601|Aquí no se ofrecen comentarios.
+1602|Este es el mensaje propio de YouTube Music para esta canción.
+1603|Mostrar los comentarios de nuevo
+1604|Verificado
+1605|Creador
+1606|Tú
+1607|Me gusta: %@
+1608|Ver respuestas (%@)
+1609|Ver respuestas
+1610|Respuestas: %@
+1611|Más respuestas
+1612|Cargando respuestas
+1613|Se muestran las primeras %@ páginas de respuestas. Esta app no carga más.
+1614|Más comentarios
+1615|Se muestran las primeras %@ páginas de comentarios. Esta app no carga más.
+1616|Esta lista de comentarios está desactualizada. Vuelve a mostrar los comentarios.
+1617|Aún no se pueden publicar ni moderar comentarios desde esta app.

@@ -1,0 +1,138 @@
+{
+  "build": "r0-3",
+  "dropped": 0,
+  "observed": [
+    {
+      "kind": "blocked-playback",
+      "path": "<path:14>"
+    },
+    {
+      "kind": "blocked-playback",
+      "path": "<path:14>"
+    }
+  ],
+  "pending": 0,
+  "records": [
+    {
+      "at": "2026-11-05T16:25:26.634Z",
+      "kind": "fetch",
+      "page": "<path:/recap:6>",
+      "path": "/youtubei/v1/browse",
+      "request": {
+        "skipped": "not-json"
+      },
+      "response": {
+        "meta": {
+          "depthLimited": 0,
+          "droppedKeys": 0,
+          "redactedKeys": 2,
+          "redactedStrings": 10,
+          "truncatedArrays": []
+        },
+        "value": {
+          "contents": {
+            "singleColumnBrowseResultsRenderer": {
+              "tabs": [
+                {
+                  "tabRenderer": {
+                    "content": {
+                      "messageRenderer": {
+                        "<key:7>": {
+                          "<key:22>": {
+                            "text": {
+                              "runs": [
+                                {
+                                  "text": "<s:46:t>"
+                                },
+                                {
+                                  "text": "<s:5:w>"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "icon": {
+                          "iconType": "<s:11:w>"
+                        },
+                        "text": {
+                          "runs": [
+                            {
+                              "text": "<s:20:t>"
+                            }
+                          ]
+                        },
+                        "trackingParams": "<s:36:w>"
+                      }
+                    },
+                    "trackingParams": "<s:40:w>"
+                  }
+                }
+              ]
+            }
+          },
+          "maxAgeStoreSeconds": 0,
+          "responseContext": {
+            "responseId": "<s:28:w>",
+            "serviceTrackingParams": [
+              {
+                "params": [
+                  {
+                    "key": "browse_id",
+                    "value": "FEmusic_listening_review"
+                  },
+                  {
+                    "key": "browse_id_prefix",
+                    "value": ""
+                  },
+                  {
+                    "key": "logged_in",
+                    "value": "1"
+                  }
+                ],
+                "service": "GFEEDBACK"
+              },
+              {
+                "params": [
+                  {
+                    "key": "c",
+                    "value": "WEB_REMIX"
+                  },
+                  {
+                    "key": "cver",
+                    "value": "<s:48:w>"
+                  },
+                  {
+                    "key": "yt_li",
+                    "value": "1"
+                  },
+                  {
+                    "key": "GetBrowseListeningReviewPage_rid",
+                    "value": "<s:18:w>"
+                  }
+                ],
+                "service": "CSI"
+              },
+              {
+                "params": [
+                  {
+                    "key": "client.version",
+                    "value": "1.20000101"
+                  },
+                  {
+                    "key": "client.name",
+                    "value": "WEB_REMIX"
+                  }
+                ],
+                "service": "ECATCHER"
+              }
+            ]
+          },
+          "trackingParams": "<s:44:w>"
+        }
+      },
+      "seq": 1,
+      "status": 200
+    }
+  ],
+  "stopReason": null
+}

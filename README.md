@@ -6,9 +6,16 @@
 
 ## Status, honestly
 
-The [0.1.5 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.5) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. An update into a build containing the fix has not been checked yet, so G09 remains open. The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
+The [0.1.5 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.5) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. On 2026-11-05 the account holder confirmed the remaining core checks work, including update restart after the fix. Wider G09 distribution checks remain deferred; see the [backlog](Docs/Backlog.md). The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
 
-The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. Radio tuning filters still fail to load. These checks do not close the full account matrix, audible-output, accessibility, hardware or distribution gates below:
+The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. On 2026-11-05 the account holder confirmed the remaining core checks all work, including radio filters, audible playback, media keys, cold launch and update restart. The agreed working core is accepted; [the refreshed backlog](Docs/Backlog.md) tracks the features requested since then and deferred work. This confirmation does not close the full account, accessibility, hardware or distribution matrices below.
+
+**In the source since 0.1.5, not yet in a published preview:**
+- Share and Copy Link on songs, videos, albums, artists, playlists and Now Playing.
+- Reading a song's comments on explicit request, with the service's sort orders, more pages and replies. Posting and moderating are not available.
+- A Recap screen that shows the service's own message and error states. Recap summary figures are not implemented, because no successful Recap response has been captured.
+
+These have automated tests only. The live share sheet, signed-in comments, layout and VoiceOver are unchecked. The [backlog](Docs/Backlog.md) has details. The release gates remain:
 
 | Gate | State |
 | --- | --- |
@@ -56,6 +63,7 @@ To prove a fresh clone builds and tests with no secrets (it clones under `~/Proj
 | [SECURITY.md](SECURITY.md) | reporting a vulnerability, and what is protected |
 | [PRIVACY.md](PRIVACY.md) | what the app stores and sends |
 | [Docs/Distribution.md](Docs/Distribution.md) | releases, the updater, signing, the App Store question |
+| [Docs/Backlog.md](Docs/Backlog.md) | accepted core and deferred work |
 | [Docs/Capability-Matrix.md](Docs/Capability-Matrix.md) | what works, what is fixture-tested, what is not built |
 | [Docs/Publishing-Checklist.md](Docs/Publishing-Checklist.md) | publishing checks and remaining distribution acceptance |
 | [Docs/Architecture.md](Docs/Architecture.md), [Docs/Build.md](Docs/Build.md) | structure, modules and the local toolchain |

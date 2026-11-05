@@ -10,9 +10,12 @@ import Testing
     @MainActor final class Performer: SearchActionPerformer {
         var targets: [(playlist: String, video: String?, params: String?)] = []
         var outcome: SearchPlayOutcome = .started
+        var shared: [URL] = []
+        var copied: [URL] = []
+        func share(link: URL) -> Bool { shared.append(link); return true }
         func play(playlistID: String, title: String) async -> SearchPlayOutcome { targets.append((playlistID, nil, nil)); return outcome }
         func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome { targets.append((playlistID, videoID, params)); return outcome }
-        func copy(link: URL) {}
+        func copy(link: URL) { copied.append(link) }
     }
     private func surface(_ performer: Performer, playback: SearchPlayback = .available) -> LibrarySurface {
         LibrarySurface(models: [:], history: HistoryModel(remote: LibraryCollectionModel(source: .history, reader: { _ in throw MusicSessionError.policy }, continuer: { _ in throw MusicSessionError.policy }),
@@ -85,6 +88,23 @@ import Testing
         guard case .failed? = library.feedback["row"] else { Issue.record("a failed start is not silent"); return }
     }
 
+    // MARK: Share (SHARE)
+
+    @Test func shareOnALibraryRowOpensTheSheetForTheRowsOwnLinkOnly() async throws {
+        let performer = Performer(), library = surface(performer)
+        let row = song(video: "shareRow001", context: "LM")
+        _ = library.offers(for: row)
+        #expect(performer.shared.isEmpty && performer.copied.isEmpty, "opening a menu shares nothing")
+        await library.perform(.share, on: row, key: "row")
+        #expect(performer.shared.map(\.absoluteString) == ["https://music.youtube.com/watch?v=shareRow001"], "never the Liked Music list the row sits in")
+        #expect(performer.copied.isEmpty && performer.targets.isEmpty && library.feedback["row"] == nil)
+        let upload = song(video: "shareRow002", upload: true)
+        #expect(!library.offers(for: upload).map(\.action).contains(.share))
+        await library.perform(.share, on: upload, key: "upload")
+        guard case .failed? = library.feedback["upload"] else { Issue.record("a private upload is refused at its row"); return }
+        #expect(performer.shared.count == 1)
+    }
+
     // MARK: Start Radio (C3)
 
     @Test func startRadioOnALibraryRowStartsExactlyTheRadioTheRowPublished() async throws {
@@ -92,7 +112,7 @@ import Testing
         let row = song(video: "radioSeed01", context: "LM", radio: radio)
         let performer = Performer(), library = surface(performer)
         let offers = library.offers(for: row)
-        #expect(offers.map(\.action) == [.play, .radio, .copyLink] && offers.allSatisfy(\.isAvailable))
+        #expect(offers.map(\.action) == [.play, .radio, .copyLink, .share] && offers.allSatisfy(\.isAvailable))
         await library.perform(.radio, on: row, key: "row")
         let call = try #require(performer.targets.first)
         #expect(performer.targets.count == 1 && call.playlist == "RDAMVMradioSeed01" && call.video == "radioSeed01" && call.params == nil, "the flag is not sent: the player would treat it as a shuffle")
@@ -102,7 +122,7 @@ import Testing
         let radio = MusicRadioAction(playlistID: "RDAMVMradioSeed01", videoID: "radioSeed01", params: "wAEB")
         let row = song(video: "radioSeed01", radio: radio)   // no collection context: Play is the song's own radio
         let library = surface(Performer())
-        #expect(library.offers(for: row).map(\.action) == [.play, .copyLink])
+        #expect(library.offers(for: row).map(\.action) == [.play, .copyLink, .share])
     }
     @Test func aRowThatPublishedNoRadioHasNoStartRadioAndTheActionDoesNothing() async throws {
         // Its id could be turned into an RDAMVM list, and must not be: no link, no action.

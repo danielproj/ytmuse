@@ -1,0 +1,37 @@
+{
+ "node": "MORE-FEATURES / RECAP slice (workspace mf-recap-parallel-20261105)",
+ "purpose": "Evidence for the Recap service-message reader. Nothing here is a successful Recap payload; none has ever been captured.",
+ "files": [
+  {
+   "file": "anonymous-listening-review-no-contents.json",
+   "mode": "real-anonymous-capture",
+   "sha256": "839d4e163b5fd5f14a2263c84eb3a4377b923bf5a08ec842146ecd49992e6b2c",
+   "provenance": "Byte-for-byte copy of artifacts/harness/nodes/MORE-FEATURES/explore-captures/browse-FEmusic_listening_review.json (Explore capture 2026-11-05, no account, no cookies; visitorData and trackingParams redacted by the capture tool). The handler answers with responseContext only: logged_in=0, no contents."
+  },
+  {
+   "file": "anonymous-control-invalid-argument.json",
+   "mode": "real-anonymous-capture",
+   "sha256": "78fc581a2e37c9235e416e3f66063843c2a4cae3da8b97f5f77b4a4f284765ca",
+   "provenance": "Byte-for-byte copy of explore-captures/browse-FEmusic_zz_nonexistent_control.json: the service's answer for an invented browse id (HTTP-error-shaped body with error.code 400). Used as the control that an unknown handler / error body is unreadable."
+  },
+  {
+   "file": "signed-known-handler-sanitized-export.json",
+   "mode": "real-signed-session-structure-sanitized",
+   "sha256": "c4d678f40273ef31c6a11e7d59c6273211becc77d3320145acd7427f6403c899",
+   "provenance": "Byte-for-byte copy of artifacts/harness/nodes/MORE-FEATURES/R1/known-handler-sanitized.json: the reviewed recorder r0-3 export of ONE HTTP 200 /youtubei/v1/browse response for FEmusic_listening_review from a signed-in browser session (logged_in=1), captured 2026-11-05T16:25:26Z. Every string value was replaced by a placeholder `<s:LENGTH:CLASS>` in the page before export (t = text-like, w = word-like); keys outside the recorder vocabulary became `<key:LENGTH>`. It passed the independent check-export gate with zero drops.",
+   "limits": "The placeholders prove STRUCTURE and that a parser carries a string through verbatim. They are not the service's wording, and the lengths are not evidence of it. The meaning of the message is unknown (it could be a generic upstream error). It carries no successful Recap figures."
+  },
+  {
+   "file": "signed-known-handler-capture-manifest.json",
+   "mode": "provenance",
+   "sha256": "310db9bbfa71b1cdbb2050a27ac6eb4f33aac7a9d43aad41722795a815437019",
+   "provenance": "Byte-for-byte copy of R1/known-handler-manifest.json (recorder build r0-3, recorder sha256 4dd92fa38e401dbf51447b99f62d1473c5e405d767524036d9fcba16c2a5cc03, export sha256 c4d678f4...c899, 3717 bytes)."
+  }
+ ],
+ "notVerified": [
+  "A successful (non-message) Recap payload, its shape, its figures or its eligibility rules.",
+  "What the captured message means (generic upstream error, ineligibility, or something else).",
+  "Any other account's answer; one account at one moment.",
+  "The real key names of the redacted secondary-text sub-structure (`<key:7>` / `<key:22>`): nothing under them is interpreted, so the message's secondary line is withheld."
+ ]
+}

@@ -176,26 +176,18 @@ check("W12 the application target is the only place the live signed client is co
 check("W12/W19 the write path set is exactly the six rate/subscribe/feedback paths plus the one confirmed upload removal",
       '"/youtubei/v1/subscription/subscribe", "/youtubei/v1/subscription/unsubscribe", "/youtubei/v1/feedback",\n                                                 "/youtubei/v1/music/delete_privately_owned_entity"]' in adapter_signed
       and adapter_signed.count("/youtubei/v1/") >= 7)
-# --- W19: uploads ---
-upl = [p for d in ("Features/Uploads",) for p in (S / d).rglob("*.swift")] + [S / "AppShell/UploadComposition.swift", S / "AppShell/DevelopmentUploads.swift"]
-devup = (S / "AppShell/DevelopmentUploads.swift").read_text()
-upcomp = (S / "AppShell/UploadComposition.swift").read_text()
-w19_tests = ui[ui.index("// MARK: W19 Uploads"):]
-check("W19 the development uploads are Debug-only and need all three flags plus QA isolation",
-      devup.lstrip().startswith("#if DEBUG") and devup.rstrip().endswith("#endif") and 'environment["YTMUSE_UI_DEVELOPMENT_UPLOADS"] == "1"' in devup and "DevelopmentLibrary.isEnabled(environment)" in devup
-      and "DevelopmentUploads.enabled, let root = isolatedStorage?.root" in upcomp)
-check("W19 every use of the development uploads sits inside a DEBUG block",
-      all(("DevelopmentUploads" not in line) or line.strip().startswith("//") or depth > 0 for depth, line in (lambda lines: [(sum(1 if l.strip().startswith('#if DEBUG') else -1 if l.strip().startswith('#endif') else 0 for l in lines[:i]), lines[i]) for i in range(len(lines))])(upcomp.splitlines())))
-check("W19 no upload source names a network API, a host or a URL request", all(not re.search(r"URLSession|URLRequest|https?://|upload\.youtube|usermusic", p.read_text()) for p in upl), [p.name for p in upl])
-check("W19 no upload source names a production store, Keychain item or app-support path", all(not re.search(r"applicationSupportDirectory|Keychain|SecItem|ProductionDirectory|local\.native-music\.development", p.read_text()) for p in upl))
-check("W19 the job list lives under the chosen app directory (the isolated root under QA)", 'UploadJobFileStore(directory: appDirectory.appendingPathComponent("upload-jobs"))' in comp)
-check("W19 the synthetic samples live under the isolated root and test mode accepts files only from there", 'root.appendingPathComponent("upload-samples"' in devup and "UploadSourceInspector(testRoot: dev.samples)" in upcomp)
-check("W19 the production transport is the unavailable one, replaced only inside DEBUG", "var transport: any UploadTransport = UnavailableUploadTransport()" in upcomp)
-check("W19 uploads UI tests launch only through uploadsApplication()/libraryApplication()/designApplication() (isolated), never XCUIApplication directly",
-      "uploadsApplication()" in w19_tests and "XCUIApplication(" not in w19_tests.replace("private func uploadsApplication() -> XCUIApplication", "") and "libraryApplication()" in w19_tests)
-check("W19 uploads UI tests never open sign-in, press Play, or touch the real preferences domain", "musicSignIn" not in w19_tests and "libraryPlay-" not in w19_tests and "UserDefaults" not in w19_tests)
-check("W19 nothing in the upload code writes, moves or deletes a chosen file", all(not re.search(r"removeItem|trashItem|moveItem|replaceItem|copyItem|setAttributes|createFile|forWriting|forUpdating|\.write\(to", p.read_text()) for p in upl if p.name not in ("UploadComposition.swift", "DevelopmentUploads.swift")))
-check("W19 the removal writer is the Library ledger's one writer closure (still one awaitedMusic().write call site)", callers == ["Packages/NativeMusic/Sources/AppShell/LibraryComposition.swift"] and "writer: writer" in (S / "AppShell/LibraryComposition.swift").read_text() + upcomp)
+# --- W19: uploads (REMOVED from the product; MF-C3 restated this block to current truth) ---
+# The original W19 clauses read Features/Uploads, AppShell/UploadComposition.swift and AppShell/DevelopmentUploads.swift, which the core redesign
+# deleted (commit b7b7095c). Reading them crashed the proof before any W20 clause ran. What stays true, and is asserted instead: none of them is
+# back, nothing names them, and the one signed write call site is still the Library ledger's writer closure. Uploads are NOT restored by this.
+upload_leftovers = [str(p.relative_to(ROOT)) for p in [S / "AppShell/UploadComposition.swift", S / "AppShell/DevelopmentUploads.swift"] if p.exists()] \
+    + [str(p.relative_to(ROOT)) for p in (S / "Features/Uploads").rglob("*.swift")]
+check("W19 uploads are removed: no upload composition, development upload data or upload feature source exists", not upload_leftovers, upload_leftovers)
+check("W19 nothing in the sources or UI tests names the removed upload composition, development uploads or their flag",
+      all(not re.search(r"UploadComposition|DevelopmentUploads|YTMUSE_UI_DEVELOPMENT_UPLOADS|UploadTransport|UploadJobFileStore", p.read_text()) for p in sources if p.name not in ("DiscoveryComposition.swift",))
+      and "MARK: W19 Uploads" not in ui and "uploadsApplication" not in ui)
+check("W19 the removal writer is the Library ledger's one writer closure (still one awaitedMusic().write call site)",
+      callers == ["Packages/NativeMusic/Sources/AppShell/LibraryComposition.swift"] and "writer: writer" in (S / "AppShell/LibraryComposition.swift").read_text())
 # --- W20: Samples, tuner, Recap, badges, comments / moderation / invitations ---
 devdisc = (S / "AppShell/DevelopmentDiscovery.swift").read_text()
 disccomp = (S / "AppShell/DiscoveryComposition.swift").read_text()
@@ -210,17 +202,38 @@ for number, line in enumerate(disccomp.splitlines(), 1):
     elif t.startswith("#endif"): depth -= 1
     if ("DevelopmentDiscovery" in t or "scripted" in t) and not t.startswith("//") and depth <= 0: unguarded.append(number)
 check("W20 every use of the development discovery data sits inside a DEBUG block", not unguarded, unguarded)
-check("W20 the application composes unresolved sources: no Samples, Recap, badges, tuner-control or comments route is simulated",
-      all(t in disccomp for t in ("var samplesSource: any SamplesSource = UnresolvedSamplesSource()", "var summarySource: any AccountSummarySource = UnresolvedSummarySource()",
-                                  "var controlsSource: any RadioControlsSource = UnresolvedRadioControlsSource()", "var transport: any CommentsTransport = UnresolvedCommentsTransport()")))
+# MF-C3: restated to current truth. The tuner (QueueRadioControlsSource), Recap (SignedRecapSummarySource) and comments (the coordinator read transport)
+# are the PRODUCTION sources and each reaches the account coordinator through one named read; isolated automation keeps all three unresolved; Samples
+# and badges still have no route and stay unresolved; the scripted sources exist only inside DEBUG (the clauses above and below).
+commentscomp = (S / "AppShell/CommentsComposition.swift").read_text()
+def code_only(text): return "\n".join(l for l in text.splitlines() if not l.strip().startswith("//"))
+disc_code, comments_code = code_only(disccomp), code_only(commentscomp)
+check("W20 production composes the tuner queue controls, the Recap reader and the comments coordinator read transport; isolated automation keeps all three unresolved; Samples and badges stay unresolved",
+      all(t in disc_code for t in ("var samplesSource: any SamplesSource = UnresolvedSamplesSource()",
+                                   "var controlsSource: any RadioControlsSource = QueueRadioControlsSource {",
+                                   "if Self.automationIsolated(launchEnvironment) { controlsSource = UnresolvedRadioControlsSource() }",
+                                   "isolated ? UnresolvedSummarySource() : SignedRecapSummarySource(reader: recap)",
+                                   "var badgesUnresolved: String? { UnresolvedSummarySource().unresolved }",
+                                   "commentsTransport(isolated: isolatedLaunch)"))
+      and all(t in comments_code for t in ("isolated ? UnresolvedCommentsTransport() : CoordinatorCommentsTransport(reader: reader)",
+                                           "var unresolved: String? { nil }", "func post(", "throw CommentsFailure.writesUnavailable")))
 check("W20 no discovery or social source names a network API, a host, a URL request or a decoder",
       all(not re.search(r"URLSession|URLRequest|https?://|JSONDecoder|JSONSerialization|WKWebView|NWConnection", "\n".join(l for l in p.read_text().splitlines() if not l.strip().startswith("//"))) for p in w20_sources), [p.name for p in w20_sources])
 check("W20 no discovery or social source names a production store, Keychain item or app-support path",
       all(not re.search(r"applicationSupportDirectory|Keychain|SecItem|ProductionDirectory|local\.native-music\.development|UserDefaults|FileManager", p.read_text()) for p in w20_sources))
 check("W20 the only Network.framework use is the passive path monitor", [p.name for p in w20_sources if "import Network" in p.read_text()] == ["DiscoveryComposition.swift"]
       and "NWPathMonitor()" in disccomp and "NWConnection" not in disccomp and "monitor.start(queue:" in disccomp)
-check("W20 neither new composition adds a signed write: still one awaitedMusic().write call site, unchanged", callers == ["Packages/NativeMusic/Sources/AppShell/LibraryComposition.swift"]
-      and "awaitedMusic" not in disccomp and "writer" not in disccomp)
+# MF-C3: the old clause banned every `awaitedMusic` in the discovery composition, but the accepted tuner has called it since 8fa17bac and Recap and comments
+# read through it. The stronger statement: the one signed write call site is still the Library's, and the discovery and comments compositions reach the
+# coordinator ONLY through the named reads (Recap's recap(), comments(), the tuner's radioQueue()); never a write, a playlist edit or a direct transport.
+direct_reads = set(re.findall(r"awaitedMusic\(\)\s*\.(\w+)\(", disc_code + comments_code))
+bound_reads = set(re.findall(r"\bmusic\.(\w+)\(", disc_code + comments_code))
+forbidden_words = re.compile(r"\.write\(|editPlaylist\(|writer|MusicWriteRequest\(|MusicPlaylistRequest|DirectSignedMusicTransport|SignedMusicClient\(|PublicMusicClient\(")
+check("W20 neither composition adds a signed write: still one awaitedMusic().write call site (the Library's); discovery and comments reach the coordinator only through recap(), comments() and the tuner's radioQueue()",
+      callers == ["Packages/NativeMusic/Sources/AppShell/LibraryComposition.swift"]
+      and direct_reads == {"recap", "comments"} and bound_reads == {"radioQueue"} and "let music = try await self.awaitedMusic()" in disc_code
+      and not forbidden_words.search(disc_code + comments_code),
+      {"direct": sorted(direct_reads), "bound": sorted(bound_reads)})
 check("W20 the social surface writes only through the Library ledger and the playlist edit session (no direct request type)",
       all(t not in (S / "Features/Social/SocialSurface.swift").read_text() for t in ("MusicWriteRequest(", "MusicPlaylistRequest.edit", ".apply(", "writer(")))
 check("W20 development discovery launches never press a library Play or open sign-in", "musicSignIn" not in w20_ui and "libraryPlay-" not in w20_ui and "UserDefaults" not in w20_ui)
@@ -229,7 +242,7 @@ check("W20 UI tests launch only through discoveryApplication()/libraryApplicatio
 queue_src = (S / "YouTubeMusicAdapter/MusicRadioQueue.swift").read_text()
 check("W20 rework: the radio-queue seam is a pure parser and request body: it names no network API, host or session and sends nothing",
       not re.search(r"URLSession|URLRequest|https?://|dataTask|\.send\(|awaitedMusic", queue_src) and "public static func body" in queue_src and "public static func parse" in queue_src)
-check("W20 rework: nothing in the application sends a radio-queue request yet (the live tuner reader is the unresolved source)",
+check("W20 rework: AppShell does not construct raw radio-queue requests (production uses the coordinator read)",
       all("MusicRadioQueueParser.body" not in p.read_text() and "MusicRadioQueueRequest" not in p.read_text() for p in (S / "AppShell").rglob("*.swift") if p.name != "DevelopmentDiscovery.swift"))
 products = Path(os.environ.get("BUILD_DIR") or ROOT / ".build/xcode")
 release = products / "Build/Products/Release/YTMuse.app/Contents/MacOS/YTMuse"

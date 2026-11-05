@@ -54,7 +54,10 @@ public enum SocialPermission: Sendable, Equatable {
 public enum SocialPolicy {
     public static func permission(_ action: SocialActionKind, role: SocialRole) -> SocialPermission {
         switch action {
-        case .readComments, .postComment, .moderateComment, .rate:
+        // Comments are read from the service's public surface: reading needs no account. Everything that changes something does.
+        case .readComments:
+            return .allowed
+        case .postComment, .moderateComment, .rate:
             return role == .signedOut ? .denied(.needsSignIn) : .allowed
         case .createInvite, .stopContributions:
             switch role {

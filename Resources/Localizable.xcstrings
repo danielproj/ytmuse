@@ -14443,40 +14443,92 @@
     },
     "Comments aren’t available yet. None of the YouTube Music responses this app can read carries them, so there is nothing to read, post or moderate.": {
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Kommentare sind noch nicht verfügbar. Keine der YouTube-Music-Antworten, die diese App lesen kann, enthält sie, daher gibt es nichts zu lesen, zu posten oder zu moderieren."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Kommentare sind noch nicht verfügbar. Keine der YouTube-Music-Antworten, die diese App lesen kann, enthält sie, daher gibt es nichts zu lesen, zu posten oder zu moderieren."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Comments aren’t available yet. None of the YouTube Music responses this app can read carries them, so there is nothing to read, post or moderate."
           }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Comments aren’t connected in this session, so nothing is read, posted or moderated.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare sind in dieser Sitzung nicht verbunden, daher wird nichts gelesen, gepostet oder moderiert."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare sind in dieser Sitzung nicht verbunden, daher wird nichts gelesen, gepostet oder moderiert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comments aren’t connected in this session, so nothing is read, posted or moderated."
+          }
         },
         "es": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Los comentarios aún no están disponibles. Ninguna de las respuestas de YouTube Music que esta app puede leer los incluye, así que no hay nada que leer, publicar ni moderar."
+            "value": "Los comentarios no están conectados en esta sesión, así que no se lee, publica ni modera nada."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Les commentaires ne sont pas encore disponibles. Aucune des réponses de YouTube Music que cette app sait lire n’en contient ; il n’y a donc rien à lire, à publier ou à modérer."
+            "value": "Les commentaires ne sont pas connectés dans cette session ; rien n’est donc lu, publié ni modéré."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "Комментарии пока недоступны. Ни в одном ответе YouTube Music, который может прочитать это приложение, их нет, поэтому читать, публиковать и модерировать нечего."
+            "value": "Комментарии в этом сеансе не подключены, поэтому ничего не читается, не публикуется и не модерируется."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Comments aren’t offered here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Hier werden keine Kommentare angeboten."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Hier werden keine Kommentare angeboten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comments aren’t offered here."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Aquí no se ofrecen comentarios."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Les commentaires ne sont pas proposés ici."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Здесь комментарии не предусмотрены."
           }
         }
       },
@@ -15226,6 +15278,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Создание плейлиста…"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Creator": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Creator"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Creator"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creator"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Creador"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Créateur"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Автор канала"
           }
         }
       },
@@ -25072,6 +25165,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Likes: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Likes: %@"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Likes: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Likes: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Me gusta: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "J’aime : %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Отметок «Нравится»: %@"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Liking needs the song's page: open it once and the control appears here.": {
       "localizations": {
         "de": {
@@ -25857,6 +25991,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Радиофильтры загружаются…"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Loading replies": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten werden geladen"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten werden geladen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading replies"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Cargando respuestas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Chargement des réponses"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Загрузка ответов"
           }
         }
       },
@@ -27730,6 +27905,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "More comments": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Weitere Kommentare"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Weitere Kommentare"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More comments"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Más comentarios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Plus de commentaires"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ещё комментарии"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "More items follow; YouTube Music lists only the next few.": {
       "localizations": {
         "de": {
@@ -27807,6 +28023,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Другие действия воспроизведения"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "More replies": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Weitere Antworten"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Weitere Antworten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More replies"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Más respuestas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Plus de réponses"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ещё ответы"
           }
         }
       },
@@ -38482,6 +38739,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Posting and moderating comments aren’t available from this app yet.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare posten und moderieren ist in dieser App noch nicht möglich."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare posten und moderieren ist in dieser App noch nicht möglich."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posting and moderating comments aren’t available from this app yet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Aún no se pueden publicar ni moderar comentarios desde esta app."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "La publication et la modération de commentaires ne sont pas encore disponibles dans cette app."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Публиковать и модерировать комментарии в этом приложении пока нельзя."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Prepared queue": {
       "localizations": {
         "de": {
@@ -43695,6 +43993,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Replies: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten: %@"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replies: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Respuestas: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Réponses : %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ответов: %@"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Reset All Local Data": {
       "localizations": {
         "de": {
@@ -48676,6 +49015,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Sharing isn’t available right now.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Teilen ist gerade nicht verfügbar."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Teilen ist gerade nicht verfügbar."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharing isn’t available right now."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Compartir no está disponible ahora mismo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Le partage n’est pas disponible pour le moment."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Поделиться сейчас недоступно."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Shortest first": {
       "localizations": {
         "de": {
@@ -49168,6 +49548,88 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Show comments": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare anzeigen"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare anzeigen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show comments"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Mostrar comentarios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Afficher les commentaires"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Показать комментарии"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Show comments again": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare erneut anzeigen"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Kommentare erneut anzeigen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show comments again"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Mostrar los comentarios de nuevo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Afficher à nouveau les commentaires"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Показать комментарии снова"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Show less": {
       "localizations": {
         "de": {
@@ -49532,6 +49994,88 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Результаты по запросу «%@»."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Showing the first %@ pages of comments. This app doesn’t load more.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Es werden die ersten %@ Seiten der Kommentare angezeigt. Diese App lädt nicht mehr."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Es werden die ersten %@ Seiten der Kommentare angezeigt. Diese App lädt nicht mehr."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing the first %@ pages of comments. This app doesn’t load more."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Se muestran las primeras %@ páginas de comentarios. Esta app no carga más."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Affichage des %@ premières pages de commentaires. Cette app n’en charge pas davantage."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Показаны первые страницы комментариев (не более %@). Приложение не загружает больше."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Showing the first %@ pages of replies. This app doesn’t load more.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Es werden die ersten %@ Seiten der Antworten angezeigt. Diese App lädt nicht mehr."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Es werden die ersten %@ Seiten der Antworten angezeigt. Diese App lädt nicht mehr."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing the first %@ pages of replies. This app doesn’t load more."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Se muestran las primeras %@ páginas de respuestas. Esta app no carga más."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Affichage des %@ premières pages de réponses. Cette app n’en charge pas davantage."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Показаны первые страницы ответов (не более %@). Приложение не загружает больше."
           }
         }
       },
@@ -62789,6 +63333,88 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "This is YouTube Music’s answer, shown as it was sent. This app can’t tell whether it is about your account or a temporary problem.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Das ist die Antwort von YouTube Music, so angezeigt, wie sie gesendet wurde. Diese App kann nicht erkennen, ob sie dein Konto betrifft oder ein vorübergehendes Problem ist."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Das ist die Antwort von YouTube Music, so angezeigt, wie sie gesendet wurde. Diese App kann nicht erkennen, ob sie dein Konto betrifft oder ein vorübergehendes Problem ist."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is YouTube Music’s answer, shown as it was sent. This app can’t tell whether it is about your account or a temporary problem."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Esta es la respuesta de YouTube Music, mostrada tal como se envió. Esta app no puede saber si se refiere a tu cuenta o a un problema temporal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Voici la réponse de YouTube Music, affichée telle qu’elle a été envoyée. Cette app ne peut pas savoir si elle concerne votre compte ou un problème temporaire."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Это ответ YouTube Music, показанный в том виде, в котором он был отправлен. Приложение не может определить, относится он к вашему аккаунту или это временная проблема."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "This is YouTube Music’s own message for this song.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Das ist die eigene Meldung von YouTube Music zu diesem Song."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Das ist die eigene Meldung von YouTube Music zu diesem Song."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is YouTube Music’s own message for this song."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Este es el mensaje propio de YouTube Music para esta canción."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Voici le message de YouTube Music pour ce titre."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Это собственное сообщение YouTube Music для этой песни."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "This is already the audio version.": {
       "localizations": {
         "de": {
@@ -63532,6 +64158,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Не удаётся открыть эту ссылку. Используйте ссылку YouTube Music на песню, альбом, исполнителя или плейлист."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "This list of comments is out of date. Show the comments again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Diese Kommentarliste ist veraltet. Zeige die Kommentare erneut an."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Diese Kommentarliste ist veraltet. Zeige die Kommentare erneut an."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This list of comments is out of date. Show the comments again."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Esta lista de comentarios está desactualizada. Vuelve a mostrar los comentarios."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Cette liste de commentaires est obsolète. Affichez à nouveau les commentaires."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Этот список комментариев устарел. Покажите комментарии снова."
           }
         }
       },
@@ -69146,6 +69813,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Verified": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Verifiziert"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Verifiziert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verified"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Verificado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Vérifié"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Подтверждён"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Verifying your YouTube Music account…": {
       "localizations": {
         "de": {
@@ -69428,6 +70136,88 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Видео"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "View replies": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten anzeigen"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten anzeigen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View replies"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ver respuestas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Afficher les réponses"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Показать ответы"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "View replies (%@)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten anzeigen (%@)"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Antworten anzeigen (%@)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View replies (%@)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ver respuestas (%@)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Afficher les réponses (%@)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Показать ответы (%@)"
           }
         }
       },
@@ -71572,6 +72362,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YTMuse обращается только к Google для входа, к YouTube Music для медиатеки и воспроизведения, к серверам обложек, которые указаны на этих страницах, и к устройствам, которые вы выбираете для AirPlay и Cast. Он не передаёт данные аккаунта никаким другим сервисам и не ведёт аналитику."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "You": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Du"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Du"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Tú"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Vous"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Вы"
           }
         }
       },
@@ -74758,6 +75589,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "YouTube Music is asking for a pause. Try Recap again in a moment.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music bittet um eine Pause. Versuche es mit Recap gleich noch einmal."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music bittet um eine Pause. Versuche es mit Recap gleich noch einmal."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music is asking for a pause. Try Recap again in a moment."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music pide una pausa. Vuelve a probar Recap en un momento."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music demande une pause. Réessayez Recap dans un instant."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music просит сделать паузу. Попробуйте Recap ещё раз чуть позже."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "YouTube Music is asking for a pause. Try Samples again in a moment.": {
       "localizations": {
         "de": {
@@ -75466,6 +76338,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "YouTube Music sent a message": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat eine Nachricht gesendet"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music hat eine Nachricht gesendet"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music sent a message"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music ha enviado un mensaje"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music a envoyé un message"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music прислал сообщение"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "YouTube Music sent a page in a form this version can’t read yet.": {
       "localizations": {
         "de": {
@@ -75789,6 +76702,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Ответ YouTube Music не удалось прочитать, поэтому ничего не показано."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "YouTube Music’s answer for Recap couldn’t be read, so nothing is shown.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Antwort von YouTube Music für Recap konnte nicht gelesen werden, daher wird nichts angezeigt."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Antwort von YouTube Music für Recap konnte nicht gelesen werden, daher wird nichts angezeigt."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music’s answer for Recap couldn’t be read, so nothing is shown."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "No se pudo leer la respuesta de YouTube Music para Recap, así que no se muestra nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "La réponse de YouTube Music pour Recap n’a pas pu être lue, donc rien n’est affiché."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ответ YouTube Music для Recap не удалось прочитать, поэтому ничего не показано."
           }
         }
       },
@@ -78092,6 +79046,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Нет подключения"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "You’re offline, so Recap couldn’t be loaded.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Du bist offline, daher konnte Recap nicht geladen werden."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Du bist offline, daher konnte Recap nicht geladen werden."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You’re offline, so Recap couldn’t be loaded."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Estás sin conexión, así que no se pudo cargar Recap."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Vous êtes hors connexion : Recap n’a pas pu être chargé."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Нет подключения к интернету, поэтому Recap не удалось загрузить."
           }
         }
       },

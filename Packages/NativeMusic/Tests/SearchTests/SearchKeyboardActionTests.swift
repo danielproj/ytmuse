@@ -93,7 +93,7 @@ import Testing
         await rig.model.activate(song)
         #expect(rig.model.feedback[song.id] == .failed(String(localized: "Your session ended. Sign in again to play.")))
         #expect(rig.performer.played.isEmpty)
-        #expect(rig.model.offers(for: song).map(\.action) == [.play, .copyLink], "Copy Link needs no account")
+        #expect(rig.model.offers(for: song).map(\.action) == [.play, .copyLink, .share], "Copy Link and Share need no account")
         #expect(rig.model.offers(for: song).first?.isAvailable == false)
     }
     @Test func aPlayThatFailsOrGoesStaleIsReportedAndABusyOneIsQuiet() async throws {
@@ -131,14 +131,38 @@ import Testing
         await rig.model.perform(.copyLink, on: try rig.result("Synthetic Artist"))
         #expect(rig.performer.copied.last?.absoluteString == "https://music.youtube.com/channel/UCaaaaaaaaaaaaaaaaaaaaaa")
     }
+    @Test func shareOpensTheSheetForTheResultsOwnLinkAndCopiesNothing() async throws {
+        let rig = Rig(); try await rig.load()
+        // Offers are listed when a row's menu opens; that alone shares nothing.
+        for result in rig.model.results { _ = rig.model.offers(for: result) }
+        #expect(rig.performer.shared.isEmpty && rig.performer.copied.isEmpty)
+        for title in ["Noche Cálida", "Synthetic Album", "Café Mix", "Brewing music", "Synthetic Artist"] { await rig.model.perform(.share, on: try rig.result(title)) }
+        #expect(rig.performer.shared.map(\.absoluteString) == [
+            "https://music.youtube.com/watch?v=aaaaaaaaaa3", "https://music.youtube.com/playlist?list=OLAK5uy_syntheticAlbum01",
+            "https://music.youtube.com/playlist?list=PLsyntheticFeatured01", "https://music.youtube.com/watch?v=cccccccccc1",
+            "https://music.youtube.com/channel/UCaaaaaaaaaaaaaaaaaaaaaa"])
+        #expect(rig.performer.copied.isEmpty && rig.performer.played.isEmpty, "Share neither copies nor plays")
+        #expect(rig.model.feedback.isEmpty, "the share sheet is the feedback")
+    }
+    @Test func shareWithNothingToPresentOrNoLinkIsSaidAtTheResult() async throws {
+        let rig = Rig(); try await rig.load()
+        let song = try rig.result("Noche Cálida")
+        rig.performer.canShare = false
+        await rig.model.perform(.share, on: song)
+        #expect(rig.model.feedback[song.id] == .failed(String(localized: "Sharing isn’t available right now.")) && rig.performer.copied.isEmpty)
+        let bare = SearchResult(kind: .album, title: "No ids", subtitle: nil, badges: [], target: SearchTarget(browseID: "MPREb_x"), fromService: true)
+        #expect(!SearchActionPlan.offers(for: bare, playback: .available).contains { $0.action == .share }, "no link, no Share")
+        let local = SearchResult(kind: .playlist, title: "Local", subtitle: nil, badges: [.library], target: SearchTarget(browseID: "VLPLlocalListOne01", playlistID: "PLlocalListOne01"), fromService: false)
+        #expect(SearchActionPlan.link(for: local)?.absoluteString == "https://music.youtube.com/playlist?list=PLlocalListOne01", "a library playlist normalises its VL page id")
+    }
     @Test func onlyRealActionsAreOffered() async throws {
         let rig = Rig(); try await rig.load()
         for result in rig.model.results {
             let offered = Set(rig.model.offers(for: result).map(\.action))
-            #expect(offered.isSubset(of: [.play, .copyLink]), "no placeholder actions: \(result.title)")
+            #expect(offered.isSubset(of: [.play, .copyLink, .share]), "no placeholder actions: \(result.title)")
         }
-        #expect(SearchAction.allCases == [.play, .copyLink])
-        #expect(rig.model.offers(for: try rig.result("Synthetic Artist")).map(\.action) == [.copyLink], "an artist has no Play, so none is shown")
+        #expect(SearchAction.allCases == [.play, .copyLink, .share])
+        #expect(rig.model.offers(for: try rig.result("Synthetic Artist")).map(\.action) == [.copyLink, .share], "an artist has no Play, so none is shown")
     }
     @Test func aResultWithNoPlayTargetIsNeverGivenAGuessedOne() {
         let bare = SearchResult(kind: .album, title: "No ids", subtitle: nil, badges: [], target: SearchTarget(browseID: "MPREb_x"), fromService: true)

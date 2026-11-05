@@ -256,6 +256,51 @@ public actor SignedMusicClient: MusicSessionReading {
         if Self.loggedOut(root) { throw MusicSessionError.signedOut }
         return .init(value: try MusicLyricsParser.parseLyrics(root), rotation: firstRotation + secondRotation)
     }
+    /// Comments: signed with the account's session, or the anonymous public request when `session` is nil. Same request counts as the anonymous
+    /// path (`open` at most 2, `page`/`replies` exactly 1), validated before anything is sent. A `loggedOut` root on any response is `.signedOut`;
+    /// a comments response over `PublicMusicClient.maxCommentsResponseBytes` is `.oversized`; HTTP 400 and a watch shell are `.unrecognised`.
+    /// Signed comment shapes have not been observed: anything the parser does not know fails loudly.
+    public func comments(_ request: MusicCommentsRequest, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicCommentsAnswer> {
+        try request.validate()
+        guard let session else {
+            guard let anonymous else { throw MusicSessionError.policy }
+            do { return .init(value: try await anonymous.comments(request), rotation: []) }
+            catch let error as MusicSessionError { throw error }
+            catch let error as ConnectionError { throw Self.classifyConnection(error) }
+            catch { throw DirectSignedMusicTransport.classify(error) }
+        }
+        let cap = PublicMusicClient.maxCommentsResponseBytes
+        switch request {
+        case .open(let videoID):
+            let (root, firstRotation) = try await post("next", body: ["videoId": videoID, "isAudioOnly": true], session: session, limit: 4_000_000)
+            if Self.loggedOut(root) { throw MusicSessionError.signedOut }
+            let entry = try MusicCommentsParser.parseEntry(root, videoID: videoID)
+            guard case .continuation(let token) = entry else { return .init(value: .opened(entry: entry, firstPage: nil), rotation: firstRotation) }
+            let (pageRoot, secondRotation) = try await post("next", body: ["continuation": token], session: session, limit: cap)
+            if Self.loggedOut(pageRoot) { throw MusicSessionError.signedOut }
+            let page = try MusicCommentsParser.parsePage(pageRoot, videoID: videoID)
+            return .init(value: .opened(entry: entry, firstPage: page), rotation: firstRotation + secondRotation)
+        case .page(let token, let videoID):
+            let (root, rotation) = try await post("next", body: ["continuation": token], session: session, limit: cap)
+            if Self.loggedOut(root) { throw MusicSessionError.signedOut }
+            return .init(value: .page(try MusicCommentsParser.parsePage(root, videoID: videoID)), rotation: rotation)
+        case .replies(let token, _, let parentID):
+            let (root, rotation) = try await post("next", body: ["continuation": token], session: session, limit: cap)
+            if Self.loggedOut(root) { throw MusicSessionError.signedOut }
+            return .init(value: .replies(try MusicCommentsParser.parseReplies(root, parentID: parentID)), rotation: rotation)
+        }
+    }
+    /// The account's Recap: ONE `browse` of the known handler, signed only. No parameters, no continuation, no retry: a second look is a second
+    /// explicit call from the person. The answer is read by `MusicRecapParser` (a service message or the signed-out state; anything else is
+    /// `.unrecognised`; a logged-out answer is `.signedOut`).
+    public func recap(session: MusicCookieSession) async throws -> MusicSignedResult<MusicRecapReading> {
+        let (root, rotation) = try await post("browse", body: ["browseId": MusicRecapRoute.browseID], session: session, limit: MusicRecapRoute.maximumResponseBytes)
+        if Self.loggedOut(root) { throw MusicSessionError.signedOut }
+        let reading = try MusicRecapParser.parse(root)
+        // A signed read the service answers as logged out is an ended session, handled by the coordinator's expiry like every other signed read.
+        if reading == .needsSignIn { throw MusicSessionError.signedOut }
+        return .init(value: reading, rotation: rotation)
+    }
     public func continuation(token: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicContinuationPage> {
         guard MusicBrowseParser.isToken(token) else { throw MusicSessionError.policy }
         guard let session else {

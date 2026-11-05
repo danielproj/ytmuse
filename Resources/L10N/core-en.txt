@@ -401,7 +401,7 @@
 440|Commands
 441|Comment on %@
 442|Comments
-443|Comments aren’t available yet. None of the YouTube Music responses this app can read carries them, so there is nothing to read, post or moderate.
+443|Comments aren’t connected in this session, so nothing is read, posted or moderated.
 444|Compact
 445|Compact size
 446|Connect a source that can open this item, or return to your collection.
@@ -1379,3 +1379,27 @@ Q39|Undo: removed %lld songs
 1414|Since %@
 Q40|%lld plays
 1415|Sound Settings…
+1416|Sharing isn’t available right now.
+1500|You’re offline, so Recap couldn’t be loaded.
+1501|YouTube Music’s answer for Recap couldn’t be read, so nothing is shown.
+1502|YouTube Music is asking for a pause. Try Recap again in a moment.
+1503|YouTube Music sent a message
+1504|This is YouTube Music’s answer, shown as it was sent. This app can’t tell whether it is about your account or a temporary problem.
+1600|Show comments
+1601|Comments aren’t offered here.
+1602|This is YouTube Music’s own message for this song.
+1603|Show comments again
+1604|Verified
+1605|Creator
+1606|You
+1607|Likes: %@
+1608|View replies (%@)
+1609|View replies
+1610|Replies: %@
+1611|More replies
+1612|Loading replies
+1613|Showing the first %@ pages of replies. This app doesn’t load more.
+1614|More comments
+1615|Showing the first %@ pages of comments. This app doesn’t load more.
+1616|This list of comments is out of date. Show the comments again.
+1617|Posting and moderating comments aren’t available from this app yet.

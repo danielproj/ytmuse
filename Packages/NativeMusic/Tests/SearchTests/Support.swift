@@ -62,6 +62,8 @@ actor ScriptedRemote {
 @MainActor final class SpyPerformer: SearchActionPerformer {
     var played: [(playlist: String, title: String)] = []
     var copied: [URL] = []
+    var shared: [URL] = []
+    var canShare = true
     var outcome: SearchPlayOutcome = .started
     var gate: CheckedContinuation<Void, Never>?
     var holdPlay = false
@@ -71,6 +73,7 @@ actor ScriptedRemote {
         return outcome
     }
     func copy(link: URL) { copied.append(link) }
+    func share(link: URL) -> Bool { guard canShare else { return false }; shared.append(link); return true }
     func release() { gate?.resume(); gate = nil }
 }
 
