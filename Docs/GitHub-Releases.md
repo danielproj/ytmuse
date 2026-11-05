@@ -1,18 +1,20 @@
 # GitHub source and installable releases
 
-The cleaned source repository and [0.1.2 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.2) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
+The cleaned source repository and [0.1.3 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.3) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
 
 The preview targets **Apple Silicon and macOS 27 or later**. Intel Macs and earlier macOS versions are not supported. Building from source requires the exact Xcode/Swift versions in `toolchain.json`.
 
 ## Install
 
-Download `YTMuse-0.1.2.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
+Download `YTMuse-0.1.3.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
 
 Release packaging uses a dedicated production app/widget identity, derived by default as `com.github.<owner>.<repository>` with a `.widget` companion. `YTMUSE_RELEASE_BUNDLE_ID` can override it with a valid reverse-DNS identifier. The app group uses the signing Team ID followed by that production identifier. Ordinary source builds retain development identifiers; no migration from development stores is included.
 
 The public app pins its update repository, feed URL and Ed25519 public key. Automatic checks require opt-in, and installation requires an explicit restart. Source builds have no feed or pinned key and leave update networking disabled.
 
 ## What was verified
+
+0.1.3 (build 4) was built from source tag `v0.1.3` on the packaging Mac and makes the output picker opaque and shorter (a player that follows the Mac lists only the output in use, with a Sound Settings button; shared sentences are folded under Details) and hides the Home welcome card once signed in. Its app and DMG passed Gatekeeper as notarized Developer ID, stapler validation, a strict deep signature check and the checksum, and the app keeps the 0.1.2 bundle identifier; every uploaded asset was downloaded again and matched the verified file; and the published `releases/latest` feed verifies as an offer of 0.1.3 to a 0.1.2 build 3, a 0.1.1 build 2 and a 0.1.0 build 1. The picker rules are covered by unit tests; neither change was checked in a live window. No earlier install has actually been updated to it.
 
 0.1.2 (build 3) was built from source tag `v0.1.2` on the packaging Mac and adds clickable Home card covers (a song or video plays, an album, playlist or artist opens) and corrected On this Mac figures: listening time now covers the whole listen rather than the first 30 seconds, songs are grouped by video id, and totals use every play the Mac keeps. Its app and DMG passed Gatekeeper as notarized Developer ID, stapler validation, a strict deep signature check and the checksum, and the app keeps the 0.1.1 bundle identifier; every uploaded asset was downloaded again and matched the verified file; and the published `releases/latest` feed verifies as an offer of 0.1.2 to a 0.1.1 build 2 and to a 0.1.0 build 1. The new behaviour is covered by unit tests and offscreen renders, not checked in a live window. No earlier install has actually been updated to it.
 
