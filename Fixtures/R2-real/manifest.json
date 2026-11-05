@@ -1,0 +1,24 @@
+{
+  "mode": "real-public-anonymous-capture",
+  "capturedUTC": "2026-11-05T08:38:08.265663+00:00",
+  "request": {
+    "playlistId": "RDEMyqld5TvlRMTjOZ3qRzO16w",
+    "params": "wAEB",
+    "isAudioOnly": true,
+    "enablePersistentPlaylistPanel": true
+  },
+  "clientVersion": "1.20261031.09.00",
+  "cookies": false,
+  "credentials": false,
+  "requests": 2,
+  "byteLimit": 4000000,
+  "timeoutSeconds": 90,
+  "redactions": [
+    "visitorData",
+    "trackingParams",
+    "clickTrackingParams"
+  ],
+  "sha256": "c165dd2d7f8f5d3e3bfcb992328ba9aebc1d3c507e74e68ea71ab33a7a4a4141",
+  "bytes": 1916027,
+  "note": "An artist radio (RDEM) queue. Its 13 filter chips publish queueUpdateSection QUEUE_UPDATE_SECTION_QUEUE, where R1-real (2026-11-03) published QUEUE_UPDATE_SECTION_AUTOPLAY."
+}

@@ -88,8 +88,9 @@ private func listID(_ url: URL?) -> String? {
         page.send(lifecycleState(playing: false, playlist: "PLsynthetic"))
         await model.music?.pause()
         func queue(_ id: String) -> [String: Any] {
+            // The page's queue message leads with the playing item, marked current (the Nov 4 read-back contract); an unmarked list is rejected.
             ["type": "queue", "doc": 1, "load": 1, "videoId": lifecycleVideo,
-             "items": "[{\"i\":\"" + id + "\",\"t\":\"Upcoming\"}]", "more": 0]
+             "items": "[{\"i\":\"" + lifecycleVideo + "\",\"t\":\"Now\",\"c\":true},{\"i\":\"" + id + "\",\"t\":\"Upcoming\"}]", "more": 0]
         }
         page.send(queue("bbbbbbbbbb1"))
         let scope = try #require(performer.captureRadioQueueScope(playlistID: "PLsynthetic"))

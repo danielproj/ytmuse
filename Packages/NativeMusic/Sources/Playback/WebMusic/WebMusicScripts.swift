@@ -632,10 +632,11 @@ public enum WebMusicScripts {
     if (ytmuseAdShowing()) { return "ad"; }
     if (ytmusePlayingVideoID() !== videoId) { return "rejected"; }
     if (ytmuseObservedPlaylistID(videoId) !== currentPlaylistId) { return "rejected"; }
+    if (section !== "QUEUE_UPDATE_SECTION_AUTOPLAY" && section !== "QUEUE_UPDATE_SECTION_QUEUE") { return "rejected"; }
     var endpoint = { playlistId: playlistId, params: params };
     if (playerParams !== "") { endpoint.playerParams = playerParams; }
     var command = { queueUpdateCommand: {
-        queueUpdateSection: "QUEUE_UPDATE_SECTION_AUTOPLAY",
+        queueUpdateSection: section,
         fetchContentsCommand: { watchEndpoint: endpoint },
         dedupeAgainstLocalQueue: true,
         syncMode: "QUEUE_UPDATE_SYNC_MODE_DEDUPE_AGAINST_LOCAL"

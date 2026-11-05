@@ -2102,8 +2102,8 @@ private enum RealQueue {
 
 @Suite @MainActor struct RadioQueueCommandScriptTests {
     @Test func boundedArgumentsAndCanonicalOperationReachResolveCommandExactly() throws {
-        for extra in [nil, "0gcJCW0At9Zurpe2"] as [String?] {
-            let command = try #require(MusicQueueFilterCommand(playlistID: "RDATmZvkhnokW3Mw24", params: "opaque%3D", playerParams: extra))
+        for section in MusicQueueUpdateSection.allCases { for extra in [nil, "0gcJCW0At9Zurpe2"] as [String?] {
+            let command = try #require(MusicQueueFilterCommand(playlistID: "RDATmZvkhnokW3Mw24", params: "opaque%3D", playerParams: extra, section: section))
             let invocation = try WebMusicCommand.updateRadioQueue(command, document: 1, load: 1, videoID: "khnokW3Mw24", currentPlaylistID: "RDoriginal").invocation()
             let harness = QueuePageHarness(nodes: try RealQueue.items(), playing: "khnokW3Mw24")
             harness.set("__api.getPlaylistId = function() { return 'RDoriginal'; };")
@@ -2112,12 +2112,26 @@ private enum RealQueue {
             let actual = try #require(harness.routed)
             var endpoint = ["playlistId": command.playlistID, "params": command.params]
             if let extra { endpoint["playerParams"] = extra }
-            let expected: [String: Any] = ["queueUpdateCommand": ["queueUpdateSection": "QUEUE_UPDATE_SECTION_AUTOPLAY",
+            // The section is the one the chip published, sent back unchanged (2026-11-05: YouTube Music moved every chip to QUEUE).
+            let expected: [String: Any] = ["queueUpdateCommand": ["queueUpdateSection": section.rawValue,
                 "fetchContentsCommand": ["watchEndpoint": endpoint], "dedupeAgainstLocalQueue": true,
                 "syncMode": "QUEUE_UPDATE_SYNC_MODE_DEDUPE_AGAINST_LOCAL"]]
             #expect(NSDictionary(dictionary: actual).isEqual(to: expected))
             #expect(harness.context.evaluateScript("JSON.stringify(window.__ytmuseState)")?.toString() == before)
             #expect(harness.issues.isEmpty)
+        } }
+    }
+    @Test func anUnknownSectionNeverReachesThePage() throws {
+        let command = try #require(MusicQueueFilterCommand(playlistID: "RDATmZvkhnokW3Mw24", params: "opaque%3D", section: .queue))
+        let invocation = try WebMusicCommand.updateRadioQueue(command, document: 1, load: 1, videoID: "khnokW3Mw24", currentPlaylistID: "RDoriginal").invocation()
+        #expect(invocation.arguments["section"] as? String == "QUEUE_UPDATE_SECTION_QUEUE")
+        for bad in ["", "QUEUE_UPDATE_SECTION_ALL", "QUEUE_UPDATE_SECTION_QUEUE\n"] {
+            var arguments = invocation.arguments
+            arguments["section"] = bad
+            let harness = QueuePageHarness(nodes: try RealQueue.items(), playing: "khnokW3Mw24")
+            harness.set("__api.getPlaylistId = function() { return 'RDoriginal'; };")
+            #expect(harness.run(invocation.body, arguments) == "rejected")
+            #expect(harness.routed == nil)
         }
     }
     @Test func liveAdAndStaleDocumentLoadOrContentRefuseWithoutMutation() throws {
