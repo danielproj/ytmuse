@@ -1,18 +1,20 @@
 # GitHub source and installable releases
 
-The cleaned source repository and [0.1.5 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.5) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
+The cleaned source repository and [0.1.6 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.6) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
 
 The preview targets **Apple Silicon and macOS 27 or later**. Intel Macs and earlier macOS versions are not supported. Building from source requires the exact Xcode/Swift versions in `toolchain.json`.
 
 ## Install
 
-Download `YTMuse-0.1.5.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
+Download `YTMuse-0.1.6.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
 
 Release packaging uses a dedicated production app/widget identity, derived by default as `com.github.<owner>.<repository>` with a `.widget` companion. `YTMUSE_RELEASE_BUNDLE_ID` can override it with a valid reverse-DNS identifier. The app group uses the signing Team ID followed by that production identifier. Ordinary source builds retain development identifiers; no migration from development stores is included.
 
 The public app pins its update repository, feed URL and Ed25519 public key. Automatic checks require opt-in, and installation requires an explicit restart. Source builds have no feed or pinned key and leave update networking disabled.
 
 ## What was verified
+
+0.1.6 (build 7), source tag `v0.1.6` at commit `9a6c356`, adds native Share/Copy Link actions, explicit comments reading with sort/pagination/replies, and the source-backed Recap service-message/error-state reader. Comment writes and successful Recap summary figures are not implemented. Independent code reviews and focused counted tests passed, including the final 298-test comments review, and the Debug app built successfully. The app and DMG were Developer ID signed, notarized and stapled; strict signatures, Gatekeeper acceptance on the packaging Mac, checksum, SBOM and signed feed were checked. All five uploaded assets were downloaded again and matched byte for byte. The live latest feed verifies as an offer of 0.1.6 build 7 to a 0.1.5 build 6; identical feed bytes also verify for 0.1.3 build 4 and 0.1.0 build 1. Live native share-sheet presentation, signed-in comments, layout and VoiceOver remain unverified. A historical fixture-manifest test and legacy proof checks remain explicit baseline limitations; no whole-suite or G01–G09 acceptance is claimed.
 
 0.1.5 (build 6) was built from source tag `v0.1.5` on the packaging Mac. Radio filters load again: YouTube Music moved every filter chip to the main queue section, which the parser had rejected, and the app now sends back the section each chip publishes. Audio quality and Smart Downloads are removed from Settings, since neither can be configured. Its app and DMG passed Gatekeeper as notarized Developer ID, stapler validation, a strict deep signature check and the checksum, and the app keeps the 0.1.4 bundle identifier; every uploaded asset was downloaded again and matched the verified file; and the published `releases/latest` feed verifies as an offer of 0.1.5 to a 0.1.4 build 5, a 0.1.3 build 4 and a 0.1.0 build 1. The filter fix was checked against a fresh anonymous capture and on YouTube Music's own page. On 2026-11-05 the account holder confirmed the remaining core checklist all works, including signed-in radio filters, update restart and final playback/media-key/cold-launch checks. This is reported manual acceptance, not a new agent-observed run; the exact update pair and per-filter matrix were not recorded. The agreed core is accepted; [broader work is deferred](Backlog.md).
 
