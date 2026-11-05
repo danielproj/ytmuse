@@ -141,7 +141,7 @@ struct BrowserDestinationView: View {
                         CollectionDetailView(model: model, fallbackTitle: catalog.title(for: route), navigator: navigator)
                     }
                 } else if entry.destination == .home {
-                    HomeView(model: model, navigator: navigator, openChip: { chip in navigator.openTarget(CatalogTarget(browseID: chip.browseID, params: chip.params), chip.title) }) { welcome }
+                    HomeView(model: model, navigator: navigator, showsIntro: !signedInLibrary, openChip: { chip in navigator.openTarget(CatalogTarget(browseID: chip.browseID, params: chip.params), chip.title) }) { welcome }
                 } else {
                     ExploreView(model: model, title: String(localized: "Explore"), navigator: navigator, discovery: discovery == nil ? nil : { openDiscovery($0) })
                 }
@@ -231,13 +231,11 @@ struct BrowserDestinationView: View {
     private var welcome: some View {
         VStack(alignment: .leading, spacing: MusicSpace.lg) {
             HStack(alignment: .center, spacing: MusicSpace.lg) {
-                ResonanceArtwork().frame(width: 152)
-                VStack(alignment: .leading, spacing: MusicSpace.sm) {
-                    Text("Welcome to YTMuse").font(.title.bold())
-                    Text("YouTube Music, native on Mac.").font(.title3)
+                ResonanceArtwork().frame(width: 96)
+                VStack(alignment: .leading, spacing: MusicSpace.xs) {
+                    Text("Welcome to YTMuse").font(.title2.bold())
                     Text("An independent native YouTube Music client for Mac").foregroundStyle(MusicStyle.secondaryText)
                     Text(accounts.connectionStatus).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("connectionStatus")
-                    Text("Service subscriptions remain with YouTube.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
                 }
             }
             HStack {

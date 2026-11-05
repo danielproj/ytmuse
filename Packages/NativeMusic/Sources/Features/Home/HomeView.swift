@@ -9,15 +9,17 @@ public struct HomeView<Intro: View>: View {
     @Bindable var model: CatalogPageModel
     let navigator: CatalogNavigator
     let openChip: (MusicChip) -> Void
+    /// False once the listener is signed in: the shelves and the sidebar already lead to their music, so the welcome card would only take room.
+    let showsIntro: Bool
     @ViewBuilder var intro: () -> Intro
-    public init(model: CatalogPageModel, navigator: CatalogNavigator, openChip: @escaping (MusicChip) -> Void, @ViewBuilder intro: @escaping () -> Intro) {
-        self.model = model; self.navigator = navigator; self.openChip = openChip; self.intro = intro
+    public init(model: CatalogPageModel, navigator: CatalogNavigator, showsIntro: Bool = true, openChip: @escaping (MusicChip) -> Void, @ViewBuilder intro: @escaping () -> Intro) {
+        self.model = model; self.navigator = navigator; self.showsIntro = showsIntro; self.openChip = openChip; self.intro = intro
     }
     public var body: some View {
         CatalogShelvesView(model: model, navigator: navigator) {
             VStack(alignment: .leading, spacing: MusicSpace.md) {
                 CatalogTitleRow(title: String(localized: "Home"), model: model)
-                intro().padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
+                if showsIntro { intro().padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface() }
                 if !model.chips.isEmpty {
                     ScrollView(.horizontal) {
                         MusicGlassGroup {

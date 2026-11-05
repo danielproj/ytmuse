@@ -54939,6 +54939,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Sound Settings…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Toneinstellungen …"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Toneinstellungen …"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound Settings…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Ajustes de sonido…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Réglages Son…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Настройки звука…"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Source: %@ · %@ · %@ · %@": {
       "localizations": {
         "de": {
