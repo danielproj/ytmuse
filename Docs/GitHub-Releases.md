@@ -1,18 +1,20 @@
 # GitHub source and installable releases
 
-The cleaned source repository and [0.1.4 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.4) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
+The cleaned source repository and [0.1.5 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.5) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
 
 The preview targets **Apple Silicon and macOS 27 or later**. Intel Macs and earlier macOS versions are not supported. Building from source requires the exact Xcode/Swift versions in `toolchain.json`.
 
 ## Install
 
-Download `YTMuse-0.1.4.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
+Download `YTMuse-0.1.5.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
 
 Release packaging uses a dedicated production app/widget identity, derived by default as `com.github.<owner>.<repository>` with a `.widget` companion. `YTMUSE_RELEASE_BUNDLE_ID` can override it with a valid reverse-DNS identifier. The app group uses the signing Team ID followed by that production identifier. Ordinary source builds retain development identifiers; no migration from development stores is included.
 
 The public app pins its update repository, feed URL and Ed25519 public key. Automatic checks require opt-in, and installation requires an explicit restart. Source builds have no feed or pinned key and leave update networking disabled.
 
 ## What was verified
+
+0.1.5 (build 6) was built from source tag `v0.1.5` on the packaging Mac. Radio filters load again: YouTube Music moved every filter chip to the main queue section, which the parser had rejected, and the app now sends back the section each chip publishes. Audio quality and Smart Downloads are removed from Settings, since neither can be configured. Its app and DMG passed Gatekeeper as notarized Developer ID, stapler validation, a strict deep signature check and the checksum, and the app keeps the 0.1.4 bundle identifier; every uploaded asset was downloaded again and matched the verified file; and the published `releases/latest` feed verifies as an offer of 0.1.5 to a 0.1.4 build 5, a 0.1.3 build 4 and a 0.1.0 build 1. The filter fix was checked against a fresh anonymous capture and on YouTube Music's own page, not yet with a signed-in account in the app.
 
 0.1.4 (build 5) was built from source tag `v0.1.4` on the packaging Mac and fixes Restart to Update: the old app no longer crashes as it quits (the quit request arrived on a LaunchServices background queue and trapped in `MainActor.assumeIsolated`), and the new app no longer records the handover as an unclean quit. Its app and DMG passed Gatekeeper as notarized Developer ID, stapler validation, a strict deep signature check and the checksum, and the app keeps the 0.1.3 bundle identifier; every uploaded asset was downloaded again and matched the verified file; and the published `releases/latest` feed verifies as an offer of 0.1.4 to a 0.1.3 build 4, a 0.1.2 build 3 and a 0.1.0 build 1. The fix is covered by unit tests; no install has yet been updated into a build that contains it. Updating from 0.1.3 still runs 0.1.3's quit, so that one update crashes the old app once.
 
