@@ -170,6 +170,34 @@ enum Captures {
             #expect(body["videoId"] == nil && body["tunerSettingValue"] == nil)
         }
     }
+    /// R2-real (2026-11-05): YouTube Music moved every chip to the QUEUE section. The R1 parser accepted AUTOPLAY only, so it rejected the whole
+    /// cloud and the live app said "Radio filters couldn't load" for every radio. Both captures must read, and each chip keeps its own section.
+    @Test func radioFiltersReadTheQueueSectionCaptureAndKeepEachChipsSection() async throws {
+        let data = try Data(contentsOf: fixturesRoot().appendingPathComponent("R2-real/next-radio-artist.json"))
+        let manifestData = try Data(contentsOf: fixturesRoot().appendingPathComponent("R2-real/manifest.json"))
+        let manifest = try #require(try JSONSerialization.jsonObject(with: manifestData) as? [String: Any])
+        let hash = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        #expect(hash == "c165dd2d7f8f5d3e3bfcb992328ba9aebc1d3c507e74e68ea71ab33a7a4a4141")
+        #expect(hash == manifest["sha256"] as? String && manifest["mode"] as? String == "real-public-anonymous-capture")
+        let root = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let queue = try MusicRadioQueueParser.parse(root)
+        #expect(queue.chips.map(\.title) == ["All", "Popular", "Discover", "Deep cuts", "Pump-up", "Pop", "1980s", "Rock", "Alternative", "1970s", "Gothic Funk", "Beat rock", "Rock noir"])
+        #expect(queue.chips.allSatisfy { $0.section == .queue })
+        #expect(queue.chips[0].isSelected && queue.chips.dropFirst().allSatisfy { !$0.isSelected })
+        #expect(queue.chips.filter { $0.playerParams != nil }.map(\.title) == ["Discover"])
+        let r1 = try #require(try JSONSerialization.jsonObject(with: Data(contentsOf: fixturesRoot().appendingPathComponent("R1-real/next-radio.json"))) as? [String: Any])
+        #expect(try MusicRadioQueueParser.parse(r1).chips.allSatisfy { $0.section == .autoplay }, "the earlier capture still reads, as AUTOPLAY")
+        // The tuner turns each chip into the command the page receives, carrying that chip's section.
+        let controls = try await QueueRadioControlsSource { _ in queue }.controls(for: RadioContext(seed: RadioSeed(id: "RDEMyqld5TvlRMTjOZ3qRzO16w", kind: .artist, title: "Japan"), playlistID: "RDEMyqld5TvlRMTjOZ3qRzO16w", params: "wAEB", choices: [:]))
+        #expect(controls.first?.options.allSatisfy { $0.queueCommand?.section == MusicQueueUpdateSection.queue } == true)
+    }
+    @Test func anUnknownQueueSectionFailsTheWholeRead() throws {
+        var text = try String(contentsOf: fixturesRoot().appendingPathComponent("R2-real/next-radio-artist.json"), encoding: .utf8)
+        let range = try #require(text.range(of: "\"QUEUE_UPDATE_SECTION_QUEUE\""))
+        text.replaceSubrange(range, with: "\"QUEUE_UPDATE_SECTION_SOMETHING_ELSE\"")
+        let root = try #require(try JSONSerialization.jsonObject(with: Data(text.utf8)) as? [String: Any])
+        #expect(throws: MusicSessionError.unrecognised) { try MusicRadioQueueParser.parse(root) }
+    }
     @Test func validNoFilterQueueIsDifferentFromMalformedOrUnrelatedBody() throws {
         let data = try Data(contentsOf: fixturesRoot().appendingPathComponent("W18-real/next-song.json"))
         let root = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])

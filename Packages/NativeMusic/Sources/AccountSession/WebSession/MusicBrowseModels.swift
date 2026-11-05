@@ -1,3 +1,4 @@
+import Domain
 import Foundation
 
 /// What a catalog entry on a Home, Explore or detail page is. Classified from the entry's own typed
@@ -264,8 +265,10 @@ public struct MusicRadioChip: Sendable, Equatable {
     public let params: String
     /// Additional published playback semantics. Retained verbatim; the shared playback path cannot apply these yet.
     public let playerParams: String?
-    public init(title: String, isSelected: Bool, playlistID: String, params: String, playerParams: String? = nil) {
-        self.title = title; self.isSelected = isSelected; self.playlistID = playlistID; self.params = params; self.playerParams = playerParams
+    /// The queue section the chip's own command names.
+    public let section: MusicQueueUpdateSection
+    public init(title: String, isSelected: Bool, playlistID: String, params: String, playerParams: String? = nil, section: MusicQueueUpdateSection = .autoplay) {
+        self.title = title; self.isSelected = isSelected; self.playlistID = playlistID; self.params = params; self.playerParams = playerParams; self.section = section
     }
 }
 /// What a radio's queue (`next`) response says about tuning that radio. Empty `chips` is a real answer only when a queue response was read.

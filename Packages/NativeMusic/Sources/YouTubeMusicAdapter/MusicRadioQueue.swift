@@ -1,4 +1,5 @@
 import AccountSession
+import Domain
 import Foundation
 
 /// Queue metadata only. Shape grounded in the anonymous R1 public radio capture.
@@ -32,7 +33,7 @@ public enum MusicRadioQueueParser {
             guard let chip = entry["chipCloudChipRenderer"] as? [String: Any],
                   let navigation = chip["navigationEndpoint"] as? [String: Any],
                   let command = navigation["queueUpdateCommand"] as? [String: Any],
-                  command["queueUpdateSection"] as? String == "QUEUE_UPDATE_SECTION_AUTOPLAY",
+                  let section = (command["queueUpdateSection"] as? String).flatMap(MusicQueueUpdateSection.init(rawValue:)),
                   command["dedupeAgainstLocalQueue"] as? Bool == true,
                   command["syncMode"] as? String == "QUEUE_UPDATE_SYNC_MODE_DEDUPE_AGAINST_LOCAL",
                   Set(command.keys) == ["queueUpdateSection", "fetchContentsCommand", "dedupeAgainstLocalQueue", "syncMode"],
@@ -59,7 +60,7 @@ public enum MusicRadioQueueParser {
             }
             // Unknown functional fields must not be silently discarded. Logging context has no playback semantics.
             guard Set(endpoint.keys).isSubset(of: ["playlistId", "params", "playerParams", "loggingContext"]) else { throw MusicSessionError.unrecognised }
-            chips.append(MusicRadioChip(title: title, isSelected: selected, playlistID: list, params: params, playerParams: playerParams))
+            chips.append(MusicRadioChip(title: title, isSelected: selected, playlistID: list, params: params, playerParams: playerParams, section: section))
         }
         return MusicRadioQueue(chips: chips)
     }

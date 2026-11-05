@@ -107,7 +107,7 @@ public struct QueueRadioControlsSource: RadioControlsSource {
         let queue = try await reader(context)
         guard !queue.chips.isEmpty else { return [] }
         let options = try queue.chips.map { chip in
-            guard let command = MusicQueueFilterCommand(playlistID: chip.playlistID, params: chip.params, playerParams: chip.playerParams) else { throw MusicSessionError.unrecognised }
+            guard let command = MusicQueueFilterCommand(playlistID: chip.playlistID, params: chip.params, playerParams: chip.playerParams, section: chip.section) else { throw MusicSessionError.unrecognised }
             return TunerOption(id: chip.playlistID + "|" + chip.params, title: chip.title, selected: chip.isSelected,
                                playlistID: chip.playlistID, params: chip.params, playerParams: chip.playerParams, queueCommand: command)
         }

@@ -57,7 +57,7 @@ public enum WebMusicCommand: Sendable, Equatable {
             guard load > 0, load <= 9_007_199_254_740_991, document > 0, document <= 9_007_199_254_740_991,
                   WebMusicIdentifier.isVideoID(videoID), WebMusicIdentifier.isPlaylistID(currentPlaylistID) else { throw .invalidArgument }
             return .init(body: WebMusicScripts.updateRadioQueue, arguments: ["playlistId": command.playlistID,
-                "params": command.params, "playerParams": command.playerParams ?? "", "load": Int(load),
+                "params": command.params, "playerParams": command.playerParams ?? "", "section": command.section.rawValue, "load": Int(load),
                 "documentID": Int(document), "videoId": videoID, "currentPlaylistId": currentPlaylistID])
         case .play: return .init(body: WebMusicScripts.play, arguments: [:])
         case .pause: return .init(body: WebMusicScripts.pause, arguments: [:])
