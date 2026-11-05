@@ -105,26 +105,58 @@ public final class DiagnosticLog: @unchecked Sendable {
 }
 
 /// The difference between a source outage and a crash (DIAG02). At launch the marker of the previous run is read: if it is still there, that run never
-/// reached its clean quit. The marker holds a random run id and the time, nothing else.
+/// reached its clean quit. The marker holds a random run id, the process id and the time, nothing else.
+///
+/// Restart to Update starts the new app before the old one quits, so the new run reads a marker whose run is still alive and quitting. That is a handover,
+/// not a crash. The old run's clean quit then lands after the new run's `begin`, so `endCleanly` only writes while the file still holds this run's own id:
+/// otherwise the old run would mark the NEW run clean and a later real crash of the new run would go unreported.
 public final class RunMarker: @unchecked Sendable {
-    public enum Previous: Equatable, Sendable { case none, endedCleanly, endedUnexpectedly(since: Date) }
+    public enum Previous: Equatable, Sendable { case none, endedCleanly, handedOver, endedUnexpectedly(since: Date) }
     private let url: URL
     private let fileManager = FileManager.default
-    public init(directory: URL) { url = directory.appendingPathComponent("run-marker.json") }
+    private let processID: Int32
+    private let isRunning: @Sendable (Int32) -> Bool
+    private var run: String?
+    public convenience init(directory: URL) {
+        self.init(directory: directory, processID: ProcessInfo.processInfo.processIdentifier, isRunning: RunMarker.isSameAppRunning)
+    }
+    init(directory: URL, processID: Int32, isRunning: @escaping @Sendable (Int32) -> Bool) {
+        url = directory.appendingPathComponent("run-marker.json"); self.processID = processID; self.isRunning = isRunning
+    }
     public func begin(now: Date = Date()) -> Previous {
         var previous = Previous.none
-        if let data = try? Data(contentsOf: url), let marker = try? JSONDecoder().decode(Marker.self, from: data) {
-            previous = marker.clean ? .endedCleanly : .endedUnexpectedly(since: marker.at)
+        if let marker = read() {
+            if marker.clean { previous = .endedCleanly }
+            else if let pid = marker.pid, pid != processID, isRunning(pid) { previous = .handedOver }
+            else { previous = .endedUnexpectedly(since: marker.at) }
         }
-        write(Marker(run: UUID().uuidString, at: now, clean: false))
+        let mine = UUID().uuidString
+        run = mine
+        write(Marker(run: mine, at: now, clean: false, pid: processID))
         return previous
     }
-    public func endCleanly(now: Date = Date()) { write(Marker(run: UUID().uuidString, at: now, clean: true)) }
+    public func endCleanly(now: Date = Date()) {
+        guard let run, read()?.run == run else { return }
+        write(Marker(run: run, at: now, clean: true, pid: processID))
+    }
+    private func read() -> Marker? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        return try? JSONDecoder().decode(Marker.self, from: data)
+    }
     private func write(_ marker: Marker) {
         try? fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         guard let data = try? JSONEncoder().encode(marker) else { return }
         try? data.write(to: url, options: .atomic)
         try? fileManager.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
     }
-    private struct Marker: Codable { let run: String; let at: Date; let clean: Bool }
+    /// `pid` is optional so a marker written before it existed still decodes; such a run is judged on `clean` alone.
+    private struct Marker: Codable { let run: String; let at: Date; let clean: Bool; var pid: Int32? }
+    /// A live process with this id running the same executable as this one. A recycled id belonging to another program does not count.
+    static let isSameAppRunning: @Sendable (Int32) -> Bool = { pid in
+        guard pid > 0, kill(pid, 0) == 0 || errno == EPERM else { return false }
+        var buffer = [CChar](repeating: 0, count: 4 * Int(MAXPATHLEN))
+        guard proc_pidpath(pid, &buffer, UInt32(buffer.count)) > 0 else { return false }
+        let path = String(decoding: buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, as: UTF8.self)
+        return URL(fileURLWithPath: path).lastPathComponent == URL(fileURLWithPath: ProcessInfo.processInfo.arguments.first ?? "").lastPathComponent
+    }
 }

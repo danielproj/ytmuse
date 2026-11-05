@@ -208,11 +208,29 @@ struct LeakyError: Error, CustomStringConvertible {
     }
     @Test func theRunMarkerSeesACleanQuitAndAMissingOne() throws {
         let scratch = try Scratch(); defer { scratch.cleanup() }
+        #expect(RunMarker(directory: scratch.url).begin() == .none)
         let marker = RunMarker(directory: scratch.url)
-        #expect(marker.begin() == .none)
-        guard case .endedUnexpectedly = RunMarker(directory: scratch.url).begin() else { Issue.record("a run that never quit cleanly is reported"); return }
+        guard case .endedUnexpectedly = marker.begin() else { Issue.record("a run that never quit cleanly is reported"); return }
         marker.endCleanly()
         #expect(RunMarker(directory: scratch.url).begin() == .endedCleanly)
+    }
+    /// Restart to Update: the new app starts while the old one is still quitting. Neither run may be misreported.
+    @Test func anUpdateHandoverIsNotACrashAndTheOldRunCannotMarkTheNewOneClean() throws {
+        let scratch = try Scratch(); defer { scratch.cleanup() }
+        let old = RunMarker(directory: scratch.url, processID: 100, isRunning: { $0 == 100 })
+        #expect(old.begin() == .none)
+        let new = RunMarker(directory: scratch.url, processID: 200, isRunning: { $0 == 100 })
+        #expect(new.begin() == .handedOver, "a predecessor that is still running is a handover, not a crash")
+        old.endCleanly()   // the old run's quit lands after the new run began
+        let next = RunMarker(directory: scratch.url, processID: 300, isRunning: { _ in false })
+        guard case .endedUnexpectedly = next.begin() else { Issue.record("the old run's clean quit overwrote the new run's marker, hiding the new run's crash"); return }
+        let gone = RunMarker(directory: scratch.url, processID: 400, isRunning: { _ in false })
+        guard case .endedUnexpectedly = gone.begin() else { Issue.record("a predecessor that is no longer running and never quit cleanly is a crash"); return }
+    }
+    @Test func aRecycledProcessIDOrThisProcessIsNotAHandover() throws {
+        #expect(RunMarker.isSameAppRunning(ProcessInfo.processInfo.processIdentifier))
+        #expect(!RunMarker.isSameAppRunning(1), "launchd is a different program")
+        #expect(!RunMarker.isSameAppRunning(-1) && !RunMarker.isSameAppRunning(0))
     }
     @Test func theClassifierMapsEveryServiceFaultToACategoryWithoutQuotingTheError() {
         let cases: [(MusicSessionError, DiagnosticCategory)] = [(.network, .networkOffline), (.rateLimited, .sourceOutage), (.server, .sourceOutage), (.timedOut, .sourceOutage), (.unrecognised, .sourceChanged), (.oversized, .sourceChanged),
