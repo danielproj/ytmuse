@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-06. Latest public development preview: **[0.1.6](https://github.com/danielproj/ytmuse/releases/tag/v0.1.6)**. The additions below are included in this signed, notarized preview; implementation and live-acceptance limits remain separate.
+Updated 2026-11-06. Latest public development preview: **[0.1.7](https://github.com/danielproj/ytmuse/releases/tag/v0.1.7)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,17 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## New in the 0.1.7 preview
+
+Two changes the account holder asked for. Both have automated tests and offscreen renders; **neither has been checked live in the native app**.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| History | Only the rows on screen are built, and the next page of the service's history is read only when the end of the list is reached. A hosted test with 1,500 rows builds 9 rows when the page opens (1,501 before) and reads no page until the end. | Scrolling a long signed-in history in the live app. |
+| Share in the player | **Share…** for the song that is playing is a button next to **Queue** in the player bar, Now Playing and the expanded mini-player, instead of an item in **⋯**. It is dimmed when no song can be shared. | The button in a live window. The share sheet still opens from a fixed point of the window, not from the button. |
+
+The 0.1.7 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 8 to earlier releases.
 
 ## New in the 0.1.6 preview
 
