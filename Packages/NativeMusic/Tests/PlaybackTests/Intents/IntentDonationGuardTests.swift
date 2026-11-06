@@ -117,22 +117,35 @@ import Testing
     }
     /// TH5 (TH4 critic L-d): a script-like file over 2 MB is reported by this guard as well (it used to be dropped by the sweep before it was read). Plants: a clean-text
     /// file just over the cap, and one that would itself violate a rule (a donate call); controls: a file exactly at the cap and a known binary over it.
-    @Test func theSweepReportsAFileOverTwoMegabytesInsteadOfSkippingIt() throws {
-        let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("ytmuse-th5-donation-size-" + UUID().uuidString, isDirectory: true)
-        defer { try? FileManager.default.removeItem(at: scratch) }
-        try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
-        let over = scratch.appendingPathComponent("big.py"), hidden = scratch.appendingPathComponent("hidden.sh"), exact = scratch.appendingPathComponent("exact.sh"), binary = scratch.appendingPathComponent("big.bin.sh")
-        let line = Data("# comment\n".utf8)
-        func filler(_ count: Int) -> Data { var data = Data(); while data.count < count { data += line }; return data.prefix(count) }
-        try filler(2_000_001).write(to: over)
-        try (Data("x.donate(result: r)\n".utf8) + filler(2_000_000)).write(to: hidden)
-        try filler(2_000_000).write(to: exact)
-        try (Data("bplist00".utf8) + Data(repeating: 0, count: 2_000_000)).write(to: binary)
+    /// The files are written and read off the main actor (the suite's): four files of about 2 MB. On the main actor it held the main thread for 5 s alone
+    /// and up to 11 s in the full PlaybackTests run, and every main-actor test beside it stalled with it (a radio queue update missed its deadline,
+    /// AVFoundation could not report an item ready in time). A synchronous `nonisolated` test would still run on the thread that calls it.
+    @Test func theSweepReportsAFileOverTwoMegabytesInsteadOfSkippingIt() async throws {
+        struct Read: Sendable { var onMain = true, failure: String?, over: [String] = [], hidden: [String] = [], exact: [String] = [], binary: [String] = [] }
+        let read = await LifecycleSources.offMain { () -> Read in
+            var read = Read(onMain: Thread.isMainThread)
+            let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("ytmuse-th5-donation-size-" + UUID().uuidString, isDirectory: true)
+            defer { try? FileManager.default.removeItem(at: scratch) }
+            let over = scratch.appendingPathComponent("big.py"), hidden = scratch.appendingPathComponent("hidden.sh"), exact = scratch.appendingPathComponent("exact.sh"), binary = scratch.appendingPathComponent("big.bin.sh")
+            func filler(_ count: Int) -> Data { Data(String(repeating: "# comment\n", count: count / 10 + 1).utf8).prefix(count) }
+            do {
+                try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+                try filler(2_000_001).write(to: over)
+                try (Data("x.donate(result: r)\n".utf8) + filler(2_000_000)).write(to: hidden)
+                try filler(2_000_000).write(to: exact)
+                try (Data("bplist00".utf8) + Data(repeating: 0, count: 2_000_000)).write(to: binary)
+            } catch { read.failure = "\(error)"; return read }
+            read.over = Self.findings(inFile: over, swift: false); read.hidden = Self.findings(inFile: hidden, swift: false)
+            read.exact = Self.findings(inFile: exact, swift: false); read.binary = Self.findings(inFile: binary, swift: false)
+            return read
+        }
+        #expect(!read.onMain, "the files are written and read off the main thread the other tests share")
+        #expect(read.failure == nil, "\(read.failure ?? "")")
         #expect(Self.maximumBytes == 2_000_000, "the launch guard's cap")
-        #expect(Self.findings(inFile: over, swift: false) == ["big.py: \(GuardBinaryFiles.unreadableRule)"], "a text file over the cap is reported")
-        #expect(Self.findings(inFile: hidden, swift: false) == ["hidden.sh: \(GuardBinaryFiles.unreadableRule)"], "a donate call hidden in a file over the cap is not silently unread")
-        #expect(Self.findings(inFile: exact, swift: false).isEmpty, "control: exactly at the cap is read, and clean")
-        #expect(Self.findings(inFile: binary, swift: false).isEmpty, "control: a known binary type over the cap is not a finding")
+        #expect(read.over == ["big.py: \(GuardBinaryFiles.unreadableRule)"], "a text file over the cap is reported")
+        #expect(read.hidden == ["hidden.sh: \(GuardBinaryFiles.unreadableRule)"], "a donate call hidden in a file over the cap is not silently unread")
+        #expect(read.exact.isEmpty, "control: exactly at the cap is read, and clean")
+        #expect(read.binary.isEmpty, "control: a known binary type over the cap is not a finding")
         #expect(GuardBinaryFiles.unreadableRule.contains("2 MB"), "the rule's wording names the size")
     }
     @Test func theRuleFlagsEachForbiddenCallAndPassesTheCodeThatIsLegitimate() {
@@ -220,13 +233,21 @@ import Testing
         }
         #expect(status == 0 && output.contains("action.donate(), PausePlaybackIntent()() and p()"), "\(output)")
     }
-    @Test func productionNeverInstallsASinkAndTheDefaultDropsEverything() throws {
-        for url in IntentSources.swiftFiles(under: "Packages/NativeMusic/Sources") + IntentSources.swiftFiles(under: "App/Sources") {
-            let text = try String(contentsOf: url, encoding: .utf8)
-            for line in text.split(separator: "\n") where line.contains(".donations =") && !line.trimmingCharacters(in: .whitespaces).hasPrefix("//") {
-                Issue.record("\(url.lastPathComponent) installs a donation sink: \(line)")
+    @Test func productionNeverInstallsASinkAndTheDefaultDropsEverything() async throws {
+        // Every production source is read off the main actor, so the sweep never stalls the main-actor tests beside it.
+        let (read, installs) = await LifecycleSources.offMain { () -> (Int, [String]) in
+            var read = 0, installs: [String] = []
+            for url in IntentSources.swiftFiles(under: "Packages/NativeMusic/Sources") + IntentSources.swiftFiles(under: "App/Sources") {
+                guard let text = try? String(contentsOf: url, encoding: .utf8) else { installs.append("\(url.lastPathComponent) could not be read"); continue }
+                read += 1
+                for line in text.split(separator: "\n") where line.contains(".donations =") && !line.trimmingCharacters(in: .whitespaces).hasPrefix("//") {
+                    installs.append("\(url.lastPathComponent) installs a donation sink: \(line)")
+                }
             }
+            return (read, installs)
         }
+        #expect(read > 100, "the sweep read the production sources (\(read) files)")
+        #expect(installs.isEmpty, "\(installs)")
         #expect(IntentHub().donations is DiscardingDonationSink)
     }
 }

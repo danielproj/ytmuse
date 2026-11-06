@@ -1,4 +1,5 @@
 import AccountSession
+import Domain
 import Foundation
 import Testing
 @testable import Features
@@ -10,10 +11,18 @@ import Testing
 @MainActor private final class Performer: SearchActionPerformer {
     var outcome = SearchPlayOutcome.started
     var plays: [(playlist: String, video: String?, params: String?)] = []
+    /// The intent of every start that carried one (a page's Shuffle carries `.shuffle`).
+    var intents: [MusicPlaybackIntent] = []
     /// Runs while the start is in flight (before it answers).
     var during: (@MainActor () -> Void)?
     func play(playlistID: String, title: String) async -> SearchPlayOutcome { plays.append((playlistID, nil, nil)); during?(); return outcome }
     func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome { plays.append((playlistID, videoID, params)); during?(); return outcome }
+    /// Like the app's performer, this one can carry an intent. Without it the protocol's default refuses every intent but `.endpoint` (a performer
+    /// that cannot shuffle must never quietly play in order), so a show's Shuffle would fail here before reaching the start.
+    func play(playlistID: String, title: String, videoID: String?, params: String?, intent: MusicPlaybackIntent) async -> SearchPlayOutcome {
+        intents.append(intent)
+        return await play(playlistID: playlistID, title: title, videoID: videoID, params: params)
+    }
     func copy(link: URL) {}
     func copy(text: String) {}
 }
@@ -93,6 +102,7 @@ private let show = "MPSPPLZr1D7YmlHJw", showList = "PLZr1D7YmlHJw"
         // The action that was performed is the one that was asked for.
         #expect(performer.plays.count == 1 && performer.plays[0].playlist == showList)
         #expect((performer.plays[0].params != nil) == (action == .shuffle), "Shuffle sends the shuffle endpoint's parameters, Play sends none")
+        #expect(performer.intents == (action == .shuffle ? [.shuffle] : []), "Shuffle is started as a shuffle, Play as a plain playlist")
     }
     @Test func theShowsShuffleDoesNotRegisterWhenItsActionIsNotOnTheRegisteringList() throws {
         // The registering actions are exactly Play and Shuffle (a source check; the behavioural proof is the Shuffle case above).

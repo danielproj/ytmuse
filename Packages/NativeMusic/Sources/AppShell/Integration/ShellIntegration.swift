@@ -183,14 +183,15 @@ extension ShellCoordinator {
         ScriptingHost.target = self
         let provider = LinkServicesProvider(shell: self)
         servicesProvider = provider
-        NSApp.servicesProvider = provider
+        // `NSApplication.shared`, not `NSApp`: the same object in the app, and never nil in a process that has not created it yet (a filtered test run).
+        NSApplication.shared.servicesProvider = provider
     }
     func stopIntegration() {
         shortcutRouter?.remove(); shortcutRouter = nil
         globalShortcuts?.stop(); globalShortcuts = nil
         playback.songChanged = nil
         if ScriptingHost.target === self { ScriptingHost.target = nil }
-        if (NSApp.servicesProvider as AnyObject?) === servicesProvider { NSApp.servicesProvider = nil }
+        if (NSApplication.shared.servicesProvider as AnyObject?) === servicesProvider { NSApplication.shared.servicesProvider = nil }
         servicesProvider = nil
     }
     private func performGlobal(_ action: GlobalShortcutAction) {

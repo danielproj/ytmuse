@@ -151,6 +151,31 @@ import Testing
         }
     }
 
+    /// Composition factories that only wrap a reader the test injects (comments and Recap). Called on the type with `isolated: false` they build the
+    /// production reader around that injected closure: no store is opened and no service is reached unless the closure does. Called on a live
+    /// bootstrap instance, the same names read through the real coordinator, so that form stays refused.
+    static let injectedReaderFactories = ["LocalAccountBootstrap.commentsTransport(isolated: false", "LocalAccountBootstrap.summarySource(isolated: false"]
+    /// Whether a line of a test describes a session (a store, a coordinator, files) that is not isolated. Only LocalDataTests may, to evaluate the
+    /// guard's own rule; the injected-reader factories are removed from the line first, so another `isolated: false` beside one is still found.
+    static func describesUnisolatedSession(_ line: String, file: String) -> Bool {
+        guard file != "LocalDataTests.swift" else { return false }
+        var rest = line
+        for factory in injectedReaderFactories { rest = rest.replacingOccurrences(of: factory, with: "") }
+        return rest.contains("isolated: false")
+    }
+    @Test func onlyTheInjectedReaderFactoriesMayBeComposedUnisolatedInATest() {
+        let unisolatedFiles = "GuardedFiles(root: x, isolated: " + "false, real: y)"
+        for planted in ["let files = \(unisolatedFiles)", "let t = bootstrap.commentsTransport(isolated: " + "false)", "let s = bootstrap.summarySource(isolated: " + "false)",
+                        "let t = LocalAccountBootstrap.commentsTransport(isolated: " + "false, reader: r); let files = \(unisolatedFiles)"] {
+            #expect(Self.describesUnisolatedSession(planted, file: "SomeTests.swift"), Comment(rawValue: "not flagged: " + planted))
+        }
+        for allowed in ["let t = LocalAccountBootstrap.commentsTransport(isolated: " + "false, reader: reader)", "let t = LocalAccountBootstrap.commentsTransport(isolated: " + "false) { request in",
+                        "let s = LocalAccountBootstrap.summarySource(isolated: " + "false) { calls.bump(); return .needsSignIn }", "let t = LocalAccountBootstrap.commentsTransport(isolated: true, reader: r)"] {
+            #expect(!Self.describesUnisolatedSession(allowed, file: "SomeTests.swift"), Comment(rawValue: "flagged: " + allowed))
+        }
+        #expect(!Self.describesUnisolatedSession("let files = \(unisolatedFiles)", file: "LocalDataTests.swift"), "the guard's own rule is evaluated there")
+    }
+
     @Test func noTestEverBuildsAnEraserOnAnythingButItsOwnInjectedRoots() throws {
         let files = SettingsSources.swiftFiles(under: "Packages/NativeMusic/Tests")
         #expect(files.count > 50)
@@ -163,7 +188,7 @@ import Testing
                 let line = raw.components(separatedBy: "//").first ?? raw
                 let place = "\(name):\(index + 1)"
                 if line.contains("LocalDataEraser(") { eraserSites += 1; #expect(line.contains("world.roots") || line.contains("bootstrap.localRoots"), "\(place): an eraser in a test takes the injected world's (or the isolated session's) roots") }
-                if line.contains("isolated: false") { #expect(name == "LocalDataTests.swift", "\(place): a test never describes a session that is not isolated, except to evaluate the guard's rule") }
+                #expect(!Self.describesUnisolatedSession(line, file: name), "\(place): a test never describes a session that is not isolated, except to evaluate the guard's rule")
                 if line.contains("PersonConfirmation.from") { #expect(name == "LocalDataTests.swift", "\(place)") }
             }
         }

@@ -2159,19 +2159,42 @@ private enum RealQueue {
         }
     }
 }
+/// A radio queue update's deadline clock, under the test's control. It stands still, so no deadline passes however slowly a loaded machine
+/// runs the test, until `passAllDeadlines()`: from then on every reading is an hour later than the last, so a deadline already set, or set
+/// later, has passed at its next check. `standStill()` stops that again. Against a hang it also runs on by itself after two minutes of real
+/// time, a bound only a broken test reaches. (These tests used an 80 ms real deadline, which a busy test run could exceed before the work it
+/// guarded had even started: in the full PlaybackTests run one of them once took 53 s to reach a step that takes milliseconds alone.)
+@MainActor final class RadioDeadlineClock {
+    private let origin = ContinuousClock.now
+    private var offset: Duration = .zero
+    private var passing = false
+    var now: ContinuousClock.Instant {
+        if passing || ContinuousClock.now - origin > .seconds(120) { offset += .seconds(3600) }
+        return origin.advanced(by: offset)
+    }
+    func passAllDeadlines() { passing = true }
+    func standStill() { passing = false }
+}
+
 @Suite @MainActor struct RadioQueuePlayerTests {
-    private func ready() async throws -> (WebMusicPlayer, FakeMusicPage, WebMusicRadioQueueScope) {
-        let (player, page) = makePlayer(timeout: .milliseconds(80))
+    /// A paused radio with a published queue. The page loads under the ordinary bound (nothing here waits on it), and the radio update's
+    /// deadline is read from `clock`.
+    private func ready(_ clock: RadioDeadlineClock) async throws -> (WebMusicPlayer, FakeMusicPage, WebMusicRadioQueueScope) {
+        let (player, page) = makePlayer()
+        player.radioQueueClock = { clock.now }
         await player.play(playlistID: "RDoriginal")
         let fake = try #require(page()); fake.commitLast()
         let paused = state(playing: false, video: "aaaaaaaaaa1", playlist: "RDoriginal", shuffle: false)
         fake.send(paused)
         await player.pause()
         fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("bbbbbbbbbb1", "Before", "")]))
+        // The player's own follow-ups to this setup (its one native Play for a new load, a deferred volume) are queued tasks: let them reach the page
+        // now, so a test that counts or inspects the page's commands sees only its own.
+        for _ in 0..<10 { await Task.yield() }
         return (player, fake, try #require(player.captureRadioQueueScope(playlistID: "RDoriginal")))
     }
     @Test func pausedAutoplayUpdatePreservesCurrentTargetDocumentLoadIntentAndArtwork() async throws {
-        let (player, fake, scope) = try await ready()
+        let (player, fake, scope) = try await ready(RadioDeadlineClock())
         let before = player.snapshot, art = player.artwork, loads = fake.loads.count
         let command = try #require(MusicQueueFilterCommand(playlistID: "RDdifferentFetch", params: "p", playerParams: "0gcJCW0At9Zurpe2"))
         let task = Task { await player.applyRadioFilter(command, scope: scope) }
@@ -2182,11 +2205,13 @@ private enum RealQueue {
         #expect(player.snapshot.playlistID == before.playlistID && player.snapshot.videoID == before.videoID)
         #expect(player.snapshot.phase == before.phase && player.snapshot.intent == false && player.artwork == art)
         #expect(player.transport.load == 1 && player.committedDocument == 1 && fake.loads.count == loads)
-        #expect(fake.commands.last?.arguments["playerParams"] as? String == command.playerParams)
+        // The update itself carried the published player params (other commands may follow it to the page, so it is found by its script).
+        #expect(fake.commands.last(where: { $0.body == WebMusicScripts.updateRadioQueue })?.arguments["playerParams"] as? String == command.playerParams)
     }
     @Test func unconfirmedControlAndBothNativeAndPageAdRefusalKeepHealthyPlayback() async throws {
         for mode in ["unchanged", "native-ad", "page-ad", "stale-admission", "pre-acceptance", "stale-after-dispatch"] {
-            let (player, fake, scope) = try await ready()
+            let clock = RadioDeadlineClock()
+            let (player, fake, scope) = try await ready(clock)
             let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
             if mode == "native-ad" {
                 var ad = state(video: "aaaaaaaaaa1", playlist: "RDoriginal"); ad["ad"] = true
@@ -2204,14 +2229,27 @@ private enum RealQueue {
                 }
             }
             let count = fake.commands.count
-            let result = await player.applyRadioFilter(command, scope: scope, admitted: { applicable })
+            let result: Bool
+            if mode == "unchanged" || mode == "pre-acceptance" {
+                // The page accepts these and the player then waits for a change after acceptance that never comes (a change made before
+                // acceptance does not count): once it is waiting, let the deadline pass.
+                let task = Task { await player.applyRadioFilter(command, scope: scope, admitted: { applicable }) }
+                await settle { player.radioQueueAwaitingChange }
+                #expect(player.radioQueueAwaitingChange, "\(mode): the update was accepted and the player waits for the queue to change")
+                clock.passAllDeadlines()
+                result = await task.value
+            } else {
+                // The others are refused, before or right after the update is sent, without waiting for any deadline.
+                result = await player.applyRadioFilter(command, scope: scope, admitted: { applicable })
+            }
             #expect(!result && !player.snapshot.isFailed && player.transport.load == 1 && fake.loads.count == 1)
             if mode == "native-ad" || mode == "stale-admission" { #expect(fake.commands.count == count) }
         }
     }
     @Test func unrelatedPostAcceptanceReportCannotCertifyAnEarlierApplicableQueue() async throws {
         for laterApplicable in [false, true] {
-            let (player, fake, scope) = try await ready()
+            let clock = RadioDeadlineClock()
+            let (player, fake, scope) = try await ready(clock)
             let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
             fake.intercept = { invocation in
                 guard invocation.body == WebMusicScripts.updateRadioQueue else { return nil }
@@ -2219,9 +2257,9 @@ private enum RealQueue {
                 return .router
             }
             let task = Task { await player.applyRadioFilter(command, scope: scope) }
-            await settle { fake.targetAttempts > 0 || fake.commands.contains { $0.body == WebMusicScripts.updateRadioQueue } }
-            // Let the resolver return; Q1 is already the snapshot's baseline revision.
-            for _ in 0..<10 { await Task.yield() }
+            // The page has accepted the update and the player waits for a change after acceptance; Q1 is already the snapshot's baseline revision.
+            await settle { player.radioQueueAwaitingChange }
+            #expect(player.radioQueueAwaitingChange, "the update was accepted and the player waits for the queue to change")
             let acceptedRevision = player.transport.queueRevision
             fake.send(queueBody(playing: "zzzzzzzzzz1", upcoming: [("dddddddddd1", "Other content", "")]))
             #expect(player.transport.queueRevision == acceptedRevision)
@@ -2229,18 +2267,23 @@ private enum RealQueue {
             if laterApplicable {
                 fake.send(queueBody(playing: "aaaaaaaaaa1", upcoming: [("eeeeeeeeee1", "After acceptance", "")]))
                 #expect(player.transport.queueRevision > acceptedRevision)
+            } else {
+                clock.passAllDeadlines()
             }
             #expect(await task.value == laterApplicable)
             #expect(!player.snapshot.isFailed && player.snapshot.phase == .paused && !player.snapshot.intent)
         }
     }
     @Test func suspendedDispatchTimesOutReleasesBusyAndFencesLateCompletion() async throws {
-        let (player, fake, scope) = try await ready()
+        let clock = RadioDeadlineClock()
+        let (player, fake, scope) = try await ready(clock)
         let command = try #require(MusicQueueFilterCommand(playlistID: "RDfetch", params: "p"))
         fake.suspendRadioDispatch = true
         let task = Task { await player.applyRadioFilter(command, scope: scope) }
         await settle { fake.suspendedRadioReply != nil }
+        #expect(fake.suspendedRadioReply != nil, "the update reached the page and is suspended there")
         #expect(player.updatingRadioQueue)
+        clock.passAllDeadlines()
         // A continuation ignores cancellation. The outer operation must return without joining it.
         #expect(await task.value == false)
         #expect(!player.updatingRadioQueue && !player.snapshot.isFailed && player.snapshot.phase == .paused)
@@ -2252,7 +2295,8 @@ private enum RealQueue {
         fake.suspendedRadioReply?.resume(returning: .router); fake.suspendedRadioReply = nil
         for _ in 0..<10 { await Task.yield() }
         #expect(player.snapshot == before && player.refusal == refusal && !player.updatingRadioQueue)
-        // A fresh control works once the old invocation actually finishes.
+        // A fresh control works once the old invocation actually finishes, under a deadline of its own.
+        clock.standStill()
         fake.suspendRadioDispatch = false
         let fresh = Task { await player.applyRadioFilter(command, scope: scope) }
         await settle { fake.commands.count > count }
@@ -2262,7 +2306,7 @@ private enum RealQueue {
     }
     @Test func playlistDocumentAndClosedPlayerReplacementInvalidateOldScope() async throws {
         for replacement in ["playlist", "document", "closed"] {
-            let (player, fake, scope) = try await ready()
+            let (player, fake, scope) = try await ready(RadioDeadlineClock())
             if replacement == "playlist" { await player.play(playlistID: "PLreplacement") }
             if replacement == "document" { player.transport.invalidateDocument() }
             if replacement == "closed" { await player.teardown() }
