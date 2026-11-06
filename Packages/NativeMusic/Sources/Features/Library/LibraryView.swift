@@ -382,10 +382,11 @@ public struct LibraryView: View {
     }
     public var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.lg) {
-            HStack {
-                Text("Library").font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle")
-                Spacer()
-                if surface.development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("developmentDataLabel") }
+            HStack(alignment: .top) {
+                // The title keeps its room and its height (larger text and long translations wrap the label beside it, never crush or lower the title).
+                Text("Library").font(MusicPageStyle.title).accessibilityAddTraits(.isHeader).accessibilityIdentifier("destinationTitle").browserRegion("destinationTitle").layoutPriority(1)
+                Spacer(minLength: MusicSpace.xs)
+                if surface.development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).multilineTextAlignment(.trailing).accessibilityIdentifier("developmentDataLabel") }
             }
             ScrollView(.horizontal) {
                 MusicGlassGroup {

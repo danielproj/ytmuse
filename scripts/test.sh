@@ -716,7 +716,8 @@ if [[ "$2" == T52 ]]; then
   counted_swift_test 'DesignTokenTests|CornerCapTests|AccentOrderTests|StackedWashTests|LayoutAuditRuleTests|SourceGuardTests'
   # Isolated synthetic content only (the app's own development catalog and library); QA isolation is decided before any store opens.
   export YTMUSE_NATIVE_DESIGN_TEST=1 YTMUSE_UI_DEVELOPMENT_DATA=1 YTMUSE_UI_DEVELOPMENT_LIBRARY=1 YTMUSE_UI_DEVELOPMENT_PLAYLISTS=1
-  counted_swift_test 'SurfaceAuditTests|SheetAuditTests|PolicyAuditTests|PlayerMorphStageTests|CapsuleHoverAuditTests|RootRegionLayoutTests|SettleHelperTests|ShutdownIsolationTests'
+  # HistoryVirtualizationTests hosts the History page with 1,500 rows and counts the rows it builds (only those on screen) and the pages it reads.
+  counted_swift_test 'SurfaceAuditTests|SheetAuditTests|PolicyAuditTests|PlayerMorphStageTests|CapsuleHoverAuditTests|RootRegionLayoutTests|SettleHelperTests|ShutdownIsolationTests|HistoryVirtualizationTests'
   # The window-root layout contract and scroll restoration also run against the generic collection page (development data, no development
   # Library), which is the page ScrollViewIntegrationTests measures; W12's Library replaced it when the library flag is set.
   unset YTMUSE_UI_DEVELOPMENT_LIBRARY YTMUSE_UI_DEVELOPMENT_PLAYLISTS

@@ -282,7 +282,8 @@ import Features
         ("Features/History/HistoryView.swift", [".restoresScroll()": 1]),
         ("Features/Downloads/DownloadsView.swift", [".remembersPage(identity: identity": 1, ".restoresByIdentity(": 1, ".identityItem(": 10]),
         ("Features/Search/SearchView.swift", [".restoresScroll()": 1, ".remembersPage(": 1]),
-        ("Features/Catalog/CatalogPageView.swift", [".remembersPage(identity: identity": 1, ".restoresByIdentity(": 1, ".identityItem(": 1, ".scrollPosition(id: $model.anchor, anchor: .top)": 1]),
+        // The shelves and the page heading are restoration targets; the heading must be registered with the restorer, or a visit left at the top could not return there.
+        ("Features/Catalog/CatalogPageView.swift", [".remembersPage(identity: identity": 1, ".restoresByIdentity(": 1, ".identityItem(": 2, "identity.setItems([headerID] + registration.order": 1, ".scrollPosition(id: $model.anchor, anchor: .top)": 1]),
         ("Features/Catalog/CatalogComponents.swift", [".identityItem(": 1, "CatalogRows.drawn(": 1, "CatalogRows.rowItem(": 1]),
         ("Features/Catalog/CatalogPageView.swift", ["CatalogRows.registration(": 1, "IdentityRestorer(rule: .coveringTop, requiresRealisation: true)": 1]),
         ("Features/PageRestoration/IdentityRestoration.swift", [".onAppear { tracker.realisation(id, true) }": 1, "restoration.flatMap { $0.memory.isCurrent ? $0.memory.token : nil }": 1]),

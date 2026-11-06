@@ -72,6 +72,11 @@ public enum MusicSpace {
   public static let xl: CGFloat = 32
   public static let xxl: CGFloat = 48
   public static let scale: [CGFloat] = [xxs, xs, sm, md, lg, xl, xxl]
+  /// The deepest nesting that is still set further in; anything deeper keeps this indent, so a long thread never walks off the page.
+  public static let maximumNesting = 3
+  /// The leading indent of content nested `level` deep under its parent (a reply under a comment): one `lg` step per level, at least one (nested content is
+  /// always set in) and at most `maximumNesting`.
+  public static func nestedIndent(level: Int) -> CGFloat { lg * CGFloat(min(max(level, 1), maximumNesting)) }
   /// Whether `value` sits on the grid, within `tolerance` (pixel rounding of native controls).
   public static func isOnGrid(_ value: CGFloat, tolerance: CGFloat = 0.5) -> Bool {
     let remainder = value.truncatingRemainder(dividingBy: grid)

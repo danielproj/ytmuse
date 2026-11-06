@@ -95,18 +95,26 @@ import Testing
         for other in [ad, idle, odd] { #expect(CurrentSongShare.item(for: other.rig.model.music) == nil) }
         #expect(CurrentSongShare.item(for: nil) == nil, "no player: owned or local media has no Music link")
     }
-    @Test func thePlayersMoreMenuOffersShareOnlyWhenTheShellCanShareTheSong() async throws {
+    @Test func thePlayerSharesTheSongFromItsOwnButtonBesideQueueAndNotFromTheMoreMenu() async throws {
         let rig = try await IntegrationRig.make(); defer { rig.cleanUp() }
         let state = try #require(rig.rig.model.music).snapshot
-        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: true, canShowVideo: false, episode: false) == [.sleepTimer], "off unless the shell provides the action")
-        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: true, canShowVideo: false, episode: false, canShare: true) == [.sleepTimer, .shareSong])
-        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: false, canShowVideo: false, episode: false, canShare: true) == [.shareSong])
-        // Both player hosts provide it from their shell, and the menu item runs nothing but that closure.
+        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: true, canShowVideo: false, episode: false) == [.sleepTimer], "⋯ no longer carries Share")
+        #expect(WebCapsuleSecondary.moreItems(state: state, hasSleepTimer: false, canShowVideo: false, episode: false).isEmpty)
+        // Both player hosts provide it from their shell, and the button runs nothing but that closure.
         let shellSurfaces = try IntegrationSources.text("Packages/NativeMusic/Sources/AppShell/Lifecycle/ShellPlayerSurfaces.swift")
         let browser = try IntegrationSources.text("Packages/NativeMusic/Sources/AppShell/BrowserShell.swift")
         #expect(shellSurfaces.contains(".environment(\\.shareCurrentSong,") && browser.contains(".environment(\\.shareCurrentSong,"))
         let capsule = try IntegrationSources.text("Packages/NativeMusic/Sources/AppShell/PlayerCapsuleViews.swift")
         #expect(capsule.contains("Button { shareCurrentSong() }") && !capsule.contains("NSSharingServicePicker") && !capsule.contains("ShareLink"))
+        #expect(capsule.components(separatedBy: "shareCurrentSong()").count - 1 == 1, "one Share in the player, not a second one in a menu")
+        // The trailing group is the bar's, the mini-player's and Now Playing's: Share sits right after Queue there and before ⋯, and with no song to share
+        // (an advertisement, a stopped player) it stays in place, disabled, so the controls never shift.
+        let group = try #require(capsule.range(of: "@ViewBuilder private func group(")), end = try #require(capsule.range(of: "more(state, episode: episode, edge: edge)", range: group.upperBound..<capsule.endIndex))
+        let body = capsule[group.upperBound..<end.lowerBound]
+        let queue = try #require(body.range(of: ".accessibilityIdentifier(\"transportQueue\")")), share = try #require(body.range(of: ".accessibilityIdentifier(\"musicShare\")"))
+        #expect(queue.upperBound < share.lowerBound)
+        #expect(!body[queue.upperBound..<share.lowerBound].contains(".accessibilityIdentifier(\"music"), "nothing sits between Queue and Share")
+        #expect(body.contains(".disabled(CurrentSongShare.item(for: player) == nil)"))
     }
 
     @Test func theServicesEntryOpensALinkThroughTheSameRulesAndRefusesWithOneSentence() async throws {

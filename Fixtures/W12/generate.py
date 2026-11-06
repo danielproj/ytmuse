@@ -233,7 +233,7 @@ manifest = {
     "browse_ids_relied_on": {
         "songs": "FEmusic_liked_videos", "likedSongs": "VLLM", "albums": "FEmusic_liked_albums", "artists": "FEmusic_library_corpus_track_artists",
         "following": "FEmusic_library_corpus_artists", "playlists": "FEmusic_liked_playlists", "podcasts": "FEmusic_library_non_music_audio_list",
-        "savedEpisodes": "VLSE", "uploads": "FEmusic_library_privately_owned_tracks", "history": "FEmusic_history"},
+        "savedEpisodes": "VLSE", "history": "FEmusic_history"},
     "files": files,
 }
 with open(os.path.join(HERE, "manifest.json"), "w") as f:

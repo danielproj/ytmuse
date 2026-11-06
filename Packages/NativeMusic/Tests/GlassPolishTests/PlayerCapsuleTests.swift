@@ -110,15 +110,21 @@ import Domain
         #expect(views.contains(".disabled(!snapshot.canSeek)"))
     }
     /// The expanded player's controls match the capsule's: plain glyphs, the accent Play circle, the volume glyph with a slim slider (no "Mute" text button) and
-    /// a ⋯ with no box. The mini player and the popover (ShellPlayerSurfaces) keep the boxed controls.
-    @Test func theExpandedPlayerUsesThePlainControlsAndTheMiniPlayerDoesNot() throws {
-        let expanded = try String(contentsOf: Self.root.appendingPathComponent("Packages/NativeMusic/Sources/AppShell/ExpandedPlayer.swift"), encoding: .utf8)
+    /// a ⋯ with no box; for owned media its transport is the capsule's own `OwnedCapsuleButtons`. Since the player-surfaces refinement the mini player and the
+    /// status item (ShellPlayerSurfaces) use the same plain glyphs, so no player surface keeps the boxed controls.
+    @Test func everyPlayerSurfaceUsesThePlainControls() throws {
+        func source(_ path: String) throws -> String { try String(contentsOf: Self.root.appendingPathComponent("Packages/NativeMusic/Sources/AppShell/" + path), encoding: .utf8) }
+        let expanded = try source("ExpandedPlayer.swift")
         #expect(expanded.contains("WebMusicControlsView(player: player, large: true, namespace: namespace, plain: true)"))
-        #expect(expanded.contains("OwnedControlsView(model: model, large: true, namespace: namespace, plain: true)"))
+        #expect(expanded.contains("OwnedCapsuleButtons(model: model, large: true, namespace: namespace)"))
         #expect(expanded.contains("WebMusicTimelineView(player: player, plain: true)") && expanded.contains(", plain: true)\n                    .audit(\"nowPlayingTimeline\""))
         #expect(expanded.contains("WebCapsuleSecondary(player: player, compact: compact, expanded: true") && expanded.contains("OwnedCapsuleSecondary(model: model, compact: compact, expanded: true"))
-        let surfaces = try String(contentsOf: Self.root.appendingPathComponent("Packages/NativeMusic/Sources/AppShell/Lifecycle/ShellPlayerSurfaces.swift"), encoding: .utf8)
-        #expect(!surfaces.contains("plain: true"), "the mini player and the status item are out of scope")
+        let surfaces = try source("Lifecycle/ShellPlayerSurfaces.swift")
+        #expect(surfaces.contains("WebMusicControlsView(player: player, large: large, plain: true)") && surfaces.contains("OwnedControlsView(model: shell.playback, large: large, plain: true)"))
+        #expect(surfaces.contains("WebMusicTimelineView(player: player, plain: true)"), "the mini player and the status item draw the plain timeline too")
+        for path in ["ExpandedPlayer.swift", "Lifecycle/ShellPlayerSurfaces.swift", "Lifecycle/MiniPlayer.swift", "Lifecycle/StatusItem.swift"] {
+            #expect(!(try source(path)).contains(".musicButtons("), "\(path) keeps no boxed player controls")
+        }
     }
     @Test func theOwnedMenuShowsTheCurrentShuffleAndRepeatMode() {
         let off = OwnedQueueModeState(seed: nil, repeatMode: .off), on = OwnedQueueModeState(seed: 7, repeatMode: .all)

@@ -169,7 +169,8 @@ import Domain
       let got = (units?["one"]?["stringUnit"] as? [String: Any])?["value"] as? String
       if got != one { problems.append("English singular of \(key) is \(got ?? "missing"), expected \(one)") }
     }
-    for key in ["%lld seconds remaining", "Fading · %lld seconds remaining", "%lld more files"] { #expect(ones[key] != nil, "\(key) is registered with its singular") }
+    // ("%lld more files" was the uploads screen's and left with it.)
+    for key in ["%lld seconds remaining", "Fading · %lld seconds remaining"] { #expect(ones[key] != nil, "\(key) is registered with its singular") }
     #expect(problems.isEmpty, Comment(rawValue: problems.prefix(20).joined(separator: "\n")))
     // Control: the detector does flag an echoed identifier and a value different from its source.
     #expect(identifier.firstMatch(in: "detailSeparator", range: NSRange(location: 0, length: 15)) != nil && identifier.firstMatch(in: "macOS", range: NSRange(location: 0, length: 5)) == nil)
