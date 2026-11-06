@@ -52,7 +52,7 @@ Settings › Appearance › **Style** offers two looks beside Mode (System/Light
 
 ## Design alignment — 2026-11-06
 
-This alignment supersedes the earlier directions to put glass on content panels. Both styles share one layout: edge-to-edge solid content and a full-height solid queue/lyrics inspector with a leading divider. Standard uses the system window background; YTMuse retains its existing canvas (near-black in dark appearance). Native sidebar and toolbar, floating player and expanded-player controls retain glass. Content and inspector content clear the floating player by at least 12 pt.
+This alignment supersedes the earlier directions to put glass on content panels. Both styles share one layout: edge-to-edge solid content and a full-height solid queue/lyrics inspector with a leading divider. Standard uses the system window background; YTMuse retains its existing canvas (near-black in dark appearance). Native sidebar and toolbar, floating player and expanded-player controls retain glass. Page content and inspector content end at the same height (within 1 pt in the geometry audit), at least 12 pt above the floating player.
 
 Standard follows the macOS accent; YTMuse uses the audited red palette. Window roots inject the accent and native tint. Content uses native primary, secondary and inline button roles. Rows, cards, chips, artwork, notes and sheet actions follow the shared design-system recipe.
 
