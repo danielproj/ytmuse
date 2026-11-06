@@ -4,8 +4,19 @@ import SwiftUI
 /// Page roles complement the floating player. Surfaces inside a page are quiet and opaque;
 /// glass remains at the window boundary. These modifiers never claim the parent's height.
 public enum MusicPageStyle {
+    /// Shared spacing roles for page content.
+    public static let sectionSpacing = MusicSpace.lg
+    public static let cardPadding = MusicSpace.md
+    public static let rowVertical = MusicSpace.xs
+    public static let rowHorizontal = MusicSpace.sm
+    public static let iconColumn = MusicSpace.lg
+    /// DESIGN-ALIGN: one type scale. A page's title; a section of a page; a group inside a card, panel, popover or palette; a sheet's title;
+    /// an explanatory note under a control or a group.
     public static let title: Font = .largeTitle.weight(.semibold)
     public static let section: Font = .title2.weight(.semibold)
+    public static let group: Font = .headline
+    public static let sheetTitle: Font = .title2.weight(.semibold)
+    public static let note: Font = .footnote
 }
 
 private struct PageInsetSurface: ViewModifier {
@@ -17,21 +28,13 @@ private struct PageInsetSurface: ViewModifier {
             .overlay(MusicCorner.feature.shape.strokeBorder(Color.primary.opacity(contrast == .increased ? 0.6 : 0.08)))
     }
 }
-private struct PageAction: ViewModifier {
-    var prominent: Bool
-    func body(content: Content) -> some View {
-        if prominent {
-            content.buttonStyle(.borderedProminent).buttonBorderShape(.capsule).tint(MusicStyle.accentFill)
-        } else { content.buttonStyle(.borderless) }
-    }
-}
 extension View {
     public func musicPageContent(includeTopInset: Bool = true) -> some View {
         padding(.horizontal, MusicSpace.lg).padding(.top, includeTopInset ? MusicSpace.xl : 0).padding(.bottom, MusicSpace.xl)
     }
     /// Caller owns inset and width, so nested surfaces do not multiply padding.
     public func musicInsetSurface() -> some View { modifier(PageInsetSurface()) }
-    public func musicPageAction(prominent: Bool = false) -> some View { modifier(PageAction(prominent: prominent)) }
+    public func musicPageAction(prominent: Bool = false) -> some View { musicAction(prominent ? .primary : .inline) }
     public func musicPageRow() -> some View {
         padding(.vertical, MusicSpace.xs).padding(.horizontal, MusicSpace.xs).musicHoverHighlight()
     }

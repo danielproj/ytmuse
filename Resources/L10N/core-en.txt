@@ -1407,3 +1407,9 @@ Q40|%lld plays
 1619|Standard
 1620|YTMuse is the app’s own dark look. Standard follows macOS: the main window lets the desktop show through its sidebar, and other windows use the system background.
 1621|With the Standard style there is no tinted window background, so only the player is tinted.
+1622|Lyrics couldn’t be loaded
+1623|This episode couldn’t be loaded
+1624|This playlist couldn’t be read
+1625|Loading lyrics…
+1626|Loading episode…
+1627|Loading Samples…

@@ -1,4 +1,5 @@
 import AccountSession
+import DesignSystem
 import Features
 import Foundation
 import Playback
@@ -10,6 +11,30 @@ import YouTubeMusicAdapter
     private func item(_ capture: Capture, shelf: Int = 0, index: Int = 0) throws -> MusicCatalogItem { try realPage(capture).shelves[shelf].items[index] }
 
     // MARK: Action plan
+
+    @Test func pageActionRolesPreserveThePrimaryAndSongUtilities() throws {
+        for capture in [Capture.album, .playlist, .artist] {
+            let header = try #require(try realPage(capture).header)
+            let offers = CatalogActionPlan.offers(for: header.actions, playback: .available)
+            let primary: CatalogAction = capture == .artist ? .shuffle : .play
+            #expect(offers.first?.action == primary)
+            for offer in offers {
+                #expect(CatalogActionPlan.pageRole(of: offer.action, in: offers, song: false) == (offer.action == primary ? .primary : .secondary))
+            }
+        }
+        let offers = CatalogActionPlan.offers(for: try item(.home), playback: .available)
+        #expect(offers.contains { $0.action == .play })
+        #expect(offers.contains { $0.action == .copyLink })
+        #expect(offers.contains { $0.action == .share })
+        for action in CatalogAction.allCases {
+            let expected: MusicActionRole = switch action {
+            case .play: .primary
+            case .copyLink, .share: .inline
+            default: .secondary
+            }
+            #expect(CatalogActionPlan.pageRole(of: action, in: offers, song: true) == expected)
+        }
+    }
 
     @Test func playTargetsAreTheEntrysOwnIdentifiers() throws {
         let song = try item(.home)

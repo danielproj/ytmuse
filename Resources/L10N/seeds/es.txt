@@ -340,3 +340,9 @@ Q40|one:%lld reproducción	many:%lld de reproducciones	other:%lld reproducciones
 1619|Estándar
 1620|YTMuse es el aspecto oscuro propio de la app. Estándar sigue a macOS: en la ventana principal el escritorio se ve a través de la barra lateral y las demás ventanas usan el fondo del sistema.
 1621|Con el estilo Estándar la ventana no tiene un fondo teñido, así que solo se tiñe el reproductor.
+1622|No se pudo cargar la letra
+1623|No se pudo cargar este episodio
+1624|No se pudo leer esta playlist
+1625|Cargando la letra…
+1626|Cargando el episodio…
+1627|Cargando Samples…

@@ -340,3 +340,9 @@ Q40|one:%lld Wiedergabe	other:%lld Wiedergaben
 1619|Standard
 1620|YTMuse ist das eigene dunkle Design der App. Standard folgt macOS: Im Hauptfenster scheint der Schreibtisch durch die Seitenleiste, andere Fenster verwenden den Systemhintergrund.
 1621|Im Stil „Standard“ hat das Fenster keinen eingefärbten Hintergrund, daher wird nur der Player eingefärbt.
+1622|Songtext konnte nicht geladen werden
+1623|Diese Folge konnte nicht geladen werden
+1624|Diese Playlist konnte nicht gelesen werden
+1625|Songtext wird geladen …
+1626|Folge wird geladen …
+1627|Samples werden geladen …

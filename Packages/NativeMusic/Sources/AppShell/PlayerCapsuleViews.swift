@@ -71,7 +71,7 @@ struct CapsuleVolume: View {
             HStack(spacing: 0) {
                 if let mute { muteButton(mute) }
                 else {
-                    Image(systemName: symbol).font(.system(size: 15, weight: .medium))
+                    Image(systemName: symbol).font(PlayerCapsule.volumeGlyphFont)
                         .foregroundStyle(enabled ? Color.primary.opacity(0.8) : Color.primary.opacity(0.3))
                         .frame(width: PlayerCapsule.glyphEdge(large: large), height: PlayerCapsule.glyphEdge(large: large)).accessibilityHidden(true)
                 }

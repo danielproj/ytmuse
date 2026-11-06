@@ -105,7 +105,6 @@ public struct CommandPaletteView: View {
     private let motion = MusicMotionContext()
     public init(model: CommandPaletteModel) { self.model = model }
     public var body: some View {
-        MusicGlassGroup(spacing: MusicSpace.xs) {
         VStack(alignment: .leading, spacing: MusicSpace.sm) {
             SearchField(model: model.search, prompt: "Type a command or search YouTube Music", focus: $focused, identifier: "paletteField") { model.handle($0, composing: $1) }
             SearchStatusView(model: model.search)
@@ -113,11 +112,11 @@ public struct CommandPaletteView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: MusicSpace.xxs) {
                         if !model.matchingCommands.isEmpty {
-                            Text("Commands").font(.title3.bold()).accessibilityAddTraits(.isHeader)
+                            Text("Commands").font(MusicPageStyle.group).accessibilityAddTraits(.isHeader)
                             ForEach(model.matchingCommands) { command in commandRow(command).id("command:" + command.id) }
                         }
                         ForEach(model.search.sections) { section in
-                            Text(section.group.title).font(.title3.bold()).padding(.top, MusicSpace.sm).accessibilityAddTraits(.isHeader)
+                            Text(section.group.title).font(MusicPageStyle.group).padding(.top, MusicSpace.sm).accessibilityAddTraits(.isHeader)
                             ForEach(section.results) { result in
                                 SearchResultRow(result: result, selected: model.selection == "result:" + result.id, offers: model.search.offers(for: result),
                                                 feedback: model.search.feedback[result.id], select: { model.selection = "result:" + result.id },
@@ -133,8 +132,7 @@ public struct CommandPaletteView: View {
             }
         }
         .padding(MusicSpace.lg)
-        }
-        .frame(minWidth: 520, minHeight: 420).musicCanvas()
+        .frame(minWidth: 520, minHeight: 420)
         .task { focused = true }
         .onChange(of: model.search.query) { _, _ in model.queryChanged() }
         .accessibilityElement(children: .contain).accessibilityLabel(Text("Command Palette")).accessibilityIdentifier("commandPalette")
@@ -143,20 +141,18 @@ public struct CommandPaletteView: View {
         let id = "command:" + command.id
         return VStack(alignment: .leading, spacing: MusicSpace.hairline) {
             HStack(spacing: MusicSpace.sm) {
-                Image(systemName: command.symbol).frame(width: 24).foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
+                Image(systemName: command.symbol).frame(width: MusicPageStyle.iconColumn).foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
                 Text(command.title).font(.body.weight(.medium))
-                Spacer(minLength: 8)
+                Spacer(minLength: MusicSpace.xs)
                 if let shortcut = command.shortcut { Text(shortcut).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
             }
             if let reason = model.failure[id] {
-                Label(reason, systemImage: "exclamationmark.triangle").font(.caption).accessibilityIdentifier("paletteItemError-" + command.id)
+                Label(reason, systemImage: "exclamationmark.triangle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("paletteItemError-" + command.id)
             }
         }
-        .padding(.vertical, MusicSpace.xs).padding(.horizontal, MusicSpace.xs)
+        .musicRow(selected: model.selection == id)
         .audit("paletteRow-" + command.id, group: "palette-rows", alignLeading: "paletteRows")
-        .musicSelectionBackground(model.selection == id).musicHoverHighlight()
         .musicAnimation(.selection, value: model.selection == id)
-        .contentShape(Rectangle())
         .onTapGesture { model.selection = id; model.activate(.command(command)) }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text([command.title, command.shortcut].compactMap { $0 }.joined(separator: ", ")))

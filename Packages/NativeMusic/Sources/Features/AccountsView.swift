@@ -200,13 +200,12 @@ public struct AccountsView: View {
   @State private var removing: LocalIdentity?
   public init(model: AccountsModel) { self.model = model }
   public var body: some View {
-    MusicGlassGroup {
       VStack(alignment: .leading, spacing: MusicSpace.md) {
-        Text("Accounts").font(MusicPageStyle.title).audit("accountsTitle", group: "accounts-header", alignLeading: "accountsLeading")
+        Text("Accounts").font(MusicPageStyle.sheetTitle).audit("accountsTitle", group: "accounts-header", alignLeading: "accountsLeading")
         Text(
           "Local labels and defaults apply to this Mac. Service subscriptions remain with YouTube."
         )
-        .foregroundStyle(MusicStyle.secondaryText).audit("accountsIntro", group: "accounts-header", alignLeading: "accountsLeading")
+        .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).audit("accountsIntro", group: "accounts-header", alignLeading: "accountsLeading")
         if model.identities.isEmpty {
           ContentUnavailableView(
             "No accounts connected", systemImage: "person.crop.circle",
@@ -215,17 +214,13 @@ public struct AccountsView: View {
               : "Add an account when browser sign-in is available.")
           ).frame(maxWidth: .infinity).musicInsetSurface().audit("accountsEmpty", group: "accounts-body", alignLeading: "accountsLeading")
         } else {
-          // The scrolled glass gets its own container inside the scroll view, and the
-          // scroll view clips. One outer container composited the scrolled card's
-          // glass outside the clip, over the footer status line (live L4).
           ScrollView {
-            MusicGlassGroup {
-            LazyVStack(alignment: .leading, spacing: MusicStyle.spacing) {
+            LazyVStack(alignment: .leading, spacing: MusicSpace.md) {
               if model.usesMusicSession { MusicAccountCard(model: model) }
               ForEach(model.identities) { identity in
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
                   HStack {
-                    Text(identity.account.displayName).font(.headline)
+                    Text(verbatim: identity.account.displayName).font(.headline)
                     if model.defaultIdentity == identity.id {
                       Text("Default").foregroundStyle(MusicStyle.secondaryText)
                     }
@@ -245,14 +240,13 @@ public struct AccountsView: View {
                   .musicTransition(.reveal)
               }
             }.padding(MusicSpace.xxs)
-            }
           }
           .clipShape(Rectangle())
-          .contentMargins(.bottom, MusicStyle.compact, for: .scrollContent)
+          .contentMargins(.bottom, MusicSpace.xs, for: .scrollContent)
         }
-        VStack(alignment: .leading, spacing: MusicStyle.compact) {
+        VStack(alignment: .leading, spacing: MusicSpace.xs) {
           AccountActionFeedback(model: model)
-          Text(model.connectionStatus).foregroundStyle(MusicStyle.secondaryText)
+          Text(verbatim: model.connectionStatus).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier("accountsConnectionStatus")
         }
@@ -263,11 +257,10 @@ public struct AccountsView: View {
           ).accessibilityIdentifier("authUnavailable")
         }
         ViewThatFits(in: .horizontal) {
-          HStack(spacing: MusicStyle.spacing) { primaryActions }
-          VStack(alignment: .leading, spacing: MusicStyle.compact) { primaryActions }
+          HStack(spacing: MusicSpace.md) { primaryActions }
+          VStack(alignment: .leading, spacing: MusicSpace.xs) { primaryActions }
         }.audit("accountsActions", group: "accounts-body", alignLeading: "accountsLeading")
-      }.padding(MusicStyle.inset).frame(minWidth: 700, minHeight: 440)
-    }.musicCanvas()
+      }.padding(MusicSpace.md).frame(minWidth: 700, minHeight: 440)
       .task {
         await model.refresh()
         if model.proof == .none { await model.loadProof() }
@@ -302,7 +295,7 @@ public struct AccountsView: View {
     Button(model.usesMusicSession && !model.identities.isEmpty ? "Add Another Account" : model.authenticationLabel) {
       Task { await model.authenticate() }
     }.disabled(!model.canAuthenticate || model.busy)
-      .accessibilityIdentifier("addAccount").musicPageAction(prominent: true)
+      .accessibilityIdentifier("addAccount").musicAction(.secondary)
     if model.canRefreshAuthorization {
       Button("Refresh Google authorization") { Task { await model.refreshAuthorization() } }.disabled(model.busy)
         .musicPageAction()
@@ -327,7 +320,7 @@ public struct AccountsView: View {
         .accessibilityIdentifier("reconnect-" + identity.account.displayName).disabled(
         !model.canAuthenticate || !model.authenticationCanConnectMusic)
       if !model.authenticationCanConnectMusic {
-        Text("Music reconnection awaits source-session access.").font(.caption)
+        Text("Music reconnection awaits source-session access.").font(MusicPageStyle.note)
       }
     }
     Button("Rename") {

@@ -13,10 +13,8 @@ struct PlaylistEditEntry: View {
     var body: some View {
         let id = MusicPlaylistRequest.playlistID(fromBrowseID: model.target.browseID)
         if let surface, surface.isSignedIn, model.target.browseID.hasPrefix("VL"), header.editing?.canEditTracks == true, MusicPlaylistRequest.isEditablePlaylistID(id) {
-            MusicGlassGroup {
-                HStack {
-                    Button { editing = true } label: { Label("Edit Playlist", systemImage: "pencil") }.musicButtons().accessibilityIdentifier("playlistEdit")
-                }
+            HStack {
+                Button { editing = true } label: { Label("Edit Playlist", systemImage: "pencil") }.musicAction(.secondary).accessibilityIdentifier("playlistEdit")
             }
             .sheet(isPresented: $editing, onDismiss: { Task { await model.refresh() } }) {
                 PlaylistEditorView(session: surface.session(for: id), surface: surface, onDeleted: { navigator.openTarget(.home, String(localized: "Home")) })
@@ -33,11 +31,9 @@ struct NewPlaylistEntry: View {
     var body: some View {
         if let surface, surface.isSignedIn {
             HStack {
-                MusicGlassGroup {
-                    HStack {
-                        Button { surface.creator.reset(); creating = true } label: { Label("New Playlist", systemImage: "plus") }.musicButtons().accessibilityIdentifier("playlistNew")
-                        JoinPlaylistEntry(navigator: navigator)
-                    }
+                HStack {
+                    Button { surface.creator.reset(); creating = true } label: { Label("New Playlist", systemImage: "plus") }.musicAction(.primary).accessibilityIdentifier("playlistNew")
+                    JoinPlaylistEntry(navigator: navigator)
                 }
                 Spacer()
             }
@@ -55,7 +51,7 @@ struct SongAddToPlaylistEntry: View {
     @State private var adding = false
     var body: some View {
         if let surface, surface.isSignedIn, let video = item.videoID, item.kind == .song || item.kind == .video, MusicPlaylistRequest.isVideoID(video) {
-            Button { adding = true } label: { Label("Add to Playlist…", systemImage: "text.badge.plus") }.musicButtons().accessibilityIdentifier("songAddToPlaylist")
+            Button { adding = true } label: { Label("Add to Playlist…", systemImage: "text.badge.plus") }.musicAction(.secondary).accessibilityIdentifier("songAddToPlaylist")
                 .sheet(isPresented: $adding) { PlaylistAddView(surface: surface, song: PlaylistAddition(videoID: video, title: item.title)) }
         }
     }
@@ -68,9 +64,7 @@ struct JoinPlaylistEntry: View {
     @State private var joining = false
     var body: some View {
         if let surface, surface.isSignedIn {
-            MusicGlassGroup {
-                Button { surface.joiner.reset(); joining = true } label: { Label("Join Playlist…", systemImage: "person.2") }.musicButtons().accessibilityIdentifier("playlistJoinOpen")
-            }
+            Button { surface.joiner.reset(); joining = true } label: { Label("Join Playlist…", systemImage: "person.2") }.musicAction(.secondary).accessibilityIdentifier("playlistJoinOpen")
             .sheet(isPresented: $joining) {
                 PlaylistJoinView(joiner: surface.joiner) { id in navigator.openTarget(CatalogTarget(browseID: "VL" + id), String(localized: "Playlist")) }
             }
@@ -92,7 +86,7 @@ struct SelectionAddToPlaylistEntry: View {
     }
     var body: some View {
         if let surface, surface.isSignedIn, !songs.isEmpty {
-            Button("Add to Playlist…") { adding = true }.musicButtons().accessibilityIdentifier("libraryAddToPlaylist")
+            Button("Add to Playlist…") { adding = true }.musicAction(.secondary).accessibilityIdentifier("libraryAddToPlaylist")
                 .sheet(isPresented: $adding) { PlaylistAddView(surface: surface, songs: songs) }
         }
     }

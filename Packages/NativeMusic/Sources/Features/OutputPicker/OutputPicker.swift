@@ -139,26 +139,26 @@ struct OutputPickerPanel<SystemPicker: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.sm) {
             HStack(alignment: .firstTextBaseline) {
-                Text("Output").font(.headline)
+                Text("Output").font(MusicPageStyle.group)
                 Spacer(minLength: MusicSpace.xs)
                 if content.followsMac {
-                    Button("Sound Settings…") { openURL(Self.soundSettings) }.musicButtons().accessibilityIdentifier("outputSoundSettings")
+                    Button("Sound Settings…") { openURL(Self.soundSettings) }.musicAction(.secondary).accessibilityIdentifier("outputSoundSettings")
                 }
             }
             if let loss = content.loss {
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    Label(loss.message, systemImage: "exclamationmark.triangle").font(.callout).fixedSize(horizontal: false, vertical: true)
+                    Label { Text(verbatim: loss.message) } icon: { Image(systemName: "exclamationmark.triangle") }.foregroundStyle(MusicStyle.errorText).font(MusicPageStyle.note).fixedSize(horizontal: false, vertical: true)
                     HStack(spacing: MusicSpace.xs) {
                         if loss.canReconnect { Button("Reconnect") { actions.reconnect() }.accessibilityIdentifier("outputReconnect") }
                         Button("Play Here…") { actions.playHere() }.accessibilityIdentifier("outputPlayHere")
-                    }.musicButtons()
+                    }.musicAction(.secondary)
                 }.accessibilityElement(children: .contain).accessibilityIdentifier("outputLoss")
             }
             if let statement = content.statement {
-                Text(statement).font(.callout).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputStatement")
+                Text(verbatim: statement).font(.callout).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputStatement")
             }
             if let notice = content.notice {
-                Text(notice).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputNotice")
+                Text(verbatim: notice).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputNotice")
             }
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                 ForEach(content.visibleRows) { row in
@@ -166,19 +166,19 @@ struct OutputPickerPanel<SystemPicker: View>: View {
                 }
             }
             ForEach(content.visibleCastNotes, id: \.self) { note in
-                Text(note).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputCastNote")
+                Text(verbatim: note).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("outputCastNote")
             }
             if content.showsSystemPicker {
                 HStack(spacing: MusicSpace.xs) {
                     systemPicker.frame(width: MusicSpace.lg, height: MusicSpace.lg)
-                    Text(content.airPlayHint ?? String(localized: "AirPlay")).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+                    Text(verbatim: content.airPlayHint ?? String(localized: "AirPlay")).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                 }.accessibilityElement(children: .contain)
             }
             if !content.detailNotes.isEmpty {
                 DisclosureGroup(isExpanded: $detailsShown) {
                     VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                         ForEach(content.detailNotes, id: \.self) { note in
-                            Text(note).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+                            Text(verbatim: note).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                         }
                     }.padding(.top, MusicSpace.xxs)
                 } label: { Text("Details").font(.caption) }
@@ -216,13 +216,13 @@ struct OutputPickerRow: View {
         HStack(alignment: .firstTextBaseline, spacing: MusicSpace.xs) {
             Image(systemName: row.state == .current ? "checkmark" : row.symbol).frame(width: MusicSpace.md)
             VStack(alignment: .leading, spacing: 0) {
-                Text(row.title).font(.body)
-                if let detail = row.detail, detail != row.title { Text(detail).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-                ForEach(notes, id: \.self) { Text($0).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
+                Text(verbatim: row.title).font(.body)
+                if let detail = row.detail, detail != row.title { Text(verbatim: detail).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
+                ForEach(notes, id: \.self) { Text(verbatim: $0).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText) }
             }.fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: MusicSpace.xs)
         }
-        .padding(.vertical, MusicSpace.xxs).contentShape(Rectangle())
+        .musicRow(selected: row.state == .current, hoverable: choosable && row.selectable)
     }
 }
 
@@ -238,11 +238,11 @@ public struct OutputPromptBanner: View {
             Label(prompt.title, systemImage: "speaker.wave.2").font(.headline)
             Text(prompt.message).font(.callout).fixedSize(horizontal: false, vertical: true)
             HStack(spacing: MusicSpace.xs) {
-                Button(prompt.confirmTitle, action: confirm).musicButtons(prominent: true).accessibilityIdentifier("outputPromptConfirm")
-                Button("Cancel", role: .cancel, action: cancel).musicButtons().accessibilityIdentifier("outputPromptCancel")
+                Button(prompt.confirmTitle, action: confirm).musicAction(.primary).accessibilityIdentifier("outputPromptConfirm")
+                Button("Cancel", role: .cancel, action: cancel).musicAction(.secondary).accessibilityIdentifier("outputPromptCancel")
             }
         }
-        .padding(MusicSpace.sm).musicSurface(.panel)
+        .padding(MusicSpace.md).musicInsetSurface()
         .accessibilityElement(children: .contain).accessibilityIdentifier("outputPrompt")
     }
 }

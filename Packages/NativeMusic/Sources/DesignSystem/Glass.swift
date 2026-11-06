@@ -53,9 +53,7 @@ extension View {
   /// A text field on glass: plain field, token padding, interactive glass tinted while focused.
   /// `dense` fits a toolbar-like row of pickers and buttons without making it taller than a bordered field would.
   public func musicField(focused: Bool = false, dense: Bool = false) -> some View {
-    textFieldStyle(.plain).padding(.horizontal, MusicSpace.sm).padding(.vertical, dense ? MusicSpace.hairline : MusicSpace.xs)
-      .musicGlass(.media, tint: focused ? MusicStyle.accent.opacity(0.18) : nil, interactive: true, edge: true)
-      .musicAnimation(.selection, value: focused)
+    modifier(MusicField(focused: focused, dense: dense))
   }
   public func musicGlassCapsule(tint: Color? = nil, interactive: Bool = false) -> some View {
     modifier(MusicGlassModifier(shape: Capsule(style: .continuous), tint: tint, interactive: interactive))
@@ -162,11 +160,24 @@ public struct MusicBadge: View {
 
 /// A hairline outlined capsule label ("Local only").
 public struct MusicOutlineBadge: View {
-  let text: LocalizedStringKey
-  public init(_ text: LocalizedStringKey) { self.text = text }
+  let text: Text
+  let symbol: String?
+  public init(_ text: LocalizedStringKey, systemImage: String? = nil) { self.text = Text(text); self.symbol = systemImage }
+  public init(verbatim text: String, systemImage: String? = nil) { self.text = Text(verbatim: text); self.symbol = systemImage }
   public var body: some View {
-    Text(text).font(.caption).foregroundStyle(MusicStyle.secondaryText)
+    Label { text } icon: { if let symbol { Image(systemName: symbol) } }.labelStyle(.titleAndIcon).font(.caption).foregroundStyle(MusicStyle.secondaryText)
       .padding(.horizontal, MusicSpace.xs).padding(.vertical, MusicSpace.hairline)
       .overlay(Capsule().strokeBorder(.secondary.opacity(0.6)))
+  }
+}
+
+private struct MusicField: ViewModifier {
+  let focused: Bool
+  let dense: Bool
+  @Environment(\.musicAccent) private var accent
+  func body(content: Content) -> some View {
+    content.textFieldStyle(.plain).padding(.horizontal, MusicSpace.sm).padding(.vertical, dense ? MusicSpace.hairline : MusicSpace.xs)
+      .musicGlass(.media, tint: focused ? accent.opacity(0.18) : nil, interactive: true, edge: true)
+      .musicAnimation(.selection, value: focused)
   }
 }

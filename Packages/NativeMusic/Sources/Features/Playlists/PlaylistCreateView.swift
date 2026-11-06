@@ -16,30 +16,31 @@ public struct PlaylistCreateView: View {
     public init(creator: PlaylistCreator, songs: [PlaylistAddition] = [], open: @escaping (String) -> Void) { self.creator = creator; self.songs = Array(songs.prefix(MusicPlaylistRequest.maximumActions)); self.open = open; _privacy = State(initialValue: creator.startingVisibility()) }
     public var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.lg) {
-            Text(songs.isEmpty ? "New Playlist" : "Save Queue as Playlist").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
+            Text(songs.isEmpty ? "New Playlist" : "Save Queue as Playlist").font(MusicPageStyle.sheetTitle).accessibilityAddTraits(.isHeader)
             if !songs.isEmpty { Text("\(songs.count) songs from the queue").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistCreateSongs") }
             TextField("Title", text: $title).textFieldStyle(.roundedBorder).accessibilityIdentifier("playlistCreateTitle")
             TextField("Description (optional)", text: $details, axis: .vertical).textFieldStyle(.roundedBorder).lineLimit(1...3).accessibilityIdentifier("playlistCreateDescription")
             Picker("Visibility", selection: $privacy) {
                 ForEach(MusicPlaylistPrivacy.allCases, id: \.self) { Label($0.title, systemImage: $0.symbol).tag($0) }
             }.accessibilityIdentifier("playlistCreatePrivacy")
-            Text(creator.startingVisibility() == PlaylistCreator.defaultPrivacy ? LocalizedStringKey("New playlists are private unless you choose otherwise.") : LocalizedStringKey("New playlists start with the visibility chosen in Settings. You can change it here.")).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistCreateNote")
+            Text(creator.startingVisibility() == PlaylistCreator.defaultPrivacy ? LocalizedStringKey("New playlists are private unless you choose otherwise.") : LocalizedStringKey("New playlists start with the visibility chosen in Settings. You can change it here.")).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistCreateNote")
             status
             HStack {
                 Spacer()
-                MusicGlassGroup {
-                    HStack {
-                        Button("Close") { creator.reset(); dismiss() }.musicPageAction().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistCreateClose")
-                        Button("Create") { Task { await creator.create(title: title, description: details, privacy: privacy, songs: songs) } }
-                            .musicPageAction(prominent: true).disabled(title.trimmingCharacters(in: .whitespaces).isEmpty || creator.state == .creating || isCreated || creator.state == .needsReconciliation)
-                            .accessibilityIdentifier("playlistCreateButton")
-                    }
+                HStack {
+                    Button(isCreated ? "Done" : "Cancel") { creator.reset(); dismiss() }.musicAction(defaultAction == .done ? .primary : .secondary).keyboardShortcut(defaultAction == .done ? .defaultAction : .cancelAction).accessibilityIdentifier("playlistCreateClose")
+                    Button("Create") { Task { await creator.create(title: title, description: details, privacy: privacy, songs: songs) } }
+                        .musicAction(defaultAction == .submit ? .primary : .secondary).keyboardShortcut(defaultAction == .submit ? .defaultAction : nil).disabled(!canCreate)
+                        .accessibilityIdentifier("playlistCreateButton")
                 }
             }
         }
-        .padding(MusicSpace.lg).frame(minWidth: 460)
+        .padding(MusicSpace.lg).frame(minWidth: 460).musicSheet().onExitCommand { creator.reset(); dismiss() }
         .accessibilityElement(children: .contain).accessibilityIdentifier("playlistCreate")
     }
+    private var isAmbiguous: Bool { if case .ambiguous = creator.state { true } else { false } }
+    private var canCreate: Bool { !isAmbiguous && !title.trimmingCharacters(in: .whitespaces).isEmpty && creator.state != .creating && !isCreated && creator.state != .needsReconciliation }
+    private var defaultAction: PlaylistSheetDefaultAction { .resolve(completed: isCreated, canSubmit: canCreate) }
     private var isCreated: Bool { if case .created = creator.state { true } else { false } }
     @ViewBuilder private var status: some View {
         switch creator.state {
@@ -58,7 +59,7 @@ public struct PlaylistCreateView: View {
             }
         case .needsReconciliation:
             HStack {
-                Label("YouTube Music didn’t confirm the new playlist. It may or may not exist.", systemImage: "questionmark.circle").font(.caption).accessibilityIdentifier("playlistCreateUnconfirmed")
+                Label("YouTube Music didn’t confirm the new playlist. It may or may not exist.", systemImage: "questionmark.circle").font(MusicPageStyle.note).accessibilityIdentifier("playlistCreateUnconfirmed")
                 Button("Check") { Task { await creator.check() } }.musicPageAction().accessibilityIdentifier("playlistCreateCheck")
             }
         case .ambiguous(let options):

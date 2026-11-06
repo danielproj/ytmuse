@@ -39,7 +39,7 @@ struct EpisodeRowExtras: View {
         if let surface {
             let progress = surface.playback.progress(for: item, pageReadAt: readAt)
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                if let summary = item.episode?.summary { Text(summary).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(2).accessibilityIdentifier("episodeSummary") }
+                if let summary = item.episode?.summary { Text(verbatim: summary).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(2).accessibilityIdentifier("episodeSummary") }
                 HStack(spacing: MusicSpace.sm) {
                     EpisodeProgressLine(progress: progress, scope: item.id)
                     Spacer(minLength: 0)
@@ -47,10 +47,10 @@ struct EpisodeRowExtras: View {
                         Button { Task { await surface.play(request) } } label: { Label(progress.resumePosition != nil ? "Resume" : "Play", systemImage: "play.fill") }
                             .labelStyle(.iconOnly).help(Text(progress.resumePosition != nil ? "Resume \(item.title)" : "Play \(item.title)"))
                             .accessibilityLabel(Text(progress.resumePosition != nil ? "Resume \(item.title)" : "Play \(item.title)"))
-                            .accessibilityIdentifier("episodePlay-" + item.id).musicButtons().disabled(surface.playbackState != .available)
+                            .accessibilityIdentifier("episodePlay-" + item.id).musicAction(.inline).disabled(surface.playbackState != .available)
                     }
                 }
-                if let text = item.videoID.flatMap({ surface.feedbackText(for: $0) }) { Text(text).font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("episodePlayFailure") }
+                if let text = item.videoID.flatMap({ surface.feedbackText(for: $0) }) { Text(text).font(MusicPageStyle.note).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("episodePlayFailure") }
             }
         }
     }
@@ -156,7 +156,7 @@ public struct PodcastPreferencesView: View {
             Picker("Default speed", selection: Binding(get: { playback.state.preferences.defaultRate }, set: { _ = playback.setDefaultRate($0) })) {
                 ForEach(PodcastRate.steps, id: \.self) { Text(PodcastRate.label($0)).tag($0) }
             }.accessibilityIdentifier("podcastDefaultRate")
-            Text("These choices are kept on this Mac only. A show you give its own speed keeps it.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+            Text("These choices are kept on this Mac only. A show you give its own speed keeps it.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
         }
     }
 }
@@ -172,12 +172,10 @@ public struct EpisodeDetailView: View {
         ScrollView {
             switch model.phase {
             case .idle, .loading:
-                ProgressView().frame(maxWidth: .infinity).padding(MusicSpace.xxl).accessibilityLabel(Text("Loading episode"))
+                LoadingState("Loading episode…")
             case .failed(let failure):
-                VStack(spacing: MusicSpace.sm) {
-                    Label(failure.message, systemImage: "exclamationmark.circle").accessibilityIdentifier("episodeFailure")
-                    Button("Try Again") { Task { await model.refresh() } }.musicButtons().accessibilityIdentifier("episodeRetry")
-                }.padding(MusicSpace.xxl).frame(maxWidth: .infinity)
+                ErrorState(title: "This episode couldn’t be loaded", detail: failure.message, retryIdentifier: "episodeRetry") { Task { await model.refresh() } }
+                    .accessibilityElement(children: .contain).accessibilityLabel(Text(verbatim: failure.message)).accessibilityIdentifier("episodeFailure")
             case .loaded(let page):
                 content(page)
             }
@@ -190,7 +188,7 @@ public struct EpisodeDetailView: View {
             MusicHeroLayout() {
                 CatalogArtworkView(thumbnails: page.thumbnails, edge: 200, corner: .feature)
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    Text(page.title).font(MusicPageStyle.title).fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader).accessibilityIdentifier("catalogTitle")
+                    Text(verbatim: page.title).font(MusicPageStyle.title).fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader).accessibilityIdentifier("catalogTitle")
                     if let show = page.show { Button(show.title) { navigator.openLink(show) }.buttonStyle(.link).accessibilityIdentifier("episodeShowLink") }
                     if !page.details.isEmpty { Text(page.details.joined(separator: String(localized: "detailSeparator"))).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeDetails") }
                     if let length = page.info.durationText { Text(length).font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeLength") }
@@ -198,15 +196,15 @@ public struct EpisodeDetailView: View {
                     actions(page, request: request, progress: progress)
                 }
             }
-            if let reason = playbackReason(surface.playbackState) { Text(reason).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodePlaybackReason") }
-            if let note = playNote(request: request) { Text(note).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodePlayNote") }
-            if let text = surface.feedbackText(for: page.videoID) { Text(text).font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("episodePlayFailure") }
+            if let reason = playbackReason(surface.playbackState) { Text(reason).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodePlaybackReason") }
+            if let note = playNote(request: request) { Text(verbatim: note).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodePlayNote") }
+            if let text = surface.feedbackText(for: page.videoID) { Text(text).font(MusicPageStyle.note).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("episodePlayFailure") }
             if let identifier = try? ServiceID(page.videoID) { DownloadCapabilityNote(media: identifier) }
             chapters(page)
             RichDescriptionView(runs: page.description)
             if !surface.playback.state.progress.isEmpty || progress.origin == .thisMac {
                 Text("Progress marked “On this Mac” is kept on this Mac only. YouTube’s own player reports its progress to YouTube Music by itself.")
-                    .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeProgressNote")
+                    .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeProgressNote")
             }
         }.musicPageContent().frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -222,40 +220,38 @@ public struct EpisodeDetailView: View {
         return String(localized: "This episode didn’t say which show to play it from, so Play isn’t offered here. Open the show to play it.")
     }
     @ViewBuilder private func actions(_ page: MusicEpisodePage, request: EpisodePlayRequest?, progress: EpisodeProgress) -> some View {
-        MusicGlassGroup {
             HStack {
                 if let request {
                     Button { Task { await surface.play(request) } } label: { Label(progress.resumePosition != nil ? "Resume" : "Play", systemImage: "play.fill") }
-                        .musicButtons(prominent: true).disabled(surface.playbackState != .available).accessibilityIdentifier("episodePlayButton")
+                        .musicAction(.primary).disabled(surface.playbackState != .available).accessibilityIdentifier("episodePlayButton")
                 }
                 Button {
                     surface.playback.mark(page.videoID, played: !progress.isPlayed, duration: EpisodeDuration.seconds(from: page.info.durationText), show: page.show?.browseID)
                 } label: { Label(progress.isPlayed ? "Mark as Unplayed" : "Mark as Played", systemImage: progress.isPlayed ? "circle" : "checkmark.circle") }
-                    .musicButtons().help(Text("Changes only what this Mac shows")).accessibilityIdentifier("episodeMarkPlayed")
+                    .musicAction(.secondary).help(Text("Changes only what this Mac shows")).accessibilityIdentifier("episodeMarkPlayed")
                 if let later = page.later, let ledger, model.signedIn { EpisodeLaterButton(ledger: ledger, later: later) }
             }
-        }
         if let later = page.later, let ledger, model.signedIn { LibraryWriteLine(ledger: ledger, keys: [.episodeLater(videoID: later.videoID)], scope: "episodeLater") }
         else if page.later != nil, !model.signedIn {
-            Label("Sign in to save this episode for later.", systemImage: "info.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeLaterNote")
+            Label("Sign in to save this episode for later.", systemImage: "info.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("episodeLaterNote")
         }
     }
     @ViewBuilder private func chapters(_ page: MusicEpisodePage) -> some View {
         let list = model.chapters
         if !list.isEmpty {
             VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                Text("Chapters").font(.title3.bold()).accessibilityAddTraits(.isHeader)
+                Text("Chapters").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
                 ForEach(list) { chapter in
                     HStack {
                         Text(EpisodeDuration.clock(chapter.start)).font(.callout.monospacedDigit()).foregroundStyle(MusicStyle.secondaryText).frame(minWidth: 52, alignment: .trailing)
-                        Text(chapter.title)
+                        Text(verbatim: chapter.title)
                         Spacer()
                         if surface.playback.current?.videoID == page.videoID {
-                            Button("Go") { Task { await surface.playback.seek(to: chapter.start) } }.musicButtons().accessibilityIdentifier("chapterGo-\(Int(chapter.start))")
+                            Button("Go") { Task { await surface.playback.seek(to: chapter.start) } }.musicAction(.inline).accessibilityIdentifier("chapterGo-\(Int(chapter.start))")
                         }
                     }.accessibilityElement(children: .combine).accessibilityIdentifier("chapterRow-\(Int(chapter.start))")
                 }
-                Text("Chapters come from the timestamps in the episode’s description.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                Text("Chapters come from the timestamps in the episode’s description.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
             }.accessibilityElement(children: .contain).accessibilityIdentifier("episodeChapters")
         }
     }

@@ -96,3 +96,23 @@ extension View {
   /// Transparency or Increase Contrast, or when not enabled, the window background is untouched.
   public func musicWindowMaterial(enabled: Bool) -> some View { modifier(MusicWindowMaterial(enabled: enabled)) }
 }
+
+/// Accent selection is independent of window transparency and accessibility effects.
+public enum MusicAccentSource: Equatable, Sendable {
+  case system, ytmuse
+  public static func resolve(_ style: AppStyle) -> Self { style == .standard ? .system : .ytmuse }
+  public var color: Color { self == .system ? .accentColor : MusicStyle.accent }
+  public var fill: Color { self == .system ? .accentColor : MusicStyle.accentFill }
+}
+private struct MusicAccentKey: EnvironmentKey { static let defaultValue = Color.accentColor }
+private struct MusicAccentFillKey: EnvironmentKey { static let defaultValue = Color.accentColor }
+extension EnvironmentValues {
+  public var musicAccent: Color {
+    get { self[MusicAccentKey.self] }
+    set { self[MusicAccentKey.self] = newValue }
+  }
+  public var musicAccentFill: Color {
+    get { self[MusicAccentFillKey.self] }
+    set { self[MusicAccentFillKey.self] = newValue }
+  }
+}

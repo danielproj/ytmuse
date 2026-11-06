@@ -36,8 +36,7 @@ public struct MediaRow: View {
                 Spacer(minLength: MusicSpace.xs)
                 if pending { ProgressView().controlSize(.small).accessibilityLabel(Text("Pending")) }
                 if let status { Text(status).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-            }.padding(.vertical, MusicSpace.sm).padding(.horizontal, MusicSpace.xs).contentShape(Rectangle())
-                .musicSelectionBackground(selected).musicHoverHighlight()
+            }.musicRow(selected: selected)
                 .musicAnimation(.selection, value: selected)
         }.buttonStyle(.borderless).accessibilityElement(children: .combine)
             .accessibilityAddTraits(selected ? [.isSelected] : []).disabled(pending)
@@ -63,7 +62,7 @@ public struct SectionShelf<Content: View>: View {
     public init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) { self.title = title; self.content = content() }
     public var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.md) {
-            Text(title).font(.title2.bold()).accessibilityAddTraits(.isHeader)
+            Text(title).font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             ScrollView(.horizontal) { LazyHStack(alignment: .top, spacing: MusicSpace.lg) { content } }.scrollIndicators(.hidden)
         }
     }
@@ -119,12 +118,13 @@ public struct LyricsPanel: View {
     }
 }
 public struct DownloadRow: View {
+    @Environment(\.musicAccent) private var accent
     let title: String; let status: LocalizedStringKey; let progress: Double?; let recovery: (() -> Void)?
     public init(title: String, status: LocalizedStringKey, progress: Double? = nil, recovery: (() -> Void)? = nil) { self.title = title; self.status = status; self.progress = progress; self.recovery = recovery }
     public var body: some View {
         VStack(alignment: .leading) {
             HStack { Text(title); Spacer(); Text(status); if let recovery { Button("Retry", action: recovery) } }
-            if let progress { ProgressView(value: min(1, max(0, progress))).tint(MusicStyle.accent).accessibilityLabel(Text("Download progress")).musicAnimation(.reveal, value: progress) }
+            if let progress { ProgressView(value: min(1, max(0, progress))).tint(accent).accessibilityLabel(Text("Download progress")).musicAnimation(.reveal, value: progress) }
         }.padding(.vertical, MusicSpace.xs).accessibilityElement(children: .contain)
     }
 }
@@ -140,16 +140,4 @@ public struct RoutePicker: View {
         Menu { Label(current, systemImage: "checkmark"); Text("Output selection is not available yet.") } label: { Label("Output", systemImage: "hifispeaker") }
             .accessibilityLabel(Text("Current output: \(current)"))
     }
-}
-public struct ErrorState: View {
-    let title: LocalizedStringKey; let message: LocalizedStringKey; let recovery: LocalizedStringKey; let action: () -> Void
-    public init(title: LocalizedStringKey, message: LocalizedStringKey, recovery: LocalizedStringKey = "Retry", action: @escaping () -> Void) { self.title = title; self.message = message; self.recovery = recovery; self.action = action }
-    public var body: some View {
-        ContentUnavailableView { Label(title, systemImage: "exclamationmark.circle") } description: { Text(message) } actions: { Button(recovery, action: action).musicButtons() }
-    }
-}
-public struct EmptyState: View {
-    let title: LocalizedStringKey; let message: LocalizedStringKey
-    public init(title: LocalizedStringKey, message: LocalizedStringKey) { self.title = title; self.message = message }
-    public var body: some View { ContentUnavailableView { Label(title, systemImage: "music.note.list") } description: { Text(message) } }
 }

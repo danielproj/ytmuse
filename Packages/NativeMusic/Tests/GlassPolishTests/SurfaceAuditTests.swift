@@ -121,10 +121,20 @@ struct AuditRecord: Codable {
             #expect(gap >= BrowserShell.sidebarTopInset + MusicSpace.xxs, "first sidebar row sits \(gap) pt below the panel top (side gap \(side))")
             #expect(gap >= MusicSpace.md, "first sidebar row sits \(gap) pt below the panel top; the highlight needs ~16 pt around it")
         }
+        for bandName in ["banner", "debugRow", "debugPlayerRow"] {
+            if let band = frames[bandName] {
+                for regionName in ["detailPanel", "trailingPanel"] {
+                    if let region = frames[regionName] {
+                        let overlap = band.intersection(region)
+                        #expect(overlap.isNull || overlap.height <= LayoutAudit.tolerance || overlap.width <= LayoutAudit.tolerance, "chrome band must not overlap content")
+                    }
+                }
+            }
+        }
         if surface.expanded {
             // The expanded player takes the detail panel's place and extends to the window's trailing/bottom margin; it never covers the sidebar or leaves the window.
             let expanded = try #require(frames["playerExpanded"]), panel = try #require(frames["detailPanel"]), sidebar = try #require(frames["sidebarPanel"])
-            #expect(abs(expanded.minX - panel.minX) <= LayoutAudit.tolerance && abs(expanded.minY - panel.minY) <= LayoutAudit.tolerance, "grows out of the detail panel's corner")
+            #expect(abs(expanded.minX - panel.minX - MusicSpace.sm) <= LayoutAudit.tolerance && abs(expanded.minY - panel.minY - MusicSpace.sm) <= LayoutAudit.tolerance, "keeps symmetric detail column margins")
             #expect(expanded.minX >= sidebar.maxX - LayoutAudit.tolerance, "does not cover the sidebar")
             #expect(abs(host.bounds.maxX - expanded.maxX - MusicSpace.sm) <= LayoutAudit.tolerance && abs(host.bounds.maxY - expanded.maxY - MusicSpace.sm) <= LayoutAudit.tolerance, "keeps the 12 pt outer margin")
             #expect(frames["playerBar"] == nil, "the bar has become the expanded player: only one exists")
@@ -145,12 +155,21 @@ struct AuditRecord: Codable {
             #expect(abs(bar.width - min(column.width - 2 * margin, PlayerCapsule.maximumWidth)) <= tolerance, "the column's width less the margins, capped at \(PlayerCapsule.maximumWidth) (\(bar.width) in a \(column.width) column)")
             #expect(abs(host.bounds.maxY - bar.maxY - margin) <= tolerance, "\(margin) pt above the window's bottom (\(host.bounds.maxY - bar.maxY))")
             #expect(column.maxX <= host.bounds.maxX + tolerance && column.minX >= sidebar.maxX - tolerance, "the column is the area beside the sidebar")
-            // No panel reaches the capsule, and each ends above it with the gap.
-            for name in ["detailPanel", "trailingPanel"] {
-                guard let panel = frames[name] else { continue }
-                #expect(!panel.intersects(bar), "\(name) \(panel) does not intersect the capsule \(bar)")
-                #expect(panel.maxY <= bar.minY - PlayerCapsule.panelGap + tolerance, "\(name) ends \(bar.minY - panel.maxY) pt above the capsule")
-            }
+            // Solid regions fill the column; their inner content retains capsule clearance.
+            let inner = try #require(frames["detailContent"])
+            #expect(inner.maxY <= bar.minY - MusicSpace.sm + tolerance, "detail content clears the player by 12 pt")
+            let detail = try #require(frames["detailPanel"])
+            #expect(detail.minY >= column.minY - tolerance && detail.maxX <= column.maxX + tolerance)
+            #expect(abs(detail.minX - column.minX) <= tolerance)
+            #expect(abs(detail.maxY - column.maxY) <= tolerance)
+            if let inspector = frames["trailingPanel"] {
+                let inspectorContent = try #require(frames["inspectorContent"])
+                #expect(abs(inspectorContent.maxY - inner.maxY) <= 1, "inspector and page content end at the same height")
+                #expect(inspectorContent.maxY <= bar.minY - MusicSpace.sm + tolerance, "inspector content clears player by 12 pt")
+                #expect(abs(inspector.minX - detail.maxX) <= tolerance)
+                #expect(abs(inspector.maxX - column.maxX) <= tolerance)
+                #expect(abs(inspector.minY - detail.minY) <= tolerance && abs(inspector.maxY - column.maxY) <= tolerance)
+            } else { #expect(abs(detail.maxX - column.maxX) <= tolerance) }
             // The sidebar uses the full height: it ends at the window's bottom margin, where the bar used to be.
             #expect(abs(host.bounds.maxY - sidebar.maxY - MusicSpace.sm) <= tolerance, "the sidebar reaches the window's bottom margin (\(host.bounds.maxY - sidebar.maxY))")
             #expect(abs(controls.midX - bar.midX) <= 1, "the transport is centred in the capsule (\(controls.midX) vs \(bar.midX))")
@@ -244,7 +263,7 @@ struct AuditRecord: Codable {
         var required: [String]
         switch item.sheet {
         case .accounts:
-            host = AuditHost(VStack { AccountsView(model: accounts.model); Button("Done") {}.musicButtons().padding() }.musicCanvas(), size: item.size, scheme: item.scheme, title: false)
+            host = AuditHost(VStack { AccountsView(model: accounts.model); Button("Done") {}.musicAction(.primary).padding() }.musicSheet(), size: item.size, scheme: item.scheme, title: false)
             required = ["accountsTitle", "accountsIntro", "accountsEmpty", "accountsStatus", "accountsActions"]
         case .palette:
             let commands = [("open", "Open Library", "books.vertical"), ("queue", "Show Queue", "list.bullet"), ("lyrics", "Show Lyrics", "quote.bubble"), ("accounts", "Manage Accounts", "person.crop.circle")]
@@ -337,7 +356,7 @@ struct AuditRecord: Codable {
         #expect(names().contains("playerExpanded") && !names().contains("playerBar"), "only one of the bar and the expanded player exists")
         for tag in ["nowPlayingArtwork", "nowPlayingControls", "nowPlayingTimeline"] { #expect(names().contains(tag), "\(tag) is on the expanded player") }
         let expanded = try #require(frame("playerExpanded")), panel = try #require(frame("detailPanel")), sidebar = try #require(frame("sidebarPanel"))
-        #expect(abs(expanded.minX - panel.minX) <= 0.75 && abs(expanded.minY - panel.minY) <= 0.75 && expanded.minX >= sidebar.maxX - 0.75)
+        #expect(abs(expanded.minX - panel.minX - MusicSpace.sm) <= 0.75 && abs(expanded.minY - panel.minY - MusicSpace.sm) <= 0.75 && expanded.minX >= sidebar.maxX - 0.75)
         #expect(expanded.maxY > bar.minY, "it contains the place the bar had")
         #expect(host.violations(expecting: ["playerExpanded", "detailPanel", "sidebarPanel"]).isEmpty)
         // The glass tint is one input across the morph: the expanded player is given exactly what the bar had (it used to arrive untinted).

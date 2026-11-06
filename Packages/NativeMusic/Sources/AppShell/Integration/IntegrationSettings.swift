@@ -41,9 +41,9 @@ struct GlobalShortcutsSection: View {
                         Text(recording == action ? String(localized: "Press a shortcut…") : chord?.label ?? String(localized: "Not set"))
                             .foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("globalShortcutValue." + action.rawValue)
                         Button(recording == action ? "Cancel" : "Record") { message = nil; recording = recording == action ? nil : action }
-                            .accessibilityIdentifier("globalShortcutRecord." + action.rawValue)
+                            .accessibilityIdentifier("globalShortcutRecord." + action.rawValue).musicAction(.secondary)
                         Button("Clear") { service.clear(action); revision += 1; message = nil }.disabled(chord == nil)
-                            .accessibilityIdentifier("globalShortcutClear." + action.rawValue)
+                            .accessibilityIdentifier("globalShortcutClear." + action.rawValue).musicAction(.inline)
                     }
                 }
                 if let message { Text(message).font(.footnote).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("globalShortcutMessage") }

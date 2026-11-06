@@ -10,7 +10,7 @@ struct CollectionHeaderView: View {
     let navigator: CatalogNavigator
     var artworkEdge: CGFloat = 200
     var body: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.md) {
+        VStack(alignment: .leading, spacing: MusicPageStyle.sectionSpacing) {
             MusicHeroLayout() {
                 CatalogArtworkView(thumbnails: header.thumbnails, edge: artworkEdge, corner: .feature)
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
@@ -109,7 +109,7 @@ public struct SongDetailView: View {
         let item = detail.item
         let offers = detail.offers(playback: model.playback)
         ScrollView {
-            VStack(alignment: .leading, spacing: MusicSpace.lg) {
+            VStack(alignment: .leading, spacing: MusicPageStyle.sectionSpacing) {
                 MusicHeroLayout() {
                     CatalogArtworkView(thumbnails: item.thumbnails, edge: 200, corner: .feature)
                     VStack(alignment: .leading, spacing: MusicSpace.xs) {
@@ -131,19 +131,17 @@ public struct SongDetailView: View {
                         .accessibilityIdentifier("songAvailability")
                 } else {
                     Label("This page was reopened without its details, so availability isn’t known. Play and Copy Link still work.", systemImage: "questionmark.circle")
-                        .accessibilityIdentifier("songAvailability")
+                        .font(MusicPageStyle.note).accessibilityIdentifier("songAvailability")
                 }
                 Label("Audio quality is chosen by YouTube Music’s own player. YTMuse doesn’t measure or select it.", systemImage: "waveform")
-                    .font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("songQuality")
-                MusicGlassGroup {
-                    MusicActionLayout() {
-                        ForEach(offers) { offer in
-                            Button { Task { await model.perform(offer.action, on: item) } } label: { Label(offer.action.title, systemImage: offer.action.symbol) }
-                                .musicPageAction(prominent: offer.action == .play).accessibilityIdentifier("songAction-" + offer.action.rawValue)
-                        }
+                    .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("songQuality")
+                MusicActionLayout() {
+                    ForEach(offers) { offer in
+                        Button { Task { await model.perform(offer.action, on: item) } } label: { Label(offer.action.title, systemImage: offer.action.symbol) }
+                            .musicAction(CatalogActionPlan.pageRole(of: offer.action, in: offers, song: true)).accessibilityIdentifier("songAction-" + offer.action.rawValue)
                     }
                 }
-                ForEach(offers) { offer in if let message = offer.unavailable { Text(message).font(.caption).foregroundStyle(MusicStyle.secondaryText) } }
+                ForEach(offers) { offer in if let message = offer.unavailable { Text(message).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText) } }
                 if let video = item.videoID, let identifier = try? ServiceID(video) { DownloadCapabilityNote(media: identifier) }
                 FeedbackLine(feedback: model.feedback[item.id])
                 SongAddToPlaylistEntry(item: item)

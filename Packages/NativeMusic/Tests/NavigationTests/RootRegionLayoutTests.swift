@@ -50,7 +50,7 @@ struct RootMode: Sendable { let qa: Bool; let banner: Bool }
         let contract = MainWindowContractState()
         // The YTMuse style's geometry (its sidebar panel in the system column); Standard is the default since APPEARANCE-STYLE, so it is stated.
         let root = LocalAccountRoot(accounts: accounts, panels: panels, navigation: navigation, showsQAReadouts: mode.qa).modifier(MainWindowContract(state: contract))
-            .environment(\.musicAppStyle, .ytmuse)
+            .environment(\.musicAppStyle, ProcessInfo.processInfo.environment["YTMUSE_AUDIT_STYLE"] == "standard" ? .standard : .ytmuse)
             .overlayPreferenceValue(BrowserRegionAnchors.self) { anchors in GeometryReader { g in
                 let origin = g.frame(in: .global).origin
                 Color.clear.preference(key: MeasuredFrames.self, value: anchors.mapValues { g[$0].offsetBy(dx: origin.x, dy: origin.y) })
@@ -84,7 +84,9 @@ struct RootMode: Sendable { let qa: Bool; let banner: Bool }
             for child in view.subviews { census(child) }
         }
         if let theme = window.contentView?.superview { census(theme) }
-        #expect(detail.maxY <= player.minY + 1)
+        #expect(abs(detail.maxY - height) <= 1)
+        let inner = try #require(frames.values["detailContent"])
+        #expect(inner.maxY <= player.minY - MusicSpace.sm + 1, "detail content clears the player by 12 pt")
         // Actual sidebar table geometry and native bottom scroll-edge occlusion.
         // Private pocket class names are test diagnostics ONLY; never product logic.
         func descendants(_ v: NSView) -> [NSView] { [v] + v.subviews.flatMap(descendants) }
@@ -134,7 +136,7 @@ struct RootMode: Sendable { let qa: Bool; let banner: Bool }
         }
         if width >= 1120 {
             let panel = try #require(frames.values["panel"]), list = try #require(frames.values["queueList"]), footer = try #require(frames.values["queueFooter"]), next = try #require(frames.values["nextPage"])
-            #expect(panel.maxY <= player.minY + 1 && list.maxY <= footer.minY + 1 && footer.maxY <= player.minY + 1 && next.maxY <= player.minY + 1)
+            #expect(abs(panel.maxY - height) <= 1 && list.maxY <= footer.minY + 1 && footer.maxY <= player.minY + 1 && next.maxY <= player.minY + 1)
         } else { #expect(!panels.allowsInline && panels.selection == .queue) }
         if mode.banner {
             func fields(_ v: NSView) -> [NSTextField] { (v as? NSTextField).map { [$0] } ?? v.subviews.flatMap(fields) }

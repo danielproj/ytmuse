@@ -33,7 +33,7 @@ struct WebMusicArtworkView: View {
             if let shown = WebCoverMemo.shared.displayed(for: player.artwork, current: image) {
                 Image(nsImage: shown).resizable().aspectRatio(contentMode: .fill)
             } else {
-                Image(systemName: "music.note").font(.title2).frame(maxWidth: .infinity, maxHeight: .infinity).background(.quaternary)
+                MusicArtworkPlaceholder(corner: .thumbnail)
             }
         }.frame(width: edge, height: edge).musicClip(corner).playerMatched("current-artwork", namespace).accessibilityHidden(true)
             .musicAnimation(.artworkColor, value: image != nil)
@@ -109,7 +109,7 @@ struct WebMusicQueueView: View {
     /// The page's own list after the playing item. An item is a button that asks the page to play it; during an ad it is off (it would end the ad early).
     @ViewBuilder private func upNext(_ summary: WebMusicQueueSummary) -> some View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
-            Text("Up next").font(.headline).accessibilityAddTraits(.isHeader).accessibilityIdentifier("musicQueueUpNextHeader")
+            Text("Up next").font(MusicPageStyle.group).accessibilityAddTraits(.isHeader).accessibilityIdentifier("musicQueueUpNextHeader")
             if summary.upcoming.isEmpty {
                 Text("Nothing else is queued after this item.").font(.callout).foregroundStyle(MusicStyle.secondaryText)
                     .accessibilityIdentifier("musicQueueEmpty")
@@ -138,14 +138,14 @@ struct WebMusicQueueRow: View {
         let title = item.title ?? "YouTube Music"
         Button { Task { await player.playQueueItem(item.videoID) } } label: {
             HStack(spacing: MusicSpace.sm) {
-                WebMusicQueueArtwork(url: item.artworkURL, edge: 36)
+                WebMusicQueueArtwork(url: item.artworkURL, edge: MusicFixedArtworkSize.row.edge)
                 VStack(alignment: .leading, spacing: MusicSpace.hairline) {
                     Text(verbatim: title).font(.body).lineLimit(1)
                     if let artist = item.artist { Text(verbatim: artist).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1) }
                 }
                 Spacer(minLength: 0)
             }.contentShape(Rectangle())
-        }.buttonStyle(.plain).musicPageRow().disabled(!enabled)
+        }.buttonStyle(.plain).musicRow().disabled(!enabled)
             .accessibilityLabel(Text("Play \(title)"))
             .accessibilityIdentifier("musicQueueItem-\(index)")
     }
@@ -173,7 +173,7 @@ struct WebMusicQueueArtwork: View {
             if let image {
                 Image(nsImage: image).resizable().aspectRatio(contentMode: .fill)
             } else {
-                Image(systemName: "music.note").font(.body).frame(maxWidth: .infinity, maxHeight: .infinity).background(.quaternary)
+                MusicArtworkPlaceholder(corner: .thumbnail)
             }
         }.frame(width: edge, height: edge).musicClip(.thumbnail).accessibilityHidden(true)
             .task(id: url) {

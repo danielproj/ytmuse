@@ -220,7 +220,7 @@ public struct NativeArtworkView: View {
             if let image {
                 Color(red: image.palette.red, green: image.palette.green, blue: image.palette.blue).opacity(image.palette.opacity)
                 Image(decorative: image.cgImage, scale: 1).resizable().aspectRatio(contentMode: .fit)
-            } else { ResonanceArtwork() }
+            } else { MusicArtworkPlaceholder() }
         }
         .musicAnimation(.artworkColor, value: image?.palette, reduceMotion: reduceMotion, lowPower: lowPower, visible: demand.visible)
         .onChange(of: publication, initial: true) { _, value in paletteChanged?(value.palette, value.identity) }

@@ -101,7 +101,7 @@ struct ExpandedPlayer<Trailing: View>: View {
             VStack(spacing: MusicSpace.md) {
                 CurrentArtwork(pipeline: artwork, request: artworkRequest, authority: artworkAuthority, namespace: namespace, expanded: true, isExpandedDestination: true,
                                visible: windowVisible, expandedEdge: 240, paletteChanged: paletteChanged)
-                    .musicElevation(.hero, tint: accent?.color)
+                    .musicClip(.artwork).musicElevation(.hero, tint: accent?.color)
                     .accessibilityElement(children: .ignore).accessibilityLabel(Text("Now Playing artwork")).accessibilityHidden(false).accessibilityIdentifier("expandedArtwork")
                     .audit("nowPlayingArtwork", group: "expandedColumn", within: "playerExpanded")
                 Text(model.currentTitle).font(.title2.weight(.semibold)).multilineTextAlignment(.center).lineLimit(2).accessibilityIdentifier("currentMediaTitle").playerMatched("player-title", namespace, .position)

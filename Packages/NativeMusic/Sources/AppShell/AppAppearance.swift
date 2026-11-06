@@ -23,18 +23,26 @@ private struct AppAppearanceModifier: ViewModifier {
 private struct AppStyleModifier: ViewModifier {
     @AppStorage(AppStyle.key, store: AppPreferences.store) private var stored = AppStyle.defaultStyle.rawValue
     let translucentWindow: Bool
+    init(translucentWindow: Bool, store: UserDefaults) {
+        self.translucentWindow = translucentWindow
+        _stored = AppStorage(wrappedValue: AppStyle.defaultStyle.rawValue, AppStyle.key, store: store)
+    }
 
     func body(content: Content) -> some View {
         // The material is a sibling inside `musicWindowMaterial`, so this modifier never wraps `content` in a branch: a Style switch is live
         // and keeps the window's navigation, scroll positions and web views.
+        let accent = MusicAccentSource.resolve(AppStyle(storedValue: stored))
         content.musicWindowMaterial(enabled: translucentWindow)
+            .environment(\.musicAccent, accent.color)
+            .environment(\.musicAccentFill, accent.fill)
+            .tint(accent.color)
             .environment(\.musicAppStyle, AppStyle(storedValue: stored))
     }
 }
 
 extension View {
     func appAppearance() -> some View { modifier(AppAppearanceModifier()) }
-    func appStyle(translucentWindow: Bool = false) -> some View { modifier(AppStyleModifier(translucentWindow: translucentWindow)) }
+    func appStyle(translucentWindow: Bool = false, store: UserDefaults = AppPreferences.store) -> some View { modifier(AppStyleModifier(translucentWindow: translucentWindow, store: store)) }
 }
 
 struct AppAppearanceWindowBridge: NSViewRepresentable {

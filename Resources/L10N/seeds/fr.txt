@@ -340,3 +340,9 @@ Q40|one:%lld lecture	many:%lld de lectures	other:%lld lectures
 1619|Standard
 1620|YTMuse est l’apparence sombre propre à l’app. Standard suit macOS : dans la fenêtre principale, le bureau transparaît à travers la barre latérale, et les autres fenêtres utilisent le fond du système.
 1621|Avec le style Standard, la fenêtre n’a pas de fond teinté : seul le lecteur est teinté.
+1622|Impossible de charger les paroles
+1623|Impossible de charger cet épisode
+1624|Impossible de lire cette playlist
+1625|Chargement des paroles…
+1626|Chargement de l’épisode…
+1627|Chargement des Samples…

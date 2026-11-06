@@ -17,7 +17,7 @@ struct MusicLibraryList: View {
     var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.xxs) {
             HStack {
-                Text("Your playlists").font(.title2.bold()).accessibilityAddTraits(.isHeader)
+                Text("Your playlists").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
                 Spacer()
                 if accounts.proofLoading { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading library")) }
             }
@@ -50,12 +50,12 @@ struct MusicLibraryList: View {
                 }
             }
         case .expired:
-            ErrorState(title: "Session expired", message: "Sign in again to play your library.", recovery: "Retry") { Task { await accounts.loadProof() } }
+            ErrorState(title: "Session expired", message: "Sign in again to play your library.", recovery: "Try Again") { Task { await accounts.loadProof() } }
         case .unrecognised, .failed:
-            ErrorState(title: "Your library could not be read", message: "Nothing was changed. Try reading your library again.", recovery: "Retry") { Task { await accounts.loadProof() } }
+            ErrorState(title: "Your library could not be read", message: "Nothing was changed. Try reading your library again.", recovery: "Try Again") { Task { await accounts.loadProof() } }
         case .none:
             if !accounts.proofLoading {
-                Button("Show Library") { Task { await accounts.loadProof() } }.accessibilityIdentifier("showLibrary").musicButtons()
+                Button("Show Library") { Task { await accounts.loadProof() } }.accessibilityIdentifier("showLibrary").musicAction(.secondary)
             }
         }
     }
@@ -121,7 +121,7 @@ struct WebMusicTransportContent: View {
     private func titleBlock(_ state: WebMusicSnapshot) -> some View {
         VStack(alignment: .leading, spacing: MusicSpace.hairline) {
             HStack(spacing: MusicSpace.xs) {
-                Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(.system(size: compact ? 13 : 14, weight: .semibold)).lineLimit(1)
+                Text(state.title ?? state.playlistTitle ?? "YouTube Music").font(PlayerCapsule.titleFont(compact: compact)).lineLimit(1)
                     .accessibilityIdentifier("musicTitle").playerMatched("player-title", namespace, .position)
                 if state.isAd {
                     MusicBadge("Ad", style: .advertisement).fixedSize()
@@ -185,6 +185,7 @@ struct WebMusicTransportContent: View {
 /// (coalesced to whole seconds, silent while the window is hidden) plus the coarse
 /// snapshot fields that decide whether seeking is possible.
 struct WebMusicTimelineView: View {
+    @Environment(\.musicAccent) private var musicAccent
     let player: WebMusicPlayer
     /// The expanded player's slim look: a 4 pt track, an accent fill and a small knob only under the pointer or while dragged (the times stay beside it).
     var plain = false
@@ -215,7 +216,7 @@ struct WebMusicTimelineView: View {
             if plain {
                 MusicSlimSlider(fraction: shown / span, active: hovering || dragging || focused, enabled: state.canSeek, thickness: PlayerCapsule.seekHoverThickness) { slider }
                     .onHover { hovering = $0 }
-            } else { slider.tint(MusicStyle.accent) }
+            } else { slider.tint(musicAccent) }
             Text(state.isAd || state.isLive ? "" : "-" + Self.format(max(0, state.duration - (preview ?? position)))).monospacedDigit().frame(minWidth: 40)
                 .accessibilityIdentifier("musicRemaining")
         }.font(.caption).foregroundStyle(MusicStyle.secondaryText)
@@ -228,6 +229,7 @@ struct WebMusicTimelineView: View {
 /// Previous / Play-Pause / Next of the YouTube Music transport. One definition for the bar and the expanded player, so the controls keep their
 /// identifiers and their identity across the morph; only one of the two exists at a time.
 struct WebMusicControlsView: View {
+    @Environment(\.musicAccentFill) private var musicAccentFill
     let player: WebMusicPlayer
     var large = false
     var namespace: Namespace.ID? = nil
@@ -248,7 +250,7 @@ struct WebMusicControlsView: View {
                     Label(state.intent ? "Pause" : "Play", systemImage: state.intent ? "pause.fill" : "play.fill")
                         .contentTransition(.symbolEffect(.replace))
                 }
-            }.disabled(state.phase == .idle).musicButtons(prominent: true).tint(MusicStyle.accentFill).buttonBorderShape(.circle).accessibilityIdentifier("musicPlayPause")
+            }.disabled(state.phase == .idle).musicButtons(prominent: true).tint(musicAccentFill).buttonBorderShape(.circle).accessibilityIdentifier("musicPlayPause")
                 .musicAnimation(.playPause, value: state.intent)
             Button { Task { await player.next() } } label: { Label("Next", systemImage: "forward.end.fill") }
                 .disabled(!state.canSkip).accessibilityIdentifier("musicNext")

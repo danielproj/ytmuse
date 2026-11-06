@@ -43,10 +43,8 @@ public struct QueueSaveAsPlaylistEntry: View {
                     Label("No song in this queue is a YouTube Music song this app knows, so there is nothing to save as a playlist.", systemImage: "info.circle")
                         .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("queueSaveNothing")
                 } else {
-                    MusicGlassGroup {
-                        Button("Save Queue as Playlist…") { surface.creator.reset(); saving = true }.musicButtons().accessibilityIdentifier("queueSaveAsPlaylist")
-                    }
-                    if leftOut > 0 { Text("\(leftOut) items that aren’t YouTube Music songs are left out.").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("queueSaveLeftOut") }
+                    Button("Save Queue as Playlist…") { surface.creator.reset(); saving = true }.musicAction(.secondary).accessibilityIdentifier("queueSaveAsPlaylist")
+                    if leftOut > 0 { Text("\(leftOut) items that aren’t YouTube Music songs are left out.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("queueSaveLeftOut") }
                 }
             }
             .sheet(isPresented: $saving) { PlaylistCreateView(creator: surface.creator, songs: songs) { _ in } }

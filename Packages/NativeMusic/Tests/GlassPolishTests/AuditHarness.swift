@@ -55,7 +55,7 @@ enum AuditScheme: String, CaseIterable, Sendable { case light, dark
 /// An offscreen window hosting one SwiftUI surface, never ordered where a person sees it and never key.
 @MainActor final class AuditHost {
     /// The style every audit host renders in (see the hosting line below).
-    static let style = AppStyle.ytmuse
+    static let style: AppStyle = ProcessInfo.processInfo.environment["YTMUSE_AUDIT_STYLE"] == "standard" ? .standard : .ytmuse
     let window: OffscreenAuditWindow
     let controller: NSHostingController<AnyView>
     let box = FrameBox()

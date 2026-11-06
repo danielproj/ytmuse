@@ -49,7 +49,7 @@ struct NowPlayingFullScreenView: View {
                     Picker("Panel", selection: $panel) { ForEach([Panel.queue, .lyrics], id: \.self) { Text(LocalizedStringKey($0.rawValue)).tag($0) } }
                         .pickerStyle(.segmented).labelsHidden().padding([.horizontal, .top], MusicSpace.sm).accessibilityIdentifier("fullScreenPanelPicker")
                     if panel == .queue { shell.queuePanel() } else { shell.lyricsPanel() }
-                }.frame(width: Self.panelWidth).musicSurface(.panel).audit("fullScreenPanel", group: "expandedRow", within: "playerExpanded")
+                }.frame(width: Self.panelWidth).musicInspector().audit("fullScreenPanel", group: "expandedRow", within: "playerExpanded")
                     .accessibilityElement(children: .contain).accessibilityIdentifier("fullScreenPanel")
             }
         }
