@@ -48,8 +48,8 @@ struct AccountsSettingsPane: View {
                         Text(Self.state(identity.state)).font(.footnote).foregroundStyle(MusicStyle.secondaryText)
                     }
                     Spacer()
-                    Button("Clear Cache") { Task { await clear(identity) } }.accessibilityIdentifier("clearCache." + identity.id.accountID.uuidString)
-                    Button("Remove from This Mac…", role: .destructive) { pendingRemoval = identity }.accessibilityIdentifier("removeAccount." + identity.id.accountID.uuidString)
+                    Button("Clear Cache") { Task { await clear(identity) } }.accessibilityIdentifier("clearCache." + identity.id.accountID.uuidString).musicAction(.secondary)
+                    Button("Remove from This Mac…", role: .destructive) { pendingRemoval = identity }.accessibilityIdentifier("removeAccount." + identity.id.accountID.uuidString).musicAction(.secondary)
                 }
             }
             if let message { Text(message).font(.footnote).accessibilityIdentifier("settingsAccountMessage") }
@@ -103,7 +103,7 @@ struct StorageSettingsPane: View {
                 Text(breakdown.reconciles ? "These figures add up to what the download engine and the artwork cache report." : "These figures do not add up to what the owners report. Open Diagnostics.")
                     .font(.footnote).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("storageReconciles")
             } else { ProgressView().accessibilityIdentifier("storageLoading") }
-            Button("Refresh") { Task { breakdown = await accounts.storageBreakdown() } }.accessibilityIdentifier("storageRefresh")
+            Button("Refresh") { Task { breakdown = await accounts.storageBreakdown() } }.accessibilityIdentifier("storageRefresh").musicAction(.secondary)
         }.task { breakdown = await accounts.storageBreakdown() }
     }
 }
@@ -124,7 +124,7 @@ struct PrivacySettingsPane: View {
                 Text("Resets YTMuse on this Mac: it removes every account's sign-in and local data, clears caches and the Spotlight and widget copies, and restores every setting. It does not delete anything from YouTube Music or your Google account, and it does not send any request.")
                     .font(.footnote).foregroundStyle(MusicStyle.secondaryText)
                 RootsReadout(accounts: accounts)
-                Button("Reset All Local Data…", role: .destructive) { confirming = true }.disabled(running || accounts.eraser == nil).accessibilityIdentifier("resetLocalData")
+                Button("Reset All Local Data…", role: .destructive) { confirming = true }.disabled(running || accounts.eraser == nil).accessibilityIdentifier("resetLocalData").musicAction(.secondary)
                 if let result { Text(result).font(.footnote).accessibilityIdentifier("resetLocalDataResult") }
             }
         }.confirmationDialog("Reset all local data on this Mac?", isPresented: $confirming) {
@@ -180,7 +180,7 @@ struct DiagnosticsSettingsPane: View {
             }
             Section("Support bundle") {
                 Text("A redacted summary you can read before saving. It holds no media, credentials, names, searches or links, and nothing is sent anywhere.").font(.footnote).foregroundStyle(MusicStyle.secondaryText)
-                Button("Preview Support Bundle…") { Task { bundle = await accounts.diagnostics?.bundle() } }.disabled(accounts.diagnostics == nil).accessibilityIdentifier("previewBundle")
+                Button("Preview Support Bundle…") { Task { bundle = await accounts.diagnostics?.bundle() } }.disabled(accounts.diagnostics == nil).accessibilityIdentifier("previewBundle").musicAction(.secondary)
                 if let exportMessage { Text(exportMessage).font(.footnote).accessibilityIdentifier("bundleExportMessage") }
             }
         }
@@ -231,12 +231,12 @@ struct DiagnosticsSettingsPane: View {
         let close: () -> Void
         var body: some View {
             VStack(alignment: .leading, spacing: MusicSpace.sm) {
-                Text("Support Bundle Preview").font(.title3.bold())
+                Text("Support Bundle Preview").font(MusicPageStyle.sheetTitle)
                 Text("Exactly this text is saved. \(bundle.redactions) items were redacted. No media, credentials, names, searches or links are included.").font(.footnote).foregroundStyle(MusicStyle.secondaryText)
                 ScrollView { Text(bundle.text).font(.system(.caption, design: .monospaced)).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading).accessibilityIdentifier("bundlePreviewText") }
                     .frame(minHeight: 260)
-                HStack { Button("Close", action: close).accessibilityIdentifier("bundleClose"); Spacer(); Button("Save…", action: export).accessibilityIdentifier("bundleSave").musicPageAction(prominent: true) }
-            }.padding(MusicSpace.lg).frame(width: 560, height: 460)
+                HStack { Spacer(); Button("Done", action: close).keyboardShortcut(.cancelAction).accessibilityIdentifier("bundleClose").musicAction(.secondary); Button("Save…", action: export).keyboardShortcut(.defaultAction).accessibilityIdentifier("bundleSave").musicAction(.primary) }
+            }.padding(MusicSpace.lg).frame(width: 560, height: 460).musicSheet()
         }
     }
 }

@@ -68,18 +68,16 @@ struct BrowserShell: View {
                 if showsQAReadouts { debugQARow.fixedSize(horizontal: false, vertical: true) }
                 debugPlayerRow.fixedSize(horizontal: false, vertical: true)
                 #endif
-                HStack(spacing: MusicSpace.sm) {
-                    destination.musicContentZoom().id(navigation.session.current.id).musicTransition(.reveal).musicAnimation(navigationMotion, value: navigation.session.current.id, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background).frame(maxWidth: .infinity, maxHeight: .infinity).scrollEdgeEffectStyle(.soft, for: .bottom).musicSurface().audit("detailPanel", group: "panels", kind: .region)
+                HStack(spacing: 0) {
+                    destination.musicContentZoom().id(navigation.session.current.id).musicTransition(.reveal).musicAnimation(navigationMotion, value: navigation.session.current.id, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background).frame(maxWidth: .infinity, maxHeight: .infinity).scrollEdgeEffectStyle(.soft, for: .bottom).browserRegion("detailContent").padding(.bottom, PlayerCapsule.bottomReserve(compact: layout.compactPlayer)).musicContentRegion().audit("detailPanel", group: "content", kind: .layer)
                         .transformAnchorPreference(key: ShellPanelAnchor.self, value: .bounds) { $0.panel = $1 }
                         .opacity(expanded ? 0 : 1).allowsHitTesting(!expanded).accessibilityHidden(expanded)
                     if let trailing = panels.selection, panels.allowsInline, !expanded {
-                        trailingPanel(trailing).musicContentZoom().frame(minWidth: 300, idealWidth: 320, maxWidth: 420).scrollEdgeEffectStyle(.soft, for: .bottom).musicSurface().audit("trailingPanel", group: "panels", kind: .region).browserRegion("panel").accessibilityElement(children: .contain).accessibilityIdentifier("inlineTrailingPanel")
+                        trailingPanel(trailing).musicContentZoom().frame(minWidth: 300, idealWidth: 320, maxWidth: 420).audit("inspectorContent", group: "content", kind: .layer).padding(.bottom, PlayerCapsule.bottomReserve(compact: layout.compactPlayer)).musicInspector().audit("trailingPanel", group: "content", kind: .layer).browserRegion("panel").accessibilityElement(children: .contain).accessibilityIdentifier("inlineTrailingPanel")
                             .musicTransition(.slideFromTrailing)
                     }
-                // The capsule floats over the bottom of this column (in the player layer, so it can become the expanded player). The panels end above it,
-                // with a gap, and nothing scrolls behind it: this padding is that room.
-                }.padding(MusicSpace.sm).frame(maxWidth: .infinity, maxHeight: .infinity).browserRegion("detail")
-                    .padding(.bottom, PlayerCapsule.occupiedHeight(compact: layout.compactPlayer))
+                // Solid regions reach the column edges; inner content keeps clearance for the floating capsule.
+                }.frame(maxWidth: .infinity, maxHeight: .infinity).browserRegion("detail")
                 }.frame(width: available.size.width, height: available.size.height).audit("detailColumn", group: "column", kind: .layer)
                     .transformAnchorPreference(key: ShellPanelAnchor.self, value: .bounds) { $0.column = $1 }
                 }
@@ -90,9 +88,9 @@ struct BrowserShell: View {
             .onChange(of: layout.showsTrailing, initial: true) { _, value in panels.allowsInline = value }
             .sheet(isPresented: Binding(get: { panels.presentsSheet }, set: { panels.sheetChanged($0) })) {
                 VStack {
-                    if let trailing = panels.selection { trailingPanel(trailing) }
-                    Button("Done") { panels.selection = nil }.keyboardShortcut(.cancelAction).musicButtons().padding()
-                }.frame(minWidth: 340, minHeight: 360).musicCanvas().accessibilityElement(children: .contain).accessibilityIdentifier("compactTrailingPanel")
+                    if let trailing = panels.selection { trailingPanel(trailing).musicInspector() }
+                    Button("Done") { panels.selection = nil }.keyboardShortcut(.defaultAction).musicAction(.primary).padding()
+                }.frame(minWidth: 340, minHeight: 360).musicSheet().onExitCommand { panels.selection = nil }.accessibilityElement(children: .contain).accessibilityIdentifier("compactTrailingPanel")
             }
         }.background {
             MusicCanvas(artworkAccent: tint.displayed(for: accounts.artworkRequest, authority: accounts.artworkAuthority).map { Color(red: $0.red, green: $0.green, blue: $0.blue) })
@@ -150,8 +148,10 @@ struct BrowserShell: View {
             }
         }
         .sheet(isPresented: $showAccounts) {
-            VStack { AccountsView(model: accounts.model); Button("Done") { showAccounts = false }.keyboardShortcut(.cancelAction).musicButtons().padding() }
-                .musicCanvas().musicSignInSheet(accounts.model.signIn)
+            // DESIGN-ALIGN: Done is the sheet's default (Return) button, as Apple asks of a primary button; Escape still closes it.
+            VStack { AccountsView(model: accounts.model); Button("Done") { showAccounts = false }.keyboardShortcut(.defaultAction).musicAction(.primary).padding() }
+                .onExitCommand { showAccounts = false }
+                .musicSheet().musicSignInSheet(accounts.model.signIn)
         }
         // Google's sign-in page presents from the top sheet of this window only.
         .musicSignInSheet(accounts.model.signIn, enabled: !showAccounts)
@@ -341,12 +341,12 @@ struct BrowserShell: View {
                                            accent: playerAccent, accentChanged: { webAccent = $0 }, namespace: artworkNamespace, windowVisible: windowVisible, collapse: collapseNowPlaying, showQueue: { toggle(.queue) }, compact: layout.compactPlayer) {
                                 if let trailing = panels.selection, panels.allowsInline {
                                     trailingPanel(trailing).frame(minWidth: 300, idealWidth: 320, maxWidth: 420)
-                                        .background(MusicCorner.panel.shape.fill(Color.primary.opacity(0.06)))
+                                        .musicInspector()
                                         .browserRegion("panel").audit("expandedQueuePanel", group: "expandedRow", within: "playerExpanded")
                                         .accessibilityElement(children: .contain).accessibilityIdentifier("inlineTrailingPanel")
                                 }
                             }
-                            .padding(.trailing, MusicSpace.sm).padding(.bottom, MusicSpace.sm)
+                            .padding(MusicSpace.sm)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .musicTransition(.morphSwap)
                         } else {
@@ -445,10 +445,10 @@ struct BrowserShell: View {
             }, boundary: QueuePageBoundary(previous: page > 0 ? queueRow(entries[page * 80 - 1]) : nil, following: entries.dropFirst((page + 1) * 80).prefix(2).map(queueRow)), page: page, move: { ids, target in moveQueue(ids, target: target) }) { id in selectQueue(id) }.browserRegion("queueList")
             if entries.count > 80 {
                 HStack {
-                    Button("Previous page") { queuePage = max(0, page - 1) }.disabled(page == 0)
+                    Button("Previous page") { queuePage = max(0, page - 1) }.musicAction(.secondary).disabled(page == 0)
                     Text("Page \(page + 1)").font(.caption)
-                    Button("Next page") { queuePage = page + 1 }.disabled((page + 1) * 80 >= entries.count).browserRegion("nextPage")
-                }.musicButtons().padding(MusicSpace.xs).browserRegion("queueFooter")
+                    Button("Next page") { queuePage = page + 1 }.musicAction(.secondary).disabled((page + 1) * 80 >= entries.count).browserRegion("nextPage")
+                }.padding(MusicSpace.xs).browserRegion("queueFooter")
             }
         }
     }
@@ -544,8 +544,8 @@ struct WindowHistoryBanner: View {
         if let failure {
             VStack {
                 Text(LocalizedStringKey(failure)).accessibilityIdentifier("windowHistoryNotice")
-                Button("Reset saved window state…", action: reset).accessibilityIdentifier("resetWindowState")
-            }.padding(MusicSpace.sm).musicSurface().padding(MusicSpace.sm).browserRegion("banner")
+                Button("Reset saved window state…", action: reset).musicAction(.secondary).accessibilityIdentifier("resetWindowState")
+            }.padding(MusicSpace.sm).musicInsetSurface().padding(MusicSpace.sm).browserRegion("banner")
         }
     }
 }

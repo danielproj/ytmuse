@@ -57,7 +57,7 @@ struct ShellQueuePanel: View {
         } else {
             VStack(spacing: MusicSpace.xs) {
                 Text("The queue is shown in the main window.").font(.callout)
-                Button("Show Queue in Window") { shell.showQueue() }.musicButtons()
+                Button("Show Queue in Window") { shell.showQueue() }.musicAction(.secondary)
             }.padding(MusicSpace.md).frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }

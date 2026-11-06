@@ -137,14 +137,14 @@ struct CatalogCard: View {
         switch CardArtworkAction.of(item) {
         case .play?:
             Button { Task { await model.perform(.play, on: item) } } label: { image.contentShape(MusicCorner.artwork.shape(edge: edge)) }
-                .buttonStyle(.plain).musicHoverLift().help(Text("Play \(item.title)"))
+                .buttonStyle(.plain).musicCard().help(Text("Play \(item.title)"))
                 .accessibilityHidden(true).accessibilityIdentifier("catalogArtwork-" + item.id)
         case .open?:
             Button { navigator.openItem(item) } label: { image.contentShape(MusicCorner.artwork.shape(edge: edge)) }
-                .buttonStyle(.plain).musicHoverLift().help(Text("Open \(item.title)"))
+                .buttonStyle(.plain).musicCard().help(Text("Open \(item.title)"))
                 .accessibilityHidden(true).accessibilityIdentifier("catalogArtwork-" + item.id)
         case nil:
-            image.musicHoverLift()
+            image
         }
     }
 }
@@ -180,8 +180,8 @@ struct CatalogRow: View {
             HStack(spacing: MusicSpace.sm) {
                 Button { if item.opensPage { navigator.openItem(item) } } label: {
                     HStack(spacing: MusicSpace.sm) {
-                        if let position = item.position { Text(position).font(.callout.monospacedDigit()).foregroundStyle(MusicStyle.secondaryText).frame(minWidth: 24, alignment: .trailing) }
-                        if showsArtwork { CatalogArtworkView(thumbnails: item.thumbnails, edge: 44, corner: .thumbnail) }
+                        if let position = item.position { Text(position).font(.callout.monospacedDigit()).foregroundStyle(MusicStyle.secondaryText).frame(minWidth: MusicPageStyle.iconColumn, alignment: .trailing) }
+                        if showsArtwork { CatalogArtworkView(thumbnails: item.thumbnails, edge: MusicFixedArtworkSize.row.edge, corner: .thumbnail) }
                         VStack(alignment: .leading, spacing: MusicSpace.hairline) {
                             HStack(spacing: MusicSpace.xxs) { Text(item.title).font(.body).lineLimit(2); if item.explicit { ExplicitBadge() } }
                             let line = item.detailLine()
@@ -207,7 +207,7 @@ struct CatalogRow: View {
             }
             FeedbackLine(feedback: model.feedback[item.id])
         }
-        .musicPageRow()
+        .musicRow()
         .songDraggable(videoID: item.videoID, title: item.title, kind: item.kind)
         .directPlaylistMenu(addition: DirectPlaylistAddition.candidate(item), identifier: "catalogAddToPlaylist-" + item.id) {
             ItemMenu(item: item, model: model, navigator: navigator)
@@ -221,10 +221,7 @@ struct CategoryTile: View {
     let item: MusicCatalogItem
     let navigator: CatalogNavigator
     var body: some View {
-        Button { navigator.openItem(item) } label: {
-            Text(item.title).font(.callout.weight(.medium)).multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-        }.musicButtons().buttonBorderShape(.capsule).controlSize(.regular)
+        DesignSystem.MusicChip(verbatim: item.title, isSelected: false) { navigator.openItem(item) }
             .accessibilityIdentifier("catalogCategory-" + item.id)
     }
 }
@@ -331,17 +328,15 @@ struct PageActionsBar: View {
             let offers = CatalogActionPlan.offers(for: actions, playback: model.playback)
             VStack(alignment: .leading, spacing: MusicSpace.xs) {
                 if !offers.isEmpty {
-                    MusicGlassGroup {
-                        MusicActionLayout() {
-                            ForEach(offers) { offer in
-                                Button { Task { await model.perform(offer.action) } } label: { Label(offer.action.title, systemImage: offer.action.symbol) }
-                                    .musicPageAction(prominent: offer.action == offers.first?.action).accessibilityIdentifier("pageAction-" + offer.action.rawValue)
-                            }
+                    MusicActionLayout() {
+                        ForEach(offers) { offer in
+                            Button { Task { await model.perform(offer.action) } } label: { Label(offer.action.title, systemImage: offer.action.symbol) }
+                                .musicAction(CatalogActionPlan.pageRole(of: offer.action, in: offers, song: false)).accessibilityIdentifier("pageAction-" + offer.action.rawValue)
                         }
                     }
                 }
                 ForEach(offers) { offer in
-                    if let message = offer.unavailable { Text(message).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("pageActionReason") }
+                    if let message = offer.unavailable { Text(message).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("pageActionReason") }
                 }
                 ForEach([CatalogAction.play, .shuffle, .radio], id: \.self) { action in FeedbackLine(feedback: model.feedback["page:" + action.rawValue]) }
                 let controls = (model.signedIn ? ledger.map { LibraryControls.make(page: actions, ledger: $0) } : nil) ?? []
@@ -349,7 +344,7 @@ struct PageActionsBar: View {
                     LibraryControlRow(ledger: ledger, controls: controls, identifier: "page", showsTitles: true)
                     LibraryWriteLine(ledger: ledger, keys: controls.map(\.key).uniqued(), scope: "page")
                 } else if let note = CatalogActionPlan.writeNote(for: actions, signedIn: model.signedIn) {
-                    Label(note, systemImage: "info.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("catalogWriteNote")
+                    Label(note, systemImage: "info.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("catalogWriteNote")
                 }
             }
         }
@@ -364,13 +359,11 @@ struct PageShareBar: View {
     var body: some View {
         if model.header != nil, model.pageLink != nil {
             VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                MusicGlassGroup {
-                    MusicActionLayout() {
-                        Button { model.sharePage() } label: { Label(CatalogAction.share.title, systemImage: CatalogAction.share.symbol) }
-                            .musicPageAction().accessibilityIdentifier("pageAction-share")
-                        Button { model.copyPageLink() } label: { Label(CatalogAction.copyLink.title, systemImage: CatalogAction.copyLink.symbol) }
-                            .musicPageAction().accessibilityIdentifier("pageAction-copyLink")
-                    }
+                MusicActionLayout() {
+                    Button { model.sharePage() } label: { Label(CatalogAction.share.title, systemImage: CatalogAction.share.symbol) }
+                        .musicPageAction().accessibilityIdentifier("pageAction-share")
+                    Button { model.copyPageLink() } label: { Label(CatalogAction.copyLink.title, systemImage: CatalogAction.copyLink.symbol) }
+                        .musicPageAction().accessibilityIdentifier("pageAction-copyLink")
                 }
                 FeedbackLine(feedback: model.feedback[CatalogPageModel.pageShareKey])
                 FeedbackLine(feedback: model.feedback[CatalogPageModel.pageCopyKey])
@@ -387,7 +380,7 @@ struct FreshnessLine: View {
             if model.isRefreshing { ProgressView().controlSize(.small) }
             Text(status).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("catalogFreshness")
             if model.leftOut > 0 {
-                Text(String(localized: "\(model.leftOut) items couldn’t be shown")).font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                Text(String(localized: "\(model.leftOut) items couldn’t be shown")).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
                     .accessibilityIdentifier("catalogLeftOut")
             }
         }

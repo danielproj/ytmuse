@@ -86,21 +86,28 @@ private struct HostWindowReader: NSViewRepresentable {
   }
 }
 
-/// Native glass frame around Google's page. The page itself is Google's; the
+/// Native frame around Google's page. The page itself is Google's; the
 /// header, address, progress, cancel and result states are YTMuse's.
 public struct MusicSignInSheet: View {
   @Bindable private var signIn: WebMusicSignIn
   @Environment(\.colorSchemeContrast) private var contrast
   public init(signIn: WebMusicSignIn) { self.signIn = signIn }
   public var body: some View {
-    MusicGlassGroup {
-      VStack(spacing: MusicStyle.spacing) {
+      VStack(spacing: MusicSpace.md) {
         header
         page
-      }.padding(MusicStyle.spacing)
-    }
+        HStack {
+          Spacer()
+          if case .failed = signIn.phase {
+            Button("Done") { signIn.close() }.keyboardShortcut(.defaultAction).musicAction(.primary).accessibilityIdentifier("cancelMusicSignIn")
+          } else {
+            Button("Cancel", role: .cancel) { signIn.close() }.keyboardShortcut(.cancelAction).musicAction(.secondary).accessibilityIdentifier("cancelMusicSignIn")
+          }
+        }
+      }.padding(MusicSpace.md)
     .frame(minWidth: 540, idealWidth: 580, minHeight: 700, idealHeight: 760)
-    .musicCanvas()
+    .musicSheet()
+    .onExitCommand { signIn.close() }
     .musicAnimation(.reveal, value: signIn.phase)
   }
   private var header: some View {
@@ -109,17 +116,15 @@ public struct MusicSignInSheet: View {
         Image(nsImage: NSApplication.shared.applicationIconImage).resizable().aspectRatio(contentMode: .fit)
           .frame(width: 40, height: 40).accessibilityHidden(true)
         VStack(alignment: .leading, spacing: MusicSpace.hairline) {
-          Text("Sign in to YouTube Music").font(.title3.bold())
+          Text("Sign in to YouTube Music").font(MusicPageStyle.sheetTitle)
           Text("You’re on Google’s own sign-in page. YTMuse never sees or stores your password.")
-            .font(.callout).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+            .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
         }
-        Spacer(minLength: MusicStyle.compact)
-        Button(cancelLabel, role: .cancel) { signIn.close() }
-          .keyboardShortcut(.cancelAction).accessibilityIdentifier("cancelMusicSignIn").musicPageAction()
+        Spacer(minLength: MusicSpace.xs)
       }
-      HStack(spacing: MusicStyle.compact) {
+      HStack(spacing: MusicSpace.xs) {
         Image(systemName: "lock.fill").foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
-        Text(signIn.host ?? "accounts.google.com").font(.callout.monospaced())
+        Text(verbatim: signIn.host ?? "accounts.google.com").font(.callout.monospaced())
           .foregroundStyle(MusicStyle.secondaryText).lineLimit(1).truncationMode(.middle)
           .accessibilityLabel("Secure page: \(signIn.host ?? "accounts.google.com")")
         Spacer()
@@ -128,11 +133,7 @@ public struct MusicSignInSheet: View {
         ProgressView(value: signIn.progress).progressViewStyle(.linear).controlSize(.small)
           .accessibilityLabel("Loading Google sign-in")
       }
-    }.padding(MusicStyle.spacing).musicInsetSurface()
-  }
-  private var cancelLabel: String {
-    if case .failed = signIn.phase { return "Close" }
-    return "Cancel"
+    }.padding(MusicSpace.md).musicInsetSurface()
   }
   private var showsProgress: Bool {
     (signIn.phase == .loading || signIn.phase == .waitingForUser) && signIn.progress < 1
@@ -161,15 +162,14 @@ public struct MusicSignInSheet: View {
                 detail: String(localized: "Reading your account name. Nothing in your library is changed."))
     case .failed(let failure):
       StateCard(symbol: MusicSignInFeedback.symbol(for: failure), title: "Sign-in didn’t finish",
-                detail: MusicSignInFeedback.message(for: failure)) {
-        Button("Close") { signIn.close() }.keyboardShortcut(.defaultAction).musicPageAction(prominent: true)
-      }.accessibilityIdentifier("musicSignInFailure")
+                detail: MusicSignInFeedback.message(for: failure)).accessibilityIdentifier("musicSignInFailure")
     default: EmptyView()
     }
   }
 }
 
 private struct StateCard<Actions: View>: View {
+  @Environment(\.musicAccent) private var accent
   let symbol: String?
   let title: String
   let detail: String?
@@ -180,19 +180,19 @@ private struct StateCard<Actions: View>: View {
   var body: some View {
     VStack(spacing: MusicSpace.sm) {
       if let symbol {
-        Image(systemName: symbol).font(.system(size: 34, weight: .medium)).foregroundStyle(MusicStyle.accent)
+        Image(systemName: symbol).font(.largeTitle.weight(.medium)).foregroundStyle(accent)
           .accessibilityHidden(true)
       } else {
         ProgressView().controlSize(.large)
       }
       Text(title).font(.headline).multilineTextAlignment(.center)
       if let detail {
-        Text(detail).font(.callout).foregroundStyle(MusicStyle.secondaryText)
+        Text(verbatim: detail).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
           .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
       }
       actions
     }
-    .padding(MusicStyle.inset).frame(maxWidth: 380).musicInsetSurface()
+    .padding(MusicSpace.md).frame(maxWidth: 380).musicInsetSurface()
     .accessibilityElement(children: .contain)
   }
 }
@@ -234,6 +234,7 @@ struct WebContentHost: NSViewRepresentable {
 /// TH2: the account photo. The bytes are decoded OFF the main actor (`AvatarDecoding`), to a raster no larger than the 60-point circle needs at 3x, and the view shows the
 /// placeholder until it is ready. `NSImage(data:)` here decoded (or deferred decoding to the first draw) on the main actor in `body`.
 private struct AvatarImage: View {
+  @Environment(\.musicAccent) private var accent
   let data: Data?
   @State private var image: CGImage?
   var body: some View {
@@ -241,7 +242,7 @@ private struct AvatarImage: View {
       if let image {
         Image(decorative: image, scale: 3).resizable().aspectRatio(contentMode: .fill)
       } else {
-        Image(systemName: "person.crop.circle.fill").resizable().foregroundStyle(MusicStyle.accent.opacity(0.8))
+        Image(systemName: "person.crop.circle.fill").resizable().foregroundStyle(accent.opacity(0.8))
       }
     }
     .task(id: data) {
@@ -276,6 +277,7 @@ enum AvatarDecoding {
 }
 
 struct MusicAccountCard: View {
+  @Environment(\.musicAccent) private var accent
   let model: AccountsModel
   @Environment(\.colorSchemeContrast) private var contrast
   var body: some View {
@@ -289,7 +291,7 @@ struct MusicAccountCard: View {
         content
       }
     }
-    .padding(MusicStyle.inset).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
+    .padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
     .accessibilityElement(children: .contain).accessibilityIdentifier("musicAccountCard")
   }
   @ViewBuilder private var content: some View {
@@ -297,17 +299,17 @@ struct MusicAccountCard: View {
     case .none:
       EmptyView()
     case .signedIn(let proof):
-      VStack(alignment: .leading, spacing: MusicStyle.spacing) {
-        HStack(spacing: MusicStyle.spacing) {
+      VStack(alignment: .leading, spacing: MusicSpace.md) {
+        HStack(spacing: MusicSpace.md) {
           avatar(proof.avatar)
           VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-            Text(proof.identity.displayName).font(MusicPageStyle.section).accessibilityIdentifier("musicIdentityName")
+            Text(verbatim: proof.identity.displayName).font(MusicPageStyle.section).accessibilityIdentifier("musicIdentityName")
             if let handle = proof.identity.handle {
-              Text(handle).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("musicIdentityHandle")
+              Text(verbatim: handle).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("musicIdentityHandle")
             }
             Label("Signed in to YouTube Music", systemImage: "checkmark.seal.fill").font(.callout)
           }
-          Spacer(minLength: MusicStyle.compact)
+          Spacer(minLength: MusicSpace.xs)
           Button("Refresh") { Task { await model.loadProof() } }.disabled(model.proofLoading || model.busy)
             .musicPageAction()
         }
@@ -319,7 +321,7 @@ struct MusicAccountCard: View {
              detail: String(localized: "Google ended this YouTube Music session. Your local data is kept.")) {
         if let active = model.active {
           Button("Sign In Again") { Task { await model.authenticate(active) } }
-            .disabled(!model.canAuthenticate || model.busy).musicPageAction(prominent: true)
+            .disabled(!model.canAuthenticate || model.busy).musicAction(.secondary)
         }
       }
     case .unrecognised:
@@ -346,7 +348,7 @@ struct MusicAccountCard: View {
     .accessibilityHidden(true)
   }
   @ViewBuilder private func library(_ library: MusicLibraryPlaylists) -> some View {
-    VStack(alignment: .leading, spacing: MusicStyle.compact) {
+    VStack(alignment: .leading, spacing: MusicSpace.xs) {
       HStack {
         Text("Library playlists").font(.headline)
         Spacer()
@@ -360,31 +362,31 @@ struct MusicAccountCard: View {
           ForEach(Array(library.playlists.enumerated()), id: \.element.id) { index, playlist in
             if index > 0 { Divider().padding(.leading, MusicSpace.xl + MusicSpace.xxs) }
             HStack(spacing: MusicSpace.sm) {
-              Image(systemName: "music.note.list").foregroundStyle(MusicStyle.accent).frame(width: 24)
+              Image(systemName: "music.note.list").foregroundStyle(accent).frame(width: MusicPageStyle.iconColumn)
                 .accessibilityHidden(true)
-              Text(playlist.title).lineLimit(1).truncationMode(.tail)
-              Spacer(minLength: MusicStyle.compact)
+              Text(verbatim: playlist.title).lineLimit(1).truncationMode(.tail)
+              Spacer(minLength: MusicSpace.xs)
               if let count = playlist.countText {
-                Text(count).font(.callout.monospacedDigit()).foregroundStyle(MusicStyle.secondaryText)
+                Text(verbatim: count).font(.callout.monospacedDigit()).foregroundStyle(MusicStyle.secondaryText)
               }
             }
-            .padding(.vertical, MusicStyle.compact).accessibilityElement(children: .combine)
+            .padding(.vertical, MusicSpace.xs).accessibilityElement(children: .combine)
           }
         }.accessibilityElement(children: .contain).accessibilityIdentifier("musicLibraryList")
       }
       Text(library.complete
         ? "Read-only preview. Nothing in your library is changed."
         : "Showing the first page of your library. Read-only; nothing in your library is changed.")
-        .font(.caption).foregroundStyle(MusicStyle.secondaryText)
+        .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
     }
   }
   private func notice<Actions: View>(symbol: String, title: String, detail: String,
                                      @ViewBuilder actions: () -> Actions) -> some View {
-    HStack(alignment: .top, spacing: MusicStyle.spacing) {
-      Image(systemName: symbol).font(.title2).foregroundStyle(MusicStyle.accent).accessibilityHidden(true)
+    HStack(alignment: .top, spacing: MusicSpace.md) {
+      Image(systemName: symbol).font(.title2).foregroundStyle(accent).accessibilityHidden(true)
       VStack(alignment: .leading, spacing: MusicSpace.xs) {
         Text(title).font(.headline).accessibilityIdentifier("musicProofTitle")
-        Text(detail).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+        Text(verbatim: detail).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
         actions()
       }
     }

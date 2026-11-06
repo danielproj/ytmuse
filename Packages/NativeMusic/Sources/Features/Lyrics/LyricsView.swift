@@ -21,15 +21,13 @@ public struct LyricsPanelView: View {
             case .idle:
                 EmptyState(title: "No song is playing", message: "Lyrics appear here for the song that is playing.")
             case .loading:
-                ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity).accessibilityLabel(Text("Loading lyrics"))
+                LoadingState("Loading lyrics…")
             case .unavailable:
                 // The service was read and has no lyrics for this song: a different state from a failed read.
                 EmptyState(title: "No lyrics available", message: "YouTube Music has no lyrics for this song.").accessibilityIdentifier("lyricsUnavailable")
             case .failed(let failure):
-                VStack(spacing: MusicSpace.sm) {
-                    Label(failure.message, systemImage: "exclamationmark.circle").accessibilityIdentifier("lyricsFailed")
-                    Button("Try Again") { Task { await model.retry() } }.musicPageAction().accessibilityIdentifier("lyricsRetry")
-                }.frame(maxWidth: .infinity, maxHeight: .infinity).padding()
+                ErrorState(title: "Lyrics couldn’t be loaded", detail: failure.message, retryIdentifier: "lyricsRetry") { Task { await model.retry() } }
+                    .accessibilityElement(children: .contain).accessibilityLabel(Text(verbatim: failure.message)).accessibilityIdentifier("lyricsFailed")
             case .loaded(let document):
                 loaded(document).id(model.videoID ?? "")
             }
@@ -47,7 +45,7 @@ public struct LyricsPanelView: View {
                     if let footer = document.sourceFooter { Text(verbatim: footer).font(.caption).foregroundStyle(MusicStyle.secondaryText).textSelection(.enabled).accessibilityIdentifier("lyricsSource") }
                     // Honest about what the source supplied: no times, so no highlight, no seek.
                     Label("These lyrics came without timing, so they don’t follow the song. Scroll to read.", systemImage: "info.circle")
-                        .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("lyricsUntimedNote")
+                        .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("lyricsUntimedNote")
                 }.padding(MusicSpace.lg)
             }
         case .timed(let lines):

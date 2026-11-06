@@ -30,7 +30,7 @@ struct SearchPaletteHost: ViewModifier {
     func body(content: Content) -> some View {
         content
             .focusedSceneValue(\.shellActions, ShellActions(find: { find() }, palette: { present() }))
-            .sheet(item: $palette) { model in CommandPaletteView(model: model).musicCanvas() }
+            .sheet(item: $palette) { model in CommandPaletteView(model: model).musicSheet() }
             .onChange(of: accounts.searchScopeToken) { _, _ in search.accountChanged(); palette?.search.accountChanged(); search.recents?.reload(); accounts.catalog.accountChanged(); accounts.library.accountChanged(); accounts.discovery.accountChanged(); accounts.social.accountChanged(); accounts.podcasts.accountChanged() }
             .onChange(of: accounts.model.identities.map(\.id)) { _, ids in
                 // A removed account takes its recent searches and items with it.

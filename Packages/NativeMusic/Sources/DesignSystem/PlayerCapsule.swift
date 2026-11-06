@@ -4,6 +4,8 @@ import SwiftUI
 // that grows on hover. Everything the shell and the transports state about its size, place and look is here, so feature code asks for tokens.
 
 public enum PlayerCapsule {
+  public static func titleFont(compact: Bool) -> Font { .system(size: compact ? 13 : 14, weight: .semibold) }
+  public static let volumeGlyphFont: Font = .system(size: 15, weight: .medium)
   public static let regularHeight: CGFloat = 56
   public static let compactHeight: CGFloat = 48
   /// The widest the capsule gets in a very wide window.
@@ -114,6 +116,7 @@ public struct MusicCapsuleRow: Layout {
 
 /// The look of a capsule glyph: no box. Accent plus a small dot underneath when `isOn`; clearly dimmed when disabled; a faint disc under the pointer.
 public struct MusicGlyphFace<Content: View>: View {
+  @Environment(\.musicAccent) private var accent
   let content: Content
   let isOn: Bool
   let pressed: Bool
@@ -129,7 +132,7 @@ public struct MusicGlyphFace<Content: View>: View {
       .frame(width: edge, height: edge)
       .background(Circle().fill(Color.primary.opacity(hovering && enabled ? 0.10 : 0)))
       .overlay(alignment: .bottom) {
-        if isOn { Circle().fill(MusicStyle.accent).frame(width: PlayerCapsule.accentDotEdge, height: PlayerCapsule.accentDotEdge) }
+        if isOn { Circle().fill(accent).frame(width: PlayerCapsule.accentDotEdge, height: PlayerCapsule.accentDotEdge) }
       }
       .contentShape(Circle())
       .opacity(pressed ? 0.6 : 1)
@@ -138,7 +141,7 @@ public struct MusicGlyphFace<Content: View>: View {
   }
   private var color: Color {
     if !enabled { return Color.primary.opacity(contrast == .increased ? 0.45 : 0.30) }
-    return isOn ? MusicStyle.accent : Color.primary.opacity(contrast == .increased ? 1 : 0.80)
+    return isOn ? accent : Color.primary.opacity(contrast == .increased ? 1 : 0.80)
   }
 }
 
@@ -167,6 +170,8 @@ public struct MusicPlayButtonStyle: ButtonStyle {
   public init(edge: CGFloat = PlayerCapsule.regularPlayEdge) { self.edge = edge }
   public func makeBody(configuration: Configuration) -> some View { Play(configuration: configuration, edge: edge) }
   private struct Play: View {
+    @Environment(\.musicAccentFill) private var accentFill
+    @Environment(\.self) private var environment
     let configuration: ButtonStyleConfiguration
     let edge: CGFloat
     @Environment(\.isEnabled) private var enabled
@@ -175,10 +180,10 @@ public struct MusicPlayButtonStyle: ButtonStyle {
     var body: some View {
       configuration.label.labelStyle(.iconOnly)
         .font(.system(size: edge * 15 / PlayerCapsule.regularPlayEdge, weight: .semibold))
-        .foregroundStyle(Color(nsColor: MusicPalette.glyphOnAccentFill.nsColor))
+        .foregroundStyle(MusicFillGlyph.color(on: accentFill, in: environment))
         .frame(width: edge, height: edge)
-        .background(Circle().fill(MusicStyle.accentFill))
-        .shadow(color: contrast == .increased ? .clear : MusicStyle.accentFill.opacity(enabled ? 0.45 : 0), radius: 7, x: 0, y: 3)
+        .background(Circle().fill(accentFill))
+        .shadow(color: contrast == .increased ? .clear : accentFill.opacity(enabled ? 0.45 : 0), radius: 7, x: 0, y: 3)
         .opacity(enabled ? 1 : 0.4)
         .scaleEffect(configuration.isPressed && !reduceMotion ? 0.96 : 1)
         .contentShape(Circle())
@@ -225,6 +230,7 @@ public enum MusicSeekState: Sendable, Equatable {
 /// The seek layer of the capsule, inside its content row: a hairline from the title's leading edge to the trailing inset, along the bottom. Drawing only
 /// (no hit testing), with the real slider over it, nearly transparent and never removed, so keyboard, VoiceOver and the identifier keep working.
 public struct MusicCapsuleSeekLayer<Control: View>: View {
+  @Environment(\.musicAccent) private var accent
   let fraction: Double, state: MusicSeekState, enabled: Bool, compact: Bool
   let control: Control
   @Environment(\.colorSchemeContrast) private var contrast
@@ -239,7 +245,7 @@ public struct MusicCapsuleSeekLayer<Control: View>: View {
         ZStack(alignment: .leading) {
           Capsule().fill(Color.primary.opacity(contrast == .increased ? 0.4 : 0.14)).frame(height: state.thickness)
             .audit("playerSeekTrack", group: "playerSeek", kind: .layer, within: "playerBar")
-          Capsule().fill(MusicStyle.accent.opacity(enabled ? 1 : 0.5)).frame(width: proxy.size.width * clamped, height: state.thickness)
+          Capsule().fill(accent.opacity(enabled ? 1 : 0.5)).frame(width: proxy.size.width * clamped, height: state.thickness)
         }.frame(height: PlayerCapsule.seekZone)
         if state.showsThumb && enabled {
           Circle().fill(Color.white).frame(width: thumb, height: thumb)
@@ -276,6 +282,7 @@ public struct MusicTimeSlot: View {
 /// A slim slider's look: a 3 pt track, an accent fill and a small knob that shows only under the pointer or while dragged or focused. Drawing only; the
 /// real `Slider` is over it, nearly transparent (never removed: keyboard, VoiceOver and identifiers).
 public struct MusicSlimSlider<Control: View>: View {
+  @Environment(\.musicAccent) private var accent
   let fraction: Double
   let active: Bool
   let enabled: Bool
@@ -294,7 +301,7 @@ public struct MusicSlimSlider<Control: View>: View {
       GeometryReader { proxy in
         ZStack(alignment: .leading) {
           Capsule().fill(Color.primary.opacity(contrast == .increased ? 0.4 : 0.18)).frame(height: thickness)
-          Capsule().fill(MusicStyle.accent.opacity(enabled ? 1 : 0.5)).frame(width: proxy.size.width * clamped, height: thickness)
+          Capsule().fill(accent.opacity(enabled ? 1 : 0.5)).frame(width: proxy.size.width * clamped, height: thickness)
           if Self.showsKnob(active: active, enabled: enabled) {
             Circle().fill(Color.white).frame(width: knob, height: knob).offset(x: (proxy.size.width - knob) * clamped)
           }

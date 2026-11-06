@@ -42,7 +42,7 @@ public struct SocialOutboxView: View {
                 ForEach(outbox.entries.prefix(5)) { entry in
                     Label { VStack(alignment: .leading, spacing: 0) {
                         Text(entry.subject).font(.callout)
-                        Text(entry.result.message).font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                        Text(verbatim: entry.result.message).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
                     } } icon: { Image(systemName: entry.result.symbol) }
                     .accessibilityElement(children: .combine).accessibilityIdentifier("socialOutbox-" + entry.action.rawValue)
                 }
@@ -64,7 +64,7 @@ public struct SocialPanel: View {
     public init(surface: SocialSurface, subject: SocialSubject) { self.surface = surface; self.subject = subject }
     public var body: some View {
         VStack(alignment: .leading, spacing: MusicSpace.sm) {
-            Text("Comments").font(.title3.bold()).accessibilityAddTraits(.isHeader).accessibilityIdentifier("socialCommentsHeader")
+            Text("Comments").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader).accessibilityIdentifier("socialCommentsHeader")
             if surface.development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("developmentDataLabel") }
             content
             SocialOutboxView(outbox: surface.outbox)
@@ -82,17 +82,17 @@ public struct SocialPanel: View {
     @ViewBuilder private var content: some View {
         switch surface.state(subject) {
         case .unresolved(let reason):
-            Label(reason, systemImage: "bubble.left.and.exclamationmark.bubble.right").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCommentsUnresolved")
+            Label(reason, systemImage: "bubble.left.and.exclamationmark.bubble.right").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCommentsUnresolved")
         case .idle:
             Button("Show comments") { show() }.musicPageAction().accessibilityIdentifier("socialShow")
         case .loading:
             ProgressView().controlSize(.small).accessibilityLabel(Text("Loading comments")).accessibilityIdentifier("socialCommentsLoading")
         case .notOffered:
-            Label("Comments aren’t offered here.", systemImage: "bubble.left").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCommentsNotOffered")
+            Label("Comments aren’t offered here.", systemImage: "bubble.left").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCommentsNotOffered")
         case .serviceMessage(let message):
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                Label(message, systemImage: "info.circle").font(.callout).accessibilityIdentifier("socialCommentsMessage")
-                Text("This is YouTube Music’s own message for this song.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                Label { Text(verbatim: message) } icon: { Image(systemName: "info.circle") }.font(.callout).accessibilityIdentifier("socialCommentsMessage")
+                Text("This is YouTube Music’s own message for this song.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
                 Button("Show comments again") { show() }.musicPageAction().accessibilityIdentifier("socialReopen")
             }
         case .failed(let failure):
@@ -106,12 +106,11 @@ public struct SocialPanel: View {
     @ViewBuilder private func loaded(_ list: CommentsList) -> some View {
         if let header = list.header {
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                if let count = header.countText { Text(count).font(.callout.weight(.semibold)).accessibilityIdentifier("socialCount") }
+                if let count = header.countText { Text(verbatim: count).font(.callout.weight(.semibold)).accessibilityIdentifier("socialCount") }
                 if !header.sorts.isEmpty {
                     HStack {
                         ForEach(Array(header.sorts.enumerated()), id: \.offset) { index, option in
-                            Button(option.title) { Task { await surface.selectSort(option, for: subject) } }
-                                .musicPageAction(prominent: option.isSelected).disabled(option.isSelected || list.sorting || list.needsReopen)
+                            MusicChip(verbatim: option.title, isSelected: option.isSelected) { Task { await surface.selectSort(option, for: subject) } }.disabled(option.isSelected || list.sorting || list.needsReopen)
                                 .accessibilityAddTraits(option.isSelected ? .isSelected : []).accessibilityIdentifier("socialSort-\(index)")
                         }
                         if list.sorting { ProgressView().controlSize(.small).accessibilityLabel(Text("Loading comments")) }
@@ -141,12 +140,12 @@ public struct SocialPanel: View {
     private func row(_ comment: SocialComment) -> some View {
         VStack(alignment: .leading, spacing: MusicSpace.hairline) {
             HStack(alignment: .firstTextBaseline) {
-                Text(comment.author).font(.callout.weight(.semibold))
+                Text(verbatim: comment.author).font(.callout.weight(.semibold))
                 if comment.isVerified { Text("Verified").font(.caption2).foregroundStyle(MusicStyle.secondaryText) }
                 if comment.isCreator { Text("Creator").font(.caption2).foregroundStyle(MusicStyle.secondaryText) }
                 if comment.isArtist { Text("Artist").font(.caption2).foregroundStyle(MusicStyle.secondaryText) }
                 if comment.isCurrentUser { Text("You").font(.caption2).foregroundStyle(MusicStyle.secondaryText) }
-                if let posted = comment.posted { Text(posted).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
+                if let posted = comment.posted { Text(verbatim: posted).font(.caption).foregroundStyle(MusicStyle.secondaryText) }
                 Spacer()
                 if !comment.moderation.isEmpty, surface.writesUnresolved == nil {
                     Menu("Moderate") {
@@ -183,7 +182,7 @@ public struct SocialPanel: View {
         }
         if list.reachedReplyBound(thread) {
             Text("Showing the first \(String(SocialSurface.maximumReplyPages)) pages of replies. This app doesn’t load more.")
-                .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialRepliesBound-" + thread.id)
+                .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialRepliesBound-" + thread.id)
         }
     }
     @ViewBuilder private func moreControls(_ list: CommentsList) -> some View {
@@ -212,7 +211,7 @@ public struct SocialPanel: View {
                 Button("Post") {
                     let text = draft
                     Task { if await surface.post(text, on: subject) == .confirmed { draft = "" } }
-                }.musicPageAction(prominent: true).disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || surface.busy.contains(subject)).accessibilityIdentifier("socialPost")
+                }.musicAction(.secondary).disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || surface.busy.contains(subject)).accessibilityIdentifier("socialPost")
             }
         } else {
             Text("YouTube Music didn’t offer commenting here.").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("socialCannotPost")

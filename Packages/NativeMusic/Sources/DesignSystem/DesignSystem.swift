@@ -160,18 +160,19 @@ private struct MusicSurface: ViewModifier {
 }
 
 private struct MusicButtons: ViewModifier {
+  @Environment(\.musicAccentFill) private var accentFill
   var prominent: Bool
   private var glass = MusicGlassEnvironment()
   func body(content: Content) -> some View {
     Group {
       if glass.policy.opaque || glass.policy.simplified {
         if prominent {
-          content.buttonStyle(.borderedProminent)
+          content.buttonStyle(.borderedProminent).tint(accentFill)
         } else {
           content.buttonStyle(.bordered)
         }
       } else {
-        if prominent { content.buttonStyle(.glassProminent) } else { content.buttonStyle(.glass) }
+        if prominent { content.buttonStyle(.glassProminent).tint(accentFill) } else { content.buttonStyle(.glass) }
       }
     }
     .onReceive(MusicGlassPower.changes) { _ in
@@ -334,8 +335,18 @@ extension View {
   /// A sheet's or a secondary window's backdrop. Under Standard it is the opaque system background even inside a translucent window (a sheet
   /// inherits its presenter's environment), because sheet text sits directly on it rather than on a scrimmed panel.
   public func musicCanvas() -> some View { background { MusicCanvas().environment(\.musicTranslucentWindow, false) } }
+  /// DESIGN-ALIGN: the backdrop of EVERY sheet, applied once at the sheet's root. Standard: the system's own sheet background (Apple asks apps
+  /// not to paint over sheets). YTMuse: the deep-dark canvas, so a sheet matches the window behind it.
+  public func musicSheet() -> some View { modifier(MusicSheetBackground()) }
   /// Deep dark: the split view's sidebar column draws the system sidebar gray behind its panel; in dark it takes the near-black canvas instead.
   public func musicSidebarColumn() -> some View { modifier(MusicSidebarColumn()) }
+}
+
+private struct MusicSheetBackground: ViewModifier {
+  @Environment(\.musicAppStyle) private var style
+  func body(content: Content) -> some View {
+    if style == .ytmuse { content.background { MusicCanvas().environment(\.musicTranslucentWindow, false) } } else { content }
+  }
 }
 
 private struct MusicSidebarColumn: ViewModifier {

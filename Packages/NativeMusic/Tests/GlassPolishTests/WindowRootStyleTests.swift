@@ -1,5 +1,11 @@
+import SwiftUI
+import AppKit
+import Domain
+import DesignSystem
+@testable import AppShell
 import Foundation
 import Testing
+import TestSupport
 
 /// APPEARANCE-STYLE finding 3: a window that misses the style injection falls back to YTMuse inside a Standard app, a mixed look nobody would
 /// notice in review. Every window root in the app's sources must therefore go through the one style hook: the two SwiftUI scenes apply
@@ -63,5 +69,32 @@ import Testing
     #expect(Self.findings(in: "// NSHostingView(rootView: Panel()) in a comment", path: "Sample.swift").isEmpty)
     let scenes = Self.scenes(in: "        WindowGroup(\"YTMuse\", id: \"main\") {\n            Root().appStyle(translucentWindow: true)\n        }\n        Settings {\n            Panel()\n        }\n")
     #expect(scenes.count == 2 && !scenes[1].body.contains(".appStyle("), "a scene without the hook is visible to the check")
+  }
+}
+
+extension WindowRootStyleTests {
+  @Test @MainActor func rootSelectsAccentForStoredStyle() throws {
+    struct Probe: View {
+      @Environment(\.musicAccent) var accent
+      @Environment(\.musicAccentFill) var fill
+      let style: AppStyle
+      let evaluated: () -> Void
+      var body: some View {
+        evaluated()
+        #expect(accent == MusicAccentSource.resolve(style).color)
+        #expect(fill == MusicAccentSource.resolve(style).fill)
+        return Color.clear
+      }
+    }
+    let scratch = ScratchDefaults(label: "DA-S1-Accent")
+    let store = scratch.defaults
+    defer { scratch.clean() }
+    for style in [AppStyle.standard, .ytmuse] {
+      store.set(style.rawValue, forKey: AppStyle.key)
+      var evaluations = 0
+      let renderer = ImageRenderer(content: Probe(style: style, evaluated: { evaluations += 1 }).appStyle(store: store).frame(width: 8, height: 8))
+      #expect(renderer.cgImage != nil)
+      #expect(evaluations > 0, "probe evaluated for \(style)")
+    }
   }
 }

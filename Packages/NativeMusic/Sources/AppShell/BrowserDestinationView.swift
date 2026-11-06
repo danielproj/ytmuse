@@ -233,7 +233,7 @@ struct BrowserDestinationView: View {
             HStack(alignment: .center, spacing: MusicSpace.lg) {
                 ResonanceArtwork().frame(width: 96)
                 VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    Text("Welcome to YTMuse").font(.title2.bold())
+                    Text("Welcome to YTMuse").font(MusicPageStyle.section)
                     Text("An independent native YouTube Music client for Mac").foregroundStyle(MusicStyle.secondaryText)
                     Text(accounts.connectionStatus).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("connectionStatus")
                 }
@@ -276,7 +276,7 @@ struct BrowserDestinationView: View {
     private var developmentCollection: some View {
         VStack(alignment: .leading, spacing: MusicSpace.xxs) {
             if entry.destination == .explore {
-                Text("Discovery").font(.title2.bold())
+                Text("Discovery").font(MusicPageStyle.section)
                 ForEach([NativeItemKind.sample, .tuner, .recap, .badge], id: \.self) { kind in
                     MediaRow(title: discoveryTitle(kind), subtitle: "Development navigation example") { openDevelopment(kind, id: kind.rawValue) }
                 }

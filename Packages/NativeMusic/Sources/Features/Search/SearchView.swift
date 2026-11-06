@@ -44,16 +44,6 @@ public struct SearchField: View {
     }
 }
 
-struct BadgeLabel: View {
-    let badge: SearchBadge
-    var body: some View {
-        Label(badge.title, systemImage: badge.symbol).labelStyle(.titleAndIcon).font(.caption2)
-            .padding(.horizontal, MusicSpace.xs).padding(.vertical, MusicSpace.hairline)
-            .overlay(Capsule().strokeBorder(.secondary.opacity(0.6)))
-            .foregroundStyle(MusicStyle.secondaryText)
-    }
-}
-
 /// One result: icon, title, detail, badges, a Play button where Play exists, and the
 /// result of the last action at the item itself.
 public struct SearchResultRow: View {
@@ -74,12 +64,12 @@ public struct SearchResultRow: View {
             HStack(spacing: MusicSpace.sm) {
                 // The item itself reads as one element; Play stays a separate, reachable button.
                 HStack(spacing: MusicSpace.sm) {
-                    Image(systemName: result.kind.symbol).frame(width: 24).foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
+                    Image(systemName: result.kind.symbol).frame(width: MusicPageStyle.iconColumn).foregroundStyle(MusicStyle.secondaryText).accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                         Text(result.title).font(.body.weight(.medium)).lineLimit(2)
                         Text(detail).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(2)
                         if !result.badges.isEmpty {
-                            HStack(spacing: MusicSpace.xs) { ForEach(result.badges.sorted(), id: \.self) { BadgeLabel(badge: $0) } }
+                            HStack(spacing: MusicSpace.xs) { ForEach(result.badges.sorted(), id: \.self) { MusicOutlineBadge(verbatim: $0.title, systemImage: $0.symbol) } }
                         }
                     }
                     Spacer(minLength: 0)
@@ -106,10 +96,8 @@ public struct SearchResultRow: View {
             }
             if let feedback { feedbackLine(feedback) }
         }
-        .padding(.vertical, MusicSpace.xs).padding(.horizontal, MusicSpace.xs)
-        .musicSelectionBackground(selected).musicHoverHighlight()
+        .musicRow(selected: selected)
         .musicAnimation(.selection, value: selected)
-        .contentShape(Rectangle())
         .onTapGesture(perform: select)
         .directPlaylistMenu(addition: DirectPlaylistAddition.candidate(result), identifier: "searchAddToPlaylist-" + result.id) {
             if let open { Button("Open") { open() } }
@@ -136,7 +124,7 @@ public struct SearchResultRow: View {
         case .started: Label("Playing from YouTube Music", systemImage: "checkmark.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText)
         case .copied: Label("Link copied", systemImage: "checkmark.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText)
         case .failed(let message):
-            Label(message, systemImage: "exclamationmark.triangle").font(.caption).accessibilityIdentifier("searchItemError-" + result.id)
+            MusicInlineError(message).font(.caption).accessibilityIdentifier("searchItemError-" + result.id)
         }
     }
 }
@@ -148,8 +136,8 @@ struct SearchStatusView: View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
             if let correction = model.correction { correctionBanner(correction) }
             else if model.corrected != nil { revertBanner }
-            if let notice = model.scopeNotice { Label(notice, systemImage: "info.circle").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("searchScopeNotice") }
-            if model.queryTooLong { Label("That search is too long.", systemImage: "exclamationmark.triangle").font(.callout) }
+            if let notice = model.scopeNotice { Label(notice, systemImage: "info.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("searchScopeNotice") }
+            if model.queryTooLong { MusicInlineError(String(localized: "That search is too long.")).font(MusicPageStyle.note) }
             remote
         }
     }
@@ -157,19 +145,16 @@ struct SearchStatusView: View {
         switch model.remoteStatus {
         case .idle, .localOnly: EmptyView()
         case .waiting, .loading:
-            HStack { ProgressView().controlSize(.small); Text("Searching YouTube Music…") }.font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("searchRemoteLoading")
+            HStack { ProgressView().controlSize(.small); Text("Searching YouTube Music…") }.font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("searchRemoteLoading")
         case .failed(let failure):
-            HStack(alignment: .firstTextBaseline) {
-                Label(message(failure), systemImage: "exclamationmark.triangle").font(.callout).accessibilityIdentifier("searchRemoteError")
-                Button("Retry") { model.retryRemote() }.musicPageAction().accessibilityIdentifier("searchRetry")
-            }
+            MusicInlineError(message(failure), retryIdentifier: "searchRetry") { model.retryRemote() }.font(MusicPageStyle.note).accessibilityElement(children: .contain).accessibilityIdentifier("searchRemoteError")
         case .loaded(let info):
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
-                if info.sessionExpired { Label("Your YouTube Music session ended. Sign in again for your own results.", systemImage: "person.crop.circle.badge.exclamationmark").font(.callout) }
-                else if !info.signedIn { Label("Not signed in: these are the results anyone sees.", systemImage: "person.crop.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-                if info.skippedRows > 0 { Label("\(info.skippedRows) results couldn’t be read and are not shown.", systemImage: "exclamationmark.triangle").font(.caption).accessibilityIdentifier("searchSkipped") }
-                if info.unsupportedRows > 0 { Label("\(info.unsupportedRows) results of a type this app doesn’t show were left out.", systemImage: "info.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-                if !info.complete && !model.results.isEmpty { Text("The first page of YouTube Music’s answer, not the whole catalog.").font(.caption).foregroundStyle(MusicStyle.secondaryText) }
+                if info.sessionExpired { Label("Your YouTube Music session ended. Sign in again for your own results.", systemImage: "person.crop.circle.badge.exclamationmark").font(MusicPageStyle.note) }
+                else if !info.signedIn { Label("Not signed in: these are the results anyone sees.", systemImage: "person.crop.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText) }
+                if info.skippedRows > 0 { Label("\(info.skippedRows) results couldn’t be read and are not shown.", systemImage: "exclamationmark.triangle").font(MusicPageStyle.note).accessibilityIdentifier("searchSkipped") }
+                if info.unsupportedRows > 0 { Label("\(info.unsupportedRows) results of a type this app doesn’t show were left out.", systemImage: "info.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText) }
+                if !info.complete && !model.results.isEmpty { Text("The first page of YouTube Music’s answer, not the whole catalog.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText) }
             }
         }
     }
@@ -183,13 +168,13 @@ struct SearchStatusView: View {
     }
     private func correctionBanner(_ correction: SearchCorrectionOffer) -> some View {
         HStack(alignment: .firstTextBaseline) {
-            Text("Did you mean “\(correction.text)”?").font(.callout)
+            Text("Did you mean “\(correction.text)”?").font(MusicPageStyle.note)
             Button("Search for “\(correction.text)”") { model.applyCorrection() }.musicPageAction().accessibilityIdentifier("applyCorrection")
         }.accessibilityElement(children: .contain).accessibilityIdentifier("searchCorrection")
     }
     private var revertBanner: some View {
         HStack(alignment: .firstTextBaseline) {
-            Text("Showing results for “\(model.query)”.").font(.callout)
+            Text("Showing results for “\(model.query)”.").font(MusicPageStyle.note)
             Button("Search for “\(model.originalQuery)” instead") { model.revertCorrection() }.musicPageAction().accessibilityIdentifier("revertCorrection")
         }.accessibilityElement(children: .contain).accessibilityIdentifier("searchCorrectionApplied")
     }
@@ -206,7 +191,7 @@ public struct SearchResultsList: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: MusicSpace.xxs, pinnedViews: []) {
                     ForEach(model.sections) { section in
-                        Text(section.group.title).font(.title3.bold()).padding(.top, MusicSpace.sm).accessibilityAddTraits(.isHeader)
+                        Text(section.group.title).font(MusicPageStyle.section).padding(.top, MusicSpace.sm).accessibilityAddTraits(.isHeader)
                             .accessibilityIdentifier("searchGroup-" + section.group.rawValue)
                         ForEach(section.results) { result in
                             SearchResultRow(result: result, selected: model.selection == result.id, offers: model.offers(for: result), feedback: model.feedback[result.id],
@@ -235,7 +220,6 @@ public struct SearchView: View {
     @FocusState private var focused: Bool
     public init(model: SearchModel, focusToken: Int = 0) { self.model = model; self.focusToken = focusToken }
     public var body: some View {
-        MusicGlassGroup(spacing: MusicSpace.xs) {
         VStack(alignment: .leading, spacing: MusicSpace.lg) {
             SearchField(model: model, focus: $focused)
             Picker("Where to search", selection: $model.scope) {
@@ -244,7 +228,6 @@ public struct SearchView: View {
                 .audit("searchScope", group: "page-top", alignLeading: "pageLeading")
             SearchStatusView(model: model)
             content
-        }
         }
         .remembersPage(fresh: { model.beginFreshVisit() }, capture: { model.pageMemory }, apply: { model.restorePage($0) })
         .task { focused = true }
@@ -269,18 +252,18 @@ struct SearchEmptyState: View {
             VStack(alignment: .leading, spacing: MusicSpace.md) {
                 if let recents = model.recents, !recents.queries.isEmpty {
                     HStack {
-                        Text("Recent searches").font(.title3.bold()).accessibilityAddTraits(.isHeader)
+                        Text("Recent searches").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
                         Spacer()
                         Button("Clear") { recents.clearQueries() }.musicPageAction().accessibilityIdentifier("clearRecentQueries")
                     }
                     ForEach(recents.queries, id: \.self) { text in
-                        Button { model.query = text } label: { Label(text, systemImage: "clock.arrow.circlepath").frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle()) }
+                        Button { model.query = text } label: { Label(text, systemImage: "clock.arrow.circlepath").frame(maxWidth: .infinity, alignment: .leading).musicRow() }
                             .buttonStyle(.borderless).accessibilityIdentifier("recentQuery").accessibilityHint(Text("Searches again"))
                     }
                 }
                 if let recents = model.recents, !recents.items.isEmpty {
                     HStack {
-                        Text("Recent items").font(.title3.bold()).accessibilityAddTraits(.isHeader)
+                        Text("Recent items").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
                         Spacer()
                         Button("Clear") { recents.clearItems() }.musicPageAction().accessibilityIdentifier("clearRecentItems")
                     }
@@ -295,9 +278,9 @@ struct SearchEmptyState: View {
                     EmptyState(title: "Search YouTube Music", message: "Matches from your library appear as you type. YouTube Music results follow a moment later.")
                 }
                 Label("For suggestions and discovery, open Home and Explore.", systemImage: "info.circle")
-                    .font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("searchDiscoveryNote")
+                    .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("searchDiscoveryNote")
                 if let recents = model.recents, !recents.isEmpty {
-                    Text("Recent searches and items stay on this Mac, are never sent anywhere and are removed with the account.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                    Text("Recent searches and items stay on this Mac, are never sent anywhere and are removed with the account.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
                 }
             }.padding(.horizontal, MusicSpace.xxs)
         }.accessibilityIdentifier("searchEmpty")

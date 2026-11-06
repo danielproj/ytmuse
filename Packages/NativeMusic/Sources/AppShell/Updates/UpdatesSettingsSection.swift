@@ -24,11 +24,11 @@ struct UpdatesSettingsSection: View {
                 Text("An update is downloaded and verified in the background, never while music is playing. It is installed only when you press Restart to Update.")
                     .font(.footnote).foregroundStyle(MusicStyle.secondaryText)
                 HStack {
-                    Button("Check Now") { Task { await controller.checkNow() } }.accessibilityIdentifier("updatesCheckNow")
-                    if case .offered = controller.status { Button("Download Update") { Task { await controller.download() } }.accessibilityIdentifier("updatesDownload") }
+                    Button("Check Now") { Task { await controller.checkNow() } }.accessibilityIdentifier("updatesCheckNow").musicAction(.secondary)
+                    if case .offered = controller.status { Button("Download Update") { Task { await controller.download() } }.accessibilityIdentifier("updatesDownload").musicAction(.primary) }
                     if case .ready = controller.status {
                         Button("Restart to Update") { controller.restartToInstall(confirmation: .fromPersonAction()) }
-                            .disabled(controller.restartBlockedByPlayback).accessibilityIdentifier("updatesRestart")
+                            .disabled(controller.restartBlockedByPlayback).accessibilityIdentifier("updatesRestart").musicAction(.primary)
                     }
                 }
                 Text(statusText).font(.footnote).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("updatesStatus")

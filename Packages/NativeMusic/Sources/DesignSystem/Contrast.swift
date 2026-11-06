@@ -174,3 +174,15 @@ public enum ContrastAudit {
     return out
   }
 }
+
+/// A white glyph unless white falls below 3:1 on the resolved fill.
+public enum MusicFillGlyph {
+  public static func usesBlack(luminance: Double) -> Bool {
+    MusicTint.contrast(1, luminance) < 3
+  }
+  public static func color(on fill: Color, in environment: EnvironmentValues) -> Color {
+    let resolved = fill.resolve(in: environment)
+    let luminance = ContrastColor(Double(resolved.red), Double(resolved.green), Double(resolved.blue)).luminance
+    return usesBlack(luminance: luminance) ? .black : .white
+  }
+}

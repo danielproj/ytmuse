@@ -507,8 +507,8 @@ struct LocalAccountRoot: View {
                 if accounts.failure {
                     HStack {
                         Text("Local storage could not open. Existing data was preserved.")
-                        Button("Retry local storage") { Task { await accounts.retryLocalStorage() } }.musicButtons()
-                    }.padding(MusicSpace.sm).musicSurface().padding(MusicSpace.sm)
+                        Button("Retry local storage") { Task { await accounts.retryLocalStorage() } }.musicAction(.secondary)
+                    }.padding(MusicSpace.sm).musicInsetSurface().padding(MusicSpace.sm)
                 }
             }
     }

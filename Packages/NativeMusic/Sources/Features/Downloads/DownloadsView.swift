@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 /// The Downloads destination (OFF01): aggregate and per-item progress, storage and its limits, Smart Downloads, recovery
 /// for each failure, a Downloaded-only filter, and an honest statement of what YouTube Music does not offer on Mac.
 public struct DownloadsView: View {
+    @Environment(\.musicAccent) private var accent
     @Bindable var model: DownloadsModel
     public init(model: DownloadsModel) { self.model = model }
     /// The screen restores by item identity (W09-F2, `IdentityRestorer`): the first section or download fully on screen is recorded for the visit
@@ -63,7 +64,7 @@ public struct DownloadsView: View {
     }
     private var addFileButton: some View {
         Button { model.importing = true } label: { Label("Add Audio File…", systemImage: "plus") }
-            .disabled(!model.snapshot.hasAccount).musicPageAction().accessibilityIdentifier("downloadsAddFile")
+            .disabled(!model.snapshot.hasAccount).musicAction(.primary).accessibilityIdentifier("downloadsAddFile")
             .help(model.snapshot.hasAccount ? Text("Keep an audio file from this Mac and play it from here") : Text("Select a signed-in account to keep files"))
     }
     private func noticeBar(_ text: String) -> some View {
@@ -71,13 +72,13 @@ public struct DownloadsView: View {
             Label(text, systemImage: "info.circle").accessibilityIdentifier("downloadsNotice")
             Spacer()
             Button("Dismiss") { model.dismissNotice() }.musicPageAction().accessibilityIdentifier("downloadsNoticeDismiss")
-        }.padding(MusicSpace.sm).musicInsetSurface()
+        }.padding(MusicSpace.md).musicInsetSurface()
         .onAppear { Announcer.post(text, kind: .download) }
     }
     private var capabilityCard: some View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
             Label(DownloadsText.youTubeMusicExplanation, systemImage: "arrow.down.circle.dotted").font(.headline).accessibilityIdentifier("downloadsYouTubeMusicNote")
-            Text(DownloadsText.youTubeMusicDetail).font(.callout).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+            Text(DownloadsText.youTubeMusicDetail).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
         }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface().accessibilityElement(children: .combine)
     }
     @ViewBuilder private var environmentNotes: some View {
@@ -90,14 +91,14 @@ public struct DownloadsView: View {
             else if snapshot.networkConstrained { Label("Low Data Mode is on for this connection. Automatic downloads wait; you can start one anyway.", systemImage: "tortoise").accessibilityIdentifier("downloadsConstrained") }
             else if snapshot.networkExpensive { Label("This connection is metered. Automatic downloads wait; you can start one anyway.", systemImage: "dollarsign.circle").accessibilityIdentifier("downloadsExpensive") }
             if snapshot.lowPowerMode { Label("Low Power Mode: one download at a time.", systemImage: "battery.25percent").accessibilityIdentifier("downloadsLowPower") }
-        }.font(.callout).foregroundStyle(MusicStyle.secondaryText)
+        }.font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
     }
     @ViewBuilder private var aggregate: some View {
         let snapshot = model.snapshot
         if let aggregate = snapshot.aggregate {
             VStack(alignment: .leading, spacing: MusicSpace.xs) {
                 if let fraction = aggregate.fraction, let total = aggregate.totalBytes {
-                    ProgressView(value: fraction) { Text("\(snapshot.activeCount) downloading, \(snapshot.waitingCount) waiting") }
+                    ProgressView(value: fraction) { Text("\(snapshot.activeCount) downloading, \(snapshot.waitingCount) waiting") }.tint(accent)
                         .accessibilityValue(Text("\(DownloadsText.bytes(aggregate.completedBytes)) of \(DownloadsText.bytes(total))"))
                     Text("\(DownloadsText.bytes(aggregate.completedBytes)) of \(DownloadsText.bytes(total))").font(.caption).foregroundStyle(MusicStyle.secondaryText)
                 } else {
@@ -110,11 +111,11 @@ public struct DownloadsView: View {
     private var storageCard: some View {
         let storage = model.snapshot.storage
         return VStack(alignment: .leading, spacing: MusicSpace.sm) {
-            Text("Storage").font(.headline).accessibilityAddTraits(.isHeader)
-            ProgressView(value: Double(min(storage.usedBytes, storage.budgetBytes)), total: Double(max(1, storage.budgetBytes)))
+            Text("Storage").font(MusicPageStyle.group).accessibilityAddTraits(.isHeader)
+            ProgressView(value: Double(min(storage.usedBytes, storage.budgetBytes)), total: Double(max(1, storage.budgetBytes))).tint(accent)
                 .accessibilityLabel(Text("Download storage used")).accessibilityValue(Text("\(DownloadsText.bytes(storage.usedBytes)) of \(DownloadsText.bytes(storage.budgetBytes))"))
             Text("\(DownloadsText.bytes(storage.usedBytes)) used of \(DownloadsText.bytes(storage.budgetBytes)) across all accounts").accessibilityIdentifier("downloadsStorageUsed")
-            Text("\(DownloadsText.bytes(storage.reserveBytes)) is always kept free on this Mac.").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadsReserve")
+            Text("\(DownloadsText.bytes(storage.reserveBytes)) is always kept free on this Mac.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadsReserve")
             HStack {
                 Picker("Storage limit", selection: Binding(get: { storage.budgetBytes }, set: { model.setBudget(bytes: $0) })) {
                     ForEach(DownloadBudgetChoices.options(including: storage.budgetBytes), id: \.self) { Text(DownloadsText.bytes($0)).tag($0) }
@@ -126,15 +127,15 @@ public struct DownloadsView: View {
                     VStack(alignment: .leading) {
                         Text("Smart Downloads")
                         Text("Off unless you turn it on. When on, it keeps suggestions for you using at most \(DownloadsText.bytes(storage.automaticCapBytes)), a quarter of the limit, and never removes anything you chose to keep.")
-                            .font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+                            .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                     }
                 }.accessibilityIdentifier("downloadsSmart")
             }
             // Nothing on this Mac can suggest items, so Smart Downloads is not shown at all: no switch that would do nothing, and no row about it.
             if model.snapshot.unlistedBytes > 0 {
-                Text("\(DownloadsText.bytes(model.snapshot.unlistedBytes)) of earlier downloads are no longer listed but still count toward the limit.").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadsUnlisted")
+                Text("\(DownloadsText.bytes(model.snapshot.unlistedBytes)) of earlier downloads are no longer listed but still count toward the limit.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadsUnlisted")
             }
-            Text("Lowering the limit never removes downloads you chose to keep.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+            Text("Lowering the limit never removes downloads you chose to keep.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
         }.padding(MusicSpace.md).frame(maxWidth: .infinity, alignment: .leading).musicInsetSurface()
     }
     private var choicesCard: some View {
@@ -157,7 +158,7 @@ public struct DownloadsView: View {
     @ViewBuilder private var collectionsSection: some View {
         if !model.snapshot.collections.isEmpty {
             VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                Text("Playlists kept offline").font(.headline).accessibilityAddTraits(.isHeader)
+                Text("Playlists kept offline").font(MusicPageStyle.group).accessibilityAddTraits(.isHeader)
                 ForEach(model.snapshot.collections) { collection in
                     HStack {
                         Label(collection.title, systemImage: "music.note.list")
@@ -189,6 +190,7 @@ public struct DownloadsView: View {
 
 /// One download: its title, the state in words, honest progress, the reason it is waiting, and only the actions that apply.
 struct DownloadItemRow: View {
+    @Environment(\.musicAccent) private var accent
     let row: DownloadRowModel
     let perform: (DownloadAction) -> Void
     var body: some View {
@@ -205,7 +207,7 @@ struct DownloadItemRow: View {
             if let cause = row.pauseCause, row.phase == .paused { Text(DownloadsText.pause(cause)).font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("downloadReason-" + row.id.uuidString) }
             if let failure = row.failure, row.phase == .failed { Label(DownloadsText.failure(failure), systemImage: "exclamationmark.triangle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("downloadFailure-" + row.id.uuidString) }
             if let retry = row.retryAt, row.phase == .queued { Text("Trying again \(retry, format: .relative(presentation: .named))").font(.caption).foregroundStyle(MusicStyle.secondaryText) }
-            if row.phase == .expired { Text("The permission to keep this item ended. Renew it or download it again.").font(.caption).foregroundStyle(MusicStyle.secondaryText) }
+            if row.phase == .expired { Text("The permission to keep this item ended. Renew it or download it again.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText) }
             if row.phase == .available || row.phase == .renewing, row.pinned || row.referenceCount > 0 {
                 (row.pinned ? Text("Kept on this Mac") : Text("Kept for a playlist")).font(.caption).foregroundStyle(MusicStyle.secondaryText)
             }
@@ -217,13 +219,13 @@ struct DownloadItemRow: View {
                     }
                 }
             }
-        }.padding(.vertical, MusicSpace.sm).accessibilityElement(children: .contain).accessibilityIdentifier("downloadRow-" + row.id.uuidString)
+        }.musicRow().accessibilityElement(children: .contain).accessibilityIdentifier("downloadRow-" + row.id.uuidString)
     }
     @ViewBuilder private var progress: some View {
         switch row.phase {
         case .downloading, .resolving, .validating, .queued, .paused:
             if let fraction = row.progress.fraction {
-                ProgressView(value: fraction).accessibilityLabel(Text("Download progress")).accessibilityValue(Text(fraction, format: .percent.precision(.fractionLength(0))))
+                ProgressView(value: fraction).tint(accent).accessibilityLabel(Text("Download progress")).accessibilityValue(Text(fraction, format: .percent.precision(.fractionLength(0))))
             } else if row.phase == .downloading || row.phase == .resolving {
                 // Size unknown: say so, with the bytes so far, and show no percentage.
                 HStack { ProgressView().controlSize(.small); Text("\(DownloadsText.bytes(row.progress.completedBytes)) so far · size not known yet").font(.caption).foregroundStyle(MusicStyle.secondaryText) }
@@ -250,11 +252,11 @@ public struct DownloadedItemsSection: View {
                         VStack(alignment: .leading) { Text(row.title); if let subtitle = row.subtitle { Text(subtitle).font(.caption).foregroundStyle(MusicStyle.secondaryText) } }
                         Spacer()
                         if row.actions.contains(.play) {
-                            Button { model.perform(.play, on: row) } label: { Label("Play", systemImage: "play.fill") }.musicPageAction(prominent: true)
+                            Button { model.perform(.play, on: row) } label: { Label("Play", systemImage: "play.fill") }.musicAction(.inline)
                                 .accessibilityLabel(Text("Play \(row.title)")).accessibilityIdentifier("libraryDownloadedPlay-" + row.id.uuidString)
                         }
                     }
-                    .padding(.vertical, MusicSpace.xs)
+                    .musicRow()
                     .background(GeometryReader { geometry in Color.clear.preference(key: DownloadedRowFrames.self, value: [row.id.uuidString: geometry.frame(in: .named(DownloadedRowFrames.space))]) })
                     .accessibilityElement(children: .contain).accessibilityIdentifier("libraryDownloadedRow-" + row.id.uuidString)
                 }

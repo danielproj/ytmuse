@@ -72,13 +72,23 @@ public struct PlaylistAddView: View {
             Text("Add to Playlist").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             Text(songs.count == 1 ? "“\(songs[0].title)”" : String(localized: "\(songs.count) songs")).font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("playlistAddSongs")
             if let chosen { destination(chosen) } else { picker }
-            MusicGlassGroup {
-                HStack { Spacer(); Button("Close") { dismiss() }.musicPageAction().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistAddClose") }
+            HStack {
+                Spacer()
+                Button(hasConfirmedAdd ? "Done" : "Cancel") { dismiss() }.musicAction(addDefault == .done ? .primary : .secondary).keyboardShortcut(addDefault == .done ? .defaultAction : .cancelAction).accessibilityIdentifier("playlistAddClose")
+                if let chosen, chosen.loadState == .loaded, chosen.role.canEdit {
+                    Button { Task { staged = await chosen.addSongs(songs) } } label: {
+                        Text(songs.count == 1 ? "Add to “\(chosenTitle)”" : String(localized: "Add \(songs.count) Songs to “\(chosenTitle)”"))
+                    }.musicAction(.primary).keyboardShortcut(addDefault == .submit ? .defaultAction : nil).disabled(chosen.isBusy).accessibilityIdentifier("playlistAddButton")
+                }
             }
         }
-        .padding(MusicSpace.lg).frame(minWidth: 460, minHeight: 280)
+        .padding(MusicSpace.lg).frame(minWidth: 460, minHeight: 280).musicSheet()
         .accessibilityElement(children: .contain).accessibilityIdentifier("playlistAdd")
+        .onExitCommand { dismiss() }
         .task { if let preselected { await choose(preselected) } else { await loadChoices() } }
+    }
+    private var addDefault: PlaylistSheetDefaultAction {
+        .resolve(completed: hasConfirmedAdd, canSubmit: chosen.map { $0.loadState == .loaded && $0.role.canEdit && !$0.isBusy } ?? false)
     }
     @ViewBuilder private var picker: some View {
         if let failure { Label(failure, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistAddFailed") }
@@ -88,7 +98,7 @@ public struct PlaylistAddView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                         ForEach(choices, id: \.playlistID) { option in
-                            Button(option.title) { Task { await choose(option) } }.buttonStyle(.plain).musicPageRow().accessibilityIdentifier("playlistAddChoice-" + option.playlistID)
+                            Button(option.title) { Task { await choose(option) } }.buttonStyle(.plain).musicRow().accessibilityIdentifier("playlistAddChoice-" + option.playlistID)
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -104,17 +114,12 @@ public struct PlaylistAddView: View {
             case .loaded:
                 if !session.role.canEdit {
                     Label("YouTube Music doesn’t let you change this playlist.", systemImage: "lock").accessibilityIdentifier("playlistAddNotPermitted")
-                } else {
-                    MusicGlassGroup {
-                        Button { Task { staged = await session.addSongs(songs) } } label: { Text(songs.count == 1 ? "Add to “\(chosenTitle)”" : String(localized: "Add \(songs.count) Songs to “\(chosenTitle)”")) }
-                            .musicPageAction(prominent: true).disabled(session.isBusy).accessibilityIdentifier("playlistAddButton")
-                    }
                 }
                 PlaylistOperationLines(session: session)
             }
-        }
-        .modifier(PlaylistStagedAddDialog(session: session, staged: $staged))
+        }.modifier(PlaylistStagedAddDialog(session: session, staged: $staged))
     }
+    private var hasConfirmedAdd: Bool { chosen?.operations.contains { $0.state == .confirmed } == true }
     private func loadChoices() async {
         do { choices = try await surface.playlistChoices() } catch { failure = PlaylistEditSession.failure(for: error, reading: true).message }
     }
@@ -137,32 +142,35 @@ public struct PlaylistJoinView: View {
         VStack(alignment: .leading, spacing: MusicSpace.lg) {
             Text("Join a Collaborative Playlist").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             TextField("Paste an invite link", text: $link).textFieldStyle(.roundedBorder).accessibilityIdentifier("playlistJoinLink")
-            Text("The link is only read to name the playlist. You join only if you press Join and confirm.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+            Text("The link is only read to name the playlist. You join only if you press Join and confirm.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
             status
-            MusicGlassGroup {
-                HStack {
-                    Spacer()
-                    Button("Close") { joiner.reset(); dismiss() }.musicPageAction().keyboardShortcut(.cancelAction).accessibilityIdentifier("playlistJoinClose")
-                    Button("Look Up") { Task { await joiner.prepare(link: link) } }.musicPageAction()
-                        .disabled(link.trimmingCharacters(in: .whitespaces).isEmpty || joiner.state == .reading || joiner.state == .joining).accessibilityIdentifier("playlistJoinLookUp")
-                    if case .offer(let offer) = joiner.state {
-                        Button("Join…") { confirming = true }.musicPageAction(prominent: true).accessibilityIdentifier("playlistJoinButton")
-                            .confirmationDialog(String(localized: "Join “\(offer.title)”?"), isPresented: $confirming, titleVisibility: .visible) {
-                                Button("Join Playlist") { Task { await joiner.join(confirmation: joiner.joinPrompt) } }
-                                Button("Cancel", role: .cancel) {}
-                            } message: { Text("You will be able to add and change songs in this playlist, and it is added to your library.") }
-                    }
+            HStack {
+                Spacer()
+                Button(isJoined ? "Done" : "Cancel") { joiner.reset(); dismiss() }.musicAction(isJoined ? .primary : .secondary).keyboardShortcut(joinDefault == .done ? .defaultAction : .cancelAction).accessibilityIdentifier("playlistJoinClose")
+                Button("Look Up") { Task { await joiner.prepare(link: link) } }.musicAction(hasJoinOffer || isJoined ? .secondary : .primary).keyboardShortcut(!hasJoinOffer && joinDefault == .submit ? .defaultAction : nil)
+                    .disabled(link.trimmingCharacters(in: .whitespaces).isEmpty || joiner.state == .reading || joiner.state == .joining).accessibilityIdentifier("playlistJoinLookUp")
+                if case .offer(let offer) = joiner.state {
+                    Button("Join…") { confirming = true }.musicAction(.primary).keyboardShortcut(.defaultAction).accessibilityIdentifier("playlistJoinButton")
+                        .confirmationDialog(String(localized: "Join “\(offer.title)”?"), isPresented: $confirming, titleVisibility: .visible) {
+                            Button("Join Playlist") { Task { await joiner.join(confirmation: joiner.joinPrompt) } }
+                            Button("Cancel", role: .cancel) {}
+                        } message: { Text("You will be able to add and change songs in this playlist, and it is added to your library.") }
                 }
             }
         }
-        .padding(MusicSpace.lg).frame(minWidth: 480)
+        .padding(MusicSpace.lg).frame(minWidth: 480).musicSheet().onExitCommand { joiner.reset(); dismiss() }
         .accessibilityElement(children: .contain).accessibilityIdentifier("playlistJoin")
     }
+    private var joinDefault: PlaylistSheetDefaultAction {
+        .resolve(completed: isJoined, canSubmit: hasJoinOffer || (!link.trimmingCharacters(in: .whitespaces).isEmpty && joiner.state != .reading && joiner.state != .joining))
+    }
+    private var isJoined: Bool { switch joiner.state { case .joined, .alreadyMember: true; default: false } }
+    private var hasJoinOffer: Bool { if case .offer = joiner.state { true } else { false } }
     @ViewBuilder private var status: some View {
         switch joiner.state {
         case .idle: EmptyView()
         case .reading, .joining: ProgressView().controlSize(.small).accessibilityIdentifier("playlistJoining")
-        case .invalidLink: Label("That isn’t a YouTube Music invite link.", systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistJoinInvalid")
+        case .invalidLink: Label("That isn’t a YouTube Music invite link.", systemImage: "exclamationmark.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistJoinInvalid")
         case .offer(let offer): Label("Ready to join “\(offer.title)”.", systemImage: "person.2").accessibilityIdentifier("playlistJoinOffer")
         case .alreadyMember(let title): Label("You can already edit “\(title)”. Nothing was sent.", systemImage: "checkmark.circle").accessibilityIdentifier("playlistJoinAlready")
         case .joined(let id):
@@ -173,7 +181,7 @@ public struct PlaylistJoinView: View {
         case .failed(let failure): Label(failure.message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("playlistJoinFailed")
         case .needsReconciliation:
             HStack {
-                Label("YouTube Music didn’t confirm this. You may or may not have joined.", systemImage: "questionmark.circle").font(.caption).accessibilityIdentifier("playlistJoinUnconfirmed")
+                Label("YouTube Music didn’t confirm this. You may or may not have joined.", systemImage: "questionmark.circle").font(MusicPageStyle.note).accessibilityIdentifier("playlistJoinUnconfirmed")
                 Button("Check") { Task { await joiner.check() } }.musicPageAction().accessibilityIdentifier("playlistJoinCheck")
             }
         }

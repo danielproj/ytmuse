@@ -35,13 +35,13 @@ struct LibraryWriteLine: View {
         case .needsReconciliation:
             VStack(alignment: .leading, spacing: MusicSpace.xxs) {
                 HStack(spacing: MusicSpace.xs) {
-                    Label("YouTube Music didn’t confirm this change. It may or may not have been applied.", systemImage: "questionmark.circle").font(.caption)
+                    Label("YouTube Music didn’t confirm this change. It may or may not have been applied.", systemImage: "questionmark.circle").font(MusicPageStyle.note)
                         .foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("libraryWriteUnconfirmed-" + scope)
                     if !write.checkedUnreadable { Button("Check") { Task { await ledger.check(key) } }.musicPageAction().accessibilityIdentifier("libraryWriteCheck-" + scope) }
                 }
                 if write.checkedUnreadable {
                     HStack(spacing: MusicSpace.xs) {
-                        Text("YouTube Music couldn’t say either. Trying again sets the same state again and can’t duplicate anything.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+                        Text("YouTube Music couldn’t say either. Trying again sets the same state again and can’t duplicate anything.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
                             .accessibilityIdentifier("libraryWriteUncheckable-" + scope)
                         Button("Try Again") { Task { await ledger.retry(key) } }.musicPageAction().accessibilityIdentifier("libraryWriteRetry-" + scope)
                         Button("Dismiss") { ledger.dismissUnconfirmed(key) }.musicPageAction().accessibilityIdentifier("libraryWriteDismiss-" + scope)
@@ -112,7 +112,7 @@ struct LibraryRow: View {
         VStack(alignment: .leading, spacing: MusicSpace.xxs) {
             HStack(spacing: MusicSpace.sm) {
                 HStack(spacing: MusicSpace.sm) {
-                    CatalogArtworkView(thumbnails: item.thumbnails, edge: 44, corner: .thumbnail)
+                    CatalogArtworkView(thumbnails: item.thumbnails, edge: MusicFixedArtworkSize.row.edge, corner: .thumbnail)
                     VStack(alignment: .leading, spacing: MusicSpace.hairline) {
                         HStack(spacing: MusicSpace.xxs) {
                             Text(item.title).font(.body).lineLimit(2)
@@ -122,7 +122,7 @@ struct LibraryRow: View {
                         let line = item.detailLine()
                         if !line.isEmpty { Text(line).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(2) }
                     }
-                    Spacer(minLength: 8)
+                    Spacer(minLength: MusicSpace.xs)
                     if let duration = item.durationText { Text(duration).font(.callout.monospacedDigit()).foregroundStyle(MusicStyle.secondaryText) }
                 }
                 .opacity(item.availability == .unavailable ? 0.55 : 1)
@@ -139,7 +139,7 @@ struct LibraryRow: View {
             FeedbackLine(feedback: surface.feedback[entry.id])
             LibraryWriteLine(ledger: surface.ledger, keys: controls.map(\.key).uniqued(), scope: item.id)
         }
-        .musicPageRow()
+        .musicRow()
         .accessibilityActions {
             ForEach(offers.filter(\.isAvailable)) { offer in Button(offer.action.title) { Task { await surface.perform(offer.action, on: item, key: entry.id) } } }
             ForEach(controls) { control in Button(control.title) { Task { await surface.ledger.submit(control.intent) } } }
@@ -161,7 +161,15 @@ struct LibraryCard: View {
         let controls = LibraryControls.make(item: item, source: model.source, ledger: surface.ledger)
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
             ZStack(alignment: .topLeading) {
-                CatalogArtworkView(thumbnails: item.thumbnails, edge: edge)
+                if item.opensPage {
+                    Button { navigator.openItem(item) } label: {
+                        CatalogArtworkView(thumbnails: item.thumbnails, edge: edge)
+                            .contentShape(MusicCorner.artwork.shape)
+                    }.buttonStyle(.plain).musicCard()
+                        .accessibilityHidden(true).help(Text("Open \(item.title)"))
+                } else {
+                    CatalogArtworkView(thumbnails: item.thumbnails, edge: edge)
+                }
                 Button { model.toggle(entry.id) } label: { Image(systemName: model.selection.contains(entry.id) ? "checkmark.circle.fill" : "circle") }
                     .buttonStyle(.plain).padding(MusicSpace.xs).help(Text("Select \(item.title)"))
                     .accessibilityLabel(Text("Select \(item.title)")).accessibilityValue(Text(model.selection.contains(entry.id) ? "Selected" : "Not selected"))
@@ -204,39 +212,28 @@ struct LibraryStateView: View {
     var body: some View {
         switch model.state {
         case .loading:
-            ProgressView("Loading…").frame(maxWidth: .infinity, minHeight: 160).accessibilityIdentifier("libraryState-loading")
+            LoadingState().accessibilityIdentifier("libraryState-loading")
         case .empty:
-            ContentUnavailableView { Label(model.source.kind?.emptyTitle ?? String(localized: "Nothing here yet"), systemImage: model.source.kind?.symbol ?? "clock") }
-                description: { Text("YouTube Music has nothing in this collection. It was read completely.") }
-                .accessibilityIdentifier("libraryState-empty")
+            MusicState(verbatim: model.source.kind?.emptyTitle ?? String(localized: "Nothing here yet"), systemImage: model.source.kind?.symbol ?? MusicStateSymbol.empty) {
+                Text("YouTube Music has nothing in this collection. It was read completely.")
+            }.accessibilityIdentifier("libraryState-empty")
         case .restricted(let reason):
-            ContentUnavailableView {
-                Label(reason == .sessionEnded ? "Your session ended" : reason == .notAvailableHere ? "Not available here" : "Sign in to see this", systemImage: "lock")
-            } description: {
+            MusicState(reason == .sessionEnded ? "Your session ended" : reason == .notAvailableHere ? "Not available here" : "Sign in to see this", systemImage: MusicStateSymbol.restricted,
+                       action: reason == .notAvailableHere ? nil : MusicStateAction("Manage Accounts", perform: openAccounts)) {
                 Text(reason == .sessionEnded ? "Sign in again to read your library. Your local data is kept."
                      : reason == .notAvailableHere ? "YouTube Music doesn’t offer this collection to this account or version."
                      : "Your library belongs to your YouTube Music account.")
-            } actions: {
-                if reason != .notAvailableHere { Button("Manage Accounts", action: openAccounts).musicPageAction() }
             }.accessibilityIdentifier("libraryState-restricted")
         case .offline:
-            ContentUnavailableView {
-                Label("You’re offline", systemImage: "wifi.slash")
-            } description: { Text("YouTube Music couldn’t be reached, and there is no saved copy of this collection yet.") } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicPageAction()
+            MusicState("You’re offline", systemImage: MusicStateSymbol.offline, action: .tryAgain { Task { await model.load() } }) {
+                Text("YouTube Music couldn’t be reached, and there is no saved copy of this collection yet.")
             }.accessibilityIdentifier("libraryState-offline")
         case .unrecognised:
-            ContentUnavailableView {
-                Label("This page isn’t readable yet", systemImage: "questionmark.square.dashed")
-            } description: { Text("YouTube Music sent this collection in a form this version can’t read. That isn’t the same as an empty library.") } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicPageAction()
+            MusicState("This page isn’t readable yet", systemImage: "questionmark.square.dashed", action: .tryAgain { Task { await model.load() } }) {
+                Text("YouTube Music sent this collection in a form this version can’t read. That isn’t the same as an empty library.")
             }.accessibilityIdentifier("libraryState-unrecognised")
         case .failed(let failure):
-            ContentUnavailableView {
-                Label("This collection couldn’t be loaded", systemImage: "exclamationmark.circle")
-            } description: { Text(failure.message) } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicPageAction()
-            }.accessibilityIdentifier("libraryState-failed")
+            ErrorState(title: "This collection couldn’t be loaded", detail: failure.message) { Task { await model.load() } }.accessibilityIdentifier("libraryState-failed")
         case .noMatches:
             ContentUnavailableView.search(text: model.query).accessibilityIdentifier("libraryState-noMatches")
         case .content:
@@ -275,7 +272,7 @@ struct LibraryStatusLine: View {
                 Text("\(model.leftOut) items couldn’t be shown").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("libraryLeftOut")
             }
             if model.pagingEnded != nil {
-                Text("YouTube Music stopped sending more of this collection before the end.").font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("libraryPagingEnded")
+                Text("YouTube Music stopped sending more of this collection before the end.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("libraryPagingEnded")
             }
         }
     }
@@ -311,25 +308,23 @@ struct LibraryCollectionView: View {
         .task(id: surface.selectedKind) { await model.load(); if model.isStale { await model.refresh() } }
     }
     private var controls: some View {
-        MusicGlassGroup {
-            HStack(spacing: MusicSpace.xs) {
-                TextField("Search this collection", text: $model.query).accessibilityIdentifier("libraryQuery").musicField(dense: true).frame(maxWidth: 320)
-                Picker("Sort", selection: $model.sort) {
-                    ForEach(model.availableSorts) { Text($0.title).tag($0) }
-                }.frame(maxWidth: 192).accessibilityIdentifier("librarySort")
-                Picker("Layout", selection: $model.layout) {
-                    Label("List", systemImage: "list.bullet").tag(LibraryLayout.list)
-                    Label("Grid", systemImage: "square.grid.2x2").tag(LibraryLayout.grid)
-                }.pickerStyle(.segmented).labelsHidden().frame(width: 92).accessibilityLabel(Text("Layout")).accessibilityIdentifier("libraryLayout")
-                if model.hasMore {
-                    Button { Task { await model.loadAll() } } label: { Label("Load All", systemImage: "arrow.down.to.line") }
-                        .musicPageAction().disabled(model.loadingMore).accessibilityIdentifier("libraryLoadAll")
-                }
-                Spacer()
-                Button { Task { await model.refresh() } } label: { Label("Refresh", systemImage: "arrow.clockwise") }
-                    .labelStyle(.iconOnly).help(Text("Refresh")).musicPageAction().disabled(model.isRefreshing).accessibilityIdentifier("libraryRefresh")
-                    .keyboardShortcut("r", modifiers: .command)
+        HStack(spacing: MusicSpace.xs) {
+            TextField("Search this collection", text: $model.query).accessibilityIdentifier("libraryQuery").musicField(dense: true).frame(maxWidth: 320)
+            Picker("Sort", selection: $model.sort) {
+                ForEach(model.availableSorts) { Text($0.title).tag($0) }
+            }.frame(maxWidth: 192).accessibilityIdentifier("librarySort")
+            Picker("Layout", selection: $model.layout) {
+                Label("List", systemImage: "list.bullet").tag(LibraryLayout.list)
+                Label("Grid", systemImage: "square.grid.2x2").tag(LibraryLayout.grid)
+            }.pickerStyle(.segmented).labelsHidden().frame(width: 92).accessibilityLabel(Text("Layout")).accessibilityIdentifier("libraryLayout")
+            if model.hasMore {
+                Button { Task { await model.loadAll() } } label: { Label("Load All", systemImage: "arrow.down.to.line") }
+                    .musicPageAction().disabled(model.loadingMore).accessibilityIdentifier("libraryLoadAll")
             }
+            Spacer()
+            Button { Task { await model.refresh() } } label: { Label("Refresh", systemImage: "arrow.clockwise") }
+                .labelStyle(.iconOnly).help(Text("Refresh")).musicPageAction().disabled(model.isRefreshing).accessibilityIdentifier("libraryRefresh")
+                .keyboardShortcut("r", modifiers: .command)
         }.audit("libraryControls", group: "page-top", within: "detailPanel", alignLeading: "pageLeading")
     }
     @ViewBuilder private var content: some View {
@@ -353,11 +348,11 @@ struct LibraryCollectionView: View {
     private var selectionBar: some View {
         HStack(spacing: MusicSpace.xs) {
             Text("\(model.selection.count) selected").accessibilityIdentifier("librarySelectionCount")
-            Button("Copy Links") { _ = surface.copyLinks(of: model.selectedEntries) }.musicPageAction().accessibilityIdentifier("libraryCopyLinks")
+            Button("Copy Links") { _ = surface.copyLinks(of: model.selectedEntries) }.musicAction(.secondary).accessibilityIdentifier("libraryCopyLinks")
             SelectionAddToPlaylistEntry(items: model.selectedEntries.map(\.item))
-            Button("Select All") { model.selectAllVisible() }.musicPageAction().keyboardShortcut("a", modifiers: .command)
-            Button("Clear Selection") { model.clearSelection() }.musicPageAction().accessibilityIdentifier("libraryClearSelection")
-            Text("Library changes are made one item at a time. Adding songs to a playlist asks first.").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+            Button("Select All") { model.selectAllVisible() }.musicAction(.secondary).keyboardShortcut("a", modifiers: .command)
+            Button("Clear Selection") { model.clearSelection() }.musicAction(.secondary).accessibilityIdentifier("libraryClearSelection")
+            Text("Library changes are made one item at a time. Adding songs to a playlist asks first.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText)
         }
     }
     private var footer: some View { LibraryListFooter(model: model) }
@@ -389,20 +384,14 @@ public struct LibraryView: View {
                 if surface.development { Text("Development data · Not YouTube Music").font(.caption).foregroundStyle(MusicStyle.secondaryText).multilineTextAlignment(.trailing).accessibilityIdentifier("developmentDataLabel") }
             }
             ScrollView(.horizontal) {
-                MusicGlassGroup {
-                    HStack(spacing: MusicSpace.xs) {
-                        ForEach(MusicLibraryKind.allCases, id: \.self) { kind in
-                            Button { show(kind) } label: { Label(kind.title, systemImage: kind.symbol) }
-                                .musicPageAction(prominent: kind == surface.selectedKind && !surface.showsDownloadedOnly)
-                                .accessibilityAddTraits(kind == surface.selectedKind && !surface.showsDownloadedOnly ? .isSelected : [])
-                                .accessibilityIdentifier("libraryKind-" + kind.rawValue)
-                        }
-                        if surface.downloads != nil {
-                            Button { restoration?.scroll.rewind(); surface.showsDownloadedOnly = true } label: { Label("Downloaded only", systemImage: "arrow.down.circle") }
-                                .musicPageAction(prominent: surface.showsDownloadedOnly)
-                                .accessibilityAddTraits(surface.showsDownloadedOnly ? .isSelected : [])
-                                .accessibilityIdentifier("libraryDownloadedOnly")
-                        }
+                HStack(spacing: MusicSpace.xs) {
+                    ForEach(MusicLibraryKind.allCases, id: \.self) { kind in
+                        MusicChip(verbatim: kind.title, isSelected: kind == surface.selectedKind && !surface.showsDownloadedOnly, systemImage: kind.symbol) { show(kind) }
+                            .accessibilityIdentifier("libraryKind-" + kind.rawValue)
+                    }
+                    if surface.downloads != nil {
+                        MusicChip(title: "Downloaded only", isSelected: surface.showsDownloadedOnly, systemImage: "arrow.down.circle") { restoration?.scroll.rewind(); surface.showsDownloadedOnly = true }
+                            .accessibilityIdentifier("libraryDownloadedOnly")
                     }
                 }.padding(.vertical, MusicSpace.hairline)
             }.scrollIndicators(.never).audit("libraryKinds", group: "page-top", within: "detailPanel", alignLeading: "pageLeading")

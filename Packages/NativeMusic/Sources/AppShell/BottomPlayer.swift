@@ -46,18 +46,18 @@ struct PlaybackPanel: View {
                 WebMusicTransportContent(player: player, compact: compact, showNowPlaying: showNowPlaying, showQueue: showQueue, accentChanged: accentChanged, namespace: artworkNamespace, outputs: model.outputs, playback: model)
             } else { ownedContent }
         }.audit("playerBar", group: "outer", kind: .floating)
-        // Messages with buttons float just above the capsule (a glass pill); none of them adds a row under it.
+        // Messages with buttons float just above the capsule (a solid card); none of them adds a row under it.
         .overlay(alignment: .top) {
             VStack(spacing: MusicSpace.xs) {
                 if let outputs = model.outputs { OutputPromptHost(controller: outputs) }
                 if let error = model.error {
                     HStack { Text(error).font(.caption).accessibilityIdentifier("playbackError")
-                        if model.canRetryAction { Button("Retry action") { Task { await model.retryFailedAction() } }.musicButtons() }
-                    }.padding(MusicSpace.sm).musicSurface(.panel).musicTransition(.reveal)
+                        if model.canRetryAction { Button("Retry action") { Task { await model.retryFailedAction() } }.musicAction(.secondary) }
+                    }.padding(MusicSpace.sm).musicInsetSurface().musicTransition(.reveal)
                 }
                 if model.music == nil, let state = model.state, state.playback.error != nil {
-                    Button("Retry selected item") { Task { await model.act { try await $0.resume() } } }.accessibilityIdentifier("retryPlayback").musicButtons()
-                        .padding(MusicSpace.xs).musicGlassCapsule()
+                    Button("Retry selected item") { Task { await model.act { try await $0.resume() } } }.accessibilityIdentifier("retryPlayback").musicAction(.secondary)
+                        .padding(MusicSpace.xs).musicInsetSurface()
                 }
             }.frame(maxWidth: PlayerCapsule.maximumWidth / 2).fixedSize(horizontal: false, vertical: true)
                 .alignmentGuide(.top) { $0[.bottom] + MusicSpace.xs }
@@ -78,7 +78,7 @@ struct PlaybackPanel: View {
                 }.buttonStyle(.plain).accessibilityLabel(Text("Show Now Playing")).help(Text("Show Now Playing"))
                     .audit("playerArtwork", group: "playerRow", within: "playerBar")
                 VStack(alignment: .leading, spacing: MusicSpace.hairline) {
-                    Text(model.currentTitle).accessibilityIdentifier("currentMediaTitle").font(.system(size: compact ? 13 : 14, weight: .semibold)).lineLimit(1).playerMatched("player-title", artworkNamespace, .position)
+                    Text(model.currentTitle).accessibilityIdentifier("currentMediaTitle").font(PlayerCapsule.titleFont(compact: compact)).lineLimit(1).playerMatched("player-title", artworkNamespace, .position)
                     if let state = model.state {
                         Text(LocalizedStringKey(model.pending ? "Working…" : state.playback.state.rawValue)).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1).accessibilityIdentifier("playbackState")
                     } else { Text("Choose music to begin").font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1) }
@@ -98,6 +98,7 @@ struct PlaybackPanel: View {
 }
 /// Previous / Play-Pause / Next and the more-actions menu of the owned-media transport, shared by the bar and the expanded player.
 struct OwnedControlsView: View {
+    @Environment(\.musicAccentFill) private var musicAccentFill
     @Bindable var model: PlaybackModel
     var large = false
     var namespace: Namespace.ID? = nil
@@ -118,7 +119,7 @@ struct OwnedControlsView: View {
             Button { Task { await model.nativePlayPause() } } label: {
                 Label(LocalizedStringKey(model.state?.playback.intent == .play ? "Pause" : "Play"), systemImage: model.state?.playback.intent == .play ? "pause.fill" : "play.fill")
                     .contentTransition(.symbolEffect(.replace))
-            }.musicButtons(prominent: true).tint(MusicStyle.accentFill).buttonBorderShape(.circle).accessibilityIdentifier("transportPlayPause")
+            }.musicButtons(prominent: true).tint(musicAccentFill).buttonBorderShape(.circle).accessibilityIdentifier("transportPlayPause")
                 .musicAnimation(.playPause, value: model.state?.playback.intent)
             Button { Task { await model.act(action: .next) { try await $0.next() } } } label: { Label("Next", systemImage: "forward.end.fill") }.accessibilityIdentifier("transportNext")
             Menu { OwnedMoreActions(model: model) } label: { Label("More playback actions", systemImage: "ellipsis") }.accessibilityIdentifier("sleepTimerMenu")
@@ -156,6 +157,7 @@ struct OwnedMoreActions: View {
 }
 
 struct PlaybackTimeline: View {
+    @Environment(\.musicAccent) private var musicAccent
     @Bindable var model: PlaybackTimelineModel
     let seek: (Double) -> Void
     /// The expanded player's slim look (see `WebMusicTimelineView`).
@@ -179,7 +181,7 @@ struct PlaybackTimeline: View {
             if plain {
                 MusicSlimSlider(fraction: shown / duration, active: hovering || dragging || focused, enabled: seekable, thickness: PlayerCapsule.seekHoverThickness) { slider }
                     .onHover { hovering = $0 }
-            } else { slider.tint(MusicStyle.accent) }
+            } else { slider.tint(musicAccent) }
             Text(format(state?.media?.duration ?? 0)).monospacedDigit().frame(minWidth: 36)
         }.font(.caption).foregroundStyle(MusicStyle.secondaryText)
     }

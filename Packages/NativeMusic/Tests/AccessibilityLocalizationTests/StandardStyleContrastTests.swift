@@ -61,3 +61,82 @@ import Testing
     #expect(MusicTint.contrast(secondary, Self.linear((1 - scrim) * 1)) < 4.5, "nothing in Standard's own drawing protects text over a white desktop")
   }
 }
+
+extension StandardStyleContrastTests {
+  /// Model only: AppKit's standard accent hues on the opaque content background, without native control treatments.
+  /// Some system hues (notably yellow on light) fall below 3:1 as bare glyphs. Native controls own their contrast treatment;
+  /// this records that limit explicitly rather than claiming the brand palette test covers the system accent.
+  @Test func modeledSystemAccentGlyphs() {
+    let accents: [(String, NSColor)] = [("blue", .systemBlue), ("purple", .systemPurple), ("pink", .systemPink),
+      ("red", .systemRed), ("orange", .systemOrange), ("yellow", .systemYellow), ("green", .systemGreen), ("graphite", .systemGray)]
+    var checked = 0
+    for appearance in [NSAppearance.Name.aqua, .darkAqua, .accessibilityHighContrastAqua, .accessibilityHighContrastDarkAqua] {
+      let background = Self.windowBackground(appearance)
+      NSAppearance(named: appearance)!.performAsCurrentDrawingAppearance {
+        for (name, color) in accents {
+          let c = color.usingColorSpace(.sRGB)!
+          let ratio = MusicTint.contrast(ContrastColor(c.redComponent, c.greenComponent, c.blueComponent).luminance, background)
+
+          // Graphite is approximated by systemGray. These high-contrast appearances
+          // resolve the same hue values; this model does not cover separate HC variants.
+          let dark = appearance == .darkAqua || appearance == .accessibilityHighContrastDarkAqua
+          #expect((ratio >= 3) == (dark || !["orange", "yellow", "green"].contains(name)))
+
+          print("System accent model: \(appearance.rawValue) \(name) \(String(format: "%.2f", ratio)):1; 3:1 \(ratio >= 3 ? "met" : "requires system treatment")")
+          checked += 1
+        }
+      }
+    }
+    #expect(checked == 32)
+  }
+}
+
+
+extension StandardStyleContrastTests {
+  @Test @MainActor func productionFillGlyphMatchesApprovedTable() {
+    let accents: [(String, NSColor, Bool, Bool)] = [
+      ("blue", .systemBlue, false, false), ("purple", .systemPurple, false, false),
+      ("pink", .systemPink, false, false), ("red", .systemRed, false, false),
+      ("orange", .systemOrange, true, true), ("yellow", .systemYellow, true, true),
+      ("green", .systemGreen, true, true), ("graphite", .systemGray, false, true),
+    ]
+    var checked = 0
+    for (scheme, appearance) in [(ColorScheme.light, NSAppearance.Name.aqua), (.dark, .darkAqua)] {
+      NSAppearance(named: appearance)!.performAsCurrentDrawingAppearance {
+        var env = EnvironmentValues()
+        env.colorScheme = scheme
+        for (name, accent, lightBlack, darkBlack) in accents {
+          let fill = Color(nsColor: accent)
+          let expectedBlack = scheme == .dark ? darkBlack : lightBlack
+          #expect(MusicFillGlyph.color(on: fill, in: env) == (expectedBlack ? Color.black : .white), "\(name) \(scheme)")
+          let resolved = fill.resolve(in: env)
+          let luminance = ContrastColor(Double(resolved.red), Double(resolved.green), Double(resolved.blue)).luminance
+          // The 3:1 floor holds by construction; the table above pins the chosen glyph.
+          #expect(MusicTint.contrast(expectedBlack ? 0 : 1, luminance) >= 3)
+          checked += 1
+        }
+      }
+    }
+    #expect(checked == 16)
+  }
+
+  // Color.resolve(in:) does not select high-contrast variants. Those rows pin the production
+  // decision; ContrastTests.theTintedPlayButtonKeepsThreeToOneBehindItsWhiteGlyph covers the darker fill.
+  @Test @MainActor func productionYTMuseFillGlyphStaysWhite() {
+    var checked = 0
+    for (scheme, appearance) in [
+      (ColorScheme.light, NSAppearance.Name.aqua),
+      (.dark, .darkAqua),
+      (.light, .accessibilityHighContrastAqua),
+      (.dark, .accessibilityHighContrastDarkAqua),
+    ] {
+      NSAppearance(named: appearance)!.performAsCurrentDrawingAppearance {
+        var env = EnvironmentValues()
+        env.colorScheme = scheme
+        #expect(MusicFillGlyph.color(on: MusicStyle.accentFill, in: env) == .white, "\(appearance.rawValue)")
+        checked += 1
+      }
+    }
+    #expect(checked == 4)
+  }
+}

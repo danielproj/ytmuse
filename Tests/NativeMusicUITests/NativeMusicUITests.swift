@@ -2913,9 +2913,9 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertEqual(app.switches["resumeAfterWake"].firstMatch.value as? Int, 1, "resuming after a wake is the default")
     }
 
-    /// W27: Settings opens on a category page; the sidebar buttons are `settingsCategory.<id>`.
+    /// W27: Settings opens on a category page; the sidebar rows are `settingsCategory.<id>`.
     @MainActor private func selectSettingsCategory(_ app: XCUIApplication, _ id: String) {
-        let button = app.buttons["settingsCategory." + id].firstMatch
+        let button = app.descendants(matching: .any)["settingsCategory." + id].firstMatch
         XCTAssertTrue(button.waitForExistence(timeout: 10), "the \(id) category is in the Settings sidebar")
         button.click()
     }
@@ -2937,7 +2937,7 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertTrue(roots.contains("owned=") && roots.contains("/ytmuse-"), "the owned-audio store is one of the isolated roots: \(roots)")
         // Every category is in the sidebar.
         for id in ["account", "general", "appearance", "playback", "library", "downloads", "integration", "privacy", "updates", "language", "storage", "diagnostics"] {
-            XCTAssertTrue(app.buttons["settingsCategory." + id].firstMatch.waitForExistence(timeout: 10), "category \(id)")
+            XCTAssertTrue(app.descendants(matching: .any)["settingsCategory." + id].firstMatch.waitForExistence(timeout: 10), "category \(id)")
         }
         // Appearance is the first page; choose Dark.
         let picker = app.popUpButtons["appearancePicker"]

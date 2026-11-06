@@ -15,33 +15,38 @@ struct SettingsWindow: View {
     private var store: SettingsStore { accounts.settings }
 
     var body: some View {
-        MusicGlassGroup {
-            HStack(spacing: 0) {
-                sidebar.frame(width: 200)
-                Divider()
-                detail.frame(maxWidth: .infinity, maxHeight: .infinity)
-            }.musicSurface()
-        }.padding(MusicSpace.lg).frame(minWidth: 780, idealWidth: 820, minHeight: 560, idealHeight: 620).musicCanvas()
+        NavigationSplitView {
+            sidebar.audit("settingsSidebar", group: "settingsColumns", kind: .region)
+                .toolbar(removing: .sidebarToggle)
+                .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 260)
+        } detail: {
+            detail.frame(maxWidth: .infinity, maxHeight: .infinity)
+                .musicContentRegion().audit("settingsDetail", group: "settingsColumns", kind: .region)
+        }
+        .frame(minWidth: 780, idealWidth: 820, minHeight: 560, idealHeight: 620)
+        .musicCanvas()
     }
 
     private var sidebar: some View {
-        VStack(alignment: .leading, spacing: MusicSpace.xs) {
-            TextField("Search Settings", text: $query).musicField(dense: true).accessibilityIdentifier("settingsSearch").padding(.bottom, MusicSpace.xs)
-            // At the 560 pt minimum, 48 pt outer + 24 pt sidebar insets leave 488 pt.
-            // Search stays fixed; categories (12 x at least 36 pt plus gaps) scroll in the remainder.
-            ScrollView {
-                VStack(alignment: .leading, spacing: MusicSpace.xs) {
-                    ForEach(SettingCategory.allCases) { category in
-                        Button { selection = category; query = "" } label: {
-                            Label(category.title, systemImage: category.symbol).frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, MusicSpace.xs).padding(.horizontal, MusicSpace.sm)
-                                .musicSelectionBackground(selection == category && query.isEmpty).musicHoverHighlight().contentShape(Rectangle())
-                        }.buttonStyle(.plain).accessibilityIdentifier("settingsCategory." + category.rawValue)
-                            .accessibilityAddTraits(selection == category ? .isSelected : [])
-                    }
-                    RootsReadout(accounts: accounts)
+        VStack(spacing: 0) {
+            TextField("Search Settings", text: $query)
+                .musicField(dense: true)
+                .accessibilityIdentifier("settingsSearch")
+                .padding(MusicSpace.sm)
+            List(selection: Binding<SettingCategory?>(get: { query.trimmingCharacters(in: .whitespaces).isEmpty ? selection : nil }, set: { category in
+                guard let category else { return }
+                selection = category
+                query = ""
+            })) {
+                ForEach(SettingCategory.allCases) { category in
+                    Label(category.title, systemImage: category.symbol)
+                        .tag(category)
+                        .accessibilityIdentifier("settingsCategory." + category.rawValue)
                 }
-            }.scrollIndicators(.automatic)
-        }.padding(MusicSpace.sm)
+            }
+            .listStyle(.sidebar)
+            RootsReadout(accounts: accounts).padding(MusicSpace.sm)
+        }
     }
 
     @ViewBuilder private var detail: some View {
@@ -58,7 +63,7 @@ struct SettingsWindow: View {
                             Text(definition.title()).font(.body)
                             Text(definition.category.title).font(.footnote).foregroundStyle(MusicStyle.secondaryText)
                         }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
-                    }.buttonStyle(.plain).accessibilityIdentifier("settingsResult." + definition.id)
+                    }.musicAction(.inline).accessibilityIdentifier("settingsResult." + definition.id)
                 }
             }.padding(MusicSpace.md)
         }
@@ -95,7 +100,7 @@ struct SettingsPane: View {
             if hasResettable {
                 Section {
                     Button("Restore Defaults") { Task { restoredNote = await restore() } }
-                        .accessibilityIdentifier(category == .appearance ? "restoreAppearance" : "restoreDefaults." + category.rawValue).musicPageAction()
+                        .accessibilityIdentifier(category == .appearance ? "restoreAppearance" : "restoreDefaults." + category.rawValue).musicAction(.secondary)
                     if let restoredNote { Text(restoredNote).font(.footnote).accessibilityIdentifier("restoredNote") }
                     Text("Restores only the settings on this page. Your playlists, library and account are not changed.").font(.footnote).foregroundStyle(MusicStyle.secondaryText)
                 }
@@ -204,7 +209,7 @@ struct OutputNote: View {
         VStack(alignment: .leading, spacing: MusicSpace.xxs) {
             Text("Choose an output from the output button in the player.").font(.footnote).foregroundStyle(MusicStyle.secondaryText)
             Button("Forget Remembered Output") { Task { note = await accounts.restoreDefaults(nil, only: "outputRoute", confirmed: true).map { String(localized: "Nothing was changed: \($0)") } ?? String(localized: "The remembered output was forgotten.") } }
-                .accessibilityIdentifier("forgetOutput").musicPageAction()
+                .accessibilityIdentifier("forgetOutput").musicAction(.secondary)
             if let note { Text(note).font(.footnote).accessibilityIdentifier("forgetOutputNote") }
         }
     }

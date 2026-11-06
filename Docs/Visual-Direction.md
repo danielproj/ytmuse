@@ -49,3 +49,11 @@ Settings › Appearance › **Style** offers two looks beside Mode (System/Light
   - The artwork tint reaches only the player, and the Artwork accent row says so.
 - Every window root applies the style hook: `.appStyle(...)` on the scenes, `.appAppearance()` on manually hosted windows. `WindowRootStyleTests` holds them to it.
 - How Standard looks over a real wallpaper is the account holder's check.
+
+## Design alignment — 2026-11-06
+
+This alignment supersedes the earlier directions to put glass on content panels. Both styles share one layout: edge-to-edge solid content and a full-height solid queue/lyrics inspector with a leading divider. Standard uses the system window background; YTMuse retains its existing canvas (near-black in dark appearance). Native sidebar and toolbar, floating player and expanded-player controls retain glass. Content and inspector content clear the floating player by at least 12 pt.
+
+Standard follows the macOS accent; YTMuse uses the audited red palette. Window roots inject the accent and native tint. Content uses native primary, secondary and inline button roles. Rows, cards, chips, artwork, notes and sheet actions follow the shared design-system recipe.
+
+Known difference from the approved plan: scrolling under the toolbar is deferred. The destination currently sits below the toolbar safe area and the banner/QA bands. Supporting the system top scroll-edge effect needs a shell rearrangement and a live scroll-edge check. The parent operator performs the isolated Debug live look in both styles; headless geometry checks do not replace that review.

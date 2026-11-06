@@ -107,7 +107,7 @@ public struct CatalogArtworkView: View {
         Group {
             if let artwork, let request = artwork.request(for: thumbnails) {
                 NativeArtworkView(pipeline: artwork.pipeline, request: request, authority: artwork.authority, visible: true)
-            } else { ResonanceArtwork() }
+            } else { MusicArtworkPlaceholder(corner: corner) }
         }.frame(width: edge, height: edge).musicClip(corner).accessibilityHidden(true)
     }
 }

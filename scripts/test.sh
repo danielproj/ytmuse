@@ -713,16 +713,25 @@ if [[ "$2" == T52 ]]; then
   # headless layout audit + snapshots of every primary surface. No UI session is needed: windows are hosted offscreen and nothing is shown or keyed.
   discovery=$(swift test --package-path Packages/NativeMusic list)
   [[ "$discovery" == *GlassPolishTests.* ]] || { echo 'T52 discovery is empty' >&2; exit 1; }
-  counted_swift_test 'DesignTokenTests|CornerCapTests|AccentOrderTests|StackedWashTests|LayoutAuditRuleTests|SourceGuardTests'
+  t52_failed=0
+  counted_swift_test 'DesignTokenTests|CornerCapTests|AccentOrderTests|StackedWashTests|LayoutAuditRuleTests|SourceGuardTests' || t52_failed=1
   # Isolated synthetic content only (the app's own development catalog and library); QA isolation is decided before any store opens.
   export YTMUSE_NATIVE_DESIGN_TEST=1 YTMUSE_UI_DEVELOPMENT_DATA=1 YTMUSE_UI_DEVELOPMENT_LIBRARY=1 YTMUSE_UI_DEVELOPMENT_PLAYLISTS=1
   # HistoryVirtualizationTests hosts the History page with 1,500 rows and counts the rows it builds (only those on screen) and the pages it reads.
-  counted_swift_test 'SurfaceAuditTests|SheetAuditTests|PolicyAuditTests|PlayerMorphStageTests|CapsuleHoverAuditTests|RootRegionLayoutTests|SettleHelperTests|ShutdownIsolationTests|HistoryVirtualizationTests'
+  for audit_style in ytmuse standard; do
+    export YTMUSE_AUDIT_STYLE="$audit_style"
+    counted_swift_test 'SurfaceAuditTests|SheetAuditTests|PolicyAuditTests|PlayerMorphStageTests|CapsuleHoverAuditTests|RootRegionLayoutTests|SettleHelperTests|ShutdownIsolationTests|HistoryVirtualizationTests' || t52_failed=1
+  done
+  unset YTMUSE_AUDIT_STYLE
   # The window-root layout contract and scroll restoration also run against the generic collection page (development data, no development
   # Library), which is the page ScrollViewIntegrationTests measures; W12's Library replaced it when the library flag is set.
   unset YTMUSE_UI_DEVELOPMENT_LIBRARY YTMUSE_UI_DEVELOPMENT_PLAYLISTS
-  counted_swift_test 'RootRegionLayoutTests|ScrollViewIntegrationTests'
-  exit 0
+  for audit_style in ytmuse standard; do
+    export YTMUSE_AUDIT_STYLE="$audit_style"
+    counted_swift_test 'RootRegionLayoutTests|ScrollViewIntegrationTests' || t52_failed=1
+  done
+  unset YTMUSE_AUDIT_STYLE
+  exit "$t52_failed"
 fi
 if [[ "$2" == T44P ]]; then
   # W44-prep: the synthetic PERF04 dataset (shape, determinism, gating), the library-model equivalence tests, the indicative headless model measurements on an

@@ -8,13 +8,9 @@ struct CatalogStateView: View {
     var body: some View {
         switch model.phase {
         case .idle, .loading:
-            ProgressView("Loading…").frame(maxWidth: .infinity, minHeight: 160).accessibilityIdentifier("catalogLoading").musicTransition(.reveal)
+            LoadingState().accessibilityIdentifier("catalogLoading").musicTransition(.reveal)
         case .failed(let failure):
-            ContentUnavailableView {
-                Label("This page couldn’t be loaded", systemImage: "exclamationmark.circle")
-            } description: { Text(failure.message) } actions: {
-                Button("Try Again") { Task { await model.load() } }.musicPageAction()
-            }.accessibilityIdentifier("catalogFailure")
+            ErrorState(title: "This page couldn’t be loaded", detail: failure.message) { Task { await model.load() } }.accessibilityIdentifier("catalogFailure")
         case .loaded:
             if !model.hasContent || (model.shelves.allSatisfy { $0.items.isEmpty } && model.header == nil) {
                 EmptyState(title: "Nothing to show here", message: "YouTube Music returned this page without any items.")
@@ -38,11 +34,11 @@ struct CatalogShelvesView<Header: View>: View {
         ScrollViewReader { proxy in
             let _ = registerItems()
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: MusicSpace.xl) {
+                LazyVStack(alignment: .leading, spacing: MusicPageStyle.sectionSpacing) {
                     // The heading is a scroll target too: a visit left at the top must
                     // restore the heading, rather than pull the first shelf over it.
                     // Its inset belongs to the target so restoration keeps page spacing.
-                    VStack(alignment: .leading, spacing: MusicSpace.xl) { header() }
+                    VStack(alignment: .leading, spacing: MusicPageStyle.sectionSpacing) { header() }
                         .padding(.top, MusicSpace.xl).identityItem(headerID)
                     CatalogStateView(model: model)
                     ForEach(model.shelves.filter { !$0.items.isEmpty || $0.continuation != nil }) { shelf in

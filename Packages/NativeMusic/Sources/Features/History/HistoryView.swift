@@ -50,7 +50,7 @@ public struct HistoryView: View {
             ForEach([history.controls.pause, history.controls.clear], id: \.title) { control in
                 VStack(alignment: .leading, spacing: MusicSpace.hairline) {
                     Text(control.title).font(.subheadline.weight(.semibold))
-                    Text(control.reason).font(.caption).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
+                    Text(control.reason).font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).fixedSize(horizontal: false, vertical: true)
                 }.accessibilityElement(children: .combine).accessibilityIdentifier("historyControlUnavailable")
             }
         }
@@ -105,7 +105,7 @@ struct HistoryRemoteSection: View {
         VStack(alignment: .leading, spacing: MusicSpace.xs) {
             Label("YouTube Music history", systemImage: "play.square").font(MusicPageStyle.section).accessibilityAddTraits(.isHeader)
             Text("Read from YouTube Music. YouTube’s own player records it when it plays; this app never writes it.")
-                .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyRemoteProvenance")
+                .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyRemoteProvenance")
             LibraryStateView(model: remote, openAccounts: openAccounts)
         }
         .accessibilityElement(children: .contain).accessibilityIdentifier("historyRemote")
@@ -115,7 +115,7 @@ struct HistoryRemoteSection: View {
             ForEach(HistoryRow.rows(remote.entries)) { row in
                 switch row.content {
                 case .heading(let title):
-                    Text(title).font(.headline).accessibilityAddTraits(.isHeader).padding(.top, row.gap)
+                    Text(title).font(MusicPageStyle.group).accessibilityAddTraits(.isHeader).padding(.top, row.gap)
                 case .entry(let entry):
                     LibraryRow(surface: surface, entry: entry, source: remote.source, navigator: navigator).padding(.top, row.gap)
                 }
@@ -160,15 +160,15 @@ private struct HistoryLocalSection: View {
                 MusicOutlineBadge("Local only").accessibilityIdentifier("historyLocalOnlyBadge")
             }
             Text("The app’s own record of what it played here. It isn’t YouTube Music’s history, and it is never sent to YouTube Music.")
-                .font(.caption).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyLocalProvenance")
+                .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyLocalProvenance")
             if history.localFailure {
-                Label("This Mac’s record couldn’t be read or saved.", systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("historyLocalFailure")
+                Label("This Mac’s record couldn’t be read or saved.", systemImage: "exclamationmark.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("historyLocalFailure")
             }
             if !history.hasLocalStore {
-                Text("Local history isn’t available in this session.").font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyLocalUnavailable")
+                Text("Local history isn’t available in this session.").font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyLocalUnavailable")
             } else if history.local.isEmpty, history.localLoaded {
                 Text(history.localCleared ? "This Mac’s record was cleared. YouTube Music’s history is unchanged." : "Nothing has played on this Mac yet. A play is recorded after you have really listened to part of a track.")
-                    .font(.callout).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyLocalEmpty")
+                    .font(MusicPageStyle.note).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("historyLocalEmpty")
             }
         }
         .accessibilityElement(children: .contain).accessibilityIdentifier("historyLocal")
@@ -177,7 +177,7 @@ private struct HistoryLocalSection: View {
         if history.hasLocalStore, !(history.local.isEmpty && history.localLoaded) {
             ForEach(history.local) { record in
                 HStack(spacing: MusicSpace.sm) {
-                    Image(systemName: "music.note").foregroundStyle(MusicStyle.secondaryText)
+                    MusicArtworkPlaceholder(corner: .thumbnail).frame(width: MusicArtworkSize.row.edge, height: MusicArtworkSize.row.edge)
                     VStack(alignment: .leading, spacing: MusicSpace.hairline) {
                         Text(record.title.isEmpty ? String(localized: "Unknown song") : record.title).lineLimit(2)
                         Text(([record.artist].compactMap { $0 } + [record.startedAt.formatted(date: .abbreviated, time: .shortened)]).joined(separator: String(localized: "detailSeparator")))
@@ -189,7 +189,7 @@ private struct HistoryLocalSection: View {
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(Text("\(record.title), \(record.artist ?? String()), local only"))
                 .accessibilityIdentifier("historyLocalRow")
-                .padding(.top, MusicSpace.xs)
+                .musicRow(hoverable: false)
             }
             Button("Clear Local History…", role: .destructive) { confirmingClear = true }
                 .musicPageAction().accessibilityIdentifier("historyClearLocal")
