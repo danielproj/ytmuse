@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-06. Latest public development preview: **[0.1.8](https://github.com/danielproj/ytmuse/releases/tag/v0.1.8)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-06. Latest public development preview: **[0.1.9](https://github.com/danielproj/ytmuse/releases/tag/v0.1.9)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,16 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## New in the 0.1.9 preview
+
+The account holder asked to align the whole app's design in both styles with Apple's macOS 27 guidance, using the recommended option for every choice. The work was done as seven harness slices, each independently reviewed. Offscreen renders of the main pages were checked in both styles; **no live window has been checked**.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| Design alignment | Solid content runs edge to edge, with one inspector column for the queue and lyrics. The accent is set at the window root: Standard follows the system accent, YTMuse uses red. The Play glyph is white unless white is below 3:1 on the fill. Buttons take primary, secondary or inline roles, at most one primary per page or sheet, and Return never repeats a write. Rows, cards (artwork-only lift), chips, artwork sizes, the placeholder, states, the type scale and sheets are shared. Settings uses the native sidebar. The layout audits run in both styles. | A live look in both styles: translucency, Liquid Glass, hover, keyboard and VoiceOver. Whether borderless buttons should take the accent colour. Content scrolling under the toolbar is deferred. The audit host does not inject the style's accent, so YTMuse audits draw the default accent. No playlist-sheet audit fixtures exist. |
+
+The 0.1.9 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 10 to earlier releases.
 
 ## New in the 0.1.8 preview
 

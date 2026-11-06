@@ -6,9 +6,17 @@
 
 ## Status, honestly
 
-The [0.1.8 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.8) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. On 2026-11-05 the account holder confirmed the remaining core checks work, including update restart after the fix. Wider G09 distribution checks remain deferred; see the [backlog](Docs/Backlog.md). The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
+The [0.1.9 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.9) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. On 2026-11-05 the account holder confirmed the remaining core checks work, including update restart after the fix. Wider G09 distribution checks remain deferred; see the [backlog](Docs/Backlog.md). The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
 
 The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. On 2026-11-05 the account holder confirmed the remaining core checks all work, including radio filters, audible playback, media keys, cold launch and update restart. The agreed working core is accepted; [the refreshed backlog](Docs/Backlog.md) tracks the features requested since then and deferred work. This confirmation does not close the full account, accessibility, hardware or distribution matrices below.
+
+**New in the 0.1.9 preview:**
+- One design across the app in both styles, following Apple's macOS 27 guidance:
+  - pages run edge to edge on a solid background;
+  - the queue and lyrics panel is one side column;
+  - buttons follow the standard Mac roles;
+  - rows, cards, chips and messages look the same everywhere;
+  - Settings uses the native sidebar.
 
 **New in the 0.1.8 preview:**
 - Settings › Appearance › Style: **Standard** (the macOS look, now the default: the main window lets the desktop show through, with plain Liquid Glass panels) or **YTMuse** (the app's own near-black look with the red accent). Both use the native macOS 27 sidebar with no panel behind the items.
@@ -35,7 +43,7 @@ Automated tests use **sanitized fixtures and owned synthetic audio**, isolated f
 
 ## Install the preview
 
-Download `YTMuse-0.1.8.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.8), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
+Download `YTMuse-0.1.9.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.9), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
 
 ## Build from source
 
