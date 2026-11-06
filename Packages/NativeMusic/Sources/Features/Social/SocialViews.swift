@@ -130,7 +130,7 @@ public struct SocialPanel: View {
             VStack(alignment: .leading, spacing: MusicSpace.xs) {
                 row(thread.comment)
                 ForEach(list.shownReplies(of: thread)) { reply in
-                    row(reply).padding(.leading, MusicSpace.lg * CGFloat(max(1, min(reply.level, 3))))
+                    row(reply).padding(.leading, MusicSpace.nestedIndent(level: reply.level))
                 }
                 replyControls(list, thread)
             }.accessibilityElement(children: .contain).accessibilityIdentifier("socialThread-" + thread.id)

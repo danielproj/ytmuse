@@ -100,7 +100,7 @@ enum CurrentSongShare {
 private struct ShareCurrentSongKey: EnvironmentKey { static let defaultValue: (@MainActor () -> Void)? = nil }
 extension EnvironmentValues {
     /// Shares the song that is playing now (the shell's `shareCurrentSong`, whose facilities are the recording stand-in under isolation); nil where
-    /// no shell provides it, which hides the player's Share… item.
+    /// no shell provides it, which hides the player's Share button.
     var shareCurrentSong: (@MainActor () -> Void)? {
         get { self[ShareCurrentSongKey.self] }
         set { self[ShareCurrentSongKey.self] = newValue }

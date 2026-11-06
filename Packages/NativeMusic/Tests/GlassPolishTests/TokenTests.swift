@@ -25,6 +25,12 @@ import SwiftUI
         #expect(MusicStyle.radius == MusicRadius.xl && MusicStyle.compact == MusicSpace.xs && MusicStyle.spacing == MusicSpace.md && MusicStyle.inset == MusicSpace.lg,
                 "the pre-V02 constants are aliases of the scale, so existing call sites cannot drift")
     }
+    @Test func nestedContentIsSetInOneStepPerLevelUpToTheCap() {
+        #expect(MusicSpace.nestedIndent(level: 1) == MusicSpace.lg && MusicSpace.nestedIndent(level: 2) == MusicSpace.lg * 2 && MusicSpace.nestedIndent(level: 3) == MusicSpace.lg * 3)
+        #expect(MusicSpace.nestedIndent(level: 0) == MusicSpace.lg && MusicSpace.nestedIndent(level: -2) == MusicSpace.lg, "nested content is always set in")
+        #expect(MusicSpace.nestedIndent(level: 12) == MusicSpace.nestedIndent(level: MusicSpace.maximumNesting), "a deep thread stops at the cap")
+        for level in -1...8 { #expect(MusicSpace.isOnGrid(MusicSpace.nestedIndent(level: level), tolerance: 0)) }
+    }
     @Test func elevationGrowsWithLevel() {
         let levels = MusicElevation.allCases
         for (lower, higher) in zip(levels, levels.dropFirst()) {

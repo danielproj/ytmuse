@@ -158,17 +158,17 @@ struct WebCapsuleTime: View {
     }
 }
 
-/// What the capsule's ⋯ menu offers, in order. Decided here (not in the view) so the choice is testable without opening a menu.
-enum CapsuleMoreItem: Hashable { case sleepTimer, showVideo, shareSong, goLive, episodeControls }
+/// What the capsule's ⋯ menu offers, in order. Decided here (not in the view) so the choice is testable without opening a menu. Share has its own
+/// button beside Queue and is never in this menu.
+enum CapsuleMoreItem: Hashable { case sleepTimer, showVideo, goLive, episodeControls }
 
-/// Shuffle, Repeat, volume, Output, Queue, the sleep timer's chip and ⋯: the trailing group. `expanded` is the expanded player's: larger, with Go Live and the
-/// LIVE badge inline (as before) and no chip (the expanded player has its own sleep-timer line).
+/// Shuffle, Repeat, volume, Output, Queue, Share, the sleep timer's chip and ⋯: the trailing group. `expanded` is the expanded player's: larger, with Go Live and
+/// the LIVE badge inline (as before) and no chip (the expanded player has its own sleep-timer line).
 struct WebCapsuleSecondary: View {
-    static func moreItems(state: WebMusicSnapshot, hasSleepTimer: Bool, canShowVideo: Bool, episode: Bool, liveInline: Bool = false, canShare: Bool = false) -> [CapsuleMoreItem] {
+    static func moreItems(state: WebMusicSnapshot, hasSleepTimer: Bool, canShowVideo: Bool, episode: Bool, liveInline: Bool = false) -> [CapsuleMoreItem] {
         var items: [CapsuleMoreItem] = []
         if hasSleepTimer { items.append(.sleepTimer) }
         if canShowVideo, state.hasPicture { items.append(.showVideo) }
-        if canShare { items.append(.shareSong) }
         if state.isLive, !liveInline { items.append(.goLive) }
         if episode { items.append(.episodeControls) }
         return items
@@ -221,6 +221,13 @@ struct WebCapsuleSecondary: View {
             if let outputs { OutputPickerHost(controller: outputs).buttonStyle(.musicGlyph(edge: edge)) }
             Button(action: showQueue) { Label("Queue", systemImage: "list.bullet") }
                 .buttonStyle(.musicGlyph(edge: edge)).help(Text("Queue")).accessibilityIdentifier("transportQueue")
+            // Share, beside Queue. The shell re-reads the playing song when this is pressed, so the link is the song's own (never its radio or queue) and is
+            // never stale; an advertisement or a stopped player has no song to share, so the button stays in place, disabled.
+            if let shareCurrentSong {
+                Button { shareCurrentSong() } label: { Label("Share…", systemImage: "square.and.arrow.up") }
+                    .buttonStyle(.musicGlyph(edge: edge)).disabled(CurrentSongShare.item(for: player) == nil)
+                    .help(Text("Share Current Song…")).accessibilityIdentifier("musicShare")
+            }
             if !expanded, let playback { SleepTimerChip(model: playback, episode: episode, identifier: "musicSleepRemaining") }
             more(state, episode: episode, edge: edge)
         }
@@ -238,8 +245,7 @@ struct WebCapsuleSecondary: View {
     /// ⋯: what has no slot of its own: the sleep timer, the video window, Go Live and an episode's speed and jumps.
     private func more(_ state: WebMusicSnapshot, episode: Bool, edge: CGFloat) -> some View {
         Menu {
-            ForEach(Self.moreItems(state: state, hasSleepTimer: playback != nil, canShowVideo: showVideo != nil, episode: episode, liveInline: expanded,
-                                   canShare: shareCurrentSong != nil && CurrentSongShare.item(for: player) != nil), id: \.self) { item in
+            ForEach(Self.moreItems(state: state, hasSleepTimer: playback != nil, canShowVideo: showVideo != nil, episode: episode, liveInline: expanded), id: \.self) { item in
                 switch item {
                 case .sleepTimer:
                     if let playback {
@@ -249,9 +255,6 @@ struct WebCapsuleSecondary: View {
                     }
                 case .showVideo:
                     if let showVideo { Button(action: showVideo) { Label("Show Video", systemImage: "play.rectangle") }.accessibilityIdentifier("musicShowVideo") }
-                case .shareSong:
-                    // The shell re-reads the playing song when this is pressed, so the link is the song's own (never its radio or queue) and is never stale.
-                    if let shareCurrentSong { Button { shareCurrentSong() } label: { Label("Share…", systemImage: "square.and.arrow.up") }.accessibilityIdentifier("musicShare") }
                 case .goLive:
                     Button { Task { await player.goLive() } } label: { Label("Go Live", systemImage: "dot.radiowaves.left.and.right") }
                         .disabled(!state.canGoLive).accessibilityIdentifier("musicGoLive")

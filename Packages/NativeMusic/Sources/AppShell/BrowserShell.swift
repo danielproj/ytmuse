@@ -102,7 +102,7 @@ struct BrowserShell: View {
         .background(HostWindowReader { hostWindow.window = $0 })
         // W21: the mini-player's and the status item's Queue button asks the window that is frontmost to show its queue.
         .environment(\.outputPickerRequest, accounts.shell.outputPickerRequest)
-        // Share… in the player's ⋯ menu: the shell re-reads the playing song at the press and hands its canonical link to its (isolation-aware) sharing facility.
+        // The player's Share button, beside Queue: the shell re-reads the playing song at the press and hands its canonical link to its (isolation-aware) sharing facility.
         .environment(\.shareCurrentSong, { [shell = accounts.shell] in shell.shareCurrentSong() })
         .onChange(of: accounts.shell.queueRequest) { _, request in
             guard request != queueRequestSeen else { return }
