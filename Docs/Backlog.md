@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-06. Latest public development preview: **[0.1.7](https://github.com/danielproj/ytmuse/releases/tag/v0.1.7)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-06. Latest public development preview: **[0.1.8](https://github.com/danielproj/ytmuse/releases/tag/v0.1.8)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,16 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## New in the 0.1.8 preview
+
+One change the account holder asked for, in several steps. It has automated tests and was checked in a live window on the packaging Mac, in an isolated Debug copy with no account signed in.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| Appearance style | Settings › Appearance › Style offers **Standard** (the default) and **YTMuse**. Standard sets the system window material on the main window, so the desktop shows through. Its panels and player are plain Liquid Glass with no scrim, and every other window and sheet uses the system background. YTMuse keeps the near-black canvas, the scrim and the red accent. Both styles use the native macOS 27 sidebar column with no panel behind the items. The style applies live to every window, and the video windows now follow Appearance too. | How Standard looks over the account holder's own wallpaper. Text legibility in Standard rests on the macOS material and is not computed. Only the opaque fallback (Reduce Transparency, Increase Contrast) is audited. Standard has no layout audit. The red accent does not yet follow the style. |
+
+The 0.1.8 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 9 to earlier releases.
 
 ## New in the 0.1.7 preview
 
