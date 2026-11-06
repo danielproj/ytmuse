@@ -336,3 +336,7 @@ Q40|one:%lld reproducción	many:%lld de reproducciones	other:%lld reproducciones
 1615|Se muestran las primeras %@ páginas de comentarios. Esta app no carga más.
 1616|Esta lista de comentarios está desactualizada. Vuelve a mostrar los comentarios.
 1617|Aún no se pueden publicar ni moderar comentarios desde esta app.
+1618|Estilo
+1619|Estándar
+1620|YTMuse es el aspecto oscuro propio de la app. Estándar sigue a macOS: en la ventana principal el escritorio se ve a través de la barra lateral y las demás ventanas usan el fondo del sistema.
+1621|Con el estilo Estándar la ventana no tiene un fondo teñido, así que solo se tiñe el reproductor.

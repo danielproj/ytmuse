@@ -336,3 +336,7 @@ Q40|one:%lld lecture	many:%lld de lectures	other:%lld lectures
 1615|Affichage des %@ premières pages de commentaires. Cette app n’en charge pas davantage.
 1616|Cette liste de commentaires est obsolète. Affichez à nouveau les commentaires.
 1617|La publication et la modération de commentaires ne sont pas encore disponibles dans cette app.
+1618|Style
+1619|Standard
+1620|YTMuse est l’apparence sombre propre à l’app. Standard suit macOS : dans la fenêtre principale, le bureau transparaît à travers la barre latérale, et les autres fenêtres utilisent le fond du système.
+1621|Avec le style Standard, la fenêtre n’a pas de fond teinté : seul le lecteur est teinté.

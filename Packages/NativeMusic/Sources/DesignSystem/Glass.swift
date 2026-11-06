@@ -1,3 +1,4 @@
+import Domain
 import SwiftUI
 
 // V02 native Liquid Glass building blocks beyond the region surface in DesignSystem.swift (GLASS09/GLASS10).
@@ -12,12 +13,13 @@ private struct MusicGlassModifier<S: Shape>: ViewModifier {
   var interactive: Bool
   /// Draw a hairline when the glass is simplified to a material (Low Power / inactive): a field on a material panel would otherwise have no edge.
   var edge: Bool
+  @Environment(\.musicAppStyle) private var style
   private var glass = MusicGlassEnvironment()
   init(shape: S, tint: Color?, interactive: Bool, edge: Bool = false) { self.shape = shape; self.tint = tint; self.interactive = interactive; self.edge = edge }
   func body(content: Content) -> some View {
     Group {
       if glass.policy.opaque {
-        content.background(MusicStyle.opaqueSurface, in: shape).overlay(shape.stroke(Color.primary.opacity(0.6), lineWidth: 1))
+        content.background(MusicStyle.opaqueSurface(style), in: shape).overlay(shape.stroke(Color.primary.opacity(0.6), lineWidth: 1))
       } else if glass.policy.simplified {
         content.background(.regularMaterial, in: shape).overlay(shape.stroke(Color.primary.opacity(edge ? 0.28 : 0), lineWidth: 1))
       } else {

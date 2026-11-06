@@ -4,6 +4,7 @@ import AppKit
 import SwiftUI
 import Observation
 import DesignSystem
+import Domain
 @testable import AppShell
 
 @MainActor @Observable private final class Frames { var values: [String: CGRect] = [:] }
@@ -47,7 +48,9 @@ struct RootMode: Sendable { let qa: Bool; let banner: Bool }
         if mode.banner { session.open(.library); accounts.playback.error = String(repeating: "Disposable long error. ", count: 20); accounts.windowAuthority.historyUnavailable() }
         let navigation = BrowserNavigation(session: session)
         let contract = MainWindowContractState()
+        // The YTMuse style's geometry (its sidebar panel in the system column); Standard is the default since APPEARANCE-STYLE, so it is stated.
         let root = LocalAccountRoot(accounts: accounts, panels: panels, navigation: navigation, showsQAReadouts: mode.qa).modifier(MainWindowContract(state: contract))
+            .environment(\.musicAppStyle, .ytmuse)
             .overlayPreferenceValue(BrowserRegionAnchors.self) { anchors in GeometryReader { g in
                 let origin = g.frame(in: .global).origin
                 Color.clear.preference(key: MeasuredFrames.self, value: anchors.mapValues { g[$0].offsetBy(dx: origin.x, dy: origin.y) })

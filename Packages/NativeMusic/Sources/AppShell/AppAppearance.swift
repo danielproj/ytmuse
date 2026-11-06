@@ -11,13 +11,30 @@ private struct AppAppearanceModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         let appearance = Appearance(storedValue: stored)
-        content.environment(\.colorScheme, appearance.colorScheme ?? inheritedScheme)
+        content.appStyle()
+            .environment(\.colorScheme, appearance.colorScheme ?? inheritedScheme)
             .background(AppAppearanceWindowBridge(preference: appearance))
+    }
+}
+
+/// APPEARANCE-STYLE: the one place a window learns its app style. Every window root applies it: the two SwiftUI scenes directly
+/// (`NativeMusicScenes`), and every manually hosted window through `appAppearance()` (WindowRootStyleTests holds both to it).
+/// `translucentWindow`: this window may show the desktop under the Standard style (the main window only; everything else is opaque).
+private struct AppStyleModifier: ViewModifier {
+    @AppStorage(AppStyle.key, store: AppPreferences.store) private var stored = AppStyle.defaultStyle.rawValue
+    let translucentWindow: Bool
+
+    func body(content: Content) -> some View {
+        // The material is a sibling inside `musicWindowMaterial`, so this modifier never wraps `content` in a branch: a Style switch is live
+        // and keeps the window's navigation, scroll positions and web views.
+        content.musicWindowMaterial(enabled: translucentWindow)
+            .environment(\.musicAppStyle, AppStyle(storedValue: stored))
     }
 }
 
 extension View {
     func appAppearance() -> some View { modifier(AppAppearanceModifier()) }
+    func appStyle(translucentWindow: Bool = false) -> some View { modifier(AppStyleModifier(translucentWindow: translucentWindow)) }
 }
 
 struct AppAppearanceWindowBridge: NSViewRepresentable {

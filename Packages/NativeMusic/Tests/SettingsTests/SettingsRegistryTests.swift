@@ -41,7 +41,7 @@ import TestSupport
         let (store, backing, _) = try memoryStore(account: UUID())
         #expect(backing.settingKeys(withPrefix: "settings.").allSatisfy { $0 == SettingsRegistry.schemaVersionKey }, "a fresh store writes nothing but its schema version")
         let expected: [String: SettingValue] = [
-            "appearance": .text("system"), "artworkAccent": .bool(true), "motion": .text("full"), "restoreSession": .bool(true), "crossfade": .double(0), "equalizer": .text("flat"),
+            "appearance": .text("system"), "appearanceStyle": .text("standard"), "artworkAccent": .bool(true), "motion": .text("full"), "restoreSession": .bool(true), "crossfade": .double(0), "equalizer": .text("flat"),
             "normalization": .bool(false), "newPlaylistVisibility": .text("private"), "headphoneDisconnect": .text("pauseNoResume"),
             "autoplayRadio": .text("onWhereSupported"), "replaceExplicitQueue": .text("ask"), "songVideo": .text("audioWhenPermitted"), "analytics": .text("off"),
             "updateChecking": .text("askOnce"), "automaticInstallation": .bool(false), "backgroundControl": .text("menuBar"), "dockIcon": .text("followsWindows"),
@@ -172,15 +172,15 @@ import TestSupport
 
     @Test func restoringOneCategoryChangesOnlyThatCategoryAndNeverTheOthers() async throws {
         let (store, backing, _) = try memoryStore(account: UUID())
-        try await store.set("appearance", .text("dark")); try await store.set("artworkAccent", .bool(false))
+        try await store.set("appearance", .text("dark")); try await store.set("artworkAccent", .bool(false)); try await store.set("appearanceStyle", .text("ytmuse"))
         try await store.set("restoreSession", .bool(false)); try await store.set("crossfade", .double(6)); try await store.set("equalizer", .text("bass")); try await store.set("newPlaylistVisibility", .text("public"))
         let before = Dictionary(uniqueKeysWithValues: backing.settingKeys(withPrefix: "").compactMap { key in backing.setting(forKey: key).map { (key, "\($0)") } })
         let outcome = try await store.reset(.appearance)
-        #expect(Set(outcome.restored) == ["appearance", "artworkAccent"] && outcome.notApplicable == ["motion"])
-        #expect(store.text("appearance") == "system" && store.bool("artworkAccent"))
+        #expect(Set(outcome.restored) == ["appearance", "appearanceStyle", "artworkAccent"] && outcome.notApplicable == ["motion"])
+        #expect(store.text("appearance") == "system" && store.bool("artworkAccent") && store.text("appearanceStyle") == "standard", "Restore Defaults returns the Style to Standard too")
         #expect(!store.bool("restoreSession") && store.double("crossfade") == 6 && store.text("equalizer") == "bass" && store.text("newPlaylistVisibility") == "public", "the other pages are untouched")
         let after = Dictionary(uniqueKeysWithValues: backing.settingKeys(withPrefix: "").compactMap { key in backing.setting(forKey: key).map { (key, "\($0)") } })
-        #expect(Set(before.keys).subtracting(after.keys).sorted() == ["appearance", "settings.artworkAccent"], "exactly the appearance keys were removed")
+        #expect(Set(before.keys).subtracting(after.keys).sorted() == ["appearance", "appearanceStyle", "settings.artworkAccent"], "exactly the appearance keys were removed")
         for (key, value) in after { #expect(before[key] == value, "\(key) unchanged") }
         _ = try await store.reset(.playback)
         #expect(store.double("crossfade") == 0 && store.text("equalizer") == "flat")

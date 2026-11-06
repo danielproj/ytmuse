@@ -135,6 +135,9 @@ struct SettingRow: View {
             if let note = definition.availability.note {
                 Text(note).font(.footnote).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("settingNote." + definition.id)
             }
+            if let note = SettingsRegistry.dependentNote(for: definition.id, style: AppStyle(storedValue: store.text("appearanceStyle"))) {
+                Text(note).font(.footnote).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("settingDependentNote." + definition.id)
+            }
             Text(scopeText).font(.caption2).foregroundStyle(MusicStyle.secondaryText).accessibilityIdentifier("settingScope." + definition.id)
         }
     }

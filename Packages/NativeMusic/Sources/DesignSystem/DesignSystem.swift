@@ -1,4 +1,5 @@
 import AppKit
+import Domain
 import Combine
 import SwiftUI
 
@@ -48,6 +49,16 @@ public enum MusicStyle {
   public static let canvas = Color(nsColor: canvasNSColor)
   public static let opaqueSurface = Color(nsColor: opaqueSurfaceNSColor)
   public static let card = Color(nsColor: cardNSColor)
+  /// The opaque surfaces per style: YTMuse keeps its deep-dark levels; Standard uses the system's window background.
+  public static func opaqueSurface(_ style: AppStyle) -> Color { style == .ytmuse ? opaqueSurface : Color(nsColor: .windowBackgroundColor) }
+  /// A quiet card inside a page. Standard: a faint tint of the text colour over the glass (like a native group box), never a dark slab;
+  /// under Increase Contrast / Reduce Transparency it is the opaque window background, as the panels are.
+  public static func card(_ style: AppStyle, opaque: Bool = false) -> Color {
+    switch style {
+    case .ytmuse: card
+    case .standard: opaque ? Color(nsColor: .windowBackgroundColor) : Color.primary.opacity(MusicPalette.standardCardTint)
+    }
+  }
   /// What dark glass carries inside its shape; nothing in light.
   public static func glassScrim(_ scheme: ColorScheme) -> Color { scheme == .dark ? Color.black.opacity(MusicPalette.darkGlassScrim) : .clear }
   public static let secondaryText = Color(nsColor: secondaryTextNSColor)
@@ -112,15 +123,16 @@ private struct MusicSurface: ViewModifier {
   var radius: CGFloat?
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(\.colorScheme) private var scheme
+  @Environment(\.musicAppStyle) private var style
   private var glass = MusicGlassEnvironment()
   init(corner: MusicCorner, tint: Color?, interactive: Bool, morph: MusicMorph?, radius: CGFloat? = nil) { self.corner = corner; self.tint = tint; self.interactive = interactive; self.morph = morph; self.radius = radius }
   func body(content: Content) -> some View {
     Group {
       if glass.policy.opaque {
-        content.background { matched(shape.fill(MusicStyle.opaqueSurface)) }
+        content.background { matched(shape.fill(MusicStyle.opaqueSurface(style))) }
           .overlay(shape.stroke(Color.primary.opacity(0.6), lineWidth: 1))
       } else if glass.policy.simplified {
-        content.background { matched(shape.fill(.regularMaterial).overlay(shape.fill(MusicStyle.glassScrim(scheme)))) }
+        content.background { matched(shape.fill(.regularMaterial).overlay(shape.fill(MusicGlassScrim.color(scheme, style: style)))) }
       } else if let morph {
         scrimmed(content).glassEffect(effect, in: shape).glassEffectID(morph.id, in: morph.namespace)
           .glassEffectTransition(reduceMotion ? .identity : .matchedGeometry)
@@ -139,7 +151,8 @@ private struct MusicSurface: ViewModifier {
     return interactive ? value.interactive() : value
   }
   /// Deep dark: the scrim rides inside the glass shape, under the content, so dark panels stay near-black whatever lies behind them.
-  private func scrimmed(_ content: Content) -> some View { content.background(shape.fill(MusicStyle.glassScrim(scheme))) }
+  /// Standard: a scrim solved for any desktop behind the window (`MusicGlassScrim`).
+  private func scrimmed(_ content: Content) -> some View { content.background(shape.fill(MusicGlassScrim.color(scheme, style: style))) }
   private var shape: RoundedRectangle { radius.map { RoundedRectangle(cornerRadius: $0, style: .continuous) } ?? corner.shape }
   @ViewBuilder private func matched<S: View>(_ backing: S) -> some View {
     if let morph, !reduceMotion { backing.matchedGeometryEffect(id: morph.id, in: morph.namespace) } else { backing }
@@ -174,8 +187,19 @@ public struct MusicCanvas: View {
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @Environment(\.colorSchemeContrast) private var contrast
   @Environment(\.colorScheme) private var scheme
+  @Environment(\.musicAppStyle) private var style
+  @Environment(\.musicTranslucentWindow) private var translucentWindow
   public init(artworkAccent: Color? = nil) { self.artworkAccent = artworkAccent }
   public var body: some View {
+    switch style {
+    case .ytmuse: ytmuseCanvas
+    // Standard: no canvas and no accent wash. In a translucent window the material shows; elsewhere the system window background.
+    // (The artwork tint still reaches the player's glass; see the Artwork accent setting's Standard note.)
+    case .standard:
+      (translucentWindow ? Color.clear : Color(nsColor: .windowBackgroundColor)).ignoresSafeArea().accessibilityHidden(true).allowsHitTesting(false)
+    }
+  }
+  private var ytmuseCanvas: some View {
     ZStack {
       MusicStyle.canvas
       // Deep dark: a fainter accent glow and no white lift in the far corner, so the canvas stays near-black.
@@ -307,15 +331,19 @@ extension View {
   public func musicButtons(prominent: Bool = false) -> some View {
     modifier(MusicButtons(prominent: prominent))
   }
-  public func musicCanvas() -> some View { background { MusicCanvas() } }
+  /// A sheet's or a secondary window's backdrop. Under Standard it is the opaque system background even inside a translucent window (a sheet
+  /// inherits its presenter's environment), because sheet text sits directly on it rather than on a scrimmed panel.
+  public func musicCanvas() -> some View { background { MusicCanvas().environment(\.musicTranslucentWindow, false) } }
   /// Deep dark: the split view's sidebar column draws the system sidebar gray behind its panel; in dark it takes the near-black canvas instead.
   public func musicSidebarColumn() -> some View { modifier(MusicSidebarColumn()) }
 }
 
 private struct MusicSidebarColumn: ViewModifier {
   @Environment(\.colorScheme) private var scheme
+  @Environment(\.musicAppStyle) private var style
   func body(content: Content) -> some View {
-    if scheme == .dark { content.background { MusicStyle.canvas.ignoresSafeArea().accessibilityHidden(true).allowsHitTesting(false) } } else { content }
+    // Standard: nothing painted, so the native Liquid Glass sidebar shows the window material (and the desktop) behind it.
+    if scheme == .dark && style == .ytmuse { content.background { MusicStyle.canvas.ignoresSafeArea().accessibilityHidden(true).allowsHitTesting(false) } } else { content }
   }
 }
 
