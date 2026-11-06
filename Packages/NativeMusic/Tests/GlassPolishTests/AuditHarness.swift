@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import DesignSystem
+import Domain
 import Observation
 @testable import AppShell
 
@@ -53,6 +54,8 @@ enum AuditScheme: String, CaseIterable, Sendable { case light, dark
 
 /// An offscreen window hosting one SwiftUI surface, never ordered where a person sees it and never key.
 @MainActor final class AuditHost {
+    /// The style every audit host renders in (see the hosting line below).
+    static let style = AppStyle.ytmuse
     let window: OffscreenAuditWindow
     let controller: NSHostingController<AnyView>
     let box = FrameBox()
@@ -65,7 +68,9 @@ enum AuditScheme: String, CaseIterable, Sendable { case light, dark
         let box = self.box
         let hosted = shell ? AnyView(content.modifier(MainWindowContract(state: MainWindowContractState()))) : AnyView(content)
         let mirrored = localeMode == .rightToLeft
-        controller = NSHostingController(rootView: AnyView(PhasedRoot(phase: phase, mode: mode, localeMode: localeMode, content: hosted.auditRoot { box.frames = mirrored ? AuditHost.mirrorHorizontally($0) : $0 })))
+        // These audits pin the YTMuse style's geometry (its padded glass sidebar panel, its panels); Standard is the default since APPEARANCE-STYLE,
+        // so the style is stated rather than inherited.
+        controller = NSHostingController(rootView: AnyView(PhasedRoot(phase: phase, mode: mode, localeMode: localeMode, content: hosted.auditRoot { box.frames = mirrored ? AuditHost.mirrorHorizontally($0) : $0 }).environment(\.musicAppStyle, AuditHost.style)))
         controller.sizingOptions = shell ? [.minSize] : []
         if shell { controller.sceneBridgingOptions = [.toolbars, .title] }
         // NSPopover receives no fixed height in production. Measure the same single

@@ -62,6 +62,8 @@ public enum MusicPalette {
   public static let darkCard = 0.085
   /// Black laid inside native glass (and its simplified material) in dark, so panels stay dark even over a light desktop or artwork.
   public static let darkGlassScrim = 0.5
+  /// Standard's inset cards: the text colour at this opacity over the glass, so a card reads as a group and never as a dark slab.
+  public static let standardCardTint = 0.06
   /// The glyph drawn on `accentFill`.
   public static let glyphOnAccentFill = ContrastColor(1, 1, 1)
   /// Badge fills with white text (Live): the pure system red and gray were 4.0:1.

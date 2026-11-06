@@ -148,6 +148,17 @@ actor RecordingResumeStore: MusicResumeStoring {
             try await rig.store.set("appearance", .text("dark"))
             #expect(Appearance(storedValue: rig.defaults.string(forKey: "appearance")).colorScheme == .dark, "the window's own preferred scheme reads the same key")
         },
+        "appearanceStyle": { rig in
+            #expect(AppStyle(storedValue: rig.defaults.string(forKey: AppStyle.key)) == .standard, "a fresh install gets the Standard look")
+            // Finding 4: the artwork tint still reaches the player's glass under Standard (only the canvas it also tinted is gone), so the row stays
+            // usable and says what it now does, rather than going silent or being disabled.
+            let note = try #require(SettingsRegistry.dependentNote(for: "artworkAccent", style: AppStyle(storedValue: rig.store.text("appearanceStyle"))))
+            #expect(note.contains("only the player"))
+            try await rig.store.set("appearanceStyle", .text("ytmuse"))
+            #expect(AppStyle(storedValue: rig.defaults.string(forKey: AppStyle.key)) == .ytmuse, "every window root's style hook reads the same key")
+            #expect(SettingsRegistry.dependentNote(for: "artworkAccent", style: AppStyle(storedValue: rig.store.text("appearanceStyle"))) == nil, "YTMuse tints the window too")
+            #expect(SettingsRegistry.dependentNote(for: "appearance", style: .standard) == nil && SettingsRegistry.dependentNote(for: "motion", style: .standard) == nil, "the note belongs to the artwork tint only")
+        },
         "artworkAccent": { _ in /* observed on the composed bootstrap: WiringTests.artworkAccent... */ #expect(SettingsRegistry.definition("artworkAccent")?.isStored == true) },
         "motion": { _ in
             #expect(ShellMotion.animates(reduceMotion: false, lowPower: false))

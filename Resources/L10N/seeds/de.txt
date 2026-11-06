@@ -336,3 +336,7 @@ Q40|one:%lld Wiedergabe	other:%lld Wiedergaben
 1615|Es werden die ersten %@ Seiten der Kommentare angezeigt. Diese App lädt nicht mehr.
 1616|Diese Kommentarliste ist veraltet. Zeige die Kommentare erneut an.
 1617|Kommentare posten und moderieren ist in dieser App noch nicht möglich.
+1618|Stil
+1619|Standard
+1620|YTMuse ist das eigene dunkle Design der App. Standard folgt macOS: Im Hauptfenster scheint der Schreibtisch durch die Seitenleiste, andere Fenster verwenden den Systemhintergrund.
+1621|Im Stil „Standard“ hat das Fenster keinen eingefärbten Hintergrund, daher wird nur der Player eingefärbt.

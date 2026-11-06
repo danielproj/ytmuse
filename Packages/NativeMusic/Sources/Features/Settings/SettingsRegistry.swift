@@ -1,3 +1,4 @@
+import Domain
 import Foundation
 
 /// W27 (section 16). The one table of every setting the app has: its category, the scope it is kept in, its default, who owns the behaviour behind it, and
@@ -134,6 +135,12 @@ public enum SettingsRegistry {
     // The words of the reasons are kept here so the Settings screen, the Diagnostics bundle and the tests read the same sentences.
     static var youTubeMusicOwnsRadio: String { String(localized: "YouTube Music’s own player decides what plays after the queue ends; this app has no switch for it. To start a radio yourself, choose Start Radio where it is offered.") }
     static var noExplicitQueue: String { String(localized: "YouTube Music keeps its own queue, so this choice applies to music from files on this Mac.") }
+    static var artworkAccentUnderStandard: String { String(localized: "With the Standard style there is no tinted window background, so only the player is tinted.") }
+    /// A note a setting carries because of ANOTHER setting's current value (shown under the control, which stays usable). Today: the artwork
+    /// tint reaches only the player under the Standard style, which paints no canvas for it to tint.
+    public static func dependentNote(for id: String, style: AppStyle) -> String? {
+        id == "artworkAccent" && style == .standard ? artworkAccentUnderStandard : nil
+    }
     static var updatesNeedAFeed: String { String(localized: "Works in a signed release build that has an update feed. A source build has none: it checks nothing and installs nothing, and says so on this page.") }
 
     public static let definitions: [SettingDefinition] = [
@@ -142,6 +149,13 @@ public enum SettingsRegistry {
                           control: .choice([SettingChoice("system", String(localized: "System")), SettingChoice("light", String(localized: "Light")), SettingChoice("dark", String(localized: "Dark"))]),
                           defaultValue: .text("system"), storage: .stored(key: "appearance"), keywords: ["theme", "dark", "light", "mode"],
                           effect: "The color scheme of every window (Appearance.colorScheme)."),
+        // APPEARANCE-STYLE: the look beside light/dark. It belongs to the specification's Appearance row (the row's default text, System, is the
+        // colour scheme's). Standard is the default (the account holder's choice, 2026-11-06); YTMuse is one choice away.
+        SettingDefinition(id: "appearanceStyle", specRow: "Appearance", category: .appearance, title: String(localized: "Style"),
+                          detail: String(localized: "YTMuse is the app’s own dark look. Standard follows macOS: the main window lets the desktop show through its sidebar, and other windows use the system background."),
+                          control: .choice([SettingChoice(AppStyle.standard.rawValue, String(localized: "Standard")), SettingChoice(AppStyle.ytmuse.rawValue, String(localized: "YTMuse"))]),
+                          defaultValue: .text(AppStyle.defaultStyle.rawValue), storage: .stored(key: AppStyle.key), keywords: ["style", "theme", "look", "glass", "translucent", "transparent", "system", "standard", "native"],
+                          effect: "The app style of every window (AppStyle via the musicAppStyle environment): YTMuse canvas, or the system window material and backgrounds."),
         SettingDefinition(id: "artworkAccent", specRow: "Artwork accent", category: .appearance, title: String(localized: "Tint the window from the artwork"),
                           detail: String(localized: "A subdued tint taken from the playing artwork. Text contrast does not change."),
                           control: .toggle, defaultValue: .bool(true), storage: .stored(key: "settings.artworkAccent"), keywords: ["accent", "color", "tint", "artwork"],

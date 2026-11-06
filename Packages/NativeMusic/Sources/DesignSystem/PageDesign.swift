@@ -1,3 +1,4 @@
+import Domain
 import SwiftUI
 
 /// Page roles complement the floating player. Surfaces inside a page are quiet and opaque;
@@ -9,8 +10,10 @@ public enum MusicPageStyle {
 
 private struct PageInsetSurface: ViewModifier {
     @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.musicAppStyle) private var style
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     func body(content: Content) -> some View {
-        content.background(MusicStyle.card, in: MusicCorner.feature.shape)
+        content.background(MusicStyle.card(style, opaque: reduceTransparency || contrast == .increased), in: MusicCorner.feature.shape)
             .overlay(MusicCorner.feature.shape.strokeBorder(Color.primary.opacity(contrast == .increased ? 0.6 : 0.08)))
     }
 }

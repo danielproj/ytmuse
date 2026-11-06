@@ -36,7 +36,8 @@ import SwiftUI
         window.setAccessibilityIdentifier(identifier)
         window.collectionBehavior = [.fullScreenPrimary]
         window.contentMinSize = NSSize(width: 480, height: 360)
-        window.contentView = NSHostingView(rootView: content())
+        // Every video and full-screen window follows Appearance and Style like the other windows (APPEARANCE-STYLE).
+        window.contentView = NSHostingView(rootView: content().appAppearance())
         window.delegate = self
         window.center()
         self.window = window

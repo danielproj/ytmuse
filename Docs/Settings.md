@@ -26,7 +26,7 @@ A control is shown only when its capability exists. A row whose capability does 
 
 | Section 16 row | State | Why |
 | --- | --- | --- |
-| Appearance, Artwork accent, Restore session, Mini-player always on top, Launch at login, New playlist visibility, Download storage, Automatic downloads on expensive networks, Track-change notifications, Spotlight private library indexing, Global shortcuts, Output | control | each calls its owner (`SettingsOwners`) and has an effect check |
+| Appearance, Style, Artwork accent, Restore session, Mini-player always on top, Launch at login, New playlist visibility, Download storage, Automatic downloads on expensive networks, Track-change notifications, Spotlight private library indexing, Global shortcuts, Output | control | each calls its owner (`SettingsOwners`) and has an effect check |
 | Crossfade / EQ / normalization | control, **scoped** | applied to every NATIVE session (music from files on this Mac). The hidden YouTube Music player is never processed. |
 | Download storage | control, **scoped** | YouTube Music has no downloads on the Mac (`artifacts/harness/W15-offline-source-decision.json`); the limit applies to files added from this Mac |
 | Motion, Background control, Dock icon, Headphone disconnect, Song/video preference, Analytics and remote crash submission | fixed policy, shown with its current effect | the specification gives a default and no alternative; W21, W22, W17 own the behaviour |

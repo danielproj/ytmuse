@@ -62,6 +62,7 @@ public struct NativeMusicScenes: Scene {
                 .appPreferences()
                 .updateAskOnce(accounts.shell)
                 .isolatedWindowSize()
+                .appStyle(translucentWindow: true)
                 .preferredColorScheme(Appearance(storedValue: storedAppearance).colorScheme)
         }.defaultSize(width: 1240, height: 820)
          .commands { MainWindowCommands(shell: accounts.shell) }
@@ -70,6 +71,7 @@ public struct NativeMusicScenes: Scene {
                 .shellWindow(accounts.shell, role: .settings)
                 .appLocale()
                 .appPreferences()
+                .appStyle()
                 .preferredColorScheme(Appearance(storedValue: storedAppearance).colorScheme)
         }
     }

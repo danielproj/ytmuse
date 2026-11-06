@@ -55688,6 +55688,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Standard": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Standard"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Standard"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Estándar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Standard"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Стандартный"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Start Radio": {
       "localizations": {
         "de": {
@@ -56518,6 +56559,47 @@
           }
         }
       }
+    },
+    "Style": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Stil"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Stil"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Style"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Estilo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Style"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Стиль"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
     "Suggested songs": {
       "localizations": {
@@ -71629,6 +71711,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "With the Standard style there is no tinted window background, so only the player is tinted.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Im Stil „Standard“ hat das Fenster keinen eingefärbten Hintergrund, daher wird nur der Player eingefärbt."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Im Stil „Standard“ hat das Fenster keinen eingefärbten Hintergrund, daher wird nur der Player eingefärbt."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With the Standard style there is no tinted window background, so only the player is tinted."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Con el estilo Estándar la ventana no tiene un fondo teñido, así que solo se tiñe el reproductor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Avec le style Standard, la fenêtre n’a pas de fond teinté : seul le lecteur est teinté."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "В стандартном стиле у окна нет тонированного фона, поэтому тонируется только плеер."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Work from any app. None is set until you record one. A shortcut needs Command, Control or Option and cannot replace a standard editing or system shortcut.": {
       "localizations": {
         "de": {
@@ -72239,6 +72362,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YTMuse ещё запускается. Повторите попытку через мгновение."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "YTMuse is the app’s own dark look. Standard follows macOS: the main window lets the desktop show through its sidebar, and other windows use the system background.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YTMuse ist das eigene dunkle Design der App. Standard folgt macOS: Im Hauptfenster scheint der Schreibtisch durch die Seitenleiste, andere Fenster verwenden den Systemhintergrund."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YTMuse ist das eigene dunkle Design der App. Standard folgt macOS: Im Hauptfenster scheint der Schreibtisch durch die Seitenleiste, andere Fenster verwenden den Systemhintergrund."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YTMuse is the app’s own dark look. Standard follows macOS: the main window lets the desktop show through its sidebar, and other windows use the system background."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YTMuse es el aspecto oscuro propio de la app. Estándar sigue a macOS: en la ventana principal el escritorio se ve a través de la barra lateral y las demás ventanas usan el fondo del sistema."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YTMuse est l’apparence sombre propre à l’app. Standard suit macOS : dans la fenêtre principale, le bureau transparaît à travers la barre latérale, et les autres fenêtres utilisent le fond du système."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YTMuse — собственное тёмное оформление приложения. «Стандартный» следует macOS: в главном окне сквозь боковую панель виден рабочий стол, а остальные окна используют системный фон."
           }
         }
       },

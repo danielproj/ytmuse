@@ -1,4 +1,5 @@
 import DesignSystem
+import Domain
 import SwiftUI
 
 // W22 (ROUTE01, ROUTE03, ROUTE09, PLAY17). The output picker and the route-loss / Play here / remote-timer banner. The views read plain values: the app
@@ -132,6 +133,7 @@ struct OutputPickerPanel<SystemPicker: View>: View {
     let systemPicker: SystemPicker
     @State private var detailsShown = false
     @Environment(\.openURL) private var openURL
+    @Environment(\.musicAppStyle) private var style
     /// The Sound pane of System Settings, where the Mac's output is chosen.
     static var soundSettings: URL { URL(string: "x-apple.systempreferences:com.apple.Sound-Settings.extension")! }
     var body: some View {
@@ -185,7 +187,7 @@ struct OutputPickerPanel<SystemPicker: View>: View {
         }
         .padding(MusicSpace.md).frame(minWidth: 280, maxWidth: 340, alignment: .leading)
         // An opaque panel: the system's translucent popover let the artwork behind it bleed through the text.
-        .presentationBackground(MusicStyle.opaqueSurface)
+        .presentationBackground(MusicStyle.opaqueSurface(style))
     }
 }
 

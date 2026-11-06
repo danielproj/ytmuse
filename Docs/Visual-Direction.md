@@ -33,3 +33,19 @@ The account holder asked for: no UI overlaps anywhere, everything perfectly alig
 - GLASS09 — Native Liquid Glass: use the system Liquid Glass APIs (glass effects, glass containers with morphing identities, glass button styles, interactive glass where it aids touch-like feedback), not imitation blur. Group neighbouring glass in containers so it refracts and merges correctly.
 - GLASS10 — Motion: light, physical motion (springs, glass morphs, gentle highlight and tint transitions) on state changes and navigation, more than today but never decorative loops. It honours Reduce Motion, Reduce Transparency, Increase Contrast and Low Power Mode, and stops while windows are hidden (MOTION01–05, WIN10).
 - GLASS11 — Player showcase: the bottom player and Now Playing are the most polished surfaces. The glass mini-player expands into Now Playing with a continuous morph, artwork-derived light and tint stay legible, progress and controls respond fluidly, and hover and press states give tactile feedback, without hiding ads (Playback addendum) and without overlapping content.
+
+## Styles — 2026-11-06 (account holder)
+
+Settings › Appearance › **Style** offers two looks beside Mode (System/Light/Dark) and Text size. All the branching lives in `Sources/DesignSystem/MusicAppStyle.swift`.
+
+- **Standard** is the default (account holder, 2026-11-06), for new installs and for installs that never chose a style.
+- **YTMuse**: the deep-dark canvas, scrimmed Liquid Glass panels and the red accent, as before. `YTMuseLookParityTests` compares the canvas, the sidebar column and the scrim with a rendering recorded before the Style work. One deliberate change: the sidebar list no longer sits in a glass panel of the app's own (account holder, 2026-11-06). Its items sit in the native column, on the canvas, in the same bounds and inset.
+- **Standard**: the macOS default.
+  - The main window sets the system window material from a sibling view (`musicWindowMaterial`). The native Liquid Glass sidebar then shows the desktop behind the window. Because the material comes from a sibling, switching Style is live and keeps the window's state.
+  - The sidebar is the **native split-view column**, with no panel of the app's own. macOS 27 draws it edge to edge (sidebars no longer float), and under Standard its glass shows the window material.
+  - Sheets, Settings, the mini-player, the menu-bar popover and full screen use the opaque system window background.
+  - Panels and the player are plain Liquid Glass with **no scrim**: the account holder asked for the black to go. A scrim solved for any desktop (0.76 black / 0.90 white) was tried first; it made the panels near-solid. Legibility over the wallpaper now rests on the system window material, as in Finder. It is not computed, and it is the account holder's visual check. The opaque fallback is audited in `StandardStyleContrastTests`.
+  - Under Reduce Transparency or Increase Contrast the main window is opaque too (GLASS05).
+  - The artwork tint reaches only the player, and the Artwork accent row says so.
+- Every window root applies the style hook: `.appStyle(...)` on the scenes, `.appAppearance()` on manually hosted windows. `WindowRootStyleTests` holds them to it.
+- How Standard looks over a real wallpaper is the account holder's check.

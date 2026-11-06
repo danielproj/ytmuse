@@ -1403,3 +1403,7 @@ Q40|%lld plays
 1615|Showing the first %@ pages of comments. This app doesn’t load more.
 1616|This list of comments is out of date. Show the comments again.
 1617|Posting and moderating comments aren’t available from this app yet.
+1618|Style
+1619|Standard
+1620|YTMuse is the app’s own dark look. Standard follows macOS: the main window lets the desktop show through its sidebar, and other windows use the system background.
+1621|With the Standard style there is no tinted window background, so only the player is tinted.

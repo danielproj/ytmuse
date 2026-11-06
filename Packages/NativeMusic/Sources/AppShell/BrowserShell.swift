@@ -375,6 +375,10 @@ struct BrowserShell: View {
     }
     /// Added above the sidebar's first row (POL-A). The list's own top inset is about 4 pt (the audit measures the first label 6 pt below the panel top); with this the first row's highlight is about 16 pt from the panel's top edge, as from its sides.
     static let sidebarTopInset = MusicSpace.sm
+    /// The native sidebar column in both styles, with no panel of the app's own behind the items (account holder, 2026-11-06). macOS 27 draws the
+    /// column edge to edge (it no longer floats): under Standard its glass shows the window material; under YTMuse `musicSidebarColumn` paints the
+    /// deep-dark canvas inside it. The region keeps the former panel's bounds and inset, so the rows stay where they were and the layout audits
+    /// still measure the same "sidebarPanel" region.
     private var sidebar: some View {
         List(selection: Binding<BrowserDestination?>(get: { navigation.session.current.destination }, set: { if let value = $0 { navigationMotion = .navigation; navigation.open(value) } })) {
             Section {
@@ -401,7 +405,7 @@ struct BrowserShell: View {
             // 6 pt below the panel top with 12 and with 40); `safeAreaPadding` moves it (SurfaceAuditTests, "sidebarFirstRow").
             .safeAreaPadding(.top, Self.sidebarTopInset)
             .scrollEdgeEffectStyle(.soft, for: .top)
-            .scrollEdgeEffectStyle(.hard, for: .bottom).musicSurface().audit("sidebarPanel", group: "panels", kind: .region).browserRegion("sidebar")
+            .scrollEdgeEffectStyle(.hard, for: .bottom).audit("sidebarPanel", group: "panels", kind: .region).browserRegion("sidebar")
             .padding([.leading, .vertical], MusicSpace.sm)
     }
     @ViewBuilder private var destination: some View {
