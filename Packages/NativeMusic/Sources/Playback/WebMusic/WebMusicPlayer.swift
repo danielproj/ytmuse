@@ -156,7 +156,12 @@ public struct WebMusicRadioQueueScope: Sendable {
         self.cookies = cookies; artworkLoader = artwork; self.loadTimeout = loadTimeout; self.rotationDelay = rotationDelay; self.shuffleAttempts = max(1, shuffleAttempts); self.shuffleInterval = shuffleInterval; self.pictureInPictureTimeout = pictureInPictureTimeout; self.sleepTiming = sleepTiming; self.makePage = makePage
     }
     @ObservationIgnored private let radioOwner = UUID()
+    /// The clock a radio queue update's deadline is read from: the continuous clock in the app. A test supplies one that stands still until it lets
+    /// the deadline pass, so whether an update was confirmed in time never depends on how busy the machine running the test is.
+    @ObservationIgnored var radioQueueClock: @MainActor () -> ContinuousClock.Instant = { ContinuousClock.now }
     @ObservationIgnored private(set) var updatingRadioQueue = false
+    /// True while an update the page accepted waits for the page's queue to show its change (the last phase before success or the deadline).
+    @ObservationIgnored private(set) var radioQueueAwaitingChange = false
     /// One uncancellable page invocation at most, including one whose native deadline expired.
     @ObservationIgnored private var radioDispatch: UUID?
     @MainActor private final class RadioDispatchResult {
@@ -188,12 +193,12 @@ public struct WebMusicRadioQueueScope: Sendable {
         guard let before = snapshot.queue,
               let invocation = try? WebMusicCommand.updateRadioQueue(command, document: scope.document, load: scope.load,
                   videoID: scope.video, currentPlaylistID: scope.playlist).invocation() else { return false }
-        let deadline = ContinuousClock.now.advanced(by: loadTimeout)
+        let deadline = radioQueueClock().advanced(by: loadTimeout)
         let result = RadioDispatchResult(), dispatch = UUID()
         updatingRadioQueue = true; radioDispatch = dispatch
         defer {
             result.active = false
-            updatingRadioQueue = false
+            updatingRadioQueue = false; radioQueueAwaitingChange = false
             // Restore the normal paused/ad scheduling policy even if WebKit never resumes.
             updateThrottle(transport.snapshot)
         }
@@ -203,28 +208,29 @@ public struct WebMusicRadioQueueScope: Sendable {
         Task { @MainActor [weak self] in
             guard let self else { return }
             defer { if self.radioDispatch == dispatch { self.radioDispatch = nil } }
-            guard result.active, ContinuousClock.now < deadline, !Task.isCancelled,
+            guard result.active, self.radioQueueClock() < deadline, !Task.isCancelled,
                   admitted(), self.radioQueueScopeIsCurrent(scope) else { return }
             if case .failure = self.transport.admitQueueSetting() { result.reply = .unavailable; return }
             self.setThrottle(false)
             let reply = await page.run(invocation)
-            guard result.active, ContinuousClock.now < deadline,
+            guard result.active, self.radioQueueClock() < deadline,
                   admitted(), self.radioQueueScopeIsCurrent(scope) else { return }
             result.acceptedRevision = self.transport.queueRevision
             result.reply = reply
         }
-        while result.reply == nil, ContinuousClock.now < deadline, !Task.isCancelled {
+        while result.reply == nil, radioQueueClock() < deadline, !Task.isCancelled {
             guard admitted(), radioQueueScopeIsCurrent(scope) else { return false }
             if case .failure(let reason) = transport.admitQueueSetting() { refusal = reason; return false }
             try? await Task.sleep(for: .milliseconds(20))
         }
         guard admitted(), radioQueueScopeIsCurrent(scope) else { return false }
-        guard !Task.isCancelled, ContinuousClock.now < deadline else { refusal = .pageDidNotTake; return false }
+        guard !Task.isCancelled, radioQueueClock() < deadline else { refusal = .pageDidNotTake; return false }
         guard let reply = result.reply else { refusal = .pageDidNotTake; return false }
         guard reply == .router else { refusal = Self.refusal(for: reply); return false }
         // Discard pre-acceptance evidence, using only the revision of the applicable snapshot.
         let accepted = result.acceptedRevision
-        while ContinuousClock.now < deadline, !Task.isCancelled {
+        radioQueueAwaitingChange = true
+        while radioQueueClock() < deadline, !Task.isCancelled {
             guard admitted(), radioQueueScopeIsCurrent(scope) else { return false }
             if case .failure(let reason) = transport.admitQueueSetting() { refusal = reason; return false }
             if transport.queueRevision > accepted, let after = snapshot.queue,
