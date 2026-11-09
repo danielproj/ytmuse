@@ -66362,47 +66362,6 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
-    "This song's rating couldn't be read from YouTube Music. It's read again the next time the song plays.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Bewertung dieses Songs konnte nicht von YouTube Music gelesen werden. Sie wird beim nächsten Abspielen des Songs erneut gelesen."
-          }
-        },
-        "de-CH": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Die Bewertung dieses Songs konnte nicht von YouTube Music gelesen werden. Sie wird beim nächsten Abspielen des Songs erneut gelesen."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This song's rating couldn't be read from YouTube Music. It's read again the next time the song plays."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "No se pudo leer la valoración de esta canción en YouTube Music. Se volverá a leer la próxima vez que suene."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Impossible de lire l’appréciation de ce titre sur YouTube Music. Elle sera relue à la prochaine lecture du titre."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Не удалось получить оценку этой песни из YouTube Music. Она будет запрошена снова при следующем воспроизведении."
-          }
-        }
-      },
-      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
-    },
     "This track isn’t available to you.": {
       "localizations": {
         "de": {

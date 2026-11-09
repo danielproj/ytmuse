@@ -192,9 +192,9 @@ import SystemIntegration
     }
     enum LikeUnavailable: Equatable {
         case nothingPlaying, advertisement, ownedMedia, pageNotRead
-        /// The playing song's own rating is being read, the service published none, the account is signed out, the read failed, or the song
-        /// offers Like but not Dislike.
-        case reading, notOffered, signedOut, readFailed, dislikeNotOffered
+        /// The playing song's rating is not on the page yet, the page shows none for it, the account is signed out, or the song offers Like but
+        /// not Dislike.
+        case reading, notOffered, signedOut, dislikeNotOffered
         var message: String {
             switch self {
             case .nothingPlaying: String(localized: "Nothing is playing, so there is nothing to like.")
@@ -204,7 +204,6 @@ import SystemIntegration
             case .reading: String(localized: "Reading this song's rating from YouTube Music…")
             case .notOffered: String(localized: "YouTube Music doesn't offer a rating for this song.")
             case .signedOut: String(localized: "Sign in to YouTube Music to like or dislike songs.")
-            case .readFailed: String(localized: "This song's rating couldn't be read from YouTube Music. It's read again the next time the song plays.")
             case .dislikeNotOffered: RemoteCommandReason.noDislike
             }
         }

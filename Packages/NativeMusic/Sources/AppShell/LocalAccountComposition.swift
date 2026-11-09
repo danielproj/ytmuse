@@ -136,8 +136,7 @@ public struct GoogleAuthorizationSetup: Sendable {
     @ObservationIgnored lazy var catalog: CatalogHub = makeCatalogHub()
     /// The Library and History screens' state, with the local listening history wired to the playback owner (W12).
     @ObservationIgnored lazy var library: LibrarySurface = { let surface = makeLibrarySurface(); connectListeningHistory(surface); surface.playlists = makePlaylistSurface(); surface.downloads = downloads; return surface }()
-    /// The playing song's rating for the player surfaces' Like and Dislike, read once per song (signed only; nothing under the development or
-    /// UI-automation launches).
+    /// The playing song's rating for the player surfaces' Like and Dislike: what the hidden page's player bar shows, taken once per song.
     @ObservationIgnored lazy var nowPlayingRatings: NowPlayingRatings = makeNowPlayingRatings()
     /// The Downloads engine (W15): composed once the account directory is known, forwarding nothing until then.
     @ObservationIgnored let lateDownloads = LateBoundDownloads()

@@ -44,7 +44,7 @@ import TestSupport
         let (_, shell, page) = try await rig()
         shell.likeControlProvider = { _ in nil }
         shell.libraryControlsProvider = { _ in [] }
-        for gap in [ShellCoordinator.LikeUnavailable.reading, .notOffered, .signedOut, .readFailed] {
+        for gap in [ShellCoordinator.LikeUnavailable.reading, .notOffered, .signedOut] {
             shell.ratingGapProvider = { _ in gap }
             #expect(shell.ratingAvailability(.like) == .unavailable(gap) && shell.ratingAvailability(.dislike) == .unavailable(gap))
             #expect(shell.remoteLibraryControl(.dislike) == .unavailable(gap.message), "the system's Dislike button gives the same reason")
@@ -55,7 +55,7 @@ import TestSupport
         shell.ratingGapProvider = { _ in .reading }
         page.send(lifecycleState(position: 0, duration: 15, video: lifecycleAdVideo, ad: true))
         #expect(shell.ratingAvailability(.dislike) == .unavailable(.advertisement))
-        let messages = [ShellCoordinator.LikeUnavailable.nothingPlaying, .advertisement, .ownedMedia, .pageNotRead, .reading, .notOffered, .signedOut, .readFailed, .dislikeNotOffered].map(\.message)
+        let messages = [ShellCoordinator.LikeUnavailable.nothingPlaying, .advertisement, .ownedMedia, .pageNotRead, .reading, .notOffered, .signedOut, .dislikeNotOffered].map(\.message)
         #expect(Set(messages).count == messages.count && messages.allSatisfy { !$0.isEmpty }, "every cause has its own sentence: \(messages)")
     }
     @Test func dislikingThePlayingSongSkipsOnlyOnceTheLedgerHoldsTheDislike() async throws {
@@ -116,80 +116,68 @@ import TestSupport
     }
 }
 
-/// The playing song's rating read (`NowPlayingRatings`): once per song, never during an advertisement or signed out, and never kept across
-/// accounts.
+/// The playing song's rating as the hidden page's player bar shows it (`NowPlayingRatings`): taken once per song start, never during an
+/// advertisement or signed out, never kept across accounts, and reported as not offered only after the song has played a while without one.
 @Suite @MainActor struct NowPlayingRatingsTests {
-    @MainActor final class Box { var scope = "account-a"; var signedIn = SearchPlayback.available; var asked: [String] = []; var answer: Result<MusicItemControls.Like?, MusicSessionError> = .success(nil) }
-    private func ratings(_ box: Box, reads: Bool = true) -> NowPlayingRatings {
-        var read: NowPlayingRatings.Reader?
-        if reads { read = { @MainActor id in box.asked.append(id); return try box.answer.get() } }
-        return NowPlayingRatings(read: read, accountScope: { box.scope }, signedIn: { box.signedIn })
-    }
-    private func settled(_ condition: @MainActor () -> Bool) async {
-        for _ in 0..<200 where !condition() { await Task.yield(); try? await Task.sleep(for: .milliseconds(1)) }
+    @MainActor final class Box { var scope = "account-a"; var signedIn = SearchPlayback.available; var clock = Date(timeIntervalSince1970: 1_000) }
+    private func ratings(_ box: Box) -> NowPlayingRatings {
+        NowPlayingRatings(accountScope: { box.scope }, signedIn: { box.signedIn }, now: { box.clock })
     }
     private let song = "Zgbfx0KLwUk", other = "khnokW3Mw24"
 
-    @Test func eachNewSongIsReadOnceAndItsRatingKept() async throws {
+    @Test func theRatingThePageShowsIsTakenOncePerSongStart() {
         let box = Box(); let ratings = ratings(box)
-        let like = MusicItemControls.Like(videoID: song, status: .like, dislikeExposed: true)
-        box.answer = .success(like)
-        for _ in 0..<5 { ratings.observe(videoID: song, isAd: false) }
-        #expect(ratings.gap(for: song) == .reading)
-        await settled { ratings.like(for: song) != nil }
-        #expect(box.asked == [song] && ratings.like(for: song) == like && ratings.gap(for: song) == nil)
-        ratings.observe(videoID: other, isAd: false)
-        ratings.observe(videoID: song, isAd: false)
-        await settled { box.asked.count == 3 }
-        #expect(box.asked == [song, other, song], "a song that starts again is read again, so its rating is current")
-    }
-    @Test func nothingIsReadDuringAnAdvertisementForAMalformedIdSignedOutOrWithoutAReader() async throws {
-        let box = Box(); let ratings = ratings(box)
-        ratings.observe(videoID: song, isAd: true)
-        ratings.observe(videoID: "not-an-id", isAd: false)
-        ratings.observe(videoID: nil, isAd: false)
-        box.signedIn = .needsSignIn
-        ratings.observe(videoID: song, isAd: false)
-        #expect(ratings.gap(for: song) == .signedOut)
-        let quiet = self.ratings(box, reads: false)
-        box.signedIn = .available
-        quiet.observe(videoID: song, isAd: false)
-        #expect(quiet.gap(for: song) == nil)
-        try await Task.sleep(for: .milliseconds(10))
-        #expect(box.asked.isEmpty)
-    }
-    @Test func eachOutcomeOfTheReadHasItsOwnGap() async throws {
-        for (answer, gap) in [(Result<MusicItemControls.Like?, MusicSessionError>.success(nil), NowPlayingRatings.Gap.notOffered),
-                              (.failure(.notSignedIn), .signedOut), (.failure(.signedOut), .signedOut), (.failure(.network), .failed), (.failure(.unrecognised), .failed)] {
-            let box = Box(); box.answer = answer
-            let ratings = ratings(box)
-            ratings.observe(videoID: song, isAd: false)
-            await settled { ratings.gap(for: song) != .reading }
-            #expect(ratings.gap(for: song) == gap && ratings.like(for: song) == nil, "\(answer)")
-        }
-    }
-    @Test func anAnswerForAnotherAccountIsDroppedAndAnAccountChangeForgetsEverything() async throws {
-        let box = Box(); let ratings = ratings(box)
-        box.answer = .success(.init(videoID: song, status: .like, dislikeExposed: true))
-        ratings.observe(videoID: song, isAd: false)
-        box.scope = "account-b"   // switched before the answer arrived
-        try await Task.sleep(for: .milliseconds(10))
-        #expect(ratings.like(for: song) == nil)
-        ratings.observe(videoID: song, isAd: false)
-        await settled { ratings.like(for: song) != nil }
+        ratings.observe(videoID: song, isAd: false, rating: .like)
+        #expect(ratings.like(for: song) == .init(videoID: song, status: .like, dislikeExposed: true) && ratings.gap(for: song) == nil)
+        // The page keeps showing the state from before a press made through the ledger: a later report of the same song changes nothing.
+        ratings.observe(videoID: song, isAd: false, rating: .indifferent)
         #expect(ratings.like(for: song)?.status == .like)
-        box.scope = "account-c"
-        ratings.observe(videoID: nil, isAd: false)
+        // The song starts again: its rating is taken again, so it is current.
+        ratings.observe(videoID: other, isAd: false, rating: .dislike)
+        ratings.observe(videoID: song, isAd: false, rating: .dislike)
+        #expect(ratings.like(for: song)?.status == .dislike && ratings.like(for: other)?.status == .dislike)
+    }
+    @Test func aSongWithoutARatingOnThePageIsReadingThenNotOffered() {
+        let box = Box(); let ratings = ratings(box)
+        ratings.observe(videoID: song, isAd: false, rating: nil)
+        #expect(ratings.gap(for: song) == .reading)
+        box.clock += NowPlayingRatings.patience - 1
+        ratings.observe(videoID: song, isAd: false, rating: nil)
+        #expect(ratings.gap(for: song) == .reading)
+        box.clock += 1
+        ratings.observe(videoID: song, isAd: false, rating: nil)
+        #expect(ratings.gap(for: song) == .notOffered)
+        // A rating that appears late is still taken.
+        ratings.observe(videoID: song, isAd: false, rating: .like)
+        #expect(ratings.like(for: song)?.status == .like && ratings.gap(for: song) == nil)
+    }
+    @Test func nothingIsTakenDuringAnAdvertisementForAMalformedIdOrSignedOut() {
+        let box = Box(); let ratings = ratings(box)
+        ratings.observe(videoID: song, isAd: true, rating: .like)
+        ratings.observe(videoID: "not-an-id", isAd: false, rating: .like)
+        ratings.observe(videoID: nil, isAd: false, rating: .like)
+        #expect(ratings.like(for: song) == nil && ratings.current == nil)
+        box.signedIn = .needsSignIn
+        ratings.observe(videoID: song, isAd: false, rating: .like)
+        #expect(ratings.like(for: song) == nil && ratings.gap(for: song) == .signedOut)
+        // Signing in changes the account scope, and the same song's rating is then taken.
+        box.signedIn = .available; box.scope = "account-a|connected"
+        ratings.observe(videoID: song, isAd: false, rating: .like)
+        #expect(ratings.like(for: song)?.status == .like)
+    }
+    @Test func anAccountChangeForgetsEveryRating() {
+        let box = Box(); let ratings = ratings(box)
+        ratings.observe(videoID: song, isAd: false, rating: .like)
+        box.scope = "account-b"
+        ratings.observe(videoID: nil, isAd: false, rating: nil)
         #expect(ratings.like(for: song) == nil && ratings.current == nil)
     }
-    @Test func aPressThatTookUpdatesTheKeptRating() async throws {
+    @Test func aPressThatTookUpdatesTheKeptRating() {
         let box = Box(); let ratings = ratings(box)
-        box.answer = .success(.init(videoID: song, status: .indifferent, dislikeExposed: true))
-        ratings.observe(videoID: song, isAd: false)
-        await settled { ratings.like(for: song) != nil }
+        ratings.observe(videoID: song, isAd: false, rating: .indifferent)
         ratings.settle(song, to: .dislike)
         #expect(ratings.like(for: song) == .init(videoID: song, status: .dislike, dislikeExposed: true))
         ratings.settle(other, to: .like)
-        #expect(ratings.like(for: other) == nil, "settling never invents a rating that was not read")
+        #expect(ratings.like(for: other) == nil, "settling never invents a rating that was not shown")
     }
 }

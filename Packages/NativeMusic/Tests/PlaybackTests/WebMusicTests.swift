@@ -1653,6 +1653,23 @@ private func queueItemsText(_ items: [[String: Any]]) -> String { String(decodin
         #expect(plain.repeatMode == nil, "a page that does not say leaves it unreported")
         #expect(WebMusicRepeatMode.off.next == .all && WebMusicRepeatMode.all.next == .one && WebMusicRepeatMode.one.next == .off, "the page's own button order")
     }
+    @Test func theStateMessageCarriesTheRatingOnlyInTheServicesOwnWordsAndOnlyWithItsSong() throws {
+        for rating in WebMusicRating.allCases {
+            var body = state(); body["rating"] = rating.rawValue
+            guard case .state(let sample) = try validate(body).get().event else { Issue.record("not state"); return }
+            #expect(sample.rating == rating)
+        }
+        for bad in ["like", "LOVE", ""] as [Any] + [1, true] {
+            var body = state(); body["rating"] = bad
+            #expect(validate(body) == .failure(.malformed), "\(bad)")
+        }
+        var orphan = state(); orphan["videoId"] = ""; orphan["rating"] = "LIKE"   // the observer posts "" when no song is loaded
+        #expect(validate(orphan) == .failure(.malformed), "a rating without the song it is about")
+        // Every key the observer can post fits within the bound together.
+        var full = state(playlist: "PLsynthetic", signedIn: true, content: syntheticVideo, shuffle: true); full["repeat"] = "all"; full["rating"] = "LIKE"
+        #expect(full.count <= WebMusicBridge.maximumKeys)
+        if case .failure(let rejection) = validate(full) { Issue.record("a full state message was refused: \(rejection)") }
+    }
 }
 
 private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal? { if case .failure(let reason) = result { reason } else { nil } }
@@ -1814,7 +1831,10 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
     private let box = IssueBox()
     var issues: [String] { box.items }
     /// `nodes` are the `ytmusic-player-queue-item` `.data` values; `shuffle`/`repeatMode` are the player bar's state (nil = the page shows none).
-    init(nodes: [[String: Any]], playing: String, ad: Bool = false, shuffle: String? = "false", repeatMode: String? = "NONE", clicksWork: Bool = true, markSelectedAttribute: Int? = nil) {
+    /// `currentBar` models the player bar as seen live on 2026-11-09: no `aria-pressed` on the shuffle button, the bar's own boolean `shuffleOn`
+    /// and its `repeat-mode` attribute. Otherwise the earlier shape (`aria-pressed`, `repeat-mode_`). `like` is the bar's like button's `.data`.
+    init(nodes: [[String: Any]], playing: String, ad: Bool = false, shuffle: String? = "false", repeatMode: String? = "NONE", clicksWork: Bool = true, markSelectedAttribute: Int? = nil,
+         currentBar: Bool = false, like: [String: Any]? = nil) {
         let box = box
         context.exceptionHandler = { _, exception in box.items.append(exception?.toString() ?? "?") }
         let data = try! JSONSerialization.data(withJSONObject: nodes)
@@ -1828,10 +1848,15 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
         var Date = { now: function () { return __clock; } };
         var setTimeout = function (fn) { Promise.resolve().then(fn); };
         var setInterval = function (fn) { __intervals.push(fn); };
+        var __current = \(currentBar);
+        var __like = \(like.flatMap { try? JSONSerialization.data(withJSONObject: $0) }.map { "{ data: " + String(decoding: $0, as: UTF8.self) + " }" } ?? "null");
         var __shuffleButton = { click: function () { __clicks.push("shuffle"); if (__works && __shuffle !== null) { __shuffle = __shuffle === "true" ? "false" : "true"; } },
-          getAttribute: function (name) { return name === "aria-pressed" ? __shuffle : null; } };
+          getAttribute: function (name) { return !__current && name === "aria-pressed" ? __shuffle : null; } };
         var __repeatButton = { click: function () { __clicks.push("repeat"); if (__works && __repeat !== null) { __repeat = __repeat === "NONE" ? "ALL" : (__repeat === "ALL" ? "ONE" : "NONE"); } } };
-        var __bar = { getAttribute: function (name) { return name === "repeat-mode_" ? __repeat : null; } };
+        var __bar = { getAttribute: function (name) {
+          if (__current) { return name === "repeat-mode" ? __repeat : (name === "shuffle-on" && __shuffle === "true" ? "" : null); }
+          return name === "repeat-mode_" ? __repeat : null; } };
+        if (__current) { Object.defineProperty(__bar, "shuffleOn", { get: function () { return __shuffle === null ? undefined : __shuffle === "true"; } }); }
         var __api = { getVideoData: function () { return { video_id: __playing }; } };
         var __video = { paused: false, ended: false, readyState: 4, currentTime: 10, duration: 200, addEventListener: function () {} };
         var __app = { resolveCommand: function (command) { if (!__router) { throw new Error("no"); } __routed = command; } };
@@ -1845,6 +1870,7 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
             case "ytmusic-player-bar .shuffle": return __shuffle === null ? null : __shuffleButton;
             case "ytmusic-player-bar .repeat": return __repeat === null ? null : __repeatButton;
             case "ytmusic-player-bar": return __bar;
+            case "ytmusic-player-bar ytmusic-like-button-renderer": return __like;
             default: return null; }
           },
           querySelectorAll: function (selector) {
@@ -2018,6 +2044,52 @@ private enum RealQueue {
         #expect(message["shuffle"] == nil && message["repeat"] == nil, "no guess when the page shows nothing")
         let odd = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", repeatMode: "SOMETHING"); odd.installObserver()
         #expect(odd.posts("state").last?["repeat"] == nil, "an unknown mode is not reported")
+    }
+    /// The player bar as it is now: shuffle from the bar's own `shuffleOn`, repeat from `repeat-mode`. Both were reported as unknown by 0.1.10,
+    /// which greyed out Shuffle and Repeat.
+    @Test func theCurrentPlayerBarShapeIsReadToo() throws {
+        let real = try RealQueue.items()
+        for (shuffle, raw, name) in [("true", "ALL", "all"), ("false", "NONE", "off"), ("false", "ONE", "one")] {
+            let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: shuffle, repeatMode: raw, currentBar: true); harness.installObserver()
+            let message = try #require(harness.posts("state").last)
+            #expect(message["shuffle"] as? Bool == (shuffle == "true") && message["repeat"] as? String == name, "\(message)")
+            if case .failure(let rejection) = WebMusicBridge.validate(message, frame: music, document: 1, load: 1) { Issue.record("the bridge refused it: \(rejection)") }
+        }
+        let silent = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: nil, repeatMode: nil, currentBar: true); silent.installObserver()
+        let message = try #require(silent.posts("state").last)
+        #expect(message["shuffle"] == nil && message["repeat"] == nil, "no guess when the page shows nothing")
+    }
+    @Test func theShuffleAndRepeatCommandsWorkOnTheCurrentPlayerBar() throws {
+        let real = try RealQueue.items()
+        let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: "false", repeatMode: "NONE", currentBar: true)
+        #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ok" && harness.clicks == ["shuffle"])
+        #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ok" && harness.clicks == ["shuffle"], "already on: no second click")
+        #expect(harness.run(WebMusicScripts.setRepeat, ["mode": "one"]) == "ok" && harness.clicks == ["shuffle", "repeat", "repeat"])
+    }
+    /// The rating the bar's like button shows, only for the song that is playing and only where likes are allowed. The data's shape is the
+    /// service's own `likeButtonRenderer` (target, likeStatus, likesAllowed), as seen on the live page on 2026-11-09.
+    @Test func theRatingIsTheBarsLikeButtonForThePlayingSongOnly() throws {
+        let real = try RealQueue.items()
+        for status in ["LIKE", "DISLIKE", "INDIFFERENT"] {
+            let like: [String: Any] = ["target": ["videoId": "khnokW3Mw24"], "likeStatus": status, "likesAllowed": true]
+            let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", currentBar: true, like: like); harness.installObserver()
+            let message = try #require(harness.posts("state").last)
+            #expect(message["rating"] as? String == status)
+            guard case .state(let sample)? = try? WebMusicBridge.validate(message, frame: music, document: 1, load: 1).get().event else { Issue.record("refused"); continue }
+            #expect(sample.rating?.rawValue == status)
+        }
+        let cases: [[String: Any]] = [
+            ["target": ["videoId": "SYNTHother1"], "likeStatus": "LIKE", "likesAllowed": true],   // the previous song's data, not yet replaced
+            ["target": ["videoId": "khnokW3Mw24"], "likeStatus": "LIKE", "likesAllowed": false],  // likes switched off
+            ["target": ["videoId": "khnokW3Mw24"], "likeStatus": "LOVE", "likesAllowed": true],   // a state the app does not know
+            ["likeStatus": "LIKE", "likesAllowed": true],                                          // no song named
+        ]
+        for like in cases {
+            let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", currentBar: true, like: like); harness.installObserver()
+            #expect(harness.posts("state").last?["rating"] == nil, "\(like)")
+        }
+        let none = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", currentBar: true); none.installObserver()
+        #expect(none.posts("state").last?["rating"] == nil)
     }
 }
 

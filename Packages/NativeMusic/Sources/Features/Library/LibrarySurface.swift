@@ -52,7 +52,7 @@ public enum LibraryControls {
         }
         return controls
     }
-    /// Like, and Dislike where the service exposes it, for one rating the service published: a row's or the playing song's (`MusicWatchRatingParser`).
+    /// Like, and Dislike where the service exposes it, for one rating the service published: a row's, or the playing song's as the page's player bar shows it (`NowPlayingRatings`).
     @MainActor public static func rating(_ like: MusicItemControls.Like, ledger: LibraryWriteLedger) -> [LibraryControl] {
         let current = ledger.rating(like.videoID, service: like.status)
         let liked = current == .like
