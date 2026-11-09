@@ -288,37 +288,101 @@ public enum WebMusicScripts {
       }
     """
 
-    /// CORE-A: the player bar's own shuffle and repeat controls, read back from the page. A state the page does not show is `undefined`, never
+    /// CORE-A: the player's own shuffle and repeat controls, read back from the page. A state the page does not show is `undefined`, never
     /// a guess; the commands never click a control whose state they cannot read.
     ///
-    /// The player bar's markup changed (seen live on 2026-11-09, client 1.20261104): the shuffle button no longer carries `aria-pressed`, and
-    /// the bar's repeat attribute is `repeat-mode`, not `repeat-mode_`. Shuffle is now the bar's own boolean `shuffleOn` (mirrored by a
-    /// `shuffle-on` attribute that is present only while on, so its absence alone is not read as "off"). Both older forms are still read.
-    /// `ytmuseRating` is the bar's like button's own data: the rating YouTube Music shows for the song, only when that data names `video`.
+    /// YouTube Music serves two different players, both seen live on 2026-11-09 (client 1.20261104):
+    /// - Signed out: `ytmusic-player-bar`. Shuffle is the bar's own boolean `shuffleOn` (the button no longer carries `aria-pressed`), repeat
+    ///   its `repeat-mode` attribute (formerly `repeat-mode_`); both older forms are still read. The rating is the bar's like button's own
+    ///   data (the service's `likeButtonRenderer`), used only when it names `video`.
+    /// - Signed in (the account's page, which is the app's): there is no `ytmusic-player-bar`. The controls are `ytmusic-wiz-player-controls`
+    ///   whose buttons run Shuffle, speed, rewind, Previous, Play, fast forward, Next, Repeat, so Shuffle is the first and Repeat the last,
+    ///   each a toggle with `aria-pressed`; this is found by position, not by the (localised) labels. Repeat's `aria-pressed` is false for
+    ///   off and true for both all and one; only the label tells all from one, so it is matched in the app's five main languages, and an
+    ///   unrecognised label is `undefined`. The rating is the pressed state of the `segmented-like-dislike-button-view-model`'s Like and
+    ///   Dislike toggles, which name no song: it is read only once the song has been the same for 1.5 s, so a reading from the song before
+    ///   is never taken for this one.
     static let playerBarDetection = """
+      function ytmuseWizToggles() {
+        try {
+          var controls = document.querySelector("ytmusic-wiz-player-controls");
+          if (!controls) { return null; }
+          var buttons = controls.querySelectorAll("button");
+          if (!buttons || buttons.length < 2) { return null; }
+          var first = buttons[0], last = buttons[buttons.length - 1];
+          var toggle = function (b) { var p = b.getAttribute("aria-pressed"); return p === "true" || p === "false"; };
+          if (!toggle(first) || !toggle(last)) { return null; }
+          return { shuffle: first, repeat: last };
+        } catch (e) { return null; }
+      }
+      function ytmuseShuffleButton() {
+        var old = document.querySelector("ytmusic-player-bar .shuffle");
+        if (old) { return old; }
+        var wiz = ytmuseWizToggles();
+        return wiz ? wiz.shuffle : null;
+      }
+      function ytmuseRepeatButton() {
+        var old = document.querySelector("ytmusic-player-bar .repeat");
+        if (old) { return old; }
+        var wiz = ytmuseWizToggles();
+        return wiz ? wiz.repeat : null;
+      }
       function ytmuseShuffleState() {
         try {
           var bar = document.querySelector("ytmusic-player-bar");
-          if (bar && typeof bar.shuffleOn === "boolean" && document.querySelector("ytmusic-player-bar .shuffle")) { return bar.shuffleOn; }
           var button = document.querySelector("ytmusic-player-bar .shuffle");
-          if (!button) { return undefined; }
-          var pressed = button.getAttribute("aria-pressed");
-          if (pressed === "true") { return true; }
-          if (pressed === "false") { return false; }
+          if (button) {
+            if (bar && typeof bar.shuffleOn === "boolean") { return bar.shuffleOn; }
+            var pressed = button.getAttribute("aria-pressed");
+            if (pressed === "true") { return true; }
+            if (pressed === "false") { return false; }
+            return undefined;
+          }
+          var wiz = ytmuseWizToggles();
+          if (wiz) {
+            var on = wiz.shuffle.getAttribute("aria-pressed");
+            if (on === "true") { return true; }
+            if (on === "false") { return false; }
+          }
         } catch (e) {}
         return undefined;
       }
       function ytmuseRepeatState() {
         try {
           var bar = document.querySelector("ytmusic-player-bar");
-          if (!bar) { return undefined; }
-          var raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode") : null;
-          if (typeof raw !== "string" || raw === "") { raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode_") : null; }
-          if (typeof raw !== "string" || raw === "") { raw = bar.repeatMode_; }
-          if (raw === "NONE") { return "off"; }
-          if (raw === "ALL") { return "all"; }
-          if (raw === "ONE") { return "one"; }
+          if (bar) {
+            var raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode") : null;
+            if (typeof raw !== "string" || raw === "") { raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode_") : null; }
+            if (typeof raw !== "string" || raw === "") { raw = bar.repeatMode_; }
+            if (raw === "NONE") { return "off"; }
+            if (raw === "ALL") { return "all"; }
+            if (raw === "ONE") { return "one"; }
+            if (document.querySelector("ytmusic-player-bar .repeat")) { return undefined; }
+          }
+          var wiz = ytmuseWizToggles();
+          if (wiz) {
+            var pressed = wiz.repeat.getAttribute("aria-pressed");
+            if (pressed === "false") { return "off"; }
+            if (pressed === "true") {
+              var label = ((wiz.repeat.getAttribute("aria-label") || "") + " " + (wiz.repeat.getAttribute("title") || "")).toLowerCase();
+              if (/\\bone\\b|\\b1\\b|один|одн|\\beine?n?\\b|\\beins\\b|\\buno\\b|\\buna\\b|un titre|une piste|le titre|ce titre/.test(label)) { return "one"; }
+              if (/\\ball\\b|все|всё|\\balle\\b|\\btodo\\b|\\btodas\\b|\\btodos\\b|\\btout\\b|\\btous\\b/.test(label)) { return "all"; }
+            }
+          }
         } catch (e) {}
+        return undefined;
+      }
+      function ytmuseWizRating() {
+        var group = document.querySelector("segmented-like-dislike-button-view-model");
+        if (!group) { return undefined; }
+        var like = group.querySelector("like-button-view-model button[aria-pressed]");
+        var dislike = group.querySelector("dislike-button-view-model button[aria-pressed]");
+        if (!like || !dislike) { return undefined; }
+        if (like.getAttribute("aria-disabled") === "true" || dislike.getAttribute("aria-disabled") === "true") { return undefined; }
+        var liked = like.getAttribute("aria-pressed"), disliked = dislike.getAttribute("aria-pressed");
+        if (liked === "true" && disliked === "false") { return "LIKE"; }
+        if (disliked === "true" && liked === "false") { return "DISLIKE"; }
+        if (liked === "false" && disliked === "false") { return "INDIFFERENT"; }
         return undefined;
       }
       function ytmuseRating(video) {
@@ -326,9 +390,16 @@ public enum WebMusicScripts {
           if (typeof video !== "string" || video === "") { return undefined; }
           var button = document.querySelector("ytmusic-player-bar ytmusic-like-button-renderer");
           var data = button && button.data;
-          if (!data || typeof data !== "object" || !data.target || data.target.videoId !== video || data.likesAllowed !== true) { return undefined; }
-          var status = data.likeStatus;
-          if (status === "LIKE" || status === "DISLIKE" || status === "INDIFFERENT") { return status; }
+          if (data && typeof data === "object") {
+            if (!data.target || data.target.videoId !== video || data.likesAllowed !== true) { return undefined; }
+            var status = data.likeStatus;
+            return status === "LIKE" || status === "DISLIKE" || status === "INDIFFERENT" ? status : undefined;
+          }
+          var memory = window.__ytmuseState || {};
+          var now = Date.now();
+          if (memory.ratingVideo !== video) { memory.ratingVideo = video; memory.ratingSince = now; }
+          if (now - memory.ratingSince < 1500) { return undefined; }
+          return ytmuseWizRating();
         } catch (e) {}
         return undefined;
       }
@@ -570,7 +641,22 @@ public enum WebMusicScripts {
         barObserved = bar;
         try { new MutationObserver(function () { report(true); }).observe(bar, { attributes: true, subtree: true, attributeFilter: ["aria-pressed", "repeat-mode_", "repeat-mode", "shuffle-on", "like-status"] }); } catch (e) {}
       }
-      function refresh() { bind(); hookErrors(); observeClasses(); observeBar(); }
+      // The signed-in player has no player bar: its controls and its Like/Dislike toggles are watched the same way.
+      var wizObserved = null, ratingObserved = null;
+      function observeControls() {
+        if (typeof MutationObserver !== "function") { return; }
+        var controls = document.querySelector("ytmusic-wiz-player-controls");
+        if (controls && controls !== wizObserved) {
+          wizObserved = controls;
+          try { new MutationObserver(function () { report(true); }).observe(controls, { attributes: true, subtree: true, attributeFilter: ["aria-pressed", "aria-label"] }); } catch (e) {}
+        }
+        var group = document.querySelector("segmented-like-dislike-button-view-model");
+        if (group && group !== ratingObserved) {
+          ratingObserved = group;
+          try { new MutationObserver(function () { report(true); }).observe(group, { attributes: true, subtree: true, attributeFilter: ["aria-pressed"] }); } catch (e) {}
+        }
+      }
+      function refresh() { bind(); hookErrors(); observeClasses(); observeBar(); observeControls(); }
       refresh();
       // PL1: say at once whether this document is the YouTube Music app. YouTube's
       // "not optimized for your browser" page (and any other non-app document) has
@@ -893,7 +979,7 @@ public enum WebMusicScripts {
     var current = ytmuseShuffleState();
     if (current === undefined) { return "unsupported"; }
     if (current === on) { return "ok"; }
-    var button = document.querySelector("ytmusic-player-bar .shuffle");
+    var button = ytmuseShuffleButton();
     if (!button || typeof button.click !== "function") { return "unsupported"; }
     button.click();
     for (var wait = 0; wait < 10; wait += 1) {
@@ -912,7 +998,7 @@ public enum WebMusicScripts {
     if (ytmuseAdShowing()) { return "ad"; }
     var current = ytmuseRepeatState();
     if (current === undefined) { return "unsupported"; }
-    var button = document.querySelector("ytmusic-player-bar .repeat");
+    var button = ytmuseRepeatButton();
     if (!button || typeof button.click !== "function") { return "unsupported"; }
     for (var step = 0; step < 3 && current !== mode; step += 1) {
       button.click();

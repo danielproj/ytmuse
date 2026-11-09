@@ -1834,7 +1834,8 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
     /// `currentBar` models the player bar as seen live on 2026-11-09: no `aria-pressed` on the shuffle button, the bar's own boolean `shuffleOn`
     /// and its `repeat-mode` attribute. Otherwise the earlier shape (`aria-pressed`, `repeat-mode_`). `like` is the bar's like button's `.data`.
     init(nodes: [[String: Any]], playing: String, ad: Bool = false, shuffle: String? = "false", repeatMode: String? = "NONE", clicksWork: Bool = true, markSelectedAttribute: Int? = nil,
-         currentBar: Bool = false, like: [String: Any]? = nil) {
+         currentBar: Bool = false, like: [String: Any]? = nil, wiz: Bool = false, wizRating: String? = nil,
+         repeatLabels: [String: String] = ["NONE": "Repeat off", "ALL": "Repeat all", "ONE": "Repeat one"]) {
         let box = box
         context.exceptionHandler = { _, exception in box.items.append(exception?.toString() ?? "?") }
         let data = try! JSONSerialization.data(withJSONObject: nodes)
@@ -1848,7 +1849,8 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
         var Date = { now: function () { return __clock; } };
         var setTimeout = function (fn) { Promise.resolve().then(fn); };
         var setInterval = function (fn) { __intervals.push(fn); };
-        var __current = \(currentBar);
+        var __current = \(currentBar), __wiz = \(wiz), __wizRating = \(wizRating.map(JSONLiteral.string) ?? "null");
+        var __repeatLabels = \(String(decoding: try! JSONSerialization.data(withJSONObject: repeatLabels), as: UTF8.self));
         var __like = \(like.flatMap { try? JSONSerialization.data(withJSONObject: $0) }.map { "{ data: " + String(decoding: $0, as: UTF8.self) + " }" } ?? "null");
         var __shuffleButton = { click: function () { __clicks.push("shuffle"); if (__works && __shuffle !== null) { __shuffle = __shuffle === "true" ? "false" : "true"; } },
           getAttribute: function (name) { return !__current && name === "aria-pressed" ? __shuffle : null; } };
@@ -1857,6 +1859,19 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
           if (__current) { return name === "repeat-mode" ? __repeat : (name === "shuffle-on" && __shuffle === "true" ? "" : null); }
           return name === "repeat-mode_" ? __repeat : null; } };
         if (__current) { Object.defineProperty(__bar, "shuffleOn", { get: function () { return __shuffle === null ? undefined : __shuffle === "true"; } }); }
+        // The signed-in player (seen live 2026-11-09): no player bar; `ytmusic-wiz-player-controls` holds Shuffle first and Repeat last, each
+        // an `aria-pressed` toggle, and the Like/Dislike toggles sit in a segmented view model.
+        function __plain(label) { return { click: function () {}, getAttribute: function (n) { return n === "aria-label" ? label : null; } }; }
+        var __wizShuffle = { click: function () { __shuffleButton.click(); },
+          getAttribute: function (n) { return n === "aria-pressed" ? __shuffle : (n === "aria-label" || n === "title" ? "Shuffle" : null); } };
+        var __wizRepeat = { click: function () { __repeatButton.click(); },
+          getAttribute: function (n) { if (n === "aria-pressed") { return __repeat === null ? null : (__repeat === "NONE" ? "false" : "true"); } return (n === "aria-label" || n === "title") ? (__repeatLabels[__repeat] || "") : null; } };
+        var __controls = { querySelectorAll: function (sel) { return sel === "button" ? [__wizShuffle, __plain("Playback speed 1x"), __plain("Rewind 10 seconds"), __plain("Previous"), __plain("Play"), __plain("Fast forward 30 seconds"), __plain("Next"), __wizRepeat] : []; } };
+        function __toggle(on) { return { getAttribute: function (n) { return n === "aria-pressed" ? (on() ? "true" : "false") : (n === "aria-disabled" ? "false" : null); } }; }
+        var __group = { querySelector: function (sel) {
+          if (sel === "like-button-view-model button[aria-pressed]") { return __toggle(function () { return __wizRating === "LIKE"; }); }
+          if (sel === "dislike-button-view-model button[aria-pressed]") { return __toggle(function () { return __wizRating === "DISLIKE"; }); }
+          return null; } };
         var __api = { getVideoData: function () { return { video_id: __playing }; } };
         var __video = { paused: false, ended: false, readyState: 4, currentTime: 10, duration: 200, addEventListener: function () {} };
         var __app = { resolveCommand: function (command) { if (!__router) { throw new Error("no"); } __routed = command; } };
@@ -1867,10 +1882,12 @@ private func refusal(_ result: Result<Void, WebMusicRefusal>) -> WebMusicRefusal
             case "video": return __video;
             case "ytmusic-player": return { playerApi: __api };
             case "ytmusic-app": return __app;
-            case "ytmusic-player-bar .shuffle": return __shuffle === null ? null : __shuffleButton;
-            case "ytmusic-player-bar .repeat": return __repeat === null ? null : __repeatButton;
-            case "ytmusic-player-bar": return __bar;
-            case "ytmusic-player-bar ytmusic-like-button-renderer": return __like;
+            case "ytmusic-player-bar .shuffle": return __wiz || __shuffle === null ? null : __shuffleButton;
+            case "ytmusic-player-bar .repeat": return __wiz || __repeat === null ? null : __repeatButton;
+            case "ytmusic-player-bar": return __wiz ? null : __bar;
+            case "ytmusic-player-bar ytmusic-like-button-renderer": return __wiz ? null : __like;
+            case "ytmusic-wiz-player-controls": return __wiz ? __controls : null;
+            case "segmented-like-dislike-button-view-model": return __wiz && __wizRating !== null ? __group : null;
             default: return null; }
           },
           querySelectorAll: function (selector) {
@@ -2065,6 +2082,53 @@ private enum RealQueue {
         #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ok" && harness.clicks == ["shuffle"])
         #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ok" && harness.clicks == ["shuffle"], "already on: no second click")
         #expect(harness.run(WebMusicScripts.setRepeat, ["mode": "one"]) == "ok" && harness.clicks == ["shuffle", "repeat", "repeat"])
+    }
+    /// The signed-in player: no player bar, `ytmusic-wiz-player-controls` with Shuffle first and Repeat last as `aria-pressed` toggles. 0.1.11
+    /// read only the player bar, so for a signed-in account Shuffle, Repeat and the rating were never reported.
+    @Test func theSignedInPlayersControlsAreReadByPositionAndRepeatsModeByItsLabel() throws {
+        let real = try RealQueue.items()
+        for (shuffle, raw, name) in [("true", "ALL", "all"), ("false", "NONE", "off"), ("false", "ONE", "one")] {
+            let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: shuffle, repeatMode: raw, wiz: true); harness.installObserver()
+            let message = try #require(harness.posts("state").last)
+            #expect(message["shuffle"] as? Bool == (shuffle == "true") && message["repeat"] as? String == name, "\(message)")
+        }
+        let russian = ["NONE": "Не повторять", "ALL": "Повторять все", "ONE": "Повторять один трек"]
+        for (raw, name) in [("ALL", "all"), ("ONE", "one"), ("NONE", "off")] {
+            let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", repeatMode: raw, wiz: true, repeatLabels: russian); harness.installObserver()
+            #expect(harness.posts("state").last?["repeat"] as? String == name, "\(raw) in Russian")
+        }
+        let unknown = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", repeatMode: "ALL", wiz: true, repeatLabels: ["ALL": "Zzz", "NONE": "Zzz", "ONE": "Zzz"]); unknown.installObserver()
+        #expect(unknown.posts("state").last?["repeat"] == nil, "a label the app cannot read is not guessed")
+        let none = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: nil, repeatMode: nil, wiz: true); none.installObserver()
+        let message = try #require(none.posts("state").last)
+        #expect(message["shuffle"] == nil && message["repeat"] == nil, "controls that are not toggles are not read")
+    }
+    @Test func theShuffleAndRepeatCommandsWorkOnTheSignedInPlayer() throws {
+        let real = try RealQueue.items()
+        let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", shuffle: "false", repeatMode: "NONE", wiz: true)
+        #expect(harness.run(WebMusicScripts.setShuffle, ["on": true]) == "ok" && harness.clicks == ["shuffle"])
+        #expect(harness.run(WebMusicScripts.setRepeat, ["mode": "one"]) == "ok" && harness.clicks == ["shuffle", "repeat", "repeat"])
+        #expect(harness.run(WebMusicScripts.setRepeat, ["mode": "off"]) == "ok" && harness.clicks.count == 4)
+    }
+    /// The signed-in player's Like/Dislike toggles name no song, so a rating is read only once the same song has played 1.5 s.
+    @Test func theSignedInRatingIsTheToggleThatIsPressedOnceTheSongHasSettled() throws {
+        let real = try RealQueue.items()
+        for status in ["LIKE", "DISLIKE", "INDIFFERENT"] {
+            let harness = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", wiz: true, wizRating: status); harness.installObserver()
+            #expect(harness.posts("state").last?["rating"] == nil, "not on the first report of a song")
+            harness.tick(); harness.tick()
+            let message = try #require(harness.posts("state").last)
+            #expect(message["rating"] as? String == status, "\(status): \(message)")
+            // A new song: its rating is not read until it, too, has settled.
+            harness.set("__playing = 'SYNTHq00001';")
+            harness.tick()
+            #expect(harness.posts("state").last?["videoId"] as? String == "SYNTHq00001" && harness.posts("state").last?["rating"] == nil)
+            harness.tick(); harness.tick()
+            #expect(harness.posts("state").last?["rating"] as? String == status)
+        }
+        let none = QueuePageHarness(nodes: real, playing: "khnokW3Mw24", wiz: true); none.installObserver()
+        none.tick(); none.tick()
+        #expect(none.posts("state").last?["rating"] == nil, "no toggles, no rating")
     }
     /// The rating the bar's like button shows, only for the song that is playing and only where likes are allowed. The data's shape is the
     /// service's own `likeButtonRenderer` (target, likeStatus, likesAllowed), as seen on the live page on 2026-11-09.
