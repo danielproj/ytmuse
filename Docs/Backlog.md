@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-06. Latest public development preview: **[0.1.9](https://github.com/danielproj/ytmuse/releases/tag/v0.1.9)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-09. Latest public development preview: **[0.1.10](https://github.com/danielproj/ytmuse/releases/tag/v0.1.10)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,16 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## New in the 0.1.10 preview
+
+The account holder asked for Like and Dislike, chose that Dislike on the playing song skips to the next one, and that both buttons sit in the player bar. Automated tests cover it; **no live window and no signed-in answer has been checked**.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| Like and Dislike in the player | The bottom bar, the expanded player, full screen and the mini-player show Like and Dislike for the playing song through the one library ledger; the system's buttons follow. A song no page showed gets its rating from one signed `next` read when it starts (the player overlay's like button); nothing is read during an ad, signed out or for owned media, and an account switch forgets every rating. A missing button reads as "not offered", never "not liked". Disliking the playing song skips once the ledger holds the dislike, only while that song still plays. A disabled button says why (four new messages in en/ru/de/es/fr). | That a signed `next` answer carries the account's own `LIKE`/`DISLIKE` where the anonymous captures read `INDIFFERENT`; a like from the bar appearing in Liked Music; the buttons, their reasons and the skip in a live window; whether the bar still fits at its narrowest width. |
+
+The 0.1.10 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 11 to earlier releases.
 
 ## New in the 0.1.9 preview
 

@@ -1,18 +1,20 @@
 # GitHub source and installable releases
 
-The cleaned source repository and [0.1.9 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.9) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
+The cleaned source repository and [0.1.10 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.10) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
 
 The preview targets **Apple Silicon and macOS 27 or later**. Intel Macs and earlier macOS versions are not supported. Building from source requires the exact Xcode/Swift versions in `toolchain.json`.
 
 ## Install
 
-Download `YTMuse-0.1.9.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
+Download `YTMuse-0.1.10.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
 
 Release packaging uses a dedicated production app/widget identity, derived by default as `com.github.<owner>.<repository>` with a `.widget` companion. `YTMUSE_RELEASE_BUNDLE_ID` can override it with a valid reverse-DNS identifier. The app group uses the signing Team ID followed by that production identifier. Ordinary source builds retain development identifiers; no migration from development stores is included.
 
 The public app pins its update repository, feed URL and Ed25519 public key. Automatic checks require opt-in, and installation requires an explicit restart. Source builds have no feed or pinned key and leave update networking disabled.
 
 ## What was verified
+
+0.1.10 (build 11), source tag `v0.1.10` at commit `faf3100`, adds Like and Dislike for the playing song to every player surface, reads the rating of a song that no page showed (one signed `next` per song started), and skips on Dislike. The details are in the [backlog](Backlog.md) and [Library.md](Library.md). Every headless test batch ran and passed on the public snapshot in a clean checkout with no secrets (`scripts/clean-checkout.sh --snapshot`: `ci: ok`). The rating parser was tested against every real anonymous `next` capture in `Fixtures/`; no signed answer has been captured, so the signed rating state, a like appearing in Liked Music, and the buttons in a live window are unverified. The app and DMG were Developer ID signed, notarized and stapled. Strict signatures, Gatekeeper acceptance on the packaging Mac, the checksum, the SBOM and the signed feed were checked. All five uploaded assets were downloaded again and matched byte for byte. The live latest feed verifies as an offer of 0.1.10 build 11 to a 0.1.9 build 10, a 0.1.8 build 9, a 0.1.7 build 8 and a 0.1.0 build 1.
 
 0.1.9 (build 10), source tag `v0.1.9` at commit `b5fb017`, aligns the design across the app in both styles. The details are in the [backlog](Backlog.md). Every headless test batch ran and passed on the public snapshot in a clean checkout with no secrets. The layout audits passed in the development tree in both styles, apart from two sets that fail the same way on 0.1.8: six toolbar banner cases and four scroll-restoration cases. Offscreen renders of the main pages were checked in both styles; no live window was checked. The app and DMG were Developer ID signed, notarized and stapled. Strict signatures, Gatekeeper acceptance on the packaging Mac, the checksum, the SBOM and the signed feed were checked. All five uploaded assets were downloaded again and matched byte for byte. The live latest feed verifies as an offer of 0.1.9 build 10 to a 0.1.8 build 9, a 0.1.7 build 8 and a 0.1.0 build 1, and the packaged feed also verifies for 0.1.6 build 7.
 
