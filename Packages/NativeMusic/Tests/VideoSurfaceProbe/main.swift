@@ -71,7 +71,8 @@ Task { @MainActor in
     let inlineFacts = await player.measureVideo()
     check(inlineFacts?.presenting == true && inlineFacts?.styleInstalled == true && (inlineFacts?.hidden ?? 0) > 0, "the page chrome is hidden for the picture")
     check(inlineFacts?.fit == "contain", "the picture is scaled to fit with its aspect ratio preserved (object-fit: contain)")
-    check(inlineFacts?.rect.count == 4 && abs(inlineFacts!.rect[2] - 320) < 1.5 && abs(inlineFacts!.rect[3] - 180) < 1.5, "the video element fills the 320 x 180 preview, nothing else of the page")
+    let inlineLayout = WebKitMusicPage.layoutSize(for: CGSize(width: 320, height: 180))   // zoomed out: the page is never laid out narrower than its compact-player breakpoint
+    check(inlineFacts?.rect.count == 4 && abs(inlineFacts!.rect[2] - inlineLayout.width) < 1.5 && abs(inlineFacts!.rect[3] - inlineLayout.height) < 1.5, "the video element fills the 320 x 180 preview, nothing else of the page")
     check((inlineFacts?.adOverlayCount ?? 0) >= 1 && inlineFacts?.adOverlaysOnTop == true, "advertising layers are never covered: a hit test at the centre of every ad layer lands on that layer (F1)")
     // F2: the presented page is not interactive. Real AppKit: the host answers no hit test, the web view takes no first responder and offers no menu.
     let centre = NSPoint(x: inline.bounds.midX, y: inline.bounds.midY)
@@ -101,7 +102,8 @@ Task { @MainActor in
     check(inline.subviews.isEmpty && playerHost.subviews.count == 1, "exactly one surface holds the web view")
     let windowFacts = await player.measureVideo()
     check(windowFacts?.origin == origin, "moving the picture did not reload the document")
-    check(windowFacts?.rect.count == 4 && abs(windowFacts!.rect[2] - 640) < 1.5 && abs(windowFacts!.rect[3] - 360) < 1.5, "the picture follows the new surface's size")
+    let windowLayout = WebKitMusicPage.layoutSize(for: CGSize(width: 640, height: 360))
+    check(windowFacts?.rect.count == 4 && abs(windowFacts!.rect[2] - windowLayout.width) < 1.5 && abs(windowFacts!.rect[3] - windowLayout.height) < 1.5, "the picture follows the new surface's size")
     check(player.snapshot.phase == .playing, "still playing after the move")
     let beforeFrames = player.videoActivity.frames, beforeTime = windowFacts?.time ?? 0
     try? await Task.sleep(for: .milliseconds(900))

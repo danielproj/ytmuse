@@ -106,6 +106,23 @@ final class NonInteractiveWebView: WKWebView {
     override func rightMouseDown(with event: NSEvent) {}
     override func otherMouseDown(with event: NSEvent) {}
     override func scrollWheel(with event: NSEvent) {}
+
+    /// The narrowest page YouTube Music is laid out at, in CSS pixels. Below 616 px the signed-in page swaps its player for a compact one
+    /// with no Shuffle or Repeat toggle and no Like/Dislike group (`matchMedia("(max-width: 615px)")` in its own player code, seen live on
+    /// 2026-11-09: a 574 px page had neither, a 1663 px one both), and the app reads all four from those controls. The hidden page and every
+    /// video surface (an inline picture can be a few hundred points wide) are therefore zoomed out until the page is at least this wide, so
+    /// the controls exist whatever the frame; the picture still fills the frame.
+    static let minimumLayoutWidth: CGFloat = 800
+    /// The page zoom that lays a frame `width` points wide out at least `minimumLayoutWidth` CSS pixels wide: 1 when it already is.
+    static func pageZoom(forWidth width: CGFloat) -> CGFloat {
+        guard width.isFinite, width > 0 else { return 1 }
+        return max(min(width / minimumLayoutWidth, 1), 0.1)
+    }
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        let zoom = Self.pageZoom(forWidth: newSize.width)
+        if pageZoom != zoom { pageZoom = zoom }
+    }
 }
 
 /// What the web view answers to input, measured with real AppKit (probe and tests).
@@ -142,6 +159,12 @@ public struct WebMusicInputFacts: Sendable, Equatable {
     /// order the host window in fully transparent, click-through and 1×1 (still
     /// never visible). `defaults write local.native-music.development YTMusePlayerHostOrderedIn -bool YES`
     public static let orderedInKey = "YTMusePlayerHostOrderedIn"
+    /// The size, in CSS pixels, a page shown in a frame of `size` points is laid out at (the hidden page and every video surface: see
+    /// `NonInteractiveWebView.minimumLayoutWidth`). A video that fills the surface measures this size from inside the page.
+    public static func layoutSize(for size: CGSize) -> CGSize {
+        let zoom = NonInteractiveWebView.pageZoom(forWidth: size.width)
+        return CGSize(width: size.width / zoom, height: size.height / zoom)
+    }
     private let orderHostWindowIn: Bool
     public init(delegate: any WebMusicPageDelegate, orderHostWindowIn: Bool = false) {
         self.delegate = delegate; self.orderHostWindowIn = orderHostWindowIn
@@ -194,6 +217,7 @@ public struct WebMusicInputFacts: Sendable, Equatable {
         let handler = MessageRelay(owner: self)
         configuration.userContentController.add(handler, name: WebMusicBridge.handlerName)
         let view = NonInteractiveWebView(frame: NSRect(x: 0, y: 0, width: 480, height: 360), configuration: configuration)
+        view.pageZoom = NonInteractiveWebView.pageZoom(forWidth: view.frame.width)   // init(frame:) need not go through setFrameSize
         let navigator = NavigationRelay(owner: self)
         view.navigationDelegate = navigator; view.uiDelegate = navigator
         view.setAccessibilityElement(false)
