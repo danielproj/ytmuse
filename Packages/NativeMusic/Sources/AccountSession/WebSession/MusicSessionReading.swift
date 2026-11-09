@@ -67,6 +67,9 @@ public protocol MusicSessionReading: Sendable {
     /// signed answer supplies timing; anonymous otherwise. "No lyrics" is a result; a response that cannot be read is an error.
     func radioQueue(action: MusicRadioAction, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicRadioQueue>
     func lyrics(videoID: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicLyricsResult>
+    /// The rating of one song for the signed-in account (its `next` response's like button). Signed only. `nil` when the service published no
+    /// rating in that answer (it sometimes omits it); an unreadable answer is `.unrecognised`, never "not rated".
+    func rating(videoID: String, session: MusicCookieSession) async throws -> MusicSignedResult<MusicItemControls.Like?>
     /// One comments read (open, page or replies): signed with `session`, or the anonymous public request when nil. The request is validated before
     /// anything is sent; an unreadable answer is `.unrecognised`, an oversized one `.oversized`, never a partial parse.
     func comments(_ request: MusicCommentsRequest, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicCommentsAnswer>
@@ -94,6 +97,7 @@ extension MusicSessionReading {
     public func editPlaylist(_ request: MusicPlaylistRequest, session: MusicCookieSession) async throws -> MusicSignedResult<MusicPlaylistOutcome> { throw MusicSessionError.policy }
     public func episode(id: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicEpisodePage> { throw MusicSessionError.policy }
     public func lyrics(videoID: String, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicLyricsResult> { throw MusicSessionError.policy }
+    public func rating(videoID: String, session: MusicCookieSession) async throws -> MusicSignedResult<MusicItemControls.Like?> { throw MusicSessionError.policy }
     /// Readers that predate comments do not offer them.
     public func comments(_ request: MusicCommentsRequest, session: MusicCookieSession?) async throws -> MusicSignedResult<MusicCommentsAnswer> { throw MusicSessionError.policy }
 }

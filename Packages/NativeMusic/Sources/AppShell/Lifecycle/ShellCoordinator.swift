@@ -50,6 +50,10 @@ import SystemIntegration
     /// W23: every ledger control the song published (like, dislike, save), for the remote commands. Falls back to the like provider alone.
     @ObservationIgnored var libraryControlsProvider: (@MainActor (String) -> [LibraryControl])?
     @ObservationIgnored var likePress: (@MainActor (LibraryControl) async -> Void)?
+    /// Why the playing song has no rating control yet (its rating is being read, was not offered, needs sign-in, or could not be read). Nil: no reason known.
+    @ObservationIgnored var ratingGapProvider: (@MainActor (String) -> LikeUnavailable?)?
+    /// Whether a Dislike press took: the ledger shows the song as disliked and has not rejected the change. Only then does the song skip.
+    @ObservationIgnored var ratingHeld: (@MainActor (LibraryControl) -> Bool)?
     @ObservationIgnored var queuePanelProvider: (@MainActor () -> AnyView)?
     @ObservationIgnored var lyricsPanelProvider: (@MainActor () -> AnyView)?
     @ObservationIgnored var artworkContextProvider: (@MainActor () -> ShellArtworkContext)?
@@ -177,9 +181,9 @@ import SystemIntegration
     func queuePanel() -> AnyView { queuePanelProvider?() ?? AnyView(EmptyView()) }
     func lyricsPanel() -> AnyView { lyricsPanelProvider?() ?? AnyView(EmptyView()) }
 
-    // MARK: Like (the current YouTube Music song, through the library ledger when its page has been read)
+    // MARK: Like and Dislike (the current YouTube Music song, through the library ledger)
 
-    /// Whether the current song can be liked from a shell surface, and when it cannot, the actual cause.
+    /// Whether the current song can be liked (or disliked) from a shell surface, and when it cannot, the actual cause.
     enum LikeAvailability: Equatable {
         case available(LibraryControl)
         case unavailable(LikeUnavailable)
@@ -188,27 +192,53 @@ import SystemIntegration
     }
     enum LikeUnavailable: Equatable {
         case nothingPlaying, advertisement, ownedMedia, pageNotRead
+        /// The playing song's own rating is being read, the service published none, the account is signed out, the read failed, or the song
+        /// offers Like but not Dislike.
+        case reading, notOffered, signedOut, readFailed, dislikeNotOffered
         var message: String {
             switch self {
             case .nothingPlaying: String(localized: "Nothing is playing, so there is nothing to like.")
             case .advertisement: String(localized: "An advertisement is playing. Like returns with the next song.")
             case .ownedMedia: String(localized: "This is your own audio or a local file, not a YouTube Music song, so it has no like.")
             case .pageNotRead: String(localized: "Liking needs the song's page: open the song once and the control appears here.")
+            case .reading: String(localized: "Reading this song's rating from YouTube Music…")
+            case .notOffered: String(localized: "YouTube Music doesn't offer a rating for this song.")
+            case .signedOut: String(localized: "Sign in to YouTube Music to like or dislike songs.")
+            case .readFailed: String(localized: "This song's rating couldn't be read from YouTube Music. It's read again the next time the song plays.")
+            case .dislikeNotOffered: RemoteCommandReason.noDislike
             }
         }
     }
-    func likeAvailability() -> LikeAvailability {
+    func likeAvailability() -> LikeAvailability { ratingAvailability(.like) }
+    /// Like (`.like`) or Dislike (`.dislike`) for the playing song, or the actual reason there is none.
+    func ratingAvailability(_ kind: LibraryControl.Kind) -> LikeAvailability {
         if let player = playback.music, WebMusicQueueSummary.isActive(player) {
             guard !player.snapshot.isAd else { return .unavailable(.advertisement) }
-            guard let id = player.snapshot.videoID, let control = likeControlProvider?(id) else { return .unavailable(.pageNotRead) }
-            return .available(control)
+            guard let id = player.snapshot.videoID else { return .unavailable(.pageNotRead) }
+            let control = kind == .like ? likeControlProvider?(id) : libraryControlsProvider?(id).first { $0.kind == kind }
+            if let control { return .available(control) }
+            if let gap = ratingGapProvider?(id) { return .unavailable(gap) }
+            if kind == .dislike, likeControlProvider?(id) != nil { return .unavailable(.dislikeNotOffered) }
+            return .unavailable(.pageNotRead)
         }
         return .unavailable(playback.shellState.source == .owned ? .ownedMedia : .nothingPlaying)
     }
     func likeControl() -> LibraryControl? { likeAvailability().control }
     func pressLike(_ control: LibraryControl) async {
+        let playing = playback.music?.snapshot.videoID
         await likePress?(control)
+        // Disliking the song that is playing moves on to the next one, as YouTube Music does; only once the ledger holds the dislike, and only
+        // while that same song is still playing and may be skipped.
+        if Self.dislikeSkips(control, playing: playing), ratingHeld?(control) == true, let player = playback.music, WebMusicQueueSummary.isActive(player),
+           player.snapshot.videoID == playing, !player.snapshot.isAd, player.snapshot.canSkip {
+            await player.next()
+        }
         playback.refreshRemoteCapabilities()   // the system's Like button follows the ledger, whichever surface pressed it
+    }
+    /// A press that sets Dislike (not one that removes it) on the song that is playing.
+    static func dislikeSkips(_ control: LibraryControl, playing: String?) -> Bool {
+        guard control.kind == .dislike, !control.isOn, let playing else { return false }
+        return control.key == .rating(videoID: playing)
     }
 }
 
@@ -231,7 +261,7 @@ extension ShellCoordinator: RemoteLibraryControlling {
         default: return .unavailable(RemoteCommandReason.noLibrary)
         }
         if let control = controls.first(where: { $0.kind == wanted }) { return .available(control) }
-        if controls.isEmpty { return .unavailable(LikeUnavailable.pageNotRead.message) }
+        if controls.isEmpty { return .unavailable((ratingGapProvider?(id) ?? .pageNotRead).message) }
         return .unavailable(kind == .dislike ? RemoteCommandReason.noDislike : RemoteCommandReason.noSave)
     }
     func remoteLibraryPress(_ control: LibraryControl) async { await pressLike(control) }

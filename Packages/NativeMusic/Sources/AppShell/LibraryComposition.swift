@@ -52,12 +52,23 @@ extension LocalAccountBootstrap {
     func connectListeningHistory(_ surface: LibrarySurface) {
         playback.listening = { [weak surface, weak self] snapshot in
             self?.discoveryObserves(snapshot)
+            self?.nowPlayingRatings.observe(videoID: snapshot.videoID, isAd: snapshot.isAd)
             guard let history = surface?.history else { return }
             history.observe(ListeningObservation(
                 videoID: snapshot.videoID, title: snapshot.title, artist: snapshot.artist, position: snapshot.position, duration: snapshot.duration,
                 playing: snapshot.phase == .playing, buffering: snapshot.phase == .buffering, ended: snapshot.phase == .ended,
                 content: snapshot.isAd ? .advertisement : (self?.isPreviewing(snapshot.videoID) == true ? .preview : .track), monotonic: ProcessInfo.processInfo.systemUptime, wall: Date()))
         }
+    }
+    func makeNowPlayingRatings() -> NowPlayingRatings {
+        var read: NowPlayingRatings.Reader? = { [weak self] videoID in
+            guard let self else { throw MusicSessionError.stale }
+            return try await self.awaitedMusic().rating(videoID: videoID).value
+        }
+        #if DEBUG
+        if DevelopmentLibrary.enabled || Self.automationIsolated(ProcessInfo.processInfo.environment) { read = nil }
+        #endif
+        return NowPlayingRatings(read: read, accountScope: { [unowned self] in searchScopeToken }, signedIn: { [unowned self] in searchPlayback })
     }
     private func liveLibraryTransports(pacer: ContinuationPacer) -> (LibraryCollectionModel.Reader, LibraryCollectionModel.Continuer, LibraryWriteLedger.Writer) {
         let reader: LibraryCollectionModel.Reader = { [weak self] source in

@@ -50,6 +50,7 @@ public enum LibraryWriteState: Equatable, Sendable {
     case confirmed
     case failed(LibraryWriteFailure)
     case needsReconciliation
+    public var isFailed: Bool { if case .failed = self { true } else { false } }
 }
 public struct LibraryWrite: Equatable, Sendable, Identifiable {
     public let key: LibraryWriteKey

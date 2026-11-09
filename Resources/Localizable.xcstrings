@@ -40989,6 +40989,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "Reading this song's rating from YouTube Music…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Bewertung dieses Songs wird von YouTube Music gelesen …"
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Bewertung dieses Songs wird von YouTube Music gelesen …"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading this song's rating from YouTube Music…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Leyendo la valoración de esta canción en YouTube Music…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Lecture de l’appréciation de ce titre sur YouTube Music…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Получаем оценку этой песни из YouTube Music…"
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "Reading your YouTube Music account…": {
       "localizations": {
         "de": {
@@ -52092,6 +52133,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "Щоб зробити це, увійдіть у YouTube Music."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "Sign in to YouTube Music to like or dislike songs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Melde dich bei YouTube Music an, um Songs mit „Gefällt mir“ oder „Nicht gefällt mir“ zu bewerten."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Melde dich bei YouTube Music an, um Songs mit „Gefällt mir“ oder „Nicht gefällt mir“ zu bewerten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to YouTube Music to like or dislike songs."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Inicia sesión en YouTube Music para marcar canciones con “Me gusta” o “No me gusta”."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Connectez-vous à YouTube Music pour aimer ou ne pas aimer des titres."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Войдите в YouTube Music, чтобы ставить песням «Нравится» или «Не нравится»."
           }
         }
       },
@@ -66280,6 +66362,47 @@
       },
       "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
     },
+    "This song's rating couldn't be read from YouTube Music. It's read again the next time the song plays.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Bewertung dieses Songs konnte nicht von YouTube Music gelesen werden. Sie wird beim nächsten Abspielen des Songs erneut gelesen."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Die Bewertung dieses Songs konnte nicht von YouTube Music gelesen werden. Sie wird beim nächsten Abspielen des Songs erneut gelesen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This song's rating couldn't be read from YouTube Music. It's read again the next time the song plays."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "No se pudo leer la valoración de esta canción en YouTube Music. Se volverá a leer la próxima vez que suene."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Impossible de lire l’appréciation de ce titre sur YouTube Music. Elle sera relue à la prochaine lecture du titre."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "Не удалось получить оценку этой песни из YouTube Music. Она будет запрошена снова при следующем воспроизведении."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
     "This track isn’t available to you.": {
       "localizations": {
         "de": {
@@ -75256,6 +75379,47 @@
           "stringUnit": {
             "state": "needs_review",
             "value": "YouTube Music не сообщает, что это одна и та же запись, поэтому воспроизведение начинается с начала."
+          }
+        }
+      },
+      "comment": "Core string (W28). Every non-English value is a MACHINE SEED pending human review (W42); it is not release quality."
+    },
+    "YouTube Music doesn't offer a rating for this song.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music bietet für diesen Song keine Bewertung an."
+          }
+        },
+        "de-CH": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music bietet für diesen Song keine Bewertung an."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YouTube Music doesn't offer a rating for this song."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music no ofrece valoración para esta canción."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music ne propose pas d’appréciation pour ce titre."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "YouTube Music не позволяет оценить эту песню."
           }
         }
       },

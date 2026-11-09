@@ -64,9 +64,12 @@ import TestSupport
         await session.close()
     }
     @Test func theMiniPlayerGivesTheReasonAsTheHelpAndAsTheAccessibilityHint() throws {
+        // The mini-player uses the one rating button the player bar uses; that button gives the reason as help and as the hint.
         let source = try LifecycleSources.source("Sources/AppShell/Lifecycle/MiniPlayer.swift")
-        #expect(source.contains("shell.likeAvailability()") && source.contains(".accessibilityHint(Text(reason))") && source.contains(".help(Text(control?.title ?? reason))"))
-        #expect(!source.contains("open it once and the control appears here"), "no single generic text any more")
+        #expect(source.contains("PlayingRatingButton(shell: shell, kind: .like, identifier: \"miniLike\")"))
+        let button = try LifecycleSources.source("Sources/AppShell/PlayerCapsuleViews.swift")
+        #expect(button.contains("shell.ratingAvailability(kind)") && button.contains(".accessibilityHint(Text(reason))") && button.contains(".help(Text(control?.title ?? reason))"))
+        #expect(!source.contains("open it once and the control appears here") && !button.contains("open it once and the control appears here"), "no single generic text any more")
     }
     @Test func aPressReachesThePressPathOnlyWhenTheExplicitCallIsMadeNeverOnATrackChange() async throws {
         let (_, shell, page) = try await rig()

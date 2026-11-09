@@ -416,6 +416,11 @@ public actor MusicSessionCoordinator: AccountLifecycleParticipant {
     public func recap() async throws -> MusicBrowseReply<MusicRecapReading> {
         try await scopedSigned { try await $0.recap(session: $1) }
     }
+    /// The rating of the song that is playing, for the active account. Signed only (`.notSignedIn` with no connected account, and nothing is
+    /// sent); held to the account scope it started in like every signed read.
+    public func rating(videoID: String) async throws -> MusicBrowseReply<MusicItemControls.Like?> {
+        try await scopedSigned { try await $0.rating(videoID: videoID, session: $1) }
+    }
     public func libraryContinuation(token: String) async throws -> MusicBrowseReply<MusicContinuationPage> {
         try await scopedSigned { try await $0.libraryContinuation(token: token, session: $1) }
     }

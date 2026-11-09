@@ -12,17 +12,29 @@ extension LocalAccountBootstrap {
         installOutputs()
         installUpdates()
         let shell = shell
-        shell.likeControlProvider = { [weak self] videoID in
-            guard let self, let item = self.catalog.song(videoID) else { return nil }
-            return LibraryControls.make(item: item, source: nil, ledger: self.library.ledger).first { $0.kind == .like }
-        }
-        shell.libraryControlsProvider = { [weak self] videoID in
-            guard let self, let item = self.catalog.song(videoID) else { return [] }
-            return LibraryControls.make(item: item, source: nil, ledger: self.library.ledger).filter { [.like, .dislike, .save].contains($0.kind) }
+        shell.likeControlProvider = { [weak self] videoID in self?.playingSongControls(videoID).first { $0.kind == .like } }
+        shell.libraryControlsProvider = { [weak self] videoID in self?.playingSongControls(videoID) ?? [] }
+        shell.ratingGapProvider = { [weak self] videoID in
+            switch self?.nowPlayingRatings.gap(for: videoID) {
+            case .reading?: .reading
+            case .notOffered?: .notOffered
+            case .signedOut?: .signedOut
+            case .failed?: .readFailed
+            case nil: nil
+            }
         }
         shell.likePress = { [weak self] control in
             guard let self else { return }
             await LibraryControlPress.press(control, ledger: self.library.ledger, social: self.social)
+            // The service now holds what was asked for (or the change is still settling): the playing song's rating follows it.
+            if case .rating(let video) = control.key, let write = self.library.ledger.write(control.key), !write.state.isFailed,
+               case .rating(let status)? = write.displayed {
+                self.nowPlayingRatings.settle(video, to: status)
+            }
+        }
+        shell.ratingHeld = { [weak self] control in
+            guard let self, case .rating(let video) = control.key, let write = self.library.ledger.write(control.key), !write.state.isFailed else { return false }
+            return self.library.ledger.rating(video, service: .indifferent) == .dislike
         }
         shell.artworkContextProvider = { [weak self] in self.map { ShellArtworkContext(pipeline: $0.artwork, request: $0.artworkRequest, authority: $0.artworkAuthority) } ?? ShellArtworkContext() }
         shell.queuePanelProvider = { [weak self] in
@@ -60,5 +72,19 @@ struct ShellQueuePanel: View {
                 Button("Show Queue in Window") { shell.showQueue() }.musicAction(.secondary)
             }.padding(MusicSpace.md).frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+}
+
+extension LocalAccountBootstrap {
+    /// Like, Dislike and Save for the song that is playing: what its row published when it was shown on a page, with the rating replaced by the
+    /// one read for the playing song itself (`NowPlayingRatings`), which is newer and exists for songs no page showed.
+    func playingSongControls(_ videoID: String) -> [LibraryControl] {
+        let ledger = library.ledger
+        var controls = catalog.song(videoID).map { LibraryControls.make(item: $0, source: nil, ledger: ledger) } ?? []
+        if let like = nowPlayingRatings.like(for: videoID) {
+            controls.removeAll { $0.kind == .like || $0.kind == .dislike }
+            controls.insert(contentsOf: LibraryControls.rating(like, ledger: ledger), at: 0)
+        }
+        return controls.filter { [.like, .dislike, .save].contains($0.kind) }
     }
 }

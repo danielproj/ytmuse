@@ -164,13 +164,9 @@ struct MiniPlayerView: View {
         }
     }
     static let coverEdge: CGFloat = 40
+    /// Like and Dislike: the same button the player bar uses, which gives the reason it is off as its help and accessibility hint.
     @ViewBuilder private var likeButton: some View {
-        let availability = shell.likeAvailability()
-        let control = availability.control
-        let reason = availability.reason ?? ""
-        Button { if let control { Task { await shell.pressLike(control) } } } label: { Label(control?.title ?? "Like", systemImage: control?.symbol ?? "heart") }
-            .labelStyle(.iconOnly).disabled(control == nil)
-            .help(Text(control?.title ?? reason)).accessibilityHint(Text(reason))
-            .accessibilityIdentifier("miniLike")
+        PlayingRatingButton(shell: shell, kind: .like, identifier: "miniLike")
+        PlayingRatingButton(shell: shell, kind: .dislike, identifier: "miniDislike")
     }
 }
