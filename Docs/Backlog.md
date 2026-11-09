@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-09. Latest public development preview: **[0.1.10](https://github.com/danielproj/ytmuse/releases/tag/v0.1.10)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-09. Latest public development preview: **[0.1.11](https://github.com/danielproj/ytmuse/releases/tag/v0.1.11)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,17 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## Fixed in the 0.1.11 preview
+
+The account holder reported that in 0.1.10 Like, Dislike, Shuffle and Repeat were all greyed out.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| Like and Dislike | The rating is the one the hidden page's player bar shows for the playing song: its like button's data, the service's own `likeButtonRenderer`, reported only when it names that song and allows likes. It is taken once per song start. The 0.1.10 signed `next` request, whose answer for the account carried no usable like button, is removed. | That the signed-in page shows the account's own `LIKE`/`DISLIKE` (the live anonymous page reads `INDIFFERENT`); a like from the bar appearing in Liked Music; the skip on Dislike in a live window. |
+| Shuffle and Repeat | YouTube Music's player bar now keeps shuffle in its own `shuffleOn` (no `aria-pressed`) and repeat in `repeat-mode` (not `repeat-mode_`). Both forms are read and watched. Checked on the live anonymous page. | The signed-in page in a live window. |
+
+The 0.1.11 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 12 to earlier releases.
 
 ## New in the 0.1.10 preview
 
