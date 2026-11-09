@@ -175,6 +175,7 @@ struct WebCapsuleSecondary: View {
     }
     @Environment(\.podcastsSurface) private var podcasts
     @Environment(\.shareCurrentSong) private var shareCurrentSong
+    @Environment(\.playingRatingShell) private var ratingShell
     let player: WebMusicPlayer
     var compact = false
     var expanded = false
@@ -204,6 +205,11 @@ struct WebCapsuleSecondary: View {
         let enabled = state.canControlQueue
         let edge = PlayerCapsule.glyphEdge(large: expanded)
         HStack(spacing: MusicSpace.hairline) {
+            // Like and Dislike for the song that is playing, ahead of Shuffle and Repeat. Each says why when it is off.
+            if let ratingShell {
+                PlayingRatingButton(shell: ratingShell, kind: .like, edge: edge, identifier: "musicLike")
+                PlayingRatingButton(shell: ratingShell, kind: .dislike, edge: edge, identifier: "musicDislike")
+            }
             Button { Task { await player.setShuffle(!(state.shuffle ?? false)) } } label: { Label("Shuffle", systemImage: "shuffle") }
                 .buttonStyle(.musicGlyph(on: state.shuffle == true, edge: edge)).disabled(!enabled || state.shuffle == nil)
                 .help(Text("Shuffle")).accessibilityValue(Text(state.shuffle == true ? "On" : "Off")).accessibilityAddTraits(.isToggle).accessibilityIdentifier("musicShuffle")
@@ -282,6 +288,28 @@ struct WebCapsuleSecondary: View {
         case .one?: Text("Repeat one")
         case nil: Text("Repeat")
         }
+    }
+}
+
+/// Like or Dislike for the song that is playing, through the shell (`ratingAvailability`, `pressLike`): the bottom bar, the expanded player,
+/// full-screen Now Playing and the mini-player all use this one button. A disabled button gives the actual reason as its help and its
+/// accessibility hint. Pressing Dislike on the song that is playing moves on to the next song (`ShellCoordinator.pressLike`).
+struct PlayingRatingButton: View {
+    let shell: ShellCoordinator
+    let kind: LibraryControl.Kind
+    var edge: CGFloat = PlayerCapsule.glyphEdge
+    let identifier: String
+    var body: some View {
+        let availability = shell.ratingAvailability(kind)
+        let control = availability.control
+        let reason = availability.reason ?? ""
+        let fallback = kind == .dislike ? String(localized: "Dislike") : String(localized: "Like")
+        Button { if let control { Task { await shell.pressLike(control) } } } label: {
+            Label(control?.title ?? fallback, systemImage: control?.symbol ?? (kind == .dislike ? "hand.thumbsdown" : "heart"))
+        }
+        .buttonStyle(.musicGlyph(edge: edge)).labelStyle(.iconOnly).disabled(control == nil)
+        .help(Text(control?.title ?? reason)).accessibilityHint(Text(reason))
+        .accessibilityIdentifier(identifier)
     }
 }
 

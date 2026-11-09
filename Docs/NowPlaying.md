@@ -34,7 +34,7 @@ A YouTube Music sleep timer (P17-WEB) publishes through the same two events and 
 
 ## The command table (ARCH03, T23.3)
 
-Each command is switched on in the system **only while the owner would perform it**, from the same function (`remoteCapabilities()`) that decides what a command that arrives may do. A command that arrives while off is refused (`commandFailed`), never dropped. Each command that is off while an item exists has a sentence saying why (`RemoteCapabilities.reasons`; the mini-player shows the like reasons).
+Each command is switched on in the system **only while the owner would perform it**, from the same function (`remoteCapabilities()`) that decides what a command that arrives may do. A command that arrives while off is refused (`commandFailed`), never dropped. Each command that is off while an item exists has a sentence saying why (`RemoteCapabilities.reasons`; the player bar, the expanded player and the mini-player show the Like and Dislike reasons).
 
 | Command | On when | Goes through | Gates |
 | --- | --- | --- | --- |
@@ -44,9 +44,9 @@ Each command is switched on in the system **only while the owner would perform i
 | Seek | the bar's `canSeek` (not an ad, length known or a live window) | `WebMusicPlayer.seek` (clamped by its admission) | ad refusal |
 | Skip back / forward | an episode is playing and seekable | `PodcastPlaybackModel.skipBack` / `skipForward` (the chosen lengths, offered to the system as the preferred intervals) | ad refusal; not for songs |
 | Change speed | an episode with a known show, seekable, not an ad | `PodcastPlaybackModel.setRate` (the show's speed, so the follow-the-item rule cannot undo it) | range 0.5-3 only |
-| Like, Dislike, Save to Library (the system asks for a STATE: a press on an on button asks for off; if the ledger is already there nothing is pressed) | the song's page was read and published that control (`LibraryControls`); never during an ad; never for owned or local media | `RemoteLibraryControlling.remoteLibraryPress` → the shell's `pressLike` → `LibraryControlPress` → the **W12 ledger** | the ledger's account scope and its one-operation rule; pressed only by a physical button or Control Center, never by reading capabilities or a track change |
+| Like, Dislike, Save to Library (the system asks for a STATE: a press on an on button asks for off; if the ledger is already there nothing is pressed) | the song published that control: its row on a page that was read, or (Like and Dislike) its own rating read when it started playing (`NowPlayingRatings`, see Library.md); never during an ad; never for owned or local media | `RemoteLibraryControlling.remoteLibraryPress` → the shell's `pressLike` → `LibraryControlPress` → the **W12 ledger**; a Dislike the ledger holds on the playing song then skips to the next song | the ledger's account scope and its one-operation rule; pressed only by a physical button or Control Center, never by reading capabilities or a track change |
 
-Capabilities are recomputed on every page report and after every library press from any surface (the mini-player's Like updates the system's Like button). A live stream or an advertisement publishes no clock, so its moving position does not rewrite Now Playing. A song's page read with the player paused is picked up at the next report.
+Capabilities are recomputed on every page report and after every library press from any surface (a Like or Dislike from the player bar or the mini-player updates the system's buttons). A live stream or an advertisement publishes no clock, so its moving position does not rewrite Now Playing. A song's page read with the player paused is picked up at the next report.
 
 ## No global taps (MAC02, T23.4)
 

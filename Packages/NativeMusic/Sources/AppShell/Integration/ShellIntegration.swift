@@ -98,9 +98,15 @@ enum CurrentSongShare {
     }
 }
 private struct ShareCurrentSongKey: EnvironmentKey { static let defaultValue: (@MainActor () -> Void)? = nil }
+/// The shell whose Like and Dislike the player bar and the expanded player show for the playing song. Nil (no buttons) where no shell is installed.
+private struct PlayingRatingShellKey: EnvironmentKey { static let defaultValue: ShellCoordinator? = nil }
 extension EnvironmentValues {
     /// Shares the song that is playing now (the shell's `shareCurrentSong`, whose facilities are the recording stand-in under isolation); nil where
     /// no shell provides it, which hides the player's Share button.
+    var playingRatingShell: ShellCoordinator? {
+        get { self[PlayingRatingShellKey.self] }
+        set { self[PlayingRatingShellKey.self] = newValue }
+    }
     var shareCurrentSong: (@MainActor () -> Void)? {
         get { self[ShareCurrentSongKey.self] }
         set { self[ShareCurrentSongKey.self] = newValue }

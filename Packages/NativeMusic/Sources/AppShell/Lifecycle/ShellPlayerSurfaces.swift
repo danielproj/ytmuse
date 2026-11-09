@@ -86,5 +86,6 @@ struct ShellExpandedPlayer<Trailing: View>: View {
         .background(WindowVisibility { value in windowVisible = value; if !value { tint.retract() } })
         .modifier(PlaybackObservation(model: shell.playback))
         .environment(\.shareCurrentSong, { [shell] in shell.shareCurrentSong() })
+        .environment(\.playingRatingShell, shell)
     }
 }

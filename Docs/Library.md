@@ -18,6 +18,14 @@ Design notes for the Library and History screens. Library pages need the signed 
 - Operation ids are kept for the life of one action (retries reuse it). After an unknown outcome the service is read first (`check`: the artist's or playlist's own page names the follow/save state); only when that cannot tell is repeating the same state-setting request allowed. Nothing is queued offline; a change that did not leave says nothing was changed (SYNC07 — no fake pending queue).
 - State is per account scope; a switch drops every pending change and discards late answers.
 
+### Like and Dislike for the song that is playing
+
+- The bottom player bar, the expanded player, full-screen Now Playing and the mini-player each show **Like and Dislike** for the song that is playing (`PlayingRatingButton`, through `ShellCoordinator.ratingAvailability` and `pressLike`). A press goes through `LibraryControlPress` and the same ledger as a row, so the system's Like and Dislike buttons follow it.
+- **Where the rating comes from.** A song shown on a page carries its row's `likeButtonRenderer`. A song from a mix, a radio or the queue carries none (the queue rows of a real `next` answer have no rating), so when a new song starts the app reads that song's own `next` once, signed, and takes the like button from its player overlay (`playerOverlays.playerOverlayRenderer.actions[].likeButtonRenderer`; `MusicWatchRatingParser`, `NowPlayingRatings`). That rating replaces a row's, being newer. Nothing is read during an advertisement, signed out, for owned media, or under the development and UI-automation launches; everything read is dropped on an account switch.
+- Real anonymous captures show the overlay button is **not always published**: the same song captured twice came back once with it and once without (`MF-comments/next-khnokW3Mw24.json` vs `-de.json`), and a nonsense id has no overlay at all. Both read as "no rating offered this time", never as "not liked"; the song is read again the next time it starts. A button for another song, two buttons, an unknown state or a non-watch answer is `.unrecognised`.
+- A button that is off says why: reading, not offered, signed out, the read failed, Dislike not offered for this song, an advertisement, owned media, or nothing playing.
+- **Dislike skips.** Disliking the song that is playing moves on to the next song, as YouTube Music does — only once the ledger holds the dislike (pending, confirmed or awaiting a check; never after a refusal), only while that same song is still playing, never during an ad. Removing a dislike, a like, and a dislike of any other song never skip. The system's Dislike button and the Siri/Shortcuts dislike take the same path.
+
 ## History (LIB05, SYNC08)
 
 - **YouTube Music history** is read from `FEmusic_history` and shown with the service's own day headings. YouTube's own player records it when the hidden player plays; the app never writes or imitates it.
@@ -28,6 +36,8 @@ Design notes for the Library and History screens. Library pages need the signed 
 ## Not verified live — the end-of-project list
 
 Library `browseId`s relied on (none has been requested from the service by this node): `FEmusic_liked_videos` (songs), `VLLM` (liked songs), `FEmusic_liked_albums`, `FEmusic_library_corpus_track_artists` (artists), `FEmusic_library_corpus_artists` (following), `FEmusic_liked_playlists` (M2 live-proven first page), `FEmusic_library_non_music_audio_list` (podcasts), `VLSE` (saved episodes), `FEmusic_history`.
+
+Like and Dislike in the player, to check live signed in: that a signed `next` answer's overlay like button carries the account's own state (`LIKE`/`DISLIKE`) where the anonymous one reads `INDIFFERENT`, and its `dislikeNavigationEndpoint`; that a like made from the player bar appears in Liked Music when that page is read back; that a dislike from the bar skips once and the next song plays.
 
 Rework 1 additions to the live check: that signed library toggles really take the icon conventions above (each song's add/remove direction is verified by **reading the library back**, not by the service's answer: a feedback token is opaque and a wrong-direction one is accepted and confirmed); whether library tabs arrive wrapped in `itemSectionRenderer`; the empty-library tab (ytmusicapi reads an empty library from a different tab, so an empty library may read as "unrecognised" here); whether `FEmusic_liked_videos` is truncated (Kaset notes ~13 songs) and then reports itself complete; that ytmusicapi drops the first playlist tile where this code relies on the assumed `createPlaylistEndpoint` tile; `MPLAUC…` followed-artist ids; the podcast save target (Kaset maps `MPSPP…` to `PL…`; here it is the card's own playlist id).
 

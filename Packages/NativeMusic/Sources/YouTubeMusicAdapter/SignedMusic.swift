@@ -256,6 +256,14 @@ public actor SignedMusicClient: MusicSessionReading {
         if Self.loggedOut(root) { throw MusicSessionError.signedOut }
         return .init(value: try MusicLyricsParser.parseLyrics(root), rotation: firstRotation + secondRotation)
     }
+    /// The playing song's rating: one signed `next` for the song, read by `MusicWatchRatingParser`. Signed only: a rating belongs to an account, and
+    /// an anonymous answer always reads "not rated", so with no session nothing is sent.
+    public func rating(videoID: String, session: MusicCookieSession) async throws -> MusicSignedResult<MusicItemControls.Like?> {
+        guard MusicBrowseParser.isVideoID(videoID) else { throw MusicSessionError.policy }
+        let (root, rotation) = try await post("next", body: ["videoId": videoID, "isAudioOnly": true], session: session, limit: 4_000_000)
+        if Self.loggedOut(root) { throw MusicSessionError.signedOut }
+        return .init(value: try MusicWatchRatingParser.parse(root, videoID: videoID), rotation: rotation)
+    }
     /// Comments: signed with the account's session, or the anonymous public request when `session` is nil. Same request counts as the anonymous
     /// path (`open` at most 2, `page`/`replies` exactly 1), validated before anything is sent. A `loggedOut` root on any response is `.signedOut`;
     /// a comments response over `PublicMusicClient.maxCommentsResponseBytes` is `.oversized`; HTTP 400 and a watch shell are `.unrecognised`.

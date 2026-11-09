@@ -32,17 +32,7 @@ public enum LibraryControls {
            let channel = MusicLibraryKind.channelID(fromBrowseID: browse) {
             published.follow = .init(channelID: channel, isFollowing: true, params: nil)
         }
-        if let like = published.like {
-            let current = ledger.rating(like.videoID, service: like.status)
-            let liked = current == .like
-            controls.append(LibraryControl(kind: .like, key: .rating(videoID: like.videoID), isOn: liked, intent: .rate(like, to: liked ? .indifferent : .like),
-                                           title: liked ? String(localized: "Remove Like") : String(localized: "Like"), symbol: liked ? "heart.fill" : "heart"))
-            if like.dislikeExposed {
-                let disliked = current == .dislike
-                controls.append(LibraryControl(kind: .dislike, key: .rating(videoID: like.videoID), isOn: disliked, intent: .rate(like, to: disliked ? .indifferent : .dislike),
-                                               title: disliked ? String(localized: "Remove Dislike") : String(localized: "Dislike"), symbol: disliked ? "hand.thumbsdown.fill" : "hand.thumbsdown"))
-            }
-        }
+        if let like = published.like { controls += rating(like, ledger: ledger) }
         if let song = published.songLibrary, let video = item.videoID {
             let saved = ledger.isSaved(.songSaved(videoID: video), service: song.isSaved)
             if let intent = LibraryIntent.setSongSaved(song, videoID: video, to: !saved) {
@@ -59,6 +49,19 @@ public enum LibraryControls {
             let following = ledger.isFollowing(follow.channelID, service: was)
             controls.append(LibraryControl(kind: .follow, key: .following(channelID: follow.channelID), isOn: following, intent: .setFollowing(follow, to: !following, was: was),
                                            title: following ? String(localized: "Unfollow") : String(localized: "Follow"), symbol: following ? "person.crop.circle.badge.checkmark" : "person.crop.circle.badge.plus"))
+        }
+        return controls
+    }
+    /// Like, and Dislike where the service exposes it, for one rating the service published: a row's or the playing song's (`MusicWatchRatingParser`).
+    @MainActor public static func rating(_ like: MusicItemControls.Like, ledger: LibraryWriteLedger) -> [LibraryControl] {
+        let current = ledger.rating(like.videoID, service: like.status)
+        let liked = current == .like
+        var controls = [LibraryControl(kind: .like, key: .rating(videoID: like.videoID), isOn: liked, intent: .rate(like, to: liked ? .indifferent : .like),
+                                       title: liked ? String(localized: "Remove Like") : String(localized: "Like"), symbol: liked ? "heart.fill" : "heart")]
+        if like.dislikeExposed {
+            let disliked = current == .dislike
+            controls.append(LibraryControl(kind: .dislike, key: .rating(videoID: like.videoID), isOn: disliked, intent: .rate(like, to: disliked ? .indifferent : .dislike),
+                                           title: disliked ? String(localized: "Remove Dislike") : String(localized: "Dislike"), symbol: disliked ? "hand.thumbsdown.fill" : "hand.thumbsdown"))
         }
         return controls
     }

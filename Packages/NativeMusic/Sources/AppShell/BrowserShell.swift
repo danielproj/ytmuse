@@ -102,6 +102,7 @@ struct BrowserShell: View {
         .environment(\.outputPickerRequest, accounts.shell.outputPickerRequest)
         // The player's Share button, beside Queue: the shell re-reads the playing song at the press and hands its canonical link to its (isolation-aware) sharing facility.
         .environment(\.shareCurrentSong, { [shell = accounts.shell] in shell.shareCurrentSong() })
+        .environment(\.playingRatingShell, accounts.shell)
         .onChange(of: accounts.shell.queueRequest) { _, request in
             guard request != queueRequestSeen else { return }
             queueRequestSeen = request
