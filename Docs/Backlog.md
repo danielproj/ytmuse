@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-09. Latest public development preview: **[0.1.12](https://github.com/danielproj/ytmuse/releases/tag/v0.1.12)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-09. Latest public development preview: **[0.1.13](https://github.com/danielproj/ytmuse/releases/tag/v0.1.13)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,16 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## Fixed in the 0.1.13 preview
+
+The account holder reported that in 0.1.12 Like, Dislike, Shuffle and Repeat were all greyed out in full-screen Now Playing.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| The hidden page's layout width | Below 616 CSS px (`matchMedia("(max-width: 615px)")`) the signed-in YouTube Music page renders a compact `ytmusic-player-controls` with no `ytmusic-wiz-player-controls` and no `segmented-like-dislike-button-view-model`; the hidden page was 480 pt wide, so 0.1.12 found none of the four. `NonInteractiveWebView` now sets `pageZoom` to `width / 800` (clamped to 0.1–1) on every frame change, so the page is laid out at least 800 CSS px wide; video surfaces are measured in the zoomed page's CSS pixels. | The account holder's Safari showed the controls at 1663 px and their absence at 574 px. `WebMusicLayoutWidthTests` checks the layout width in real WebKit at 480, 320 and 1200 pt. The four buttons in the app on a signed-in account are unverified. |
+
+The 0.1.13 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 14 to earlier releases.
 
 ## Fixed in the 0.1.12 preview
 
