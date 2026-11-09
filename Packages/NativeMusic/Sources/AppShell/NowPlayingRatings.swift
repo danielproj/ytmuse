@@ -4,82 +4,74 @@ import Foundation
 import Observation
 
 /// The rating of the song that is playing, so the player surfaces can offer Like and Dislike for every song and not only for one that was
-/// shown on a page first. A song from a mix, a radio or the queue carries no rating of its own (the queue rows of a `next` answer have
-/// none), so each time a new song starts this reads that song's own `next` once, signed, and keeps the like button it published
-/// (`MusicWatchRatingParser`). Nothing is read during an advertisement, signed out, for owned media, or under the development and
-/// UI-automation launches (`read` is nil there). Nothing here writes: a press still goes through `LibraryControlPress` and the one ledger.
+/// shown on a page first. It is the rating the hidden page's own player bar shows: the page is the account's signed-in YouTube Music, and its
+/// like button's data names the song it belongs to (`WebMusicScripts.playerBarDetection`, `ytmuseRating`), so nothing extra is requested.
 ///
-/// Ratings belong to an account: everything is forgotten when the account scope changes, and an answer that arrives after the scope changed
-/// is dropped.
+/// 0.1.10 read the rating from a separate signed `next` request's player overlay instead. The account's answer to that request carried no
+/// usable like button (the buttons said "doesn't offer a rating" for every song), while the anonymous answer did; the page's player bar shows
+/// the account's real rating, Dislike included, so it replaced that request.
+///
+/// The rating is taken once per song start: a press goes to the service through the ledger, not through the page, so the page keeps showing
+/// the state from before the press; `settle` records what the press set. Nothing is taken during an advertisement or signed out, and
+/// everything is forgotten when the account scope changes.
 @MainActor @Observable final class NowPlayingRatings {
     /// Why a song has no rating to offer yet.
-    enum Gap: Equatable { case reading, notOffered, signedOut, failed }
-    typealias Reader = @MainActor (String) async throws -> MusicItemControls.Like?
+    enum Gap: Equatable { case reading, notOffered, signedOut }
 
     private(set) var ratings: [String: MusicItemControls.Like] = [:]
     private(set) var gaps: [String: Gap] = [:]
     @ObservationIgnored private var order: [String] = []
-    /// The song the last report was about; a new read starts only when this changes.
+    /// The song the last report was about, when it started, and whether its rating has been taken.
     @ObservationIgnored private(set) var current: String?
+    @ObservationIgnored private var started: Date = .distantPast
+    @ObservationIgnored private var taken = false
     @ObservationIgnored private var scope: String?
-    @ObservationIgnored private let read: Reader?
     @ObservationIgnored private let accountScope: @MainActor () -> String
     @ObservationIgnored private let signedIn: @MainActor () -> SearchPlayback
+    @ObservationIgnored private let now: @MainActor () -> Date
     static let limit = 64
+    /// How long a song may play before a page that still shows no rating for it is reported as not offering one.
+    static let patience: TimeInterval = 5
 
-    init(read: Reader?, accountScope: @escaping @MainActor () -> String, signedIn: @escaping @MainActor () -> SearchPlayback) {
-        self.read = read; self.accountScope = accountScope; self.signedIn = signedIn
+    init(accountScope: @escaping @MainActor () -> String, signedIn: @escaping @MainActor () -> SearchPlayback, now: @escaping @MainActor () -> Date = Date.init) {
+        self.accountScope = accountScope; self.signedIn = signedIn; self.now = now
     }
 
     func like(for videoID: String) -> MusicItemControls.Like? { ratings[videoID] }
     func gap(for videoID: String) -> Gap? { ratings[videoID] == nil ? gaps[videoID] : nil }
 
-    /// One player report. Cheap when the song has not changed (reports arrive several times a second).
-    func observe(videoID: String?, isAd: Bool) {
+    /// One player report: the song, whether an advertisement shows, and the rating the page shows for that song (nil when it shows none).
+    func observe(videoID: String?, isAd: Bool, rating: MusicLikeStatus?) {
         resetIfScopeChanged()
-        guard !isAd, let videoID, Self.isVideoID(videoID), videoID != current else { return }
-        current = videoID
-        gaps = [:]   // only the song that is playing can be missing a rating
-        guard let read else { return }
+        guard !isAd, let videoID, Self.isVideoID(videoID) else { return }
+        if videoID != current { current = videoID; started = now(); taken = false; gaps = [:] }
+        guard !taken else { return }
         guard signedIn() == .available else { gaps[videoID] = .signedOut; return }
-        gaps[videoID] = .reading
-        let scope = self.scope
-        Task { [weak self] in
-            let outcome: Result<MusicItemControls.Like?, any Error>
-            do { outcome = .success(try await read(videoID)) } catch { outcome = .failure(error) }
-            self?.settleRead(videoID, scope: scope, outcome)
+        if let rating {
+            if ratings[videoID] == nil { order.append(videoID) }
+            ratings[videoID] = .init(videoID: videoID, status: rating, dislikeExposed: true)
+            while order.count > Self.limit { ratings[order.removeFirst()] = nil }
+            gaps[videoID] = nil
+            taken = true
+            return
         }
+        // A song that has just started may not have its rating on the page yet; one that has played a while without it is not offered one.
+        let gap: Gap = now().timeIntervalSince(started) >= Self.patience ? .notOffered : .reading
+        if gaps[videoID] != gap { gaps[videoID] = gap }
     }
 
     /// After a press the person made that the ledger did not reject: the service now holds `status`, so a later read of this song's page that
-    /// clears the ledger's entry falls back to the right state, not the one read before the press.
+    /// clears the ledger's entry falls back to the right state, not the one shown before the press.
     func settle(_ videoID: String, to status: MusicLikeStatus) {
         guard let like = ratings[videoID] else { return }
         ratings[videoID] = .init(videoID: videoID, status: status, dislikeExposed: like.dislikeExposed)
     }
 
-    private func settleRead(_ videoID: String, scope: String?, _ outcome: Result<MusicItemControls.Like?, any Error>) {
-        guard scope == self.scope, accountScope() == scope else { return }
-        switch outcome {
-        case .success(let like?):
-            if ratings[videoID] == nil { order.append(videoID) }
-            ratings[videoID] = like
-            gaps[videoID] = nil
-            while order.count > Self.limit { ratings[order.removeFirst()] = nil }
-        case .success(nil):
-            gaps[videoID] = .notOffered
-        case .failure(let error):
-            switch error as? MusicSessionError {
-            case .notSignedIn?, .signedOut?: gaps[videoID] = .signedOut
-            default: gaps[videoID] = .failed
-            }
-        }
-    }
-    /// The video-id shape the adapter accepts (`MusicBrowseParser.isVideoID`), so an id the page reported in any other shape is never sent.
+    /// The video-id shape the adapter accepts (`MusicBrowseParser.isVideoID`).
     static func isVideoID(_ id: String) -> Bool { id.range(of: #"^[A-Za-z0-9_-]{11}$"#, options: .regularExpression) != nil }
     private func resetIfScopeChanged() {
         let now = accountScope()
         guard now != scope else { return }
-        scope = now; ratings = [:]; gaps = [:]; order = []; current = nil
+        scope = now; ratings = [:]; gaps = [:]; order = []; current = nil; taken = false
     }
 }

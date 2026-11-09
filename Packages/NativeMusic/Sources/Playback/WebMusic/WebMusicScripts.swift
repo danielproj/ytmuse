@@ -289,11 +289,17 @@ public enum WebMusicScripts {
     """
 
     /// CORE-A: the player bar's own shuffle and repeat controls, read back from the page. A state the page does not show is `undefined`, never
-    /// a guess; the commands never click a control whose state they cannot read. `repeat-mode_` (NONE/ALL/ONE) is the page's own attribute
-    /// of the player bar; that it is present in this form is a live check.
+    /// a guess; the commands never click a control whose state they cannot read.
+    ///
+    /// The player bar's markup changed (seen live on 2026-11-09, client 1.20261104): the shuffle button no longer carries `aria-pressed`, and
+    /// the bar's repeat attribute is `repeat-mode`, not `repeat-mode_`. Shuffle is now the bar's own boolean `shuffleOn` (mirrored by a
+    /// `shuffle-on` attribute that is present only while on, so its absence alone is not read as "off"). Both older forms are still read.
+    /// `ytmuseRating` is the bar's like button's own data: the rating YouTube Music shows for the song, only when that data names `video`.
     static let playerBarDetection = """
       function ytmuseShuffleState() {
         try {
+          var bar = document.querySelector("ytmusic-player-bar");
+          if (bar && typeof bar.shuffleOn === "boolean" && document.querySelector("ytmusic-player-bar .shuffle")) { return bar.shuffleOn; }
           var button = document.querySelector("ytmusic-player-bar .shuffle");
           if (!button) { return undefined; }
           var pressed = button.getAttribute("aria-pressed");
@@ -306,11 +312,23 @@ public enum WebMusicScripts {
         try {
           var bar = document.querySelector("ytmusic-player-bar");
           if (!bar) { return undefined; }
-          var raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode_") : null;
+          var raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode") : null;
+          if (typeof raw !== "string" || raw === "") { raw = typeof bar.getAttribute === "function" ? bar.getAttribute("repeat-mode_") : null; }
           if (typeof raw !== "string" || raw === "") { raw = bar.repeatMode_; }
           if (raw === "NONE") { return "off"; }
           if (raw === "ALL") { return "all"; }
           if (raw === "ONE") { return "one"; }
+        } catch (e) {}
+        return undefined;
+      }
+      function ytmuseRating(video) {
+        try {
+          if (typeof video !== "string" || video === "") { return undefined; }
+          var button = document.querySelector("ytmusic-player-bar ytmusic-like-button-renderer");
+          var data = button && button.data;
+          if (!data || typeof data !== "object" || !data.target || data.target.videoId !== video || data.likesAllowed !== true) { return undefined; }
+          var status = data.likeStatus;
+          if (status === "LIKE" || status === "DISLIKE" || status === "INDIFFERENT") { return status; }
         } catch (e) {}
         return undefined;
       }
@@ -399,6 +417,8 @@ public enum WebMusicScripts {
         if (typeof shuffled === "boolean") { message.shuffle = shuffled; }
         var repeating = ytmuseRepeatState();
         if (typeof repeating === "string") { message.repeat = repeating; }
+        var rating = ytmuseRating(message.videoId);
+        if (typeof rating === "string") { message.rating = rating; }
         // P5-1: a periodic or throttled report that says nothing new is not posted, so a
         // paused or idle page wakes the app for nothing. Events (force) and a new native
         // load generation always post.
@@ -542,13 +562,13 @@ public enum WebMusicScripts {
         classObserved = movie;
         new MutationObserver(function () { report(true); }).observe(movie, { attributes: true, attributeFilter: ["class"] });
       }
-      // CORE-A: a change of the player bar's shuffle or repeat state is reported at once, not at the next one-second look.
+      // CORE-A: a change of the player bar's shuffle, repeat or rating state is reported at once, not at the next one-second look.
       var barObserved = null;
       function observeBar() {
         var bar = document.querySelector("ytmusic-player-bar");
         if (!bar || bar === barObserved || typeof MutationObserver !== "function") { return; }
         barObserved = bar;
-        try { new MutationObserver(function () { report(true); }).observe(bar, { attributes: true, subtree: true, attributeFilter: ["aria-pressed", "repeat-mode_"] }); } catch (e) {}
+        try { new MutationObserver(function () { report(true); }).observe(bar, { attributes: true, subtree: true, attributeFilter: ["aria-pressed", "repeat-mode_", "repeat-mode", "shuffle-on", "like-status"] }); } catch (e) {}
       }
       function refresh() { bind(); hookErrors(); observeClasses(); observeBar(); }
       refresh();

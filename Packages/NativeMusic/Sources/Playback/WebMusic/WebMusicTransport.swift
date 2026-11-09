@@ -87,6 +87,8 @@ public struct WebMusicSnapshot: Sendable, Equatable {
     /// CORE-A: the page player bar's shuffle and repeat state as the page reports it (nil when it does not say). Never set by a command: only by a report.
     public var shuffle: Bool?
     public var repeatMode: WebMusicRepeatMode?
+    /// The rating the page's player bar shows for `videoID` (nil when the page does not say). Read only from a report, like shuffle and repeat.
+    public var rating: WebMusicRating?
     public init() {}
     public var isLive: Bool { representation == .live }
     public var hasPicture: Bool { pictureSize != nil }
@@ -321,6 +323,7 @@ public struct WebMusicTransport: Sendable {
         if let artwork = sample.artworkURL { snapshot.artworkURL = artwork }
         // Shuffle and repeat are what the page's player bar shows now; a report that does not say clears them (a stale value would be a guess).
         snapshot.shuffle = sample.shuffle; snapshot.repeatMode = sample.repeatMode
+        snapshot.rating = sample.videoID == snapshot.videoID ? sample.rating : nil
         snapshot.duration = sample.duration
         snapshot.position = min(sample.position, sample.duration > 0 ? sample.duration : sample.position)
         refreshLive()

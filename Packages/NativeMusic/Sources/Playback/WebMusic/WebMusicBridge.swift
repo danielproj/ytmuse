@@ -36,15 +36,24 @@ public struct WebMusicSample: Sendable, Equatable {
     public let shuffle: Bool?
     /// CORE-A: the page player bar's repeat mode as the page reports it; nil = not reported (never a guess).
     public let repeatMode: WebMusicRepeatMode?
+    /// The rating the page's player bar shows for THIS report's `videoID` (its like button's own data names that song); nil = not reported.
+    public let rating: WebMusicRating?
     public init(playing: Bool, buffering: Bool, position: Double, duration: Double, videoID: String?, title: String?, artist: String?, artworkURL: URL?, ad: Bool,
-                playlistID: String? = nil, signedIn: Bool? = nil, contentID: String? = nil, shuffle: Bool? = nil, repeatMode: WebMusicRepeatMode? = nil) {
+                playlistID: String? = nil, signedIn: Bool? = nil, contentID: String? = nil, shuffle: Bool? = nil, repeatMode: WebMusicRepeatMode? = nil,
+                rating: WebMusicRating? = nil) {
         self.playing = playing; self.buffering = buffering; self.position = position; self.duration = duration
         self.videoID = videoID; self.title = title; self.artist = artist; self.artworkURL = artworkURL; self.ad = ad
         self.playlistID = playlistID; self.signedIn = signedIn; self.contentID = contentID; self.shuffle = shuffle; self.repeatMode = repeatMode
+        self.rating = rating
     }
 }
 
 /// CORE-A: the repeat mode of YouTube Music's own player bar. The raw values are what the observer script posts.
+/// The rating the page's player bar shows for the playing song, in the service's own words.
+public enum WebMusicRating: String, Sendable, Equatable, CaseIterable {
+    case like = "LIKE", dislike = "DISLIKE", indifferent = "INDIFFERENT"
+}
+
 public enum WebMusicRepeatMode: String, Sendable, Equatable, CaseIterable {
     case off, all, one
     /// The order the page's own repeat button steps through.
@@ -152,7 +161,7 @@ public enum WebMusicBridge {
     static let maximumQueueItems = 31   // the playing item and up to thirty after it
     static let maximumQueueMore = 100_000
     static let maximumSeconds = 86_400.0
-    static let stateKeys: Set<String> = ["type", "doc", "load", "playing", "buffering", "position", "duration", "videoId", "title", "artist", "artwork", "ad", "playlistId", "signedIn", "contentId", "shuffle", "repeat"]
+    static let stateKeys: Set<String> = ["type", "doc", "load", "playing", "buffering", "position", "duration", "videoId", "title", "artist", "artwork", "ad", "playlistId", "signedIn", "contentId", "shuffle", "repeat", "rating"]
     static let endedKeys: Set<String> = ["type", "doc", "load", "videoId"]
     static let errorKeys: Set<String> = ["type", "doc", "load", "code"]
     static let pageKeys: Set<String> = ["type", "doc", "load", "app", "unsupported"]
@@ -206,9 +215,15 @@ public enum WebMusicBridge {
             if let raw = object["shuffle"] { guard let value = bool(raw) else { return .failure(.malformed) }; shuffle = value } else { shuffle = nil }
             let repeatMode: WebMusicRepeatMode?
             if let raw = object["repeat"] { guard let name = raw as? String, let value = WebMusicRepeatMode(rawValue: name) else { return .failure(.malformed) }; repeatMode = value } else { repeatMode = nil }
+            let rating: WebMusicRating?
+            if let raw = object["rating"] {
+                // Only with the song it is about: a rating with no video is not this song's.
+                guard let name = raw as? String, let value = WebMusicRating(rawValue: name), videoID.value != nil else { return .failure(.malformed) }
+                rating = value
+            } else { rating = nil }
             event = .state(.init(playing: playing, buffering: buffering, position: position, duration: duration,
                                  videoID: videoID.value, title: title.value, artist: artist.value, artworkURL: artwork.value, ad: ad,
-                                 playlistID: playlist.value, signedIn: signedIn, contentID: content.value, shuffle: shuffle, repeatMode: repeatMode))
+                                 playlistID: playlist.value, signedIn: signedIn, contentID: content.value, shuffle: shuffle, repeatMode: repeatMode, rating: rating))
         case "ended":
             guard let videoID = optionalVideoID(object["videoId"]) else { return .failure(.malformed) }
             event = .ended(videoID: videoID.value)

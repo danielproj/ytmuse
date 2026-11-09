@@ -19,7 +19,6 @@ extension LocalAccountBootstrap {
             case .reading?: .reading
             case .notOffered?: .notOffered
             case .signedOut?: .signedOut
-            case .failed?: .readFailed
             case nil: nil
             }
         }
