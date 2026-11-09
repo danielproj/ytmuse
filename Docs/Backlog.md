@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-09. Latest public development preview: **[0.1.11](https://github.com/danielproj/ytmuse/releases/tag/v0.1.11)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-09. Latest public development preview: **[0.1.12](https://github.com/danielproj/ytmuse/releases/tag/v0.1.12)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,16 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## Fixed in the 0.1.12 preview
+
+The account holder reported that in 0.1.11 only Like worked: Dislike, Shuffle and Repeat were still greyed out.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| The signed-in player | YouTube Music serves a signed-in account a player with no `ytmusic-player-bar`. Shuffle and Repeat are the first and last buttons of `ytmusic-wiz-player-controls` (found by position, as the labels are localised), each an `aria-pressed` toggle; Repeat all and one are told apart by the label in en/ru/de/es/fr, and an unreadable label leaves Repeat unreported. The rating is whichever toggle of `segmented-like-dislike-button-view-model` is pressed, read once the same song has played 1.5 s, because the toggles name no song. The signed-out player bar is still read as before. | The app's exact detection code, run in Safari on the account holder's signed-in page, read shuffle off, repeat off and `INDIFFERENT`; a liked or disliked song, Repeat all and one, and the buttons in a live window are unchecked. |
+
+The 0.1.12 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 13 to earlier releases.
 
 ## Fixed in the 0.1.11 preview
 
