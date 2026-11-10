@@ -6,9 +6,14 @@
 
 ## Status, honestly
 
-The [0.1.14 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.14) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. On 2026-11-05 the account holder confirmed the remaining core checks work, including update restart after the fix. Wider G09 distribution checks remain deferred; see the [backlog](Docs/Backlog.md). The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
+The [0.1.15 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.15) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. On 2026-11-05 the account holder confirmed the remaining core checks work, including update restart after the fix. Wider G09 distribution checks remain deferred; see the [backlog](Docs/Backlog.md). The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
 
 The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. On 2026-11-05 the account holder confirmed the remaining core checks all work, including radio filters, audible playback, media keys, cold launch and update restart. The agreed working core is accepted; [the refreshed backlog](Docs/Backlog.md) tracks the features requested since then and deferred work. This confirmation does not close the full account, accessibility, hardware or distribution matrices below.
+
+**Changed in the 0.1.15 preview:**
+- Choosing music no longer leaves a "Starting…" or "Started" line under the row; the player bar shows it starting and playing.
+- A click on the player bar's title, artist or empty space opens Now Playing, as the artwork already did.
+- Opening or closing Queue or Lyrics resizes the page smoothly, like resizing the window, instead of making it jump.
 
 **Changed in the 0.1.14 preview:**
 - The YouTube Music player no longer has an output button: YouTube Music always plays through the Mac's sound output, so the button could only point to Control Center. Uploads and local audio keep the full output picker.
@@ -58,7 +63,7 @@ Automated tests use **sanitized fixtures and owned synthetic audio**, isolated f
 
 ## Install the preview
 
-Download `YTMuse-0.1.14.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.14), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
+Download `YTMuse-0.1.15.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.15), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
 
 ## Build from source
 

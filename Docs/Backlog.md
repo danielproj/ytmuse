@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-10. Latest public development preview: **[0.1.14](https://github.com/danielproj/ytmuse/releases/tag/v0.1.14)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-10. Latest public development preview: **[0.1.15](https://github.com/danielproj/ytmuse/releases/tag/v0.1.15)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,18 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## Changed in the 0.1.15 preview
+
+The account holder asked for three changes: no status messages under an item once music is chosen from it, a click on the player bar opening Now Playing, and Queue and Lyrics opening without the page jumping.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| No status line under a chosen item | The search row, the catalog `FeedbackLine` (Home, catalog pages, Library) and the Samples handoff line draw nothing for "starting" and "started"; the player bar shows the chosen item's title with "Starting YouTube Music…" and then its artist. Failures are still shown at the item and announced. | Not tried in a live window. |
+| Player bar opens Now Playing | `TransportBar` takes an `open` action behind its content (the capsule's empty space), and the title block takes it too (`musicOpensPlayer`), for YouTube Music and owned media. Buttons, menus and the seek slider keep their own clicks. | Not tried in a live window; no UI test clicks the title yet. |
+| Queue and Lyrics resize the page smoothly | `MusicTrailingPanelLayout` places the page and the panel from an animatable `reveal`, so the page is laid out again at every frame of the motion, like a live window resize; the panel keeps its width and slides in, and stays until its slide-out ends. A window too narrow for the inline panel and Now Playing opening change it at once. | The motion was not watched in a live window; `TrailingPanelLayoutTests` check the frames at each step. |
+
+Every headless test batch ran and passed on the public snapshot in a clean checkout with no secrets (`ci: ok`, 2,270 Swift Testing tests executed of 2,270). The offscreen layout audits report the same 45 smallest-window player issues on this change as on 0.1.14, and none for the queue panel. The 0.1.15 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 16 to earlier releases.
 
 ## Changed in the 0.1.14 preview
 
