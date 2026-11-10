@@ -84,15 +84,12 @@ private let living = CastDevice(id: CastDeviceID("APP-CAST-LIVING")!, friendlyNa
 
     // MARK: The picker's sentences
 
-    @Test func theYouTubeMusicPickerSaysPlainlyThatItCannotBeCastAndListsNoTargets() async throws {
+    @Test func youTubeMusicHasNoPickerSoNoCastTargetIsOfferedForIt() async throws {
         let rig = try await CastAppRig.make()
         _ = try await rig.base.play()
-        rig.cast.found([living]); rig.controller.pickerOpened()
-        let value = OutputPickerMapping.content(for: rig.controller)
+        rig.cast.found([living])
         #expect(rig.controller.subject == .youTubeMusic)
-        #expect(value.castNotes == ["Casting YouTube Music isn't available from this app."])
-        #expect(value.rows.allSatisfy { !$0.id.hasPrefix("cast:") }, "no Cast target is listed for a player that cannot use one")
-        #expect(value.statement == "YouTube Music plays through this Mac's sound output. Change it in Control Center.")
+        #expect(!rig.controller.offersPicker, "the hidden player cannot be cast, and has no output button to offer a receiver from")
     }
     @Test func theNativePickerListsReceiversWithWhatTheyCannotDoAndSaysWhatQuitDoes() async throws {
         let rig = try await CastAppRig.make()

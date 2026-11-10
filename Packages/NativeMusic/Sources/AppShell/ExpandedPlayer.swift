@@ -117,7 +117,7 @@ struct ExpandedPlayer<Trailing: View>: View {
                 transportRow {
                     WebMusicControlsView(player: player, large: true, namespace: namespace, plain: true)
                 } accessories: {
-                    WebCapsuleSecondary(player: player, compact: compact, expanded: true, showVideo: nil, showQueue: showQueue, outputs: model.outputs, playback: model)
+                    WebCapsuleSecondary(player: player, compact: compact, expanded: true, showVideo: nil, showQueue: showQueue, playback: model)
                 }
                 SleepTimerLine(model: model, episode: model.playingEpisode(model.episodes), identifier: "nowPlayingSleepRemaining")
             }

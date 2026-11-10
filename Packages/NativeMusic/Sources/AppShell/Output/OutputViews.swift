@@ -38,7 +38,7 @@ struct OutputPickerHost: View {
         OutputPickerButton(content: OutputPickerMapping.content(for: controller), actions: OutputPickerActions(
             select: { id in
                 guard let route = OutputRouteID(persisted: id) else { return }
-                Task { _ = await controller.coordinator.select(route, engine: controller.subject) }
+                Task { _ = await controller.coordinator.select(route, engine: .localMedia) }
             },
             reconnect: { Task { _ = await controller.coordinator.reconnect() } },
             playHere: { Task { await controller.requestPlayHere() } },

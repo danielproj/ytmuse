@@ -107,7 +107,7 @@ private struct MainWindowCommands: Commands {
             Button("Seek Back") { shell.perform(.seekBack) }.keyboardShortcut(chord(.seekBack).0, modifiers: chord(.seekBack).1).disabled(!shell.transport.canSeek || shell.transport.isAd)
             Divider()
             Button("Reveal Current Item") { shell.perform(.revealCurrentItem) }.keyboardShortcut(chord(.revealCurrentItem).0, modifiers: chord(.revealCurrentItem).1).disabled(!shell.transport.hasItem)
-            Button("Choose Output…") { shell.showOutputPicker() }
+            Button("Choose Output…") { shell.showOutputPicker() }.disabled(!shell.offersOutputPicker)
             Button("Show Queue") { shell.perform(.showQueue) }.keyboardShortcut(chord(.showQueue).0, modifiers: chord(.showQueue).1)
             Divider()
             Button("Share Current Song…") { shell.shareCurrentSong() }.disabled(shell.currentShareLink == nil)
