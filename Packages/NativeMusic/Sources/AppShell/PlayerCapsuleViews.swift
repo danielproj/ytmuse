@@ -181,7 +181,6 @@ struct WebCapsuleSecondary: View {
     var expanded = false
     var showVideo: (() -> Void)? = nil
     var showQueue: () -> Void = {}
-    var outputs: OutputController? = nil
     var playback: PlaybackModel? = nil
     @State private var refusal: String?
     var body: some View {
@@ -224,7 +223,8 @@ struct WebCapsuleSecondary: View {
                     }.pickerStyle(.inline).labelsHidden().disabled(!enabled || state.repeatMode == nil)
                 }
             CapsuleVolume(level: state.volume, set: { level in Task { await player.setVolume(level) } }, label: "YouTube Music volume", identifier: "musicVolume", compact: compactVolume, large: expanded)
-            if let outputs { OutputPickerHost(controller: outputs).buttonStyle(.musicGlyph(edge: edge)) }
+            // No output button here: the hidden player always follows the Mac's sound output, so a picker could only send a person to Control Center.
+            // A route loss still reaches them through the Play here prompt; the owned-media capsule keeps its real picker.
             Button(action: showQueue) { Label("Queue", systemImage: "list.bullet") }
                 .buttonStyle(.musicGlyph(edge: edge)).help(Text("Queue")).accessibilityIdentifier("transportQueue")
             // Share, beside Queue. The shell re-reads the playing song when this is pressed, so the link is the song's own (never its radio or queue) and is
@@ -430,7 +430,7 @@ struct OwnedCapsuleSecondary: View {
                           enabled: model.session != nil && volume.isEnabled, compact: compactVolume, large: expanded, help: volume.disabledReason ?? "",
                           mute: (title: LocalizedStringKey(muted ? "Unmute" : "Mute"), identifier: "transportMute", disabled: model.session == nil,
                                  action: { Task { await model.act(action: .mute) { try await $0.setMuted(!muted) } } }))
-            if let outputs = model.outputs { OutputPickerHost(controller: outputs).buttonStyle(.musicGlyph(edge: edge)) }
+            if let outputs = model.outputs { if outputs.offersPicker { OutputPickerHost(controller: outputs).buttonStyle(.musicGlyph(edge: edge)) } }
             else { RoutePicker(current: model.state?.media?.route ?? String(localized: "System output")).labelStyle(.iconOnly).buttonStyle(.musicGlyph(edge: edge)) }
             Button(action: showQueue) { Label("Queue", systemImage: "list.bullet") }
                 .buttonStyle(.musicGlyph(edge: edge)).help(Text("Queue")).accessibilityIdentifier("transportQueue")

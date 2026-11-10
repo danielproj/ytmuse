@@ -38,7 +38,9 @@ import SystemIntegration
     private(set) var queueRequest = 0
     /// Raised by "Choose Output…" (menu bar, command palette); the output button of a visible window opens its popover.
     private(set) var outputPickerRequest = 0
-    func showOutputPicker() { showMainWindow(); DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [self] in outputPickerRequest += 1 } }
+    func showOutputPicker() { guard offersOutputPicker else { return }; showMainWindow(); DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [self] in outputPickerRequest += 1 } }
+    /// Only the owned-media transport has an output button (`OutputController.offersPicker`).
+    var offersOutputPicker: Bool { playback.outputs?.offersPicker == true }
     /// W24: searches App Intents ask for wait here until a visible window performs them (see `SearchRequestInbox`).
     let searchInbox = SearchRequestInbox()
     /// W25: the Spotlight opt-in (off by default); the composition wires it to the indexer.

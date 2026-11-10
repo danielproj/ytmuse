@@ -32,10 +32,10 @@ enum OutputPickerMapping {
         case .receiver: String(localized: "While you cast, the volume slider sets the receiver's volume. The Mac's volume stays as it was.")
         }
     }
-    static func sentence(_ limit: RouteCapabilities.Limit, engine: OutputEngineKind) -> String {
+    static func sentence(_ limit: RouteCapabilities.Limit) -> String {
         switch limit {
         case .chooseOutputInApp: String(localized: "This player can't be pointed at an output; it follows the Mac.")
-        case .chooseAirPlayInApp: engine == .youTubeMusic ? String(localized: "AirPlay can't be chosen from this player.") : String(localized: "AirPlay isn't available for this kind of playback.")
+        case .chooseAirPlayInApp: String(localized: "AirPlay isn't available for this kind of playback.")
         case .groupReceivers: String(localized: "Grouping receivers is left to the system picker, as far as it offers it.")
         case .fadeOnReceiver: String(localized: "A sleep timer pauses here but can't fade.")
         case .changeDeviceVolume: String(localized: "This app never changes the Mac's volume.")
@@ -67,7 +67,8 @@ enum OutputPickerMapping {
 
     @MainActor static func content(for controller: OutputController) -> OutputPickerContent {
         let coordinator = controller.coordinator
-        let kind = controller.subject
+        // The picker is shown for the native engine only (`OutputController.offersPicker`).
+        let kind = OutputEngineKind.localMedia
         let current = coordinator.currentOutput(for: kind)
         let remote = coordinator.remote != nil
         let remoteCast = coordinator.remote?.isCast == true
@@ -75,27 +76,23 @@ enum OutputPickerMapping {
         var rows: [OutputPickerContent.Row] = []
         for entry in coordinator.entries(for: kind) {
             if entry.id.isCast {
-                // W39: Cast receivers are rows for the native engine only. For YouTube Music the picker states that it cannot be cast instead of listing targets.
-                guard kind == .localMedia else { continue }
                 let title = entry.name.isEmpty ? String(localized: "Remembered Cast receiver") : entry.name
                 let detail = entry.isPreferred ? String(localized: "Cast · Used last time") : String(localized: "Cast")
                 rows.append(.init(id: entry.id.rawValue, title: title, detail: detail, symbol: "hifispeaker.2", state: entry.connection == .unavailable ? .unavailable : (entry.isCurrent ? .current : .available),
                                   selectable: entry.connection == .connected && entry.capabilities.selection == .appSelectable, volume: volumeSentence(entry.capabilities),
-                                  unsupported: entry.capabilities.limits.map { sentence($0, engine: kind) }))
+                                  unsupported: entry.capabilities.limits.map { sentence($0) }))
                 continue
             }
             let isDefaultRow = entry.id.isSystemDefault
             let title = isDefaultRow ? String(localized: "System output") : entry.name
             let detail = isDefaultRow ? (entry.name.isEmpty ? nil : entry.name) : transportName(entry.transport)
-            let selectable = kind == .localMedia && (!remote || remoteCast) && entry.capabilities.selection == .appSelectable
+            let selectable = (!remote || remoteCast) && entry.capabilities.selection == .appSelectable
             let state: OutputPickerContent.Row.State = entry.connection == .unavailable ? .unavailable : (entry.isCurrent ? .current : .available)
             let headphones = entry.id.deviceUID.flatMap { coordinator.snapshot.device(uid: $0)?.isHeadphones } ?? false
             rows.append(.init(id: entry.id.rawValue, title: title, detail: detail, symbol: symbol(entry.transport, headphones: headphones),
                               state: state, selectable: selectable, volume: volumeSentence(entry.capabilities),
-                              unsupported: entry.capabilities.limits.map { sentence($0, engine: kind) }))
+                              unsupported: entry.capabilities.limits.map { sentence($0) }))
         }
-        let statement: String? = kind == .youTubeMusic
-            ? String(localized: "YouTube Music plays through this Mac's sound output. Change it in Control Center.") : nil
         let notice: String? = coordinator.launchNotice == .preferredUnavailable
             ? String(localized: "The output you chose before isn't connected, so the Mac's sound output is in use.") : nil
         let showsPicker = coordinator.offersSystemPicker(for: kind) && controller.pickerPlayer != nil
@@ -103,9 +100,8 @@ enum OutputPickerMapping {
             ? String(localized: "AirPlay receivers are chosen in the system picker. Grouping is left to it, as far as the system offers it.")
             : String(localized: "AirPlay receivers are chosen in the system picker.")
         let loss = coordinator.loss(for: kind).map { OutputPickerContent.Loss(message: lossMessage($0.reason, cast: $0.lostRoute.isCast), canReconnect: coordinator.lossCanReconnect(for: kind)) }
-        // W39: the picker for YouTube Music states plainly that it cannot be cast from this app (no sanctioned way to hand a receiver the account's playback).
-        var castNotes: [String] = kind == .youTubeMusic ? [sentence(.castYouTubeMusic, engine: .youTubeMusic)] : []
-        if kind == .localMedia, controller.castDirectory != nil {
+        var castNotes: [String] = []
+        if controller.castDirectory != nil {
             if let notice = controller.cast?.notice { castNotes.append(castNotice(notice)) }
             if remoteCast, coordinator.capabilities(for: .localMedia).quit == .stopsBecauseMacRelays {
                 castNotes.append(String(localized: "Playback on the receiver stops when you quit, because this Mac is serving the audio."))
@@ -114,7 +110,7 @@ enum OutputPickerMapping {
             castNotes.append(String(localized: "Only owned and local audio can be cast. YouTube Music can't be cast from this app."))
         }
         return OutputPickerContent(currentName: currentName, symbol: symbol(current?.transport, headphones: current?.isHeadphones ?? false),
-                                   statement: statement, rows: rows, notice: notice, showsSystemPicker: showsPicker, airPlayHint: hint, loss: loss, castNotes: castNotes)
+                                   rows: rows, notice: notice, showsSystemPicker: showsPicker, airPlayHint: hint, loss: loss, castNotes: castNotes)
     }
 
     @MainActor static func prompt(for controller: OutputController) -> OutputPromptContent? {

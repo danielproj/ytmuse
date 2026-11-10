@@ -138,6 +138,9 @@ import SystemIntegration
 
     /// The engine the picker speaks for: the hidden player while it is the owner, otherwise the native one.
     var subject: OutputEngineKind { model?.music.map { !$0.isClosed } == true ? .youTubeMusic : .localMedia }
+    /// The picker exists only for the native engine. The hidden player always follows the Mac's sound output, so a picker could only send a person to
+    /// Control Center; it has no output button, and "Choose Output…" is unavailable while it owns playback.
+    var offersPicker: Bool { subject == .localMedia }
 
     /// A new native session: it learns the applier, the chosen device and the external-playback observer.
     func attach(_ session: PlaybackSession) async {

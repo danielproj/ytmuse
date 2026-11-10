@@ -104,7 +104,7 @@ struct WebMusicTransportContent: View {
                 titleBlock(state).audit("playerTitle", group: "playerRow", within: "playerBar")
             }
             WebCapsuleTransport(player: player, compact: compact, namespace: namespace, showsTimes: seekState.showsTimes, preview: preview).audit("playerControls", group: "playerRow", within: "playerBar")
-            WebCapsuleSecondary(player: player, compact: compact, showVideo: showVideo, showQueue: showQueue, outputs: outputs, playback: playback)
+            WebCapsuleSecondary(player: player, compact: compact, showVideo: showVideo, showQueue: showQueue, playback: playback)
                 .audit("playerAccessories", group: "playerRow", within: "playerBar")
         }.audit("playerRow", group: "playerBar", kind: .layer, within: "playerBar")
             .overlay(alignment: .bottom) {

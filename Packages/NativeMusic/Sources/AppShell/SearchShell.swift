@@ -51,7 +51,8 @@ struct SearchPaletteHost: ViewModifier {
         }
         result.append(PaletteCommand(id: "find", title: String(localized: "Search YouTube Music"), symbol: "magnifyingglass", keywords: [String(localized: "Find")], shortcut: "⌘F") { find() })
         result.append(PaletteCommand(id: "queue", title: String(localized: "Show Queue"), symbol: "list.bullet", keywords: [String(localized: "Up next")], run: toggleQueue))
-        result.append(PaletteCommand(id: "output", title: String(localized: "Choose Output…"), symbol: "speaker.wave.2", keywords: [String(localized: "Output"), "AirPlay"]) { accounts.shell.showOutputPicker() })
+        result.append(PaletteCommand(id: "output", title: String(localized: "Choose Output…"), symbol: "speaker.wave.2", keywords: [String(localized: "Output"), "AirPlay"],
+                                     unavailable: accounts.shell.offersOutputPicker ? nil : String(localized: "YouTube Music plays through this Mac's sound output. Change it in Control Center.")) { accounts.shell.showOutputPicker() })
         result.append(PaletteCommand(id: "lyrics", title: String(localized: "Show Lyrics"), symbol: "quote.bubble", run: toggleLyrics))
         result.append(PaletteCommand(id: "accounts", title: String(localized: "Manage Accounts…"), symbol: "person.crop.circle", keywords: [String(localized: "Sign in")], run: manageAccounts))
         result.append(PaletteCommand(id: "back", title: String(localized: "Back"), symbol: "chevron.left",
