@@ -78,8 +78,8 @@ struct FeedbackLine: View {
         switch feedback {
         case .failed(let message): Label(message, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(MusicStyle.errorText)
             .accessibilityLabel(Text(message)).accessibilityIdentifier("catalogFeedback")
-        case .working: ProgressView().controlSize(.small).accessibilityLabel(Text("Starting"))
-        case .started: Label("Started", systemImage: "checkmark.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+        // Starting and started say nothing at the item: the player bar shows the chosen item starting and then playing.
+        case .working, .started: EmptyView()
         case .copied: Label("Link copied", systemImage: "checkmark.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText)
         case nil: EmptyView()
         }

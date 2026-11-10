@@ -101,7 +101,7 @@ struct WebMusicTransportContent: View {
                 Button(action: showNowPlaying) { artwork.musicCapsuleCover(compact: compact).playerMatched("current-artwork", namespace) }
                     .buttonStyle(.plain).accessibilityLabel(Text("Show Now Playing")).help(Text("Show Now Playing"))
                     .audit("playerArtwork", group: "playerRow", within: "playerBar")
-                titleBlock(state).audit("playerTitle", group: "playerRow", within: "playerBar")
+                titleBlock(state).musicOpensPlayer(showNowPlaying).audit("playerTitle", group: "playerRow", within: "playerBar")
             }
             WebCapsuleTransport(player: player, compact: compact, namespace: namespace, showsTimes: seekState.showsTimes, preview: preview).audit("playerControls", group: "playerRow", within: "playerBar")
             WebCapsuleSecondary(player: player, compact: compact, showVideo: showVideo, showQueue: showQueue, playback: playback)

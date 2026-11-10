@@ -120,8 +120,9 @@ public struct SearchResultRow: View {
     }
     @ViewBuilder private func feedbackLine(_ feedback: SearchItemFeedback) -> some View {
         switch feedback {
-        case .working: HStack { ProgressView().controlSize(.small); Text("Starting…") }.font(.caption)
-        case .started: Label("Playing from YouTube Music", systemImage: "checkmark.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText)
+        // Starting and started say nothing at the row: the player bar shows the chosen item starting and then playing, so a row never grows a line
+        // (and the list never shifts) because music was chosen from it.
+        case .working, .started: EmptyView()
         case .copied: Label("Link copied", systemImage: "checkmark.circle").font(.caption).foregroundStyle(MusicStyle.secondaryText)
         case .failed(let message):
             MusicInlineError(message).font(.caption).accessibilityIdentifier("searchItemError-" + result.id)

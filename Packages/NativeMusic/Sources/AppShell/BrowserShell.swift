@@ -25,6 +25,9 @@ struct BrowserShell: View {
     @State private var confirmingWindowReset = false
     @State private var showAccounts = false
     @State private var panels = AdaptivePanelPresentation<TrailingPanel>()
+    /// The panel drawn beside the page (it outlives the selection while it slides out) and how far it is in (0 closed, 1 open).
+    @State private var shownPanel: TrailingPanel?
+    @State private var panelReveal: CGFloat = 0
     @State private var search: SearchModel
     @State private var searchFocus = 0
     @State private var queueRequestSeen: Int
@@ -68,13 +71,15 @@ struct BrowserShell: View {
                 if showsQAReadouts { debugQARow.fixedSize(horizontal: false, vertical: true) }
                 debugPlayerRow.fixedSize(horizontal: false, vertical: true)
                 #endif
-                HStack(spacing: 0) {
+                // The page and the queue/lyrics panel: opening or closing the panel lays the page out again at each frame (MusicTrailingPanelLayout), so
+                // it narrows and widens like a live window resize instead of jumping to its final layout under the sliding panel.
+                MusicTrailingPanelLayout(reveal: panelReveal) {
                     destination.musicContentZoom().id(navigation.session.current.id).musicTransition(.reveal).musicAnimation(navigationMotion, value: navigation.session.current.id, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background).frame(maxWidth: .infinity, maxHeight: .infinity).scrollEdgeEffectStyle(.soft, for: .bottom).browserRegion("detailContent").padding(.bottom, PlayerCapsule.bottomReserve(compact: layout.compactPlayer)).musicContentRegion().audit("detailPanel", group: "content", kind: .layer)
                         .transformAnchorPreference(key: ShellPanelAnchor.self, value: .bounds) { $0.panel = $1 }
                         .opacity(expanded ? 0 : 1).allowsHitTesting(!expanded).accessibilityHidden(expanded)
-                    if let trailing = panels.selection, panels.allowsInline, !expanded {
+                    if let trailing = shownPanel {
                         trailingPanel(trailing).musicContentZoom().frame(minWidth: 300, idealWidth: 320, maxWidth: 420).audit("inspectorContent", group: "content", kind: .layer).padding(.bottom, PlayerCapsule.bottomReserve(compact: layout.compactPlayer)).musicInspector().audit("trailingPanel", group: "content", kind: .layer).browserRegion("panel").accessibilityElement(children: .contain).accessibilityIdentifier("inlineTrailingPanel")
-                            .musicTransition(.slideFromTrailing)
+                            .allowsHitTesting(inlinePanel != nil).accessibilityHidden(inlinePanel == nil)
                     }
                 // Solid regions reach the column edges; inner content keeps clearance for the floating capsule.
                 }.frame(maxWidth: .infinity, maxHeight: .infinity).browserRegion("detail")
@@ -85,7 +90,9 @@ struct BrowserShell: View {
             .overlayPreferenceValue(ShellPanelAnchor.self) { anchors in
                 GeometryReader { overlay in playerLayer(panel: anchors.panel.map { overlay[$0] }, column: anchors.column.map { overlay[$0] }, size: overlay.size, layout: layout) }
             }
-            .onChange(of: layout.showsTrailing, initial: true) { _, value in panels.allowsInline = value }
+            .onChange(of: layout.showsTrailing, initial: true) { _, value in panels.allowsInline = value; syncInlinePanel(animated: false) }
+            .onChange(of: panels.selection) { _, _ in syncInlinePanel(animated: true) }
+            .onChange(of: expanded) { _, _ in syncInlinePanel(animated: false) }
             .sheet(isPresented: Binding(get: { panels.presentsSheet }, set: { panels.sheetChanged($0) })) {
                 VStack {
                     if let trailing = panels.selection { trailingPanel(trailing).musicInspector() }
@@ -371,8 +378,25 @@ struct BrowserShell: View {
         .modifier(PlaybackObservation(model: accounts.playback))
         .musicAnimation(.playerMorph, value: expanded, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background)
     }
-    private func toggle(_ panel: TrailingPanel) {
-        musicWithAnimation(.navigation, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background) { panels.toggle(panel) }
+    private func toggle(_ panel: TrailingPanel) { panels.toggle(panel) }
+    /// The panel the page shows beside it: the selection, while the window is wide enough for it inline and Now Playing is not open (the expanded
+    /// player then hosts it itself).
+    private var inlinePanel: TrailingPanel? { panels.allowsInline && !expanded ? panels.selection : nil }
+    /// Moves the page's panel to `inlinePanel`. Opening and closing are animated by the layout's reveal; a closing panel stays in place until its slide
+    /// out has finished. Switching Queue and Lyrics, a window too narrow for an inline panel and Now Playing opening or closing change it at once.
+    private func syncInlinePanel(animated: Bool) {
+        let target = inlinePanel
+        if let target { shownPanel = target }
+        let reveal: CGFloat = target == nil ? 0 : 1
+        guard reveal != panelReveal else { if target == nil { shownPanel = nil }; return }
+        if animated {
+            musicWithAnimation(.navigation, reduceMotion: reduceMotion, lowPower: lowPower, visible: windowVisible && phase != .background, { panelReveal = reveal }) {
+                if inlinePanel == nil, panelReveal == 0 { shownPanel = nil }
+            }
+        } else {
+            panelReveal = reveal
+            if target == nil { shownPanel = nil }
+        }
     }
     /// Added above the sidebar's first row (POL-A). The list's own top inset is about 4 pt (the audit measures the first label 6 pt below the panel top); with this the first row's highlight is about 16 pt from the panel's top edge, as from its sides.
     static let sidebarTopInset = MusicSpace.sm

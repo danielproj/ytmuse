@@ -77,14 +77,25 @@ public struct TransportBar<Content: View>: View {
   let tint: MusicTint?
   let morph: MusicMorph?
   let compact: Bool
+  /// A click on the capsule's own surface (the space between its groups, where no control sits) opens Now Playing. It sits BEHIND the content, so
+  /// it never competes with a button, a menu or the seek slider for their clicks; the title block takes the same action itself (`musicOpensPlayer`).
+  let open: (() -> Void)?
   @Environment(\.colorScheme) private var scheme
-  public init(tint: MusicTint? = nil, morph: MusicMorph? = nil, compact: Bool = false, @ViewBuilder content: () -> Content) {
-    self.tint = tint; self.morph = morph; self.compact = compact; self.content = content()
+  public init(tint: MusicTint? = nil, morph: MusicMorph? = nil, compact: Bool = false, open: (() -> Void)? = nil, @ViewBuilder content: () -> Content) {
+    self.tint = tint; self.morph = morph; self.compact = compact; self.open = open; self.content = content()
   }
   public var body: some View {
     content.padding(.horizontal, MusicSpace.xs).frame(maxWidth: .infinity).frame(height: PlayerCapsule.height(compact: compact))
+      .background { if let open { Color.clear.contentShape(Capsule()).onTapGesture(perform: open).accessibilityHidden(true) } }
       .musicCapsuleSurface(height: PlayerCapsule.height(compact: compact), tint: tint?.glassColor(scheme: scheme), morph: morph).musicElevation(.floating)
       .musicAnimation(.artworkColor, value: tint)
+  }
+}
+
+extension View {
+  /// The player's title and artist open Now Playing when clicked, like the artwork beside them (VoiceOver keeps the artwork's own button for it).
+  public func musicOpensPlayer(_ open: @escaping () -> Void) -> some View {
+    contentShape(Rectangle()).onTapGesture(perform: open)
   }
 }
 

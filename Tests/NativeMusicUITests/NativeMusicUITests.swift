@@ -2237,7 +2237,11 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertTrue(readout.contains("preview=devclip00002") && readout.contains("overlap=0"), readout)
         XCTAssertTrue(w12Gone(w10(window, "samplePreviewing-devclip00001")))
         w12Wait(window, "samplePlay-devclip00002").click()
-        w12Wait(window, "samplesHandoff-started")
+        // A handoff that started puts no line under the list (the player bar shows it); the readout says it happened.
+        let readoutElement = w12Wait(window, "discoveryReadout")
+        let handedOff = NSPredicate { _, _ in [readoutElement.label, readoutElement.value as? String].compactMap { $0 }.joined(separator: " ").contains("handoffs=1") }
+        XCTAssertEqual(XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: handedOff, object: nil)], timeout: 10), .completed, "the Sample was handed to the player")
+        XCTAssertFalse(w10(window, "samplesHandoff-started").exists)
         let after = w10Text(w12Wait(window, "discoveryReadout"))
         XCTAssertTrue(after.contains("preview=none") && after.contains("handoffs=1"), after)
         capture(window, "W20 Samples one preview at a time")
