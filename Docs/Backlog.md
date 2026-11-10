@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-10. Latest public development preview: **[0.1.13](https://github.com/danielproj/ytmuse/releases/tag/v0.1.13)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-10. Latest public development preview: **[0.1.14](https://github.com/danielproj/ytmuse/releases/tag/v0.1.14)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,16 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## Changed in the 0.1.14 preview
+
+The account holder asked whether the output button on the YouTube Music player should go: it opened a panel whose only working control was a link to System Settings.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| No output button for YouTube Music | `OutputController.offersPicker` (the native engine owns playback) is the one rule: the YouTube Music transport in the bar and the expanded player has no output button, the owned-media controls hide it while a YouTube Music player is attached, and Choose Output… is disabled in the Playback menu and listed as unavailable in the command palette, with the reason "YouTube Music plays through this Mac's sound output. Change it in Control Center." The picker's follow-the-Mac mode (statement, Sound Settings button, read-only row, YouTube Music cast note) is removed. A route loss still raises the Play here prompt. | Not tried in a live window. The warning icon that used to replace the button after a route loss is gone for YouTube Music. Two strings the code no longer uses stay in the append-only string catalog. |
+
+Every headless test batch ran on the public snapshot in a clean checkout with no secrets. At load average 134 two timing-sensitive playback tests (`testTimerSetInStagedWindow`, `T061ActualAppCompositionSQLiteRestoreAndAccountBarrier`) failed and then passed alone; the steps CI stops before were run separately in the same clean environment and passed. The 0.1.14 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 15 to earlier releases.
 
 ## Fixed in the 0.1.13 preview
 
