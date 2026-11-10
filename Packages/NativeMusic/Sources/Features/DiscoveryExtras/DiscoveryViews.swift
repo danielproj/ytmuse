@@ -158,7 +158,8 @@ public struct SamplesView: View {
     }
     @ViewBuilder private func handoffLine(_ outcome: PreviewHandoffOutcome) -> some View {
         switch outcome {
-        case .started: Label("Playing in the player. The preview ended first.", systemImage: "checkmark.circle").font(MusicPageStyle.note).accessibilityIdentifier("samplesHandoff-started")
+        // A handoff that started says nothing here: the player bar shows it playing.
+        case .started: EmptyView()
         case .nothingToPlay: Label("This Sample names nothing to play.", systemImage: "nosign").font(MusicPageStyle.note).accessibilityIdentifier("samplesHandoff-nothing")
         case .notStarted: Label("YouTube Music could not start this. Try Play again.", systemImage: "exclamationmark.circle").font(MusicPageStyle.note).foregroundStyle(MusicStyle.errorText).accessibilityIdentifier("samplesHandoff-failed")
         }

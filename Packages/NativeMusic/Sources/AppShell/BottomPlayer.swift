@@ -39,7 +39,7 @@ struct PlaybackPanel: View {
     @Environment(\.scenePhase) private var phase
     /// The capsule. The shell hosts it inside the one `MusicGlassGroup` it shares with the expanded player, so the glass shape can morph between them.
     var body: some View {
-        TransportBar(tint: accent, morph: artworkNamespace.map { MusicMorph("player-surface", in: $0) }, compact: compact) {
+        TransportBar(tint: accent, morph: artworkNamespace.map { MusicMorph("player-surface", in: $0) }, compact: compact, open: showNowPlaying) {
             // One transport for the single playback owner: YouTube Music's hidden
             // player when it is the active source, otherwise the owned session.
             if let player = model.music {
@@ -82,7 +82,7 @@ struct PlaybackPanel: View {
                     if let state = model.state {
                         Text(LocalizedStringKey(model.pending ? "Working…" : state.playback.state.rawValue)).font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1).accessibilityIdentifier("playbackState")
                     } else { Text("Choose music to begin").font(.caption).foregroundStyle(MusicStyle.secondaryText).lineLimit(1) }
-                }.frame(maxWidth: PlayerCapsule.titleWidth, alignment: .leading).audit("playerTitle", group: "playerRow", within: "playerBar")
+                }.frame(maxWidth: PlayerCapsule.titleWidth, alignment: .leading).musicOpensPlayer(showNowPlaying).audit("playerTitle", group: "playerRow", within: "playerBar")
             }
             OwnedCapsuleTransport(model: model, compact: compact, namespace: artworkNamespace, showsTimes: seekState.showsTimes, preview: preview).audit("playerControls", group: "playerRow", within: "playerBar")
             OwnedCapsuleSecondary(model: model, compact: compact, showQueue: showQueue).audit("playerAccessories", group: "playerRow", within: "playerBar")
