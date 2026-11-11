@@ -103,7 +103,9 @@ public enum CatalogActionPlan {
         public init(playlistID: String, videoID: String? = nil, params: String? = nil) { self.playlistID = playlistID; self.videoID = videoID; self.params = params }
     }
     /// A song or video inside a collection plays that collection from this track (the playlist its own row names); a song
-    /// the service seeded only with its own radio (`RDAMVM…`) plays that radio. An album, playlist or podcast plays the playlist
+    /// the service seeded only with its own radio (`RDAMVM…`) plays that radio STARTING AT THIS TRACK. The video id always goes
+    /// with the radio: `watch?list=RDAMVM<id>` without `v=` makes the service build a mix that need not open with (or even
+    /// contain) the seed, so a Home "Listen again" card started a different song. An album, playlist or podcast plays the playlist
     /// its own play button names. Artists, categories and single episodes have no target here.
     public static func target(for item: MusicCatalogItem) -> PlayTarget? {
         switch item.kind {
@@ -111,7 +113,7 @@ public enum CatalogActionPlan {
             // Private service media has no supported catalog playback.
             guard let video = item.videoID, !item.isPrivatelyOwned else { return nil }
             if let context = item.contextPlaylistID, !context.hasPrefix("RDAMVM") { return PlayTarget(playlistID: context, videoID: video) }
-            return PlayTarget(playlistID: "RDAMVM" + video)
+            return PlayTarget(playlistID: "RDAMVM" + video, videoID: video)
         case .album, .playlist, .podcast: return item.playlistID.map { PlayTarget(playlistID: $0) }
         case .artist, .category, .episode: return nil
         }
@@ -138,7 +140,10 @@ public enum CatalogActionPlan {
         }
     }
     /// Whether the track's Play continues a collection from this track (rather than starting the song's radio).
-    public static func continuesCollection(_ item: MusicCatalogItem) -> Bool { target(for: item)?.videoID != nil }
+    public static func continuesCollection(_ item: MusicCatalogItem) -> Bool {
+        guard let target = target(for: item), let video = target.videoID else { return false }
+        return target.playlistID != "RDAMVM" + video
+    }
     /// The public link Copy Link and Share hand out for an entry (`CatalogShareLink`): its own identifier only, nil for private media, a category
     /// or an identifier that is not shaped like the service's.
     public static func link(for item: MusicCatalogItem) -> URL? { CatalogShareLink.url(for: item) }

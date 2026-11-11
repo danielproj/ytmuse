@@ -318,7 +318,11 @@ public struct SearchCorrectionOffer: Sendable, Equatable {
             guard let playlist = SearchActionPlan.playlist(for: result) else { feedback[result.id] = .failed(String(localized: "This result didn’t include anything to play.")); return }
             let scopeAtStart = accountScope()
             feedback[result.id] = .working
-            let outcome = await performer.play(playlistID: playlist, title: result.title)
+            let outcome = if let video = SearchActionPlan.startVideo(for: result) {
+                await performer.play(playlistID: playlist, title: result.title, videoID: video, params: nil)
+            } else {
+                await performer.play(playlistID: playlist, title: result.title)
+            }
             guard accountScope() == scopeAtStart else { feedback[result.id] = nil; return }
             switch outcome {
             case .started: feedback[result.id] = .started; recordChoice(result)

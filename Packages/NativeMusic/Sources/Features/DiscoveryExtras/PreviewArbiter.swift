@@ -109,8 +109,9 @@ public enum PreviewHandoffOutcome: Sendable, Equatable {
             let playlist = clip.playlistID
             guard playlist != nil || !clip.id.isEmpty else { return .nothingToPlay }
             await stopActive(.handedOffToPlayback)
-            // The preview is silent now. A clip with no playlist of its own plays as the service's radio for that clip.
-            let outcome = await performer.play(playlistID: playlist ?? "RDAMVM" + clip.id, title: clip.title, videoID: playlist == nil ? nil : clip.id, params: clip.params)
+            // The preview is silent now. A clip with no playlist of its own plays as the service's radio for that clip, starting at the clip
+            // (a radio loaded without its video id need not open with it).
+            let outcome = await performer.play(playlistID: playlist ?? "RDAMVM" + clip.id, title: clip.title, videoID: clip.id, params: clip.params)
             if outcome == .started { record(.handedOff(clip.id)); return .started }
             return .notStarted(outcome)
         }

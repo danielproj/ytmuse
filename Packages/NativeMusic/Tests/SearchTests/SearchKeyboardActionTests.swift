@@ -65,12 +65,14 @@ import Testing
         rig.model.selection = try rig.result("Noche Cálida").id
         #expect(rig.model.handle(.returnKey) == .handled); await settle()
         #expect(rig.performer.played.map(\.playlist) == ["RDAMVMaaaaaaaaaa3"] && rig.performer.played.map(\.title) == ["Noche Cálida"])
+        #expect(rig.performer.startVideos == ["aaaaaaaaaa3"], "the radio starts at the song, not wherever the service's mix begins")
         #expect(rig.model.feedback[try rig.result("Noche Cálida").id] == .started)
     }
     @Test func playRoutesEachKindToItsPlayableTarget() async throws {
         let rig = Rig(); try await rig.load()
         for title in ["Synthetic Album", "Café Mix", "Cafe Talk", "Café del Mar (Official Video)", "Café del Mar"] { await rig.model.activate(try rig.result(title)) }
         #expect(rig.performer.played.map(\.playlist) == ["OLAK5uy_syntheticAlbum01", "PLsyntheticFeatured01", "PLsyntheticShow01", "RDAMVMbbbbbbbbbb1", "RDAMVMaaaaaaaaaa1"])
+        #expect(rig.performer.startVideos == [nil, nil, nil, "bbbbbbbbbb1", "aaaaaaaaaa1"], "a collection plays from its start; a song or video starts its radio at itself")
     }
     @Test func aKindWithNoPlayTargetReportsItAtTheItem() async throws {
         let rig = Rig(); try await rig.load()
