@@ -61,6 +61,8 @@ actor ScriptedRemote {
 
 @MainActor final class SpyPerformer: SearchActionPerformer {
     var played: [(playlist: String, title: String)] = []
+    /// The track each play started at (nil for a whole playlist), index for index with `played`.
+    var startVideos: [String?] = []
     var copied: [URL] = []
     var shared: [URL] = []
     var canShare = true
@@ -68,7 +70,11 @@ actor ScriptedRemote {
     var gate: CheckedContinuation<Void, Never>?
     var holdPlay = false
     func play(playlistID: String, title: String) async -> SearchPlayOutcome {
-        played.append((playlistID, title))
+        await play(playlistID: playlistID, title: title, videoID: nil, params: nil)
+    }
+    func play(playlistID: String, title: String, videoID: String?, params: String?) async -> SearchPlayOutcome {
+        guard params == nil else { return .failed }
+        played.append((playlistID, title)); startVideos.append(videoID)
         if holdPlay { await withCheckedContinuation { gate = $0 } }
         return outcome
     }

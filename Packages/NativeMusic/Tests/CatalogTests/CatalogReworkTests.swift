@@ -85,10 +85,11 @@ import YouTubeMusicAdapter
     }
     @Test func aSongSeededOnlyWithItsOwnRadioStillPlaysThatRadio() throws {
         let pick = try #require(try realPage(.home).shelves.first?.items.first)
-        #expect(CatalogActionPlan.target(for: pick) == .init(playlistID: "RDAMVMZ85lxckrtzg"))
+        #expect(CatalogActionPlan.target(for: pick) == .init(playlistID: "RDAMVMZ85lxckrtzg", videoID: "Z85lxckrtzg"), "the radio starts at the song that was clicked")
         #expect(!CatalogActionPlan.continuesCollection(pick))
         let bare = MusicCatalogItem(kind: .song, title: "x", videoID: "aaaaaaaaaaa")
-        #expect(CatalogActionPlan.target(for: bare) == .init(playlistID: "RDAMVMaaaaaaaaaaa"))
+        #expect(CatalogActionPlan.target(for: bare) == .init(playlistID: "RDAMVMaaaaaaaaaaa", videoID: "aaaaaaaaaaa"))
+        #expect(!CatalogActionPlan.continuesCollection(bare))
     }
     @Test(arguments: [Capture.album, .playlist, .artist]) func everyRealTrackTargetIsAnIdThePlayerAccepts(capture: Capture) throws {
         for item in try realPage(capture).shelves.flatMap(\.items) where item.kind == .song || item.kind == .video {

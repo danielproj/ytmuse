@@ -16,6 +16,9 @@ private func identity() throws -> (LocalIdentity, RequestContext) {
 private func listID(_ url: URL?) -> String? {
     url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) }?.queryItems?.first { $0.name == "list" }?.value
 }
+private func startVideo(_ url: URL?) -> String? {
+    url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) }?.queryItems?.first { $0.name == "v" }?.value
+}
 
 /// Search's Play goes through the shared command layer to the one hidden player: the same
 /// `playMusic` the Library uses, behind the account permit, never at launch or on typing.
@@ -62,6 +65,8 @@ private func listID(_ url: URL?) -> String? {
         let item = result(.song, SearchTarget(videoID: "aaaaaaaaaa1"), "Seed song")
         await search.perform(.play, on: item)
         #expect(listID(log.pages.first?.loads.first) == "RDAMVMaaaaaaaaaa1")
+        // Without v= the service opens the radio on a mix that need not begin with (or contain) the chosen song.
+        #expect(startVideo(log.pages.first?.loads.first) == "aaaaaaaaaa1", "the song's radio starts at the song")
         #expect(search.feedback[item.id] == .started)
     }
     @Test func aPermitCapturedByTheActionIsRefusedAfterAnAccountBarrier() async throws {

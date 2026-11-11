@@ -169,6 +169,14 @@ public enum SearchActionPlan {
         case .artist, .episode: nil
         }
     }
+    /// The track a play starts at: a song or video starts its own radio at itself. Without it the service opens the radio on a
+    /// mix that need not begin with (or contain) the song that was chosen.
+    public static func startVideo(for result: SearchResult) -> String? {
+        switch result.kind {
+        case .song, .video: result.target.videoID
+        case .album, .playlist, .podcast, .artist, .episode: nil
+        }
+    }
     /// The public link Copy Link and Share hand out for a result (`CatalogShareLink`): its own identifier only.
     public static func link(for result: SearchResult) -> URL? {
         CatalogShareLink.url(kind: MusicEntityKind(rawValue: result.kind.rawValue) ?? .category, videoID: result.target.videoID,

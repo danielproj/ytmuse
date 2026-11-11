@@ -246,7 +246,7 @@ import Testing
         let performer = RecordingPerformer()
         let arbiter = makeArbiter()
         _ = await arbiter.play(clip("zzzzzzzzzzz"), performer: performer)
-        #expect(performer.plays == [.init(playlistID: "RDAMVMzzzzzzzzzzz", title: "Clip zzzzzzzzzzz", videoID: nil, params: nil)])
+        #expect(performer.plays == [.init(playlistID: "RDAMVMzzzzzzzzzzz", title: "Clip zzzzzzzzzzz", videoID: "zzzzzzzzzzz", params: nil)], "the radio starts at the clip, not wherever the service's mix begins")
     }
     @Test func aRefusedStartIsReportedAndThePreviewIsAlreadyGone() async {
         let engine = TimelineEngine(); let performer = RecordingPerformer(); performer.outcome = .failed
