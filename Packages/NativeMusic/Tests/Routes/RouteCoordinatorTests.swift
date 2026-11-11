@@ -54,22 +54,20 @@ import TestSupport
         // No await since the announcement: the record and the refusal already stand, and the pause was issued INSIDE the announcement's turn.
         #expect(rig.local.log == ["pauseForRouteLoss"] && rig.music.log == ["pauseForRouteLoss"], "both engines were told to pause before the announcement returned")
         #expect(rig.coordinator.loss != nil)
-        if case .confirmPlayHere = rig.coordinator.admission(.start, engine: .localMedia) {} else { Issue.record("a Play after a loss must be held for confirmation") }
-        if case .confirmPlayHere = rig.coordinator.admission(.start, engine: .youTubeMusic) {} else { Issue.record("so must the hidden player's") }
+        #expect(rig.coordinator.loss(for: .localMedia) != nil && rig.coordinator.loss(for: .youTubeMusic) != nil, "both engines hold the loss until a person plays")
     }
     @Test func theLossWinsOverEveryLaterResumeRequest() async {
         let rig = await Rig.make()
         rig.music.audible = true
         rig.directory.change([Synthetic.speakers], defaultUID: Synthetic.speakers.uid)
         await rig.coordinator.settled()
-        var ran = 0
-        for _ in 0..<3 { _ = await rig.coordinator.perform(.start, engine: .youTubeMusic) { ran += 1 } }
-        #expect(ran == 0, "a wake, a media key or a queued Play cannot start sound after a loss")
         #expect(rig.music.log == ["pauseForRouteLoss"] && rig.local.log.isEmpty)
-        // The local engine's route was the same lost device: it holds the loss too (quietly), so it cannot start on the speakers either.
-        var localRan = 0
-        _ = await rig.coordinator.perform(.start, engine: .localMedia) { localRan += 1 }
-        #expect(localRan == 0 && rig.coordinator.loss(for: .localMedia)?.wasAudible == false)
+        // The local engine's route was the same lost device: it holds the loss too (quietly), so a wake does not resume it on the speakers either.
+        #expect(rig.coordinator.loss(for: .localMedia)?.wasAudible == false)
+        // A person's Play is the decision to play here: it runs, and clears both engines' loss of that device.
+        var ran = 0
+        #expect(await rig.coordinator.perform(.start, engine: .youTubeMusic) { ran += 1 } && ran == 1)
+        #expect(rig.coordinator.losses.isEmpty && rig.coordinator.prompt == nil)
     }
     @Test func reconnectingTheOutputNeverResumesAnything() async {
         let rig = await Rig.make()
@@ -117,7 +115,7 @@ import TestSupport
         #expect(used.coordinator.loss?.wasAudible == false, "paused by a person, but sound would now come out of the speakers")
         var ran = false
         _ = await used.coordinator.perform(.start, engine: .localMedia) { ran = true }
-        #expect(!ran && used.coordinator.prompt != nil)
+        #expect(ran && used.coordinator.prompt == nil && used.coordinator.loss == nil, "the Play runs on this Mac's output")
     }
     @Test func aPinnedDeviceThatVanishesIsALossToo() async {
         let rig = await Rig.make(devices: [Synthetic.speakers, Synthetic.dac], defaultUID: Synthetic.speakers.uid)
@@ -397,7 +395,8 @@ import TestSupport
     }
 }
 
-/// T22.5: nothing sounds on speakers after a loss until Play here is confirmed, and a receiver that cannot fade the timer says so before it is enabled.
+/// T22.5: a loss pauses and asks nothing; the person's next Play runs at once on this Mac's current output. A receiver that cannot fade the timer
+/// still says so before the timer is enabled.
 @Suite @MainActor struct PlayHereTests {
     private func lost(_ kind: OutputEngineKind = .localMedia) async -> Rig {
         let rig = await Rig.make()
@@ -407,49 +406,25 @@ import TestSupport
         return rig
     }
     @Test(arguments: [OutputEngineKind.youTubeMusic, .localMedia])
-    func playHereAsksFirstAndSoundsOnlyAfterConfirmation(kind: OutputEngineKind) async throws {
+    func aPlayAfterALossRunsAtOnceOnThisMacsOutput(kind: OutputEngineKind) async throws {
         let rig = await lost(kind)
+        #expect(rig.engine(kind).log == ["pauseForRouteLoss"] && !rig.engine(kind).audible, "the loss paused it")
         var started = 0
         let ran = await rig.coordinator.perform(.start, engine: kind) { started += 1; rig.engine(kind).started() }
-        #expect(!ran && started == 0 && !rig.engine(kind).audible, "the prompt is up and nothing is audible")
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected the Play here prompt"); return }
-        #expect(prompt.output == Synthetic.speakers.name && prompt.reason == .deviceDisconnected && !prompt.canReconnect)
-        await rig.coordinator.confirm(prompt.id)
-        #expect(started == 1 && rig.engine(kind).audible && rig.coordinator.loss(for: kind) == nil && rig.coordinator.prompt == nil)
-        #expect(rig.coordinator.selection == .systemDefault, "Play here means this Mac's current output")
+        #expect(ran && started == 1 && rig.engine(kind).audible && rig.coordinator.loss(for: kind) == nil && rig.coordinator.prompt == nil, "no prompt")
+        #expect(rig.coordinator.selection == .systemDefault, "the Play means this Mac's current output")
         if kind == .localMedia { #expect(rig.local.applied.last == .some(nil), "the local engine follows the system output again") }
         else { #expect(rig.local.applied.isEmpty, "the hidden player follows the Mac already; the local engine's choice is not touched") }
     }
-    @Test func playHereDoesNotRewriteTheRememberedRoute() async throws {
+    @Test func aPlayAfterALossDoesNotRewriteTheRememberedRoute() async throws {
         let rig = await Rig.make(devices: [Synthetic.speakers, Synthetic.buds], defaultUID: Synthetic.buds.uid, preferred: .device(uid: Synthetic.buds.uid))
         rig.local.audible = true
         rig.directory.change([Synthetic.speakers], defaultUID: Synthetic.speakers.uid)
-        _ = await rig.coordinator.perform(.start, engine: .localMedia) {}
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected the prompt"); return }
-        await rig.coordinator.confirm(prompt.id)
-        #expect(rig.store.load() == .device(uid: Synthetic.buds.uid), "a temporary Play here is not a new preference")
+        #expect(await rig.coordinator.perform(.start, engine: .localMedia) {})
+        #expect(rig.coordinator.prompt == nil)
+        #expect(rig.store.load() == .device(uid: Synthetic.buds.uid), "playing on this Mac after a loss is not a new preference")
     }
-    @Test func cancellingKeepsEverythingSilentAndTheLossStanding() async throws {
-        let rig = await lost()
-        var started = 0
-        _ = await rig.coordinator.perform(.start, engine: .localMedia) { started += 1 }
-        let id = try #require(rig.coordinator.prompt?.id)
-        rig.coordinator.cancel(id)
-        #expect(rig.coordinator.prompt == nil && started == 0 && rig.coordinator.loss != nil)
-        await rig.coordinator.confirm(id)
-        #expect(started == 0, "a cancelled prompt cannot be confirmed later")
-    }
-    @Test func aPromptTheRouteOutlivedIsDroppedAndNeverPlays() async throws {
-        let rig = await lost()
-        var started = 0
-        _ = await rig.coordinator.perform(.start, engine: .localMedia) { started += 1 }
-        let id = try #require(rig.coordinator.prompt?.id)
-        // The outputs change while the prompt is up (a device appears): what it described is no longer what would happen.
-        rig.directory.change([Synthetic.speakers, Synthetic.dac], defaultUID: Synthetic.dac.uid)
-        await rig.coordinator.confirm(id)
-        #expect(started == 0 && rig.coordinator.prompt == nil, "it must be asked again")
-    }
-    @Test func reconnectingAvoidsThePromptBecauseSoundReturnsToTheSameOutput() async {
+    @Test func reconnectingReturnsSoundToTheSameOutput() async {
         let rig = await lost()
         rig.directory.change([Synthetic.speakers, Synthetic.buds], defaultUID: Synthetic.buds.uid)
         #expect(await rig.coordinator.reconnect())
@@ -521,23 +496,20 @@ import TestSupport
         #expect(route.identity?.uid == Synthetic.dac.uid && route.pinned, "the wake check compares the device the engine was pointed at")
         #expect(rig.coordinator.audibleRoute(for: .youTubeMusic).pinned == false)
     }
-    @Test func lossesAreHeldPerEngineAndPlayHereClearsOnlyWhatItAccepted() async throws {
+    @Test func lossesAreHeldPerEngineAndAPlayClearsOnlyWhatItAccepted() async throws {
         let rig = await Rig.make(devices: [Synthetic.speakers, Synthetic.buds, Synthetic.dac], defaultUID: Synthetic.buds.uid)
         _ = await rig.coordinator.select(.device(uid: Synthetic.dac.uid), engine: .localMedia)
         rig.local.audible = true; rig.music.audible = true
         rig.directory.change([Synthetic.speakers], defaultUID: Synthetic.speakers.uid)   // both the AirPods and the DAC leave
         #expect(rig.coordinator.loss(for: .localMedia) != nil && rig.coordinator.loss(for: .youTubeMusic) != nil)
         var ran = 0
-        _ = await rig.coordinator.perform(.start, engine: .youTubeMusic) { ran += 1 }
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected the prompt"); return }
-        #expect(prompt.engine == .youTubeMusic)
-        await rig.coordinator.confirm(prompt.id)
+        #expect(await rig.coordinator.perform(.start, engine: .youTubeMusic) { ran += 1 })
         #expect(ran == 1 && rig.coordinator.loss(for: .youTubeMusic) == nil)
-        #expect(rig.coordinator.loss(for: .localMedia) != nil, "the local engine's DAC is a different loss and still needs its own Play here")
+        #expect(rig.coordinator.loss(for: .localMedia) != nil, "the local engine's DAC is a different loss and stays until that engine is played")
     }
-    // MARK: round 2, R2-1: the OTHER engine may not start on the speakers that took over
+    // MARK: round 2, R2-1: the OTHER engine's next Play also lands on the speakers that took over, and clears the shared loss
     @Test(arguments: [(OutputEngineKind.localMedia, OutputEngineKind.youTubeMusic), (.youTubeMusic, .localMedia)])
-    func afterALossTheOtherEngineAlsoNeedsPlayHereBeforeItStartsOnTheSpeakers(sounding: OutputEngineKind, other: OutputEngineKind) async throws {
+    func afterALossAPlayOnTheOtherEngineClearsTheSharedLoss(sounding: OutputEngineKind, other: OutputEngineKind) async throws {
         let rig = await Rig.make()   // both engines are on the system default, the earbuds
         rig.engine(sounding).audible = true
         rig.directory.change([Synthetic.speakers], defaultUID: Synthetic.speakers.uid)
@@ -547,11 +519,7 @@ import TestSupport
         #expect(!held.wasAudible && held.lost?.uid == Synthetic.buds.uid)
         var started = 0
         let ran = await rig.coordinator.perform(.start, engine: other) { started += 1; rig.engine(other).started() }
-        #expect(!ran && started == 0 && !rig.engine(other).audible, "a new item on the other engine asks first")
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected Play here"); return }
-        #expect(prompt.engine == other)
-        await rig.coordinator.confirm(prompt.id)
-        #expect(started == 1 && rig.coordinator.loss(for: other) == nil)
+        #expect(ran && started == 1 && rig.coordinator.loss(for: other) == nil && rig.coordinator.prompt == nil)
         #expect(rig.coordinator.loss(for: sounding) == nil, "accepting this Mac's output for the lost device clears the other engine's loss of the same device")
     }
     @Test func anEngineOnADifferentDeviceIsNotHeldByAnotherEnginesLoss() async {

@@ -410,9 +410,9 @@ import TestSupport
         if case .acknowledgeTimer = rig.coordinator.admission(.enableTimer, engine: .localMedia) {} else { Issue.record("PLAY17: a receiver that cannot fade must be explained first") }
     }
 
-    // MARK: Loss, Reconnect, Play here (T39.3)
+    // MARK: Loss, Reconnect, Play (T39.3)
 
-    @Test func aLostReceiverPausesTheSessionRecordsTheLossAndKeepsTheLocalEngineSilentUntilPlayHere() async throws {
+    @Test func aLostReceiverPausesTheSessionAndRecordsTheLoss() async throws {
         let rig = try await CastRig.make(); defer { rig.cleanup() }
         _ = await connect(rig)
         #expect(await waitUntil { rig.coordinator.remote?.state == .playing })
@@ -424,7 +424,6 @@ import TestSupport
         #expect(!rig.local.state.playing && rig.engine.lossPauses == 1, "the session was paused with a route-loss pause")
         #expect(await waitUntil { !rig.local.silenced }, "the engine is audible-capable again only after the pause settled")
         #expect(rig.coordinator.remote == nil)
-        if case .confirmPlayHere = rig.coordinator.admission(.start, engine: .localMedia) {} else { Issue.record("a Play after the loss must be held for confirmation") }
     }
     @Test func reconnectNeedsTheReceiverToBeSeenAgainAndNeverPlays() async throws {
         let rig = try await CastRig.make(); defer { rig.cleanup() }
@@ -449,33 +448,18 @@ import TestSupport
         try await Task.sleep(for: .milliseconds(60))
         #expect(rig.receiver.playerState == "PAUSED")
     }
-    @Test func aPlayAfterTheLossIsHeldAndOnlyAConfirmedPlayHereStartsSoundOnThisMac() async throws {
+    @Test func aPlayAfterTheLossStartsSoundOnThisMacWithoutAsking() async throws {
         let rig = try await CastRig.make(); defer { rig.cleanup() }
         _ = await connect(rig)
         rig.receiver.dropConnection()
         #expect(await waitUntil { rig.coordinator.loss(for: .localMedia) != nil })
         await rig.coordinator.settled()
         _ = await waitUntil { !rig.local.silenced }
+        #expect(!rig.local.state.playing, "the loss paused it")
         let ran = Mutex(false)
         let performed = await rig.coordinator.perform(.start, engine: .localMedia) { ran.withLock { $0 = true } }
-        #expect(!performed && !ran.withLock { $0 }, "held")
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("no Play here prompt"); return }
-        #expect(!rig.local.state.playing && !rig.local.log.suffix(2).contains("resume"), "nothing is audible while the question stands")
-        await rig.coordinator.confirm(prompt.id)
-        #expect(ran.withLock { $0 } && rig.coordinator.loss(for: .localMedia) == nil)
-        #expect(rig.coordinator.selection.isSystemDefault && rig.coordinator.preferred == CastFixtures.livingRoom.routeID, "Play here does not erase the remembered receiver")
-    }
-    @Test func cancellingPlayHereLeavesEverythingSilent() async throws {
-        let rig = try await CastRig.make(); defer { rig.cleanup() }
-        _ = await connect(rig)
-        rig.receiver.dropConnection()
-        #expect(await waitUntil { rig.coordinator.loss(for: .localMedia) != nil })
-        await rig.coordinator.settled()
-        let ran = Mutex(false)
-        await rig.coordinator.perform(.start, engine: .localMedia) { ran.withLock { $0 = true } }
-        guard let prompt = rig.coordinator.prompt else { Issue.record("no prompt"); return }
-        rig.coordinator.cancel(prompt.id)
-        #expect(!ran.withLock { $0 } && rig.coordinator.prompt == nil && rig.coordinator.loss(for: .localMedia) != nil && !rig.local.state.playing)
+        #expect(performed && ran.withLock { $0 } && rig.coordinator.prompt == nil && rig.coordinator.loss(for: .localMedia) == nil)
+        #expect(rig.coordinator.selection.isSystemDefault && rig.coordinator.preferred == CastFixtures.livingRoom.routeID, "playing here does not erase the remembered receiver")
     }
     @Test func anotherSenderTakingTheReceiverOverIsALossTooNotASilentSwitch() async throws {
         let rig = try await CastRig.make(); defer { rig.cleanup() }

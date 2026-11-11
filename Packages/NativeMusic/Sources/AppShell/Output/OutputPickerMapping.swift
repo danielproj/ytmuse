@@ -115,12 +115,6 @@ enum OutputPickerMapping {
 
     @MainActor static func prompt(for controller: OutputController) -> OutputPromptContent? {
         switch controller.coordinator.prompt {
-        case .playHere(let value)?:
-            let place = value.output.map { String(localized: "Playing now uses \($0).") } ?? String(localized: "Playing now uses this Mac's sound output.")
-            let reconnect = value.canReconnect ? " " + String(localized: "The output you were using is back; choose Reconnect in the Output menu to continue there.") : ""
-            let castLoss = controller.coordinator.loss(for: value.engine)?.lostRoute.isCast ?? false
-            return .init(id: value.id, kind: .playHere(canReconnect: value.canReconnect), title: String(localized: "Play on this Mac?"),
-                         message: lossMessage(value.reason, cast: castLoss) + " " + place + reconnect, confirmTitle: String(localized: "Play Here"))
         case .timer(let value)?:
             return .init(id: value.id, kind: .timer, title: String(localized: "This receiver can't fade the sleep timer"),
                          message: String(localized: "The sleep timer will pause playback on the receiver when it ends, but it can't fade the sound first. Turn it on anyway?"),

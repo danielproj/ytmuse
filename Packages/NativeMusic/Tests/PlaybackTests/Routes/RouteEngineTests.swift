@@ -91,38 +91,23 @@ final class PlaybackScriptedDirectory: OutputDirectory, @unchecked Sendable {
         #expect(extra >= 1 && extra <= 3, "an in-flight 'playing' report is answered with a bounded repeat of the pause (\(extra))")
         #expect(!player.snapshot.intent && count(page, WebMusicScripts.play) == 0, "and nothing ever plays by itself")
     }
-    @Test func reconnectingNeverPlaysAndAPersonsPlayIsHeldForConfirmation() async throws {
+    @Test func reconnectingNeverPlaysAndAPersonsPlayPlaysAtOnce() async throws {
         let rig = try await OutputRig.make()
         let (player, page) = try await rig.play()
         rig.unplug(); await rig.coordinator.settled()
         rig.replug()
         #expect(rig.coordinator.loss != nil && rig.coordinator.lossCanReconnect(for: .youTubeMusic))
         #expect(count(page, WebMusicScripts.play) == 0, "the output is back and nothing started")
-        // A person presses Play (or a media key does): the speakers/other output would take over, so the owner asks first.
+        // A person presses Play (or a media key does): it plays on this Mac's current output, without a prompt.
         await player.resume()
-        #expect(count(page, WebMusicScripts.play) == 0 && rig.coordinator.prompt != nil, "held for confirmation")
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected Play here"); return }
-        await rig.coordinator.confirm(prompt.id)
-        #expect(count(page, WebMusicScripts.play) == 1 && player.snapshot.intent && !player.snapshot.pausedByRouteLoss)
+        #expect(count(page, WebMusicScripts.play) == 1 && player.snapshot.intent && !player.snapshot.pausedByRouteLoss && rig.coordinator.prompt == nil)
     }
-    @Test func aNewItemStartedAfterALossIsHeldForConfirmationToo() async throws {
+    @Test func aNewItemStartedAfterALossStartsWithoutAsking() async throws {
         let rig = try await OutputRig.make()
         _ = try await rig.play()
         rig.unplug(); await rig.coordinator.settled()
-        let pages = rig.base.log.pages.count
         let outcome = await rig.model.playMusic(playlistID: "PLsyntheticOther", title: "Another", request: rig.base.authority.requestOwnedStart())
-        #expect(outcome == .busy && rig.base.log.pages.count == pages && rig.coordinator.prompt != nil, "nothing loads or plays until Play here is confirmed")
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected Play here"); return }
-        await rig.coordinator.confirm(prompt.id)
-        #expect(rig.coordinator.loss == nil)
-    }
-    @Test func aMediaKeyPlayAfterALossIsHeldToo() async throws {
-        let rig = try await OutputRig.make()
-        _ = try await rig.play()
-        rig.unplug(); await rig.coordinator.settled()
-        #expect(rig.model.remote(.play) == .success, "admitted: the owner decides asynchronously")
-        try await Task.sleep(for: .milliseconds(50))
-        #expect(rig.coordinator.prompt != nil && !(rig.base.log.pages.first?.bodies.contains(WebMusicScripts.play) ?? true))
+        #expect(outcome == .started && rig.coordinator.prompt == nil && rig.coordinator.loss == nil)
     }
     @Test func aSystemWakeCannotResumeOverARouteLossHeldBeforeIt() async throws {
         let rig = try await OutputRig.make()
@@ -237,17 +222,15 @@ final class PlaybackScriptedDirectory: OutputDirectory, @unchecked Sendable {
 }
 
 @Suite @MainActor struct NativePlayHereResumeTests {
-    @Test func aPersonsPlayAfterARouteLossAndPlayHereReallyPlaysAgain() async throws {
+    @Test func aPersonsPlayAfterARouteLossReallyPlaysAgain() async throws {
         let rig = try await OutputRig.make()
         let session = try await ownedSession(wall: ManualWall(), clock: ManualMonotonic())
         try await session.startOwnedMedia(OwnedMedia.items)
         rig.model.session = session
         rig.unplug(); await rig.coordinator.settled()
         #expect(try await session.snapshot().playback.intent == .pause(.routeLoss))
-        await rig.model.nativePlayPause()   // held: Play here is asked first
-        #expect(try await session.snapshot().playback.intent == .pause(.routeLoss), "nothing plays before the confirmation")
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected Play here"); return }
-        await rig.coordinator.confirm(prompt.id)
+        await rig.model.nativePlayPause()   // plays on this Mac's current output: no prompt
+        #expect(rig.coordinator.prompt == nil)
         var state = try await session.snapshot().playback
         for _ in 0..<100 where state.state != .playing { try await Task.sleep(for: .milliseconds(50)); state = try await session.snapshot().playback }
         #expect(state.intent == .play && state.state == .playing, "intent \(state.intent) state \(state.state)")

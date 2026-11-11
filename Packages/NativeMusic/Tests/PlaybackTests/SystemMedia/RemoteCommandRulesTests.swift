@@ -10,7 +10,7 @@ import Testing
 import TestSupport
 
 /// T23.3 (ARCH03): Play, seek, jumps, speed, like, dislike and save from a media key, an accessory or Control Center obey the same capabilities, the
-/// same generation and account fencing, the same advertisement restrictions and the same Play here gate as the window's own controls. A command the
+/// same generation and account fencing, the same advertisement restrictions and the same route gate as the window's own controls. A command the
 /// handler would refuse is never switched on, and one that arrives anyway is refused, never silently dropped.
 @Suite @MainActor struct RemoteCommandRulesTests {
     private func sample(_ kind: RemoteCommandKind) -> RemoteTransportCommand {
@@ -211,21 +211,18 @@ import TestSupport
         #expect(source.contains("LibraryControlPress.press(control, ledger: self.library.ledger, social: self.social)"))
     }
 
-    // MARK: Play here (W22) and fencing
+    // MARK: route loss (W22) and fencing
 
-    @Test func aMediaKeyPlayAfterARouteLossAsksPlayHereFirstAndRunsAfterTheConfirmation() async throws {
+    @Test func aMediaKeyPlayAfterARouteLossPlaysOnThisMacWithoutAsking() async throws {
         let rig = try await MediaRig.make(outputs: true)
         let (player, page) = try await rig.play()
         rig.directory?.change([routeSpeakers], defaultUID: routeSpeakers.uid)
         await rig.controller?.coordinator.settled()
         let plays = page.bodies.filter { $0 == WebMusicScripts.play }.count
-        #expect(rig.model.remote(.toggle) == .success, "admitted: the route's gate decides asynchronously")
-        await rig.wait { rig.controller?.coordinator.prompt != nil }
-        let prompt = try #require(rig.controller?.coordinator.prompt)
-        #expect(page.bodies.filter { $0 == WebMusicScripts.play }.count == plays && !player.snapshot.intent, "nothing sounds before the confirmation")
-        await rig.controller?.coordinator.confirm(prompt.id)
+        #expect(!player.snapshot.intent, "the loss paused it")
+        #expect(rig.model.remote(.toggle) == .success)
         await rig.wait { page.bodies.filter { $0 == WebMusicScripts.play }.count > plays }
-        #expect(page.bodies.filter { $0 == WebMusicScripts.play }.count == plays + 1)
+        #expect(page.bodies.filter { $0 == WebMusicScripts.play }.count == plays + 1 && rig.controller?.coordinator.prompt == nil)
     }
     @Test func aCommandAdmittedUnderOneOwnershipNeverReachesTheNextOne() throws {
         let system = NowPlayingSystem.recording()

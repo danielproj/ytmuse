@@ -50,7 +50,7 @@ struct OutputPickerHost: View {
     }
 }
 
-/// Play here / remote-timer confirmation, inline in the transport. Nothing sounds until its button is pressed.
+/// The remote-timer confirmation, inline in the transport.
 struct OutputPromptHost: View {
     let controller: OutputController
     var body: some View {
@@ -61,7 +61,7 @@ struct OutputPromptHost: View {
 }
 
 extension OutputController {
-    /// "Play Here…" from the picker: asks first (the loss is still pending), then resumes whichever engine holds the session.
+    /// "Play Here" from the picker: accepts this Mac's current output and resumes whichever engine holds the session.
     func requestPlayHere() async {
         guard let model else { return }
         if let player = model.music, !player.isClosed {

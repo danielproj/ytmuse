@@ -7,8 +7,8 @@ import Testing
 @testable import Playback
 @testable import AppShell
 
-/// W22 rework: Play here gates EVERY audible path, a held prompt does not survive an account barrier, the receiver's position is what is shown, and the
-/// wake check uses the same per-engine route as the loss policy.
+/// W22 rework: after a loss EVERY audible path (a person's Play, Next, Previous, a media key, a new item) plays on this Mac's current output without a
+/// prompt, the receiver's position is what is shown, and the wake check uses the same per-engine route as the loss policy.
 @Suite @MainActor struct RouteGateTests {
     private func count(_ page: FakeMusicPage, _ body: String) -> Int { page.bodies.filter { $0 == body }.count }
     /// A hidden player playing near the start of its item (so Previous goes to the previous item rather than restarting this one), whose output then leaves.
@@ -28,32 +28,20 @@ import Testing
     }
 
     // MARK: finding 2a: Next / Previous on the hidden player
-    @Test func nextAndPreviousOnTheHiddenPlayerAreHeldAfterALoss() async throws {
+    @Test func nextAndPreviousOnTheHiddenPlayerRunAtOnceAfterALoss() async throws {
         let (rig, player, page) = try await lostMusic()
         let skips = count(page, WebMusicScripts.skip)
         await player.next()
-        #expect(count(page, WebMusicScripts.skip) == skips && !player.snapshot.intent && rig.coordinator.prompt != nil, "the transport's Next asks first and sends nothing")
-        rig.coordinator.cancel(try #require(rig.coordinator.prompt?.id))
+        #expect(count(page, WebMusicScripts.skip) == skips + 1 && player.snapshot.intent && rig.coordinator.prompt == nil && rig.coordinator.loss == nil, "Next plays here")
         await player.previous()
-        #expect(count(page, WebMusicScripts.skip) == skips && !player.snapshot.intent && rig.coordinator.prompt != nil, "so does Previous")
+        #expect(count(page, WebMusicScripts.skip) == skips + 2 && rig.coordinator.prompt == nil, "so does Previous")
     }
-    @Test func mediaKeyNextAndPreviousOnTheHiddenPlayerAreHeldAfterALoss() async throws {
+    @Test func mediaKeyNextOnTheHiddenPlayerRunsAtOnceAfterALoss() async throws {
         let (rig, player, page) = try await lostMusic()
         let skips = count(page, WebMusicScripts.skip)
-        for command in [RemoteTransportCommand.next, .previous] {
-            _ = rig.model.remote(command)
-            try await Task.sleep(for: .milliseconds(50))
-            #expect(count(page, WebMusicScripts.skip) == skips && !player.snapshot.intent && rig.coordinator.prompt != nil, "\(command)")
-            rig.coordinator.cancel(try #require(rig.coordinator.prompt?.id))
-        }
-    }
-    @Test func nextRunsAfterPlayHereIsConfirmed() async throws {
-        let (rig, player, page) = try await lostMusic()
-        let skips = count(page, WebMusicScripts.skip)
-        await player.next()
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected Play here"); return }
-        await rig.coordinator.confirm(prompt.id)
-        #expect(count(page, WebMusicScripts.skip) == skips + 1 && player.snapshot.intent)
+        _ = rig.model.remote(.next)
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(count(page, WebMusicScripts.skip) == skips + 1 && player.snapshot.intent && rig.coordinator.prompt == nil)
     }
     @Test func nextWithNoLossStillGoesStraightThrough() async throws {
         let rig = try await OutputRig.make()
@@ -64,35 +52,22 @@ import Testing
     }
 
     // MARK: finding 2b: new native items
-    @Test func aNewNativeItemAfterALossAsksFirstAndStartsNothingUntilConfirmed() async throws {
+    @Test func aNewNativeItemAfterALossStartsWithoutAsking() async throws {
         let (rig, session) = try await nativeLost()
-        let request = rig.model.authority.requestOwnedStart()
-        await rig.model.startOwned(request: request)
-        #expect(rig.coordinator.prompt != nil && rig.model.error == nil, "held: the owner was not even asked to open a store")
-        guard case .playHere(let prompt)? = rig.coordinator.prompt else { Issue.record("expected Play here"); return }
-        await rig.coordinator.confirm(prompt.id)
-        // The test harness refuses production stores, so the confirmed start fails at the owner: proof that it ran only AFTER the confirmation.
-        #expect(rig.model.error != nil)
-        await session.close()
-    }
-    @Test func aNewNativeVideoAfterALossIsHeldToo() async throws {
-        let (rig, session) = try await nativeLost()
-        await rig.model.startOwnedVideo(request: rig.model.authority.requestOwnedStart())
-        #expect(rig.coordinator.prompt != nil && rig.model.error == nil)
+        await rig.model.startOwned(request: rig.model.authority.requestOwnedStart())
+        // The test harness refuses production stores, so the start fails at the owner: proof that it ran with no prompt in between.
+        #expect(rig.coordinator.prompt == nil && rig.coordinator.loss(for: .localMedia) == nil && rig.model.error != nil)
         await session.close()
     }
 
     // MARK: finding 6: the native media-key gate
-    @Test func nativeMediaKeyPlayAndToggleAreHeldAfterALoss() async throws {
+    @Test func nativeMediaKeyPlayResumesAtOnceAfterALoss() async throws {
         let (rig, session) = try await nativeLost()
         #expect(try await session.snapshot().playback.intent == .pause(.routeLoss))
-        for command in [RemoteTransportCommand.play, .toggle] {
-            #expect(rig.model.remote(command) == .success)
-            try await Task.sleep(for: .milliseconds(80))
-            #expect(rig.coordinator.prompt != nil, "\(command): Play here is asked")
-            #expect(try await session.snapshot().playback.intent == .pause(.routeLoss), "\(command): nothing resumed")
-            rig.coordinator.cancel(try #require(rig.coordinator.prompt?.id))
-        }
+        #expect(rig.model.remote(.play) == .success)
+        var intent = try await session.snapshot().playback.intent
+        for _ in 0..<40 where intent != .play { try await Task.sleep(for: .milliseconds(50)); intent = try await session.snapshot().playback.intent }
+        #expect(intent == .play && rig.coordinator.prompt == nil && rig.coordinator.loss(for: .localMedia) == nil)
         await session.close()
     }
 
@@ -106,53 +81,18 @@ import Testing
         #expect(page.commands.count == before && rig.coordinator.prompt == nil)
     }
 
-    // MARK: finding 5: account barrier
-    @Test func aHeldPromptDoesNotSurviveAnAccountBarrierAndItsStartPermitIsRejected() async throws {
-        let (rig, _, page) = try await lostMusic()
-        let pages = rig.base.log.pages.count
-        let request = rig.base.authority.requestOwnedStart()
-        let outcome = await rig.model.playMusic(playlistID: "PLsyntheticOther", title: "Another", request: request)
-        #expect(outcome == .busy && rig.coordinator.prompt != nil)
-        let id = try #require(rig.coordinator.prompt?.id)
-        // The account switches (the same barrier the lifecycle sends every participant).
-        let context = rig.base.context
-        try await rig.base.authority.detach(previous: context, barrier: RequestContext(account: nil, accountGeneration: context.accountGeneration + 1, requestGeneration: 0))
-        #expect(rig.coordinator.prompt == nil, "the prompt belonged to the earlier account")
-        await rig.coordinator.confirm(id)
-        #expect(rig.base.log.pages.count == pages && count(page, WebMusicScripts.loadPlaylist) == 0, "a late confirmation starts nothing")
-        // And even a start that somehow ran later would carry the OLD permit, which the barrier rejected.
-        let late = await rig.model.playMusic(playlistID: "PLsyntheticOther", title: "Another", request: request)
-        #expect(late != .started)
-    }
-
-    @Test func aHeldStartKeepsTheClicksOwnPermitSoABarrierRejectsItEvenIfThePromptSurvived() async throws {
-        let (rig, _, _) = try await lostMusic()
-        // Isolate the permit defence: the barrier no longer discards the prompt, so only the permit can stop the held start.
-        await rig.base.authority.onBarrier {}
-        let pages = rig.base.log.pages.count
-        let outcome = await rig.model.playMusic(playlistID: "PLsyntheticOther", title: "Another", request: rig.base.authority.requestOwnedStart())
-        #expect(outcome == .busy)
-        let id = try #require(rig.coordinator.prompt?.id)
-        let context = rig.base.context
-        try await rig.base.authority.detach(previous: context, barrier: RequestContext(account: nil, accountGeneration: context.accountGeneration + 1, requestGeneration: 0))
-        // The account is back (a later restore), so a start with a FRESH permit would now succeed: only the click's own, rejected permit stops this one.
-        try await rig.base.authority.restorePaused(rig.base.identity, context: rig.base.context)
-        await rig.coordinator.confirm(id)
-        #expect(rig.base.log.pages.count == pages, "the held start used the permit captured at the click, which the barrier rejected")
-    }
-
     // MARK: round 2, R2-1 on the real owner, both directions
-    @Test func aNewYouTubeMusicItemAfterANativeLossAsksFirst() async throws {
+    @Test func aNewYouTubeMusicItemAfterANativeLossStartsWithoutAsking() async throws {
         let (rig, session) = try await nativeLost()
         let pages = rig.base.log.pages.count
         let outcome = await rig.model.playMusic(playlistID: "PLsyntheticOther", title: "Another", request: rig.base.authority.requestOwnedStart())
-        #expect(outcome == .busy && rig.base.log.pages.count == pages && rig.coordinator.prompt != nil, "the speakers would take over: nothing loads until Play here is confirmed")
+        #expect(outcome == .started && rig.base.log.pages.count > pages && rig.coordinator.prompt == nil)
         await session.close()
     }
-    @Test func aNewNativeItemAfterAHiddenPlayerLossAsksFirst() async throws {
+    @Test func aNewNativeItemAfterAHiddenPlayerLossStartsWithoutAsking() async throws {
         let (rig, _, _) = try await lostMusic()
         await rig.model.startOwned(request: rig.model.authority.requestOwnedStart())
-        #expect(rig.coordinator.prompt != nil && rig.model.error == nil, "held: the owner was not asked to open anything")
+        #expect(rig.coordinator.prompt == nil && rig.coordinator.losses.isEmpty, "the Play accepted this Mac's output for the lost device")
     }
 
     // MARK: round 2, R2-3: the native engine is silenced in the announcement's own turn

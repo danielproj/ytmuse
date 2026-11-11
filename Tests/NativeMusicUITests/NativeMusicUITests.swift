@@ -3194,9 +3194,9 @@ final class NativeMusicUITests: XCTestCase {
         expectation(for: NSPredicate(format: "label == %@ OR value == %@", state, state), evaluatedWith: element)
         waitForExpectations(timeout: timeout)
     }
-    /// The output picker lists the scripted outputs with their state and what they cannot do; a lost output pauses with a route-loss reason; Play asks
-    /// first ("Play here") and stays silent until confirmed; Cancel leaves it silent.
-    @MainActor func testW22OutputPickerLossAndPlayHereConfirmation() throws {
+    /// The output picker lists the scripted outputs with their state and what they cannot do; a lost output pauses with a route-loss reason; the next Play
+    /// plays on this Mac's output without a prompt.
+    @MainActor func testW22OutputPickerLossAndPlayAfterLoss() throws {
         let app = try lifecycleApplication()
         app.launch(); defer { app.terminate() }
         XCTAssertTrue(app.windows["YTMuse"].waitForExistence(timeout: 15))
@@ -3216,20 +3216,12 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertTrue(app.buttons["outputPlayHere"].firstMatch.waitForExistence(timeout: 10))
         capture(app.windows.firstMatch, "W22 output lost")
         app.typeKey(.escape, modifierFlags: [])
-        // Play asks first, and nothing sounds meanwhile.
-        app.buttons["transportPlayPause"].firstMatch.click()
-        XCTAssertTrue(app.buttons["outputPromptConfirm"].firstMatch.waitForExistence(timeout: 10))
+        // It stays paused until a person presses Play; then it plays on this Mac's output, with no prompt.
         Thread.sleep(forTimeInterval: 2)
-        XCTAssertEqual(playbackState(app), "paused", "nothing is audible while the confirmation is up")
-        capture(app.windows.firstMatch, "W22 Play here confirmation")
-        app.buttons["outputPromptCancel"].firstMatch.click()
-        XCTAssertFalse(app.buttons["outputPromptConfirm"].firstMatch.exists)
-        XCTAssertEqual(playbackState(app), "paused", "cancelling leaves it silent")
-        // Confirming plays on this Mac's output.
+        XCTAssertEqual(playbackState(app), "paused", "a loss only pauses")
         app.buttons["transportPlayPause"].firstMatch.click()
-        XCTAssertTrue(app.buttons["outputPromptConfirm"].firstMatch.waitForExistence(timeout: 10))
-        app.buttons["outputPromptConfirm"].firstMatch.click()
         waitForPlaybackState(app, "playing")
+        XCTAssertFalse(app.otherElements["outputPrompt"].firstMatch.exists, "no Play here prompt")
     }
 
     // MARK: W28 - keyboard-only paths, an accessibility-tree traversal and independent language choices (T28.1, T28.5, T28.6)
@@ -3462,7 +3454,7 @@ final class NativeMusicUITests: XCTestCase {
         XCTAssertTrue(quitNote.waitForExistence(timeout: 10))
         capture(app.windows.firstMatch, "W39 casting")
         app.typeKey(.escape, modifierFlags: [])
-        // The receiver drops: playback pauses, the picker offers Play Here, and Play asks first.
+        // The receiver drops: playback pauses, the picker offers Play Here, and Play plays on this Mac without asking.
         app.buttons["simulateCastLoss"].firstMatch.click()
         waitForPlaybackState(app, "paused")
         picker.click()
@@ -3471,12 +3463,8 @@ final class NativeMusicUITests: XCTestCase {
         capture(app.windows.firstMatch, "W39 cast receiver lost")
         app.typeKey(.escape, modifierFlags: [])
         app.buttons["transportPlayPause"].firstMatch.click()
-        XCTAssertTrue(app.buttons["outputPromptConfirm"].firstMatch.waitForExistence(timeout: 10))
-        Thread.sleep(forTimeInterval: 2)
-        XCTAssertEqual(playbackState(app), "paused", "nothing is audible while the confirmation is up")
-        capture(app.windows.firstMatch, "W39 cast Play here confirmation")
-        app.buttons["outputPromptCancel"].firstMatch.click()
-        XCTAssertEqual(playbackState(app), "paused")
+        waitForPlaybackState(app, "playing")
+        XCTAssertFalse(app.otherElements["outputPrompt"].firstMatch.exists, "no Play here prompt")
     }
 }
 

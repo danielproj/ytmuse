@@ -32,19 +32,10 @@ public enum SelectionOutcome: Equatable, Sendable {
 public enum HandoffOutcome: Equatable, Sendable { case ready, refused, superseded }
 public enum AudibleGate: Sendable, Equatable { case start, enableTimer }
 
-public struct PlayHerePrompt: Equatable, Sendable {
-    public let id: UUID
-    /// The engine whose route was lost (the one that asked to start).
-    public let engine: OutputEngineKind
-    /// Where the sound would come out if confirmed (display name only; nothing keyed on it).
-    public let output: String?
-    public let reason: RouteLossReason
-    public let canReconnect: Bool
-}
 public struct TimerPrompt: Equatable, Sendable { public let id: UUID }
 public enum OutputPrompt: Equatable, Sendable, Identifiable {
-    case playHere(PlayHerePrompt), timer(TimerPrompt)
-    public var id: UUID { switch self { case .playHere(let prompt): prompt.id; case .timer(let prompt): prompt.id } }
+    case timer(TimerPrompt)
+    public var id: UUID { switch self { case .timer(let prompt): prompt.id } }
 }
 
 @MainActor @Observable public final class OutputRouteCoordinator {
@@ -291,51 +282,48 @@ public enum OutputPrompt: Equatable, Sendable, Identifiable {
 
     // MARK: Audible actions (ROUTE09, PLAY17)
 
-    public enum Admission: Equatable, Sendable { case allowed, confirmPlayHere(PlayHerePrompt), acknowledgeTimer(TimerPrompt) }
+    public enum Admission: Equatable, Sendable { case allowed, acknowledgeTimer(TimerPrompt) }
 
-    /// What must happen before sound may start (or a timer may be enabled) for this engine on its route.
+    /// What must happen before sound may start (or a timer may be enabled) for this engine on its route. A route loss asks nothing: the loss
+    /// already paused playback, and the person's next Play is the decision to play on this Mac's current output (`perform` accepts it).
     public func admission(_ gate: AudibleGate, engine kind: OutputEngineKind, timerActive: Bool = false) -> Admission {
-        if gate == .start, let loss = losses[kind] {
-            return .confirmPlayHere(PlayHerePrompt(id: UUID(), engine: kind, output: snapshot.defaultDevice?.name, reason: loss.reason, canReconnect: loss.canReconnect(in: snapshot, casts: castDevices)))
-        }
         let wantsTimerNote = gate == .enableTimer || timerActive
         if wantsTimerNote, capabilities(for: kind).timer == .pauseOnly, !(remote.map { acknowledgedTimerSessions.contains($0.id) } ?? false) {
             return .acknowledgeTimer(TimerPrompt(id: UUID()))
         }
         return .allowed
     }
-    /// Runs `body` (the audible action) only when the route allows it; otherwise raises the prompt and holds `body` until it is confirmed.
-    /// Returns whether `body` ran.
+    /// Runs `body` (the audible action) when the route allows it; otherwise raises the timer note and holds `body` until it is confirmed.
+    /// A Play after a route loss runs at once on this Mac's current output. Returns whether `body` ran.
     @discardableResult public func perform(_ gate: AudibleGate, engine kind: OutputEngineKind, timerActive: Bool = false, _ body: @escaping @MainActor () async -> Void) async -> Bool {
+        if gate == .start { await acceptCurrentOutput(for: kind) }
         switch admission(gate, engine: kind, timerActive: timerActive) {
         case .allowed:
             if gate == .start { soundedOn.insert(kind) }
             await body(); return true
-        case .confirmPlayHere(let value):
-            pending = (value.id, generation, body); prompt = .playHere(value); return false
         case .acknowledgeTimer(let value):
             pending = (value.id, generation, body); prompt = .timer(value); return false
         }
     }
-    /// The person confirmed. Play here accepts this Mac's current output for the engine that asked: the loss (and any other engine's loss of the SAME
-    /// device) is cleared, the local engine follows the system output again (not persisted: the preferred route stays as it was), and the held action
-    /// runs. A prompt that the route outlived (the outputs changed after it was shown) is dropped and must be asked again.
+    /// Accepts this Mac's current output for `engine` after a route loss: the loss (and any other engine's loss of the SAME device) is cleared, and the
+    /// local engine follows the system output again (not persisted: the preferred route stays as it was). Nothing when no loss is held.
+    public func acceptCurrentOutput(for engine: OutputEngineKind) async {
+        guard losses[engine] != nil else { return }
+        selectionTicket &+= 1
+        let accepted = losses[engine]?.lost
+        for (kind, loss) in losses where kind == engine || (accepted != nil && loss.lost == accepted) { losses[kind] = nil }
+        generation &+= 1
+        if engine == .localMedia {
+            selection = .systemDefault
+            _ = await engines[.localMedia]?.apply(output: nil)
+        }
+        for kind in [OutputEngineKind.youTubeMusic, .localMedia] { audible[kind] = identity(for: kind) }
+    }
+    /// The person confirmed the timer note: the held action runs. A note that the route outlived (the outputs changed after it was shown) is dropped.
     public func confirm(_ id: UUID) async {
         guard let held = pending, held.id == id, prompt?.id == id else { return }
         guard held.generation == generation else { ignoredStale += 1; clearPrompt(); return }
         switch prompt {
-        case .playHere(let value)?:
-            clearPrompt()
-            selectionTicket &+= 1
-            let accepted = losses[value.engine]?.lost
-            for (kind, loss) in losses where kind == value.engine || (accepted != nil && loss.lost == accepted) { losses[kind] = nil }
-            generation &+= 1; soundedOn.insert(value.engine)
-            if value.engine == .localMedia {
-                selection = .systemDefault
-                _ = await engines[.localMedia]?.apply(output: nil)
-            }
-            for kind in [OutputEngineKind.youTubeMusic, .localMedia] { audible[kind] = identity(for: kind) }
-            await held.body()
         case .timer?:
             clearPrompt()
             if let remote { acknowledgedTimerSessions.insert(remote.id) }
@@ -345,7 +333,7 @@ public enum OutputPrompt: Equatable, Sendable, Identifiable {
     }
     public func cancel(_ id: UUID) { if pending?.id == id { clearPrompt() } }
     private func clearPrompt() { pending = nil; prompt = nil }
-    /// An account barrier (switch, sign-out, removal, quit): a held Play here or timer prompt belongs to the account that raised it and must not
+    /// An account barrier (switch, sign-out, removal, quit): a held timer prompt belongs to the account that raised it and must not
     /// survive it (DATA03). Route losses stay: they describe the Mac, not the account.
     public func discardHeld() { clearPrompt() }
 
@@ -379,7 +367,7 @@ public enum OutputPrompt: Equatable, Sendable, Identifiable {
     /// The outputs changed (called in the turn the system announces it). Re-reads the list; the notification itself carries nothing. Each engine is judged
     /// against the route IT is audible on, so a loss of the system default pauses the hidden player and a loss of the local engine's chosen device pauses
     /// only the local engine. When a device is lost that an engine made sound on, every OTHER engine whose route was that same device also holds the loss
-    /// (quietly: nothing of it was playing), so no engine can start on the speakers that took over without Play here (ROUTE09).
+    /// (quietly: nothing of it was playing), so no engine keeps playing on the speakers that took over; the next explicit Play starts there (ROUTE09).
     public func directoryChanged() {
         let before = audible
         snapshot = directory.snapshot()

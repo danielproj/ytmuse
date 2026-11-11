@@ -176,7 +176,7 @@ import SystemIntegration
 
     // MARK: Gate
 
-    /// Runs an audible action only when the route allows it (Play here after a loss; the timer note on a receiver). True when it ran.
+    /// Runs an audible action when the route allows it (a Play after a loss accepts this Mac's output; the timer note on a receiver). True when it ran.
     @discardableResult func gate(_ gate: AudibleGate, engine: OutputEngineKind, timerActive: Bool = false, _ body: @escaping @MainActor () async -> Void) async -> Bool {
         await coordinator.perform(gate, engine: engine, timerActive: timerActive, body)
     }

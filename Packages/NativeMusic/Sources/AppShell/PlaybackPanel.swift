@@ -416,15 +416,9 @@ enum PlaybackUIAction: Equatable, Sendable {
     }
     var starting = false
     var pending = false
-    /// ROUTE09: while the local engine's route is lost, a new native item (owned, video or a kept download) asks Play here first. The held start keeps the
-    /// permit captured at the click; an account barrier discards the prompt and rejects the permit.
-    private func holdNativeStartForLoss(_ again: @escaping @MainActor (PlaybackModel) async -> Void) async -> Bool {
-        guard let outputs, outputs.lossPending(for: .localMedia) else { return false }
-        await outputs.gate(.start, engine: .localMedia) { [weak self] in if let self { await again(self) } }
-        return true
-    }
     func startOwned(request: OwnedStartRequest) async {
-        if await holdNativeStartForLoss({ await $0.startOwned(request: request) }) { return }
+        // ROUTE09: a new item after a route loss plays on this Mac's current output; the loss already paused what was playing.
+        await outputs?.coordinator.acceptCurrentOutput(for: .localMedia)
         let replacement = await settleReplacement(retry: { [weak self] _ in await self?.startOwned(request: request) })
         guard replacement.proceed else { return }
         guard !starting else { return }; error = nil; failedAction = nil; retryOperation = nil; failedSession = nil; starting = true; defer { starting = false }
@@ -448,12 +442,7 @@ enum PlaybackUIAction: Equatable, Sendable {
     }
     /// Plays a kept (downloaded) item through the native session, with Now Playing and media keys. False when it could not start.
     func playKept(_ item: PlayableDownload, parts: RetainedPlaybackParts) async -> Bool {
-        if outputs?.lossPending(for: .localMedia) == true {
-            // The held start runs after the confirmation with the permit captured now.
-            let held = authority.requestOwnedStart()
-            _ = await holdNativeStartForLoss({ _ = await $0.playKeptAdmitted(item, parts: parts, request: held) })
-            return false
-        }
+        await outputs?.coordinator.acceptCurrentOutput(for: .localMedia)
         return await playKeptAdmitted(item, parts: parts, request: authority.requestOwnedStart())
     }
     private func playKeptAdmitted(_ item: PlayableDownload, parts: RetainedPlaybackParts, request: OwnedStartRequest) async -> Bool {
@@ -477,7 +466,7 @@ enum PlaybackUIAction: Equatable, Sendable {
     }
     /// Debug-only: the owned synthetic video (video-only, silent) through the native AVKit path.
     func startOwnedVideo(request: OwnedStartRequest) async {
-        if await holdNativeStartForLoss({ await $0.startOwnedVideo(request: request) }) { return }
+        await outputs?.coordinator.acceptCurrentOutput(for: .localMedia)
         guard !starting else { return }; error = nil; failedAction = nil; retryOperation = nil; failedSession = nil; starting = true; defer { starting = false }
         let carried = sleepTimerToCarry(leavingYouTubeMusic: true)
         if let outputs, await outputs.coordinator.beginHandoff(to: .localMedia) == .refused { self.error = String(localized: "The other player could not be stopped. Try Play again."); return }
@@ -633,16 +622,8 @@ enum PlaybackUIAction: Equatable, Sendable {
         defer { PerformanceSignposts.end(startSignpost, failed: error != nil) }
         defer { profileSink?(.playbackStart, Double(DispatchTime.now().uptimeNanoseconds - profileStart) / 1_000_000) }
         playRequestCount += 1
-        // ROUTE09: after a route loss a new item on the speakers needs Play here first; the held start runs after the confirmation.
-        // The held start keeps the permit captured at the click: an account barrier in between rejects it (DATA03), it is never re-minted at confirmation.
-        if let outputs, outputs.lossPending(for: .youTubeMusic) {
-            let held = await outputs.gate(.start, engine: .youTubeMusic) { [weak self] in
-                guard let self else { return }
-                self.starting = false
-                _ = await self.playMusic(playlistID: playlistID, title: title, videoID: videoID, params: params, intent: intent, queueCommand: queueCommand, request: request)
-            }
-            return held ? .started : .busy
-        }
+        // ROUTE09: a new item after a route loss plays on this Mac's current output; the loss already paused what was playing.
+        await outputs?.coordinator.acceptCurrentOutput(for: .youTubeMusic)
         // ROUTE08: the native engine is silenced (and confirmed) before the hidden player starts.
         let carried = sleepTimerToCarry(leavingYouTubeMusic: false)   // P17-WEB: a native timer keeps running on the hidden player
         if let outputs, await outputs.coordinator.beginHandoff(to: .youTubeMusic) == .refused { self.error = String(localized: "The other player could not be stopped. Try Play again."); return .failed }

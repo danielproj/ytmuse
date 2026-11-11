@@ -217,12 +217,9 @@ private let living = CastDevice(id: CastDeviceID("APP-CAST-LIVING")!, friendlyNa
         #expect(snapshot.playback.intent == .pause(.routeLoss), "paused as a route loss: \(snapshot.playback.intent)")
         let value = OutputPickerMapping.content(for: rig.controller)
         #expect(value.loss?.message == "The Cast receiver disconnected, so playback paused." && value.loss?.canReconnect == true)
-        // A Play now is held for confirmation, with the Cast wording.
+        // A Play now plays on this Mac without a prompt.
         await rig.model.nativePlayPause()
-        let prompt = try #require(OutputPickerMapping.prompt(for: rig.controller))
-        #expect(prompt.title == "Play on this Mac?" && prompt.message.hasPrefix("The Cast receiver disconnected, so playback paused."))
-        rig.coordinator.cancel(prompt.id)
-        #expect(try await session.snapshot().playback.intent != .play)
+        #expect(OutputPickerMapping.prompt(for: rig.controller) == nil && rig.coordinator.loss(for: .localMedia) == nil)
     }
     @Test func aSessionStartedWhileCastingIsSilentBeforeAnyItemStarts() async throws {
         let rig = try await CastAppRig.make()

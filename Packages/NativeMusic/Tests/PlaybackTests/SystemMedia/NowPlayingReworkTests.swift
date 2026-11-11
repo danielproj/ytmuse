@@ -123,9 +123,9 @@ import TestSupport
         }
     }
 
-    // MARK: the Play-here gate, by media key
+    // MARK: after a route loss, a media key plays on this Mac without a prompt
 
-    @Test func aMediaKeyPlayAfterALossAsksFirstAndSendsNothingOnTheHiddenPlayer() async throws {
+    @Test func aMediaKeyAfterALossPlaysAtOnceOnTheHiddenPlayer() async throws {
         for command in [RemoteTransportCommand.play, .next, .previous] {
             let rig = try await MediaRig.make(outputs: true)
             let (player, page) = try await rig.play(state: lifecycleState(position: 1))
@@ -133,12 +133,12 @@ import TestSupport
             await rig.controller?.coordinator.settled()
             let before = page.bodies.filter { $0 == WebMusicScripts.play || $0 == WebMusicScripts.skip }.count
             #expect(rig.model.remote(command) == .success, "\(command) is admitted")
-            await rig.wait { rig.controller?.coordinator.prompt != nil }
-            #expect(rig.controller?.coordinator.prompt != nil && !player.snapshot.intent, "\(command): Play here is asked first")
-            #expect(page.bodies.filter { $0 == WebMusicScripts.play || $0 == WebMusicScripts.skip }.count == before, "\(command): nothing sounded before the confirmation")
+            await rig.wait { page.bodies.filter { $0 == WebMusicScripts.play || $0 == WebMusicScripts.skip }.count > before }
+            #expect(page.bodies.filter { $0 == WebMusicScripts.play || $0 == WebMusicScripts.skip }.count > before, "\(command): sent to the player")
+            #expect(rig.controller?.coordinator.prompt == nil && player.snapshot.intent, "\(command): no prompt")
         }
     }
-    @Test func aMediaKeyPlayOnTheNativeSessionAfterALossAsksFirstToo() async throws {
+    @Test func aMediaKeyPlayOnTheNativeSessionAfterALossResumesAtOnce() async throws {
         let rig = try await MediaRig.make(outputs: true)
         let session = try await ownedSession(wall: ManualWall(), clock: ManualMonotonic())
         try await session.startOwnedMedia(OwnedMedia.items)
@@ -148,10 +148,11 @@ import TestSupport
         rig.directory?.change([routeSpeakers], defaultUID: routeSpeakers.uid)
         await rig.controller?.coordinator.settled()
         await rig.model.refresh()
+        #expect(try await session.snapshot().playback.intent == .pause(.routeLoss), "the loss paused it")
         #expect(rig.model.remote(.play) == .success)
-        await rig.wait { rig.controller?.coordinator.prompt != nil }
-        #expect(rig.controller?.coordinator.prompt != nil, "native Play asks first")
-        #expect(try await session.snapshot().playback.intent != .play, "and nothing resumed")
+        var intent = try await session.snapshot().playback.intent
+        for _ in 0..<60 where intent != .play { try await Task.sleep(for: .milliseconds(50)); intent = try await session.snapshot().playback.intent }
+        #expect(intent == .play && rig.controller?.coordinator.prompt == nil, "native Play resumes without a prompt")
         await session.close()
     }
 
