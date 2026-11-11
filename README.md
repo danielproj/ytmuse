@@ -6,9 +6,13 @@
 
 ## Status, honestly
 
-The [0.1.16 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.16) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. On 2026-11-05 the account holder confirmed the remaining core checks work, including update restart after the fix. Wider G09 distribution checks remain deferred; see the [backlog](Docs/Backlog.md). The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
+The [0.1.17 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.17) provides a Developer ID-signed, notarized DMG for **Apple Silicon Macs running macOS 27 or later**. The app and installer have stapled Apple tickets and passed signature and Gatekeeper checks on the packaging Mac. By hand, on the 0.1.3 preview, the maintainer checked a clean install and a real signed update; that update crashed the old app as it quit, which 0.1.4 fixes. On 2026-11-05 the account holder confirmed the remaining core checks work, including update restart after the fix. Wider G09 distribution checks remain deferred; see the [backlog](Docs/Backlog.md). The source is public; [GitHub release setup](Docs/GitHub-Releases.md) records the packaging and acceptance limits.
 
 The core page/sidebar/player redesign has passed bounded visual checks. Native-account smoke checks cover sign-in restoration, Search, playlist creation/editing/addition/removal, mix/radio startup and upcoming-item selection. On 2026-11-05 the account holder confirmed the remaining core checks all work, including radio filters, audible playback, media keys, cold launch and update restart. The agreed working core is accepted; [the refreshed backlog](Docs/Backlog.md) tracks the features requested since then and deferred work. This confirmation does not close the full account, accessibility, hardware or distribution matrices below.
+
+**Changed in the 0.1.17 preview:**
+- When headphones, AirPods or a Cast receiver disconnect, playback just pauses; the next Play plays on the Mac without a "Play on this Mac?" prompt.
+- The time in the menu-bar player, mini-player, full-screen Now Playing and video windows keeps moving when the main window is closed.
 
 **Fixed in the 0.1.16 preview:**
 - Play on a Home card (such as Listen again), a search result or a sample starts that song, then its radio; before, YouTube Music could open the radio on a different song.
@@ -66,7 +70,7 @@ Automated tests use **sanitized fixtures and owned synthetic audio**, isolated f
 
 ## Install the preview
 
-Download `YTMuse-0.1.16.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.16), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
+Download `YTMuse-0.1.17.dmg` from the [release page](https://github.com/danielproj/ytmuse/releases/tag/v0.1.17), open it, and drag **YTMuse.app** into **Applications**. Intel Macs and earlier macOS versions are not supported. The public build uses dedicated production app/widget identifiers and an application group; it does not include a migration from development stores. Automatic update checks require opt-in, and installing an update requires an explicit restart.
 
 ## Build from source
 

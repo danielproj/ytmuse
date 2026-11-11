@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-11. Latest public development preview: **[0.1.16](https://github.com/danielproj/ytmuse/releases/tag/v0.1.16)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-11. Latest public development preview: **[0.1.17](https://github.com/danielproj/ytmuse/releases/tag/v0.1.17)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,17 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## Changed in the 0.1.17 preview
+
+The account holder asked for the "Play on this Mac?" prompt to go: a lost output should just pause. The account holder also reported that the menu-bar player's time stood still unless the main window was open.
+
+| Change | What the code does | Not done or not verified |
+| --- | --- | --- |
+| A lost output only pauses | A route loss still pauses every engine that sounded on the lost device in the announcement's own turn, and a system wake still never resumes over it. `OutputRouteCoordinator.perform(.start, …)` no longer raises a Play here prompt: `acceptCurrentOutput(for:)` clears that engine's loss (and any other engine's loss of the same device) and the action runs on the Mac's current output. New items (`playMusic`, `startOwned`, `playKept`, `startOwnedVideo`) and Shortcuts do the same instead of being held. The prompt had also been hosted twice over the YouTube Music bar; `BottomPlayer` now hosts the remaining sleep-timer note only for the native transport. | Not tried in a live window with a real output disconnect. The updated output UI tests (`testW22OutputPickerLossAndPlayAfterLoss`, the W39 Cast loss test) were built but not run. The prompt's strings remain in the catalog unused. |
+| The clock runs in hosted windows | Outside a SwiftUI scene `scenePhase` reads `.background`, so the status popover, mini-player, full-screen Now Playing and video windows counted as hidden and the YouTube Music position stood still. `appAppearance()` now sets `scenePhase` from the app's activity (active or inactive, never background); whether a surface is on screen stays its own `WindowVisibility`. | Not tried in a live window. A new test fails without the fix. |
+
+Every headless test batch ran and passed on the public snapshot in a clean checkout with no secrets (`ci: ok`, 2,268 Swift Testing tests executed of 2,268). An earlier gate run on a heavily loaded Mac (load ~11) slowed every PlaybackTests test to ~4 s and hung; the same batch passed alone in 20 s, and the rerun passed every batch. The 0.1.17 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 18 to earlier releases.
 
 ## Fixed in the 0.1.16 preview
 
