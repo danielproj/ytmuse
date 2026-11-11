@@ -49,7 +49,8 @@ struct PlaybackPanel: View {
         // Messages with buttons float just above the capsule (a solid card); none of them adds a row under it.
         .overlay(alignment: .top) {
             VStack(spacing: MusicSpace.xs) {
-                if let outputs = model.outputs { OutputPromptHost(controller: outputs) }
+                // The YouTube Music transport hosts the output prompt itself (MusicTransportBar); hosting it here too drew it twice.
+                if model.music == nil, let outputs = model.outputs { OutputPromptHost(controller: outputs) }
                 if let error = model.error {
                     HStack { Text(error).font(.caption).accessibilityIdentifier("playbackError")
                         if model.canRetryAction { Button("Retry action") { Task { await model.retryFailedAction() } }.musicAction(.secondary) }

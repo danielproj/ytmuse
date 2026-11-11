@@ -47,16 +47,12 @@ import Testing
         value = content(rig)
         #expect(value.loss?.canReconnect == true)
     }
-    @Test func thePlayHerePromptNamesWhereSoundWouldComeOutAndTheTimerPromptSaysItCannotFade() async throws {
+    @Test func aPlayAfterALossShowsNoPromptAndTheTimerPromptSaysItCannotFade() async throws {
         let rig = try await OutputRig.make()
         let (player, _) = try await rig.play()
         rig.unplug(); await rig.coordinator.settled()
         await player.resume()
-        let here = try #require(OutputPickerMapping.prompt(for: rig.controller))
-        #expect(here.title == "Play on this Mac?" && here.confirmTitle == "Play Here")
-        #expect(here.message.contains("Playing now uses Synthetic Speakers.") && here.message.contains("so playback paused"))
-        rig.coordinator.cancel(here.id)
-        #expect(OutputPickerMapping.prompt(for: rig.controller) == nil)
+        #expect(OutputPickerMapping.prompt(for: rig.controller) == nil && player.snapshot.intent, "the Play played on this Mac without asking")
 
         let remote = try await OutputRig.make()
         _ = await remote.coordinator.remoteBegan()

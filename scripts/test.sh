@@ -562,9 +562,9 @@ if [[ "$2" == T22 ]]; then
     exit 75
   fi
   # Isolated launch: the outputs are a scripted list (never a real device), the applier moves nothing, the preferences are a throwaway plist.
-  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/xcode}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testW22OutputPickerLossAndPlayHereConfirmation test)
+  args=(-project App/NativeMusic.xcodeproj -scheme NativeMusic -configuration Debug -destination 'platform=macOS,arch=arm64' -derivedDataPath "${BUILD_DIR:-$PWD/.build/xcode}" -disableAutomaticPackageResolution -only-testing:NativeMusicUITests/NativeMusicUITests/testW22OutputPickerLossAndPlayAfterLoss test)
   if [[ -n "${TEST_RESULT_PATH:-}" ]]; then args+=(-resultBundlePath "$TEST_RESULT_PATH"); fi
-  counted_ui_test testW22OutputPickerLossAndPlayHereConfirmation -- xcodebuild "${args[@]}"
+  counted_ui_test testW22OutputPickerLossAndPlayAfterLoss -- xcodebuild "${args[@]}"
   exit 0
 fi
 if [[ "$2" == T39 ]]; then

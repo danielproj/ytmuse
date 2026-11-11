@@ -10,7 +10,7 @@ import Testing
 @testable import AppShell
 
 /// T24.1 (MAC03, ARCH03): every transport, play, search, like/save, queue, player and sleep-timer command an intent can send reaches the SAME use case
-/// the window's control reaches, behind the same gates (capabilities, advertisement rules, the account and generation fence, Play here, the W12 ledger).
+/// the window's control reaches, behind the same gates (capabilities, advertisement rules, the account and generation fence, the W12 ledger).
 /// The playback owner is the W23 rig: a real `PlaybackModel` over a fake hidden page.
 @Suite @MainActor struct IntentTransportTests {
     private func playing(_ state: [String: Any] = lifecycleState()) async throws -> (IntentRig, FakeMusicPage) {
@@ -269,37 +269,27 @@ extension IntentCommand { static func like() -> IntentCommand { .rate(.like, of:
         #expect(outcome.refusal == .staleIdentity, "the authority refused the permit: \(outcome)")
         #expect(rig.rig.log.pages.isEmpty)
     }
-    @Test func afterARouteLossAPlayAsksPlayHereInTheWindowAndNothingSoundsBeforeTheAnswer() async throws {
+    @Test func afterARouteLossAPlayResumesOnThisMacWithoutAsking() async throws {
         let rig = try await IntentRig.make(outputs: true)
         let (player, page) = try await rig.rig.play()
         rig.rig.directory?.change([routeSpeakers], defaultUID: routeSpeakers.uid)
         await rig.rig.controller?.coordinator.settled()
         let plays = page.bodies.filter { $0 == WebMusicScripts.play }.count
-        // Resume of the paused item.
         let resume = await rig.run(.resume)
-        guard case .needsConfirmation? = resume.refusal else { Issue.record("Play here must be asked first: \(resume)"); return }
-        #expect(rig.surface.shown.contains("player"), "the prompt is in the window, which comes forward")
-        await rig.rig.wait { rig.rig.controller?.coordinator.prompt != nil }
-        let prompt = try #require(rig.rig.controller?.coordinator.prompt)
-        #expect(page.bodies.filter { $0 == WebMusicScripts.play }.count == plays && !player.snapshot.intent, "nothing sounds before the confirmation")
-        await rig.rig.controller?.coordinator.confirm(prompt.id)
+        #expect(resume.isDone, "\(resume)")
         await rig.rig.wait { page.bodies.filter { $0 == WebMusicScripts.play }.count > plays }
-        #expect(page.bodies.filter { $0 == WebMusicScripts.play }.count == plays + 1)
+        #expect(page.bodies.filter { $0 == WebMusicScripts.play }.count == plays + 1 && player.snapshot.intent && rig.rig.controller?.coordinator.prompt == nil)
     }
-    @Test func aNewItemBehindALostRouteIsHeldWithItsPermitAndStartsOnlyAfterTheAnswer() async throws {
+    @Test func aNewItemBehindALostRouteStartsWithoutAsking() async throws {
         let rig = try await IntentRig.make(outputs: true)
         let (_, page) = try await rig.rig.play()
         rig.rig.directory?.change([routeSpeakers], defaultUID: routeSpeakers.uid)
         await rig.rig.controller?.coordinator.settled()
         let loads = page.loads.count, scripts = page.bodies.count
-        let held = await rig.run(.play(intentMedia(scope: rig.scope, video: "SYNTHother1", playlist: "PLother")))
-        guard case .needsConfirmation? = held.refusal else { Issue.record("\(held)"); return }
-        await rig.rig.wait { rig.rig.controller?.coordinator.prompt != nil }
-        let prompt = try #require(rig.rig.controller?.coordinator.prompt)
-        #expect(page.loads.count == loads && page.bodies.count == scripts, "the new item has not been sent to the player: nothing can sound")
-        await rig.rig.controller?.coordinator.confirm(prompt.id)
+        let started = await rig.run(.play(intentMedia(scope: rig.scope, video: "SYNTHother1", playlist: "PLother")))
+        #expect(started.isDone, "\(started)")
         await rig.rig.wait { page.loads.count > loads || page.bodies.count > scripts }
-        #expect(page.loads.count > loads || page.bodies.count > scripts, "after the answer the held start runs")
+        #expect((page.loads.count > loads || page.bodies.count > scripts) && rig.rig.controller?.coordinator.prompt == nil)
     }
 }
 

@@ -44,9 +44,9 @@ public struct OutputPickerContent: Equatable, Sendable {
     }
 }
 
-/// What must be confirmed before sound may start (Play here) or before a timer is enabled on a receiver that cannot fade (PLAY17).
+/// What must be confirmed before a timer is enabled on a receiver that cannot fade (PLAY17).
 public struct OutputPromptContent: Equatable, Sendable, Identifiable {
-    public enum Kind: Equatable, Sendable { case playHere(canReconnect: Bool), timer }
+    public enum Kind: Equatable, Sendable { case timer }
     public var id: UUID
     public var kind: Kind
     public var title: String
@@ -126,7 +126,7 @@ struct OutputPickerPanel<SystemPicker: View>: View {
                     Label { Text(verbatim: loss.message) } icon: { Image(systemName: "exclamationmark.triangle") }.foregroundStyle(MusicStyle.errorText).font(MusicPageStyle.note).fixedSize(horizontal: false, vertical: true)
                     HStack(spacing: MusicSpace.xs) {
                         if loss.canReconnect { Button("Reconnect") { actions.reconnect() }.accessibilityIdentifier("outputReconnect") }
-                        Button("Play Here…") { actions.playHere() }.accessibilityIdentifier("outputPlayHere")
+                        Button("Play Here") { actions.playHere() }.accessibilityIdentifier("outputPlayHere")
                     }.musicAction(.secondary)
                 }.accessibilityElement(children: .contain).accessibilityIdentifier("outputLoss")
             }
@@ -190,7 +190,7 @@ struct OutputPickerRow: View {
     }
 }
 
-/// The inline banner that asks before sound starts on speakers after a route loss, or before a timer is enabled on a receiver that cannot fade it.
+/// The inline banner that asks before a timer is enabled on a receiver that cannot fade it.
 /// Inline rather than a confirmation dialog: the decision flips the model synchronously (the dialog dismisses before an asynchronous button action runs).
 public struct OutputPromptBanner: View {
     let prompt: OutputPromptContent

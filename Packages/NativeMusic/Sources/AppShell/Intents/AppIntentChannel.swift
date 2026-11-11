@@ -143,36 +143,24 @@ import SystemIntegration
 
     /// One transport command through the same admission the media keys use. The reason a command is off is the window's own sentence.
     private func dispatch(_ command: RemoteTransportCommand, done: String) -> IntentOutcome {
-        let engine: OutputEngineKind = playback.music != nil ? .youTubeMusic : .localMedia
-        let startsSound = [.play, .toggle, .next, .previous].contains(command.kind)
-        let promptHeld = startsSound && playback.outputs?.lossPending(for: engine) == true
         switch playback.remote(command) {
-        case .success:
-            if promptHeld { return needsPlayHere() }
-            return .done(done)
+        case .success: return .done(done)
         case .noActionableItem: return .refused(.nothingPlaying)
         case .refused:
             let reason = playback.remoteReason(command.kind) ?? String(localized: "That isn’t available right now.")
             return .refused(reason == RemoteCommandReason.advertisement ? .advertisement : .unavailable(reason))
         }
     }
-    /// A route was lost: the app asks "Play here?" in its own window and nothing sounds until it is answered. The intent says so.
-    private func needsPlayHere() -> IntentOutcome {
-        surface.showPlayerWindow()
-        return .refused(.needsConfirmation(String(localized: "Your audio output changed. Confirm “Play here” in YTMuse to start playback.")))
-    }
 
     private func play(_ media: IntentMedia, scope: IntentScope, request: OwnedStartRequest) async -> IntentOutcome {
         if let refusal = IntentResolver.admit(media, current: scope) { return .refused(refusal) }
         guard let playlistID = media.target.playlistID else { return .refused(.unavailable(String(localized: "YouTube Music gave this item nothing to play."))) }
-        let held = playback.outputs?.lossPending(for: .youTubeMusic) == true
         // `request` was captured at the very start of the command (before the scope was read), exactly as a click captures it: an account barrier after it rejects the start.
         let outcome = await playback.playMusic(playlistID: playlistID, title: media.title, videoID: media.target.videoID, params: media.target.params, request: request)
         switch outcome {
-        case .started: return held ? needsPlayHere() : .done(String(localized: "Playing \(media.title)."))
+        case .started: return .done(String(localized: "Playing \(media.title)."))
         case .stale: return .refused(.staleIdentity)
-        // `playMusic` answers `.busy` both for a start already in progress and for a start the Play here prompt is holding.
-        case .busy: return held ? needsPlayHere() : .refused(.failed(String(localized: "YTMuse is already starting something. Try again in a moment.")))
+        case .busy: return .refused(.failed(String(localized: "YTMuse is already starting something. Try again in a moment.")))
         case .failed: return .refused(.failed(playback.error ?? String(localized: "YouTube Music could not start. Try Play again.")))
         }
     }
@@ -211,7 +199,6 @@ import SystemIntegration
         guard playback.session != nil else {
             return .refused(.unavailable(String(localized: "Nothing is playing, so there is no timer to set.")))
         }
-        let held = playback.outputs?.lossPending(for: .localMedia) == true
         switch timer {
         case .off:
             await playback.act(action: .sleepTimer) { try await $0.setTimer(nil) }
@@ -220,7 +207,6 @@ import SystemIntegration
             let value: SleepTimer
             if case .minutes(let minutes) = timer { value = [5, 15, 30, 60].contains(minutes) ? .minutes(minutes) : .custom(Double(minutes) * 60) } else { value = .endOfItem }
             await playback.nativeEnableTimer { await self.playback.act(action: .sleepTimer) { try await $0.setTimer(value) } }
-            if held { return needsPlayHere() }
             if playback.failedAction == .sleepTimer { return .refused(.failed(playback.error ?? PlaybackUIAction.sleepTimer.failure)) }
             if case .minutes(let minutes) = timer { return .done(String(localized: "Sleep timer set for \(minutes) minutes.")) }
             return .done(String(localized: "Sleep timer set for the end of this item."))
