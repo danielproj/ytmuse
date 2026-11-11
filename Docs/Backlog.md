@@ -1,6 +1,6 @@
 # YTMuse backlog
 
-Updated 2026-11-10. Latest public development preview: **[0.1.15](https://github.com/danielproj/ytmuse/releases/tag/v0.1.15)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
+Updated 2026-11-11. Latest public development preview: **[0.1.16](https://github.com/danielproj/ytmuse/releases/tag/v0.1.16)**. The additions below are included in the signed, notarized previews that introduced them; implementation and live-acceptance limits remain separate.
 
 ## Working core: accepted
 
@@ -15,6 +15,16 @@ Together with the earlier bounded live checks, that acceptance covers the agreed
 - the normal install and update flow.
 
 It does not close the formal release gates G01–G09 ([capability matrix](Capability-Matrix.md)).
+
+## Fixed in the 0.1.16 preview
+
+The account holder reported that Play on the first "Listen again" card on Home, 10AGE "Так нужно", started a different song (NEMIGA and NAVAI "Пойдем в кино").
+
+| Fix | What the code does | Not done or not verified |
+| --- | --- | --- |
+| A song's radio starts at that song | A song or video that is not inside an album or playlist played `watch?list=RDAMVM<id>` without `v=<id>`, and YouTube Music builds that radio as a mix that need not open with, or even contain, the seed. `CatalogActionPlan.target(for:)` (Home and catalog pages, the Library), Search's Play (`SearchActionPlan.startVideo(for:)`) and the Samples handoff now send the video id with the radio. `continuesCollection` still tells a collection track from a song's own radio. | Not tried in a live window. Checked against YouTube Music's anonymous `next` endpoint for `F4ZcHLhRyKU` on 2026-11-11: without `v=` the radio opened on another 10AGE song and the chosen one was not in its first four; with `v=` it opened on the chosen song. |
+
+Every headless test batch ran and passed on the public snapshot in a clean checkout with no secrets (`ci: ok`, 2,270 Swift Testing tests executed of 2,270). The 0.1.16 app and DMG passed signature, notarization/stapling and local Gatekeeper checks. Uploaded assets were re-downloaded and matched, and the live signed feed offers build 17 to earlier releases.
 
 ## Changed in the 0.1.15 preview
 
