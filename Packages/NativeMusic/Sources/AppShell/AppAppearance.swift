@@ -8,11 +8,18 @@ import SwiftUI
 private struct AppAppearanceModifier: ViewModifier {
     @AppStorage("appearance", store: AppPreferences.store) private var stored = Appearance.system.rawValue
     @Environment(\.colorScheme) private var inheritedScheme
+    @State private var appActive = NSApp?.isActive ?? true
 
     func body(content: Content) -> some View {
         let appearance = Appearance(storedValue: stored)
         content.appStyle()
             .environment(\.colorScheme, appearance.colorScheme ?? inheritedScheme)
+            // Outside a SwiftUI scene `scenePhase` is always `.background`, so the status popover, the mini-player and the video windows counted as
+            // hidden: the YouTube Music clock stood still unless the main window was open, and their motion and artwork demand were off. A hosted
+            // window follows the app's activity as a scene would; whether it is on screen is each surface's own `WindowVisibility`.
+            .environment(\.scenePhase, appActive ? .active : .inactive)
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in appActive = true }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in appActive = false }
             .background(AppAppearanceWindowBridge(preference: appearance))
     }
 }
