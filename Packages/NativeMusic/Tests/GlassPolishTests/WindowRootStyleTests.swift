@@ -97,4 +97,30 @@ extension WindowRootStyleTests {
       #expect(evaluations > 0, "probe evaluated for \(style)")
     }
   }
+
+  /// Outside a SwiftUI scene `scenePhase` reads `.background`, and the player surfaces treat that as hidden: the status popover's clock stood
+  /// still unless the main window was open. A manually hosted root must give its content a scene phase other than `.background`. Positive
+  /// control: the same view hosted without the hook really does read `.background`, so the assertion cannot pass vacuously.
+  @Test @MainActor func aManuallyHostedRootIsNotInTheBackgroundScenePhase() async throws {
+    let bare = ScenePhaseProbe(), hooked = ScenePhaseProbe()
+    let windows = [NSHostingView(rootView: ScenePhaseReader(probe: bare)) as NSView, NSHostingView(rootView: ScenePhaseReader(probe: hooked).appAppearance())].map { view in
+      let window = NSWindow(contentRect: CGRect(x: -20000, y: -20000, width: 200, height: 100), styleMask: [.borderless], backing: .buffered, defer: false)
+      window.contentView = view; window.ignoresMouseEvents = true; window.orderFrontRegardless()
+      return window
+    }
+    defer { for window in windows { window.orderOut(nil); window.contentView = nil } }
+    for _ in 0..<10 where bare.phase == nil || hooked.phase == nil {
+      for window in windows { window.contentView?.layoutSubtreeIfNeeded(); window.contentView?.display() }
+      try await Task.sleep(for: .milliseconds(20))
+    }
+    #expect(bare.phase == .background, "positive control: a bare hosting root reads .background")
+    #expect(hooked.phase != nil && hooked.phase != .background, "a root hosted with .appAppearance() must not read .background")
+  }
+}
+
+@MainActor private final class ScenePhaseProbe { var phase: ScenePhase? }
+private struct ScenePhaseReader: View {
+  let probe: ScenePhaseProbe
+  @Environment(\.scenePhase) private var phase
+  var body: some View { let _ = (probe.phase = phase); Color.clear }
 }
