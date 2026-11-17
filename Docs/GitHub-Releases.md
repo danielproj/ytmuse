@@ -1,18 +1,20 @@
 # GitHub source and installable releases
 
-The cleaned source repository and [0.1.17 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.17) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
+The cleaned source repository and [0.1.18 development preview](https://github.com/danielproj/ytmuse/releases/tag/v0.1.18) are public. Anyone can download the Developer ID-signed, notarized DMG without a repository invitation. This is an early preview; G01–G09 remain open. The release notes and [capability matrix](Capability-Matrix.md) describe the implementation and validation limits.
 
 The preview targets **Apple Silicon and macOS 27 or later**. Intel Macs and earlier macOS versions are not supported. Building from source requires the exact Xcode/Swift versions in `toolchain.json`.
 
 ## Install
 
-Download `YTMuse-0.1.17.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
+Download `YTMuse-0.1.18.dmg` from the release page, open it, and drag **YTMuse.app** into **Applications**. The app and image both carry stapled Apple notarization tickets. The release also provides a SHA-256 checksum, the SBOM, release notes and signed `feed.json`.
 
 Release packaging uses a dedicated production app/widget identity, derived by default as `com.github.<owner>.<repository>` with a `.widget` companion. `YTMUSE_RELEASE_BUNDLE_ID` can override it with a valid reverse-DNS identifier. The app group uses the signing Team ID followed by that production identifier. Ordinary source builds retain development identifiers; no migration from development stores is included.
 
 The public app pins its update repository, feed URL and Ed25519 public key. Automatic checks require opt-in, and installation requires an explicit restart. Source builds have no feed or pinned key and leave update networking disabled.
 
 ## What was verified
+
+0.1.18 (build 19), source tag `v0.1.18` at commit `5454930`, displays expanded catalog pages opened with More as wrapping grids; Home and Explore carousels remain horizontal. Every headless test batch ran on the clean release checkout. Across two CI attempts, an updater temporary-disk-image creation failed (the updater batch subsequently passed twice), and a discovery in-flight-state timing assertion failed (it passed in the first full run and in isolation). Debug and Release builds, binary audits and source scans passed separately. The layout was not checked in a live app window. The app and DMG were Developer ID signed, notarized and stapled; Gatekeeper, the installer checksum and signed update offer to 0.1.17 build 18 passed. All five uploaded assets were downloaded again and matched byte for byte.
 
 0.1.17 (build 18), source tag `v0.1.17` at commit `cf696ad`, makes a lost output (headphones, AirPods or a Cast receiver disconnecting) only pause: the "Play on this Mac?" prompt is removed, and the next explicit Play, skip, queue pick, media key, Shortcut or new item plays on the Mac's current output without asking, while a system wake still never resumes over a loss. It also keeps the YouTube Music clock running in the menu-bar popover, mini-player, full-screen Now Playing and video windows, which had counted as hidden because SwiftUI reports `scenePhase` as background outside its own scenes. The details are in the [backlog](Backlog.md). Every headless test batch ran and passed on the public snapshot in a clean checkout with no secrets (`ci: ok`, 2,268 Swift Testing tests executed of 2,268). Neither change was tried in a live window; the updated output UI tests were built but not run. The app and DMG were Developer ID signed, notarized and stapled. Strict signatures, Gatekeeper acceptance on the packaging Mac, the checksum, the SBOM and the signed feed were checked. All five uploaded assets were downloaded again and matched byte for byte. The live latest feed verifies as an offer of 0.1.17 build 18 to a 0.1.16 build 17, and the packaged feed also to a 0.1.15 build 16, a 0.1.14 build 15, a 0.1.13 build 14 and a 0.1.0 build 1.
 
