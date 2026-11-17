@@ -251,11 +251,17 @@ struct ShelfView: View {
     }
     @ViewBuilder private var content: some View {
         switch shelf.layout {
-        case .carousel, .grid:
+        case .carousel:
             ScrollView(.horizontal) {
                 LazyHStack(alignment: .top, spacing: MusicSpace.lg) { ForEach(shelf.items) { CatalogCard(item: $0, model: model, navigator: navigator) } }
                     .padding(.vertical, MusicSpace.xxs)
             }.scrollIndicators(.automatic)
+        case .grid:
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 168), spacing: MusicSpace.lg, alignment: .topLeading)], alignment: .leading, spacing: MusicSpace.lg) {
+                ForEach(shelf.items) { CatalogCard(item: $0, model: model, navigator: navigator) }
+            }.padding(.vertical, MusicSpace.xxs)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("catalogGrid-" + shelf.key)
         case .categories:
             MusicActionLayout {
                 ForEach(shelf.items) { CategoryTile(item: $0, navigator: navigator) }
