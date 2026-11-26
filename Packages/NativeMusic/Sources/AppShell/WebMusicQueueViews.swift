@@ -210,7 +210,7 @@ struct WebMusicNowPlayingView: View {
             // A music video or live stream shows the hidden player's own picture in a native preview; a song shows its artwork.
             if state.hasPicture {
                 WebVideoPreview(player: player, showWindow: showVideoWindow, windowOpen: windowOpen, maxWidth: pictureWidth)
-                WebVideoControls(player: player, window: nil)
+                WebVideoControls(player: player, window: nil, transport: false)
             } else {
                 WebMusicArtworkView(player: player, edge: artworkEdge, visible: visible, corner: .feature, accentChanged: { accent = $0; accentChanged($0) }, namespace: namespace).accessibilityHidden(false).accessibilityLabel(Text("Now Playing artwork"))
                     .accessibilityIdentifier("expandedArtwork").musicElevation(.hero, tint: accent?.color)

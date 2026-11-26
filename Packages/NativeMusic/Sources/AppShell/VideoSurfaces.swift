@@ -71,8 +71,19 @@ struct WebVideoSurface: NSViewRepresentable {
         let view = VideoPictureView()
         view.setAccessibilityElement(true); view.setAccessibilityRole(.image); view.setAccessibilityLabel(String(localized: "Video"))
         box?.view = view
-        let player = player, surface = surface
-        Task { @MainActor in await player.presentVideo(on: surface, host: view) }
+        let player = player, surface = surface, first = context.coordinator
+        first.requesting = true
+        Task { @MainActor in await player.presentVideo(on: surface, host: view); first.requesting = false }
+        // A view SwiftUI kept aside and shows again (ViewThatFits switching layouts back) is not made again: if the picture moved
+        // to the other layout meanwhile, this view is empty and black, so it takes the picture back when it is on screen again.
+        let reclaims = reclaims, preferred = preferred, coordinator = first
+        view.windowChanged = { view in
+            guard view.window != nil, view.subviews.isEmpty, reclaims(), player.canShowVideo, !coordinator.requesting else { return }
+            let holder = player.surfaces.holder, wanted = preferred()
+            guard holder == nil || holder == surface || holder == wanted else { return }
+            coordinator.requesting = true
+            Task { @MainActor in _ = await player.presentVideo(on: wanted, host: view); coordinator.requesting = false }
+        }
         return view
     }
     func updateNSView(_ view: VideoPictureView, context: Context) {
@@ -85,9 +96,10 @@ struct WebVideoSurface: NSViewRepresentable {
     }
     static func dismantleNSView(_ view: VideoPictureView, coordinator: Coordinator) {
         let player = coordinator.player, surface = coordinator.surface
+        view.windowChanged = nil
         Task { @MainActor in
-            await player.releaseVideo(surface)
-            if surface == .window { await player.releaseVideo(.fullScreen) }
+            await player.releaseVideo(surface, host: view)
+            if surface == .window { await player.releaseVideo(.fullScreen, host: view) }
         }
     }
 }
@@ -133,12 +145,17 @@ struct WebVideoPreview: View {
 struct WebVideoControls: View {
     let player: WebMusicPlayer
     var window: VideoWindowPresenter?
+    /// Whether to draw play/pause and the timeline. The video window has no other transport, so it does; Now Playing already shows its own
+    /// below the title, so its picture keeps only the video's own controls (quality, captions, audio only, Picture in Picture, Ad and live state).
+    var transport = true
     var body: some View {
         let state = player.snapshot
         VStack(spacing: MusicSpace.xs) {
             HStack(spacing: MusicSpace.sm) {
-                Button { Task { await player.playPause() } } label: { Label(state.intent ? "Pause" : "Play", systemImage: state.intent ? "pause.fill" : "play.fill") }
-                    .disabled(state.phase == .idle).accessibilityIdentifier("videoPlayPause")
+                if transport {
+                    Button { Task { await player.playPause() } } label: { Label(state.intent ? "Pause" : "Play", systemImage: state.intent ? "pause.fill" : "play.fill") }
+                        .disabled(state.phase == .idle).accessibilityIdentifier("videoPlayPause")
+                }
                 if state.isAd {
                     MusicBadge("Ad", style: .advertisement)
                         .accessibilityLabel(Text("Advertisement playing")).accessibilityIdentifier("videoAdBadge")
@@ -161,7 +178,7 @@ struct WebVideoControls: View {
                 if let window { Button { window.toggleFullScreen() } label: { Label(window.isFullScreen ? "Exit Full Screen" : "Full Screen", systemImage: "arrow.up.left.and.arrow.down.right") }
                     .accessibilityIdentifier("videoFullScreen") }
             }.labelStyle(.iconOnly).musicButtons()
-            WebMusicTimelineView(player: player)
+            if transport { WebMusicTimelineView(player: player) }
             if let notice = player.videoNotice ?? state.restart?.message {
                 Text(notice).font(.caption).foregroundStyle(MusicStyle.secondaryText).frame(maxWidth: .infinity, alignment: .leading).accessibilityIdentifier("videoNotice")
             }
@@ -245,6 +262,9 @@ struct WebVideoWindowContent: View {
 /// so AVKit's Picture in Picture finds its source layer in a stable view that stays in the window for the whole of PiP. Non-interactive like every
 /// picture surface.
 final class NativeVideoLayerView: NSView {
+    /// Called when the view joins or leaves a window (see `VideoPictureView.windowChanged`).
+    var windowChanged: ((NativeVideoLayerView) -> Void)?
+    override func viewDidMoveToWindow() { super.viewDidMoveToWindow(); windowChanged?(self) }
     override func makeBackingLayer() -> CALayer { let layer = AVPlayerLayer(); layer.videoGravity = .resizeAspect; layer.backgroundColor = NSColor.black.cgColor; return layer }
     override init(frame: NSRect) { super.init(frame: frame); wantsLayer = true }
     required init?(coder: NSCoder) { nil }
@@ -304,7 +324,9 @@ final class NativeVideoLayerView: NSView {
         activeView = view
         return surfaces.request(surface)
     }
-    func release(_ surface: VideoSurface) {
+    /// `view` is the view that is closing; when the picture already moved to another view of the same kind, its release changes nothing.
+    func release(_ surface: VideoSurface, view: NativeVideoLayerView? = nil) {
+        if let view, activeView !== view { return }
         // Closing the surface that sources Picture in Picture stops PiP first: the source is never left behind in a dying view.
         if surfaces.holder == .pictureInPicture, surface == pictureInPictureSource { pictureInPictureReturn = nil; pip?.stopPictureInPicture(); return }
         guard surfaces.release(surface) else { return }
@@ -361,12 +383,20 @@ struct NativeVideoSurface: NSViewRepresentable {
         view.setAccessibilityElement(true); view.setAccessibilityRole(.image); view.setAccessibilityLabel(String(localized: "Video"))
         box?.view = view
         presenter.present(on: surface, view: view)
+        // A view SwiftUI shows again without making it (ViewThatFits) takes the picture back if it moved to the other layout meanwhile.
+        let presenter = presenter, surface = surface
+        view.windowChanged = { view in
+            guard view.window != nil, view.playerLayer.player == nil, presenter.hasPicture else { return }
+            guard presenter.surfaces.holder == nil || presenter.surfaces.holder == surface else { return }
+            presenter.present(on: surface, view: view)
+        }
         return view
     }
     func updateNSView(_ view: NativeVideoLayerView, context: Context) { box?.view = view }
     static func dismantleNSView(_ view: NativeVideoLayerView, coordinator: Coordinator) {
         let presenter = coordinator.presenter, surface = coordinator.surface
-        Task { @MainActor in presenter.release(surface) }
+        view.windowChanged = nil
+        Task { @MainActor in presenter.release(surface, view: view) }
     }
 }
 

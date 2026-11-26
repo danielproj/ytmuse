@@ -614,6 +614,10 @@ public struct WebMusicRadioQueueScope: Sendable {
     // MARK: W17 video, live and representation switching
 
     /// What the decoder is doing, read from the frame counter the page reports. Not part of `snapshot`: frames advance continuously.
+    /// The native view the picture was last moved into, and a count of presentations, so a release from a view that no longer shows the
+    /// picture, or one that finishes after a newer presentation started, cannot pull the picture out of the view that does.
+    @ObservationIgnored private weak var presentedHost: NSView?
+    @ObservationIgnored private var presentation: UInt64 = 0
     public struct VideoActivity: Sendable, Equatable {
         public var pictureSize: CGSize?
         public var frames = 0
@@ -693,15 +697,20 @@ public struct WebMusicRadioQueueScope: Sendable {
             return surfaces.request(.pictureInPicture)
         case .inline, .window, .fullScreen:
             guard let host else { return nil }
+            presentation &+= 1
             if surfaces.holder == .pictureInPicture { _ = await run(.pictureInPicture(false), on: page); pictureInPictureReturn = nil }
             guard !closed, self.page === page else { return nil }
             page.attachVideo(to: host)
+            presentedHost = host
             _ = await run(.presentVideo(true), on: page)
             return surfaces.request(surface)
         }
     }
     /// A surface closes. Only the holder's release changes anything; the media keeps playing or stays paused exactly as it was.
-    public func releaseVideo(_ surface: VideoSurface) async {
+    /// `host` is the view that is closing: when the picture has already moved to another view of the same kind (SwiftUI swapped one
+    /// layout for another and kept both views), the closing view no longer shows it, so its release changes nothing.
+    public func releaseVideo(_ surface: VideoSurface, host: NSView? = nil) async {
+        if let host, surface != .pictureInPicture, presentedHost !== host { return }
         guard surfaces.release(surface) else { return }
         if surface == .pictureInPicture { pictureInPictureWatch?.cancel(); pictureInPictureConfirmed = false }
         if surface == .pictureInPicture, let page, !closed { _ = await run(.pictureInPicture(false), on: page); pictureInPictureReturn = nil }
@@ -710,8 +719,12 @@ public struct WebMusicRadioQueueScope: Sendable {
     }
     private func endPresentation() async {
         guard let page, !closed else { return }
+        let generation = presentation
         _ = await run(.presentVideo(false), on: page)
+        // A surface asked for the picture while the page was being restored: it has it now, so the view is not taken back from it.
+        guard generation == presentation, surfaces.holder == nil, self.page === page else { return }
         page.attachVideo(to: nil)
+        presentedHost = nil
     }
     /// The page player's own quality level (one it offered) and captions. Refused honestly when the page does not take them.
     public func setQuality(_ level: String) async {
