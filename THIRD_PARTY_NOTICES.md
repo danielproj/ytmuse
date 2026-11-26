@@ -4,36 +4,6 @@
 
 YTMuse has **no third-party package dependency**: `Packages/NativeMusic/Package.resolved` records no pins and `toolchain.json` lists no external dependency. The app links only Apple's system frameworks (listed in the [SBOM](Docs/sbom.cdx.json)); the hidden YouTube Music player is the system WebKit, which is part of macOS and is not shipped. Nothing below is linked into, or shipped in, the app. The material below is *referenced, adapted or copied for tests*:
 
-## ytmusicapi
-
-- Source: https://github.com/sigma67/ytmusicapi at commit `4da34b68e68d33356860fbf5d4f0245655969b08`, licensed under the MIT licence.
-- Two upstream files (the uploads mixin and the uploads parser) are kept as a pinned reference copy in `artifacts/harness/nodes/W19/reference/` (their hashes are in its `manifest.json`). They are historical review evidence; the upload implementation and its dedicated tests were removed on 2026-11-04. Nothing is linked, shipped or copied into product code.
-- Upstream licence (captured from the same repository, `LICENSE`):
-
-```
-MIT License
-
-Copyright (c) 2026 sigma67
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
 ## Kaset
 
 - Source: https://github.com/sozercan/kaset, inspected read-only at commit `4c59ff259d853f1cc328597f5adccf2a291c2fa7`. Nothing from Kaset was built, run, vendored or linked.

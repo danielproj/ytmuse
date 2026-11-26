@@ -19,9 +19,6 @@ THIRD_PARTY = [
     {"name": "Kaset", "version": "4c59ff259d853f1cc328597f5adccf2a291c2fa7", "type": "data", "license": "MIT", "copyright": "Copyright (c) 2025 sozercan",
      "url": "https://github.com/sozercan/kaset",
      "note": "Two test fixtures copied byte-for-byte (Fixtures/W12-kaset-real, Fixtures/W13-real) and parsing conventions re-implemented in original code. Nothing is linked or shipped in the app."},
-    {"name": "ytmusicapi", "version": "4da34b68e68d33356860fbf5d4f0245655969b08", "type": "data", "license": "MIT", "copyright": "See the upstream repository's licence file (it was not captured with the copy)",
-     "url": "https://github.com/sigma67/ytmusicapi",
-     "note": "A pinned reference copy of two upstream files (artifacts/harness/nodes/W19/reference), retained only as historical review evidence after removal of the upload feature. Nothing is linked, shipped or copied into product code."},
 ]
 
 

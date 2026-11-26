@@ -4,7 +4,7 @@
 - Optional public network: `Tests/ConnectionProof/run-public-observation.sh` (homepage, Music search, selected-item player metadata; no login/playback).
 - Headless affected checks and app build: `python3 artifacts/harness/nodes/E01/validate.py`. Add `--live` only for a separate public observation.
 
-Swift tests are under `Packages/NativeMusic/Tests/ConnectionTests`. Pinned deterministic projections remain in `artifacts/harness/nodes/E01/capture-0.json` and `capture-1.json`. Each optional live run writes a new UUID directory under `observations/` with projection hashes and sanitized error categories. Historical receipts and fixtures are never refreshed by live runs. Rework validation writes under `rework-1/`; original evidence remains in `rework-1/prior/`.
+Swift tests are under `Packages/NativeMusic/Tests/ConnectionTests`. Pinned deterministic projections are in `Fixtures/E01-captures/capture-0.json` and `capture-1.json`. Each optional live run writes a new UUID directory under `observations/` with projection hashes and sanitized error categories. Historical receipts and fixtures are never refreshed by live runs. Rework validation writes under `rework-1/`; original evidence remains in `rework-1/prior/`.
 
 Builds use this checkout's `.build/e01` and `.build/e01-app`. No foreground UI/browser consent is run. See `Docs/Connection-Proof.md` for the scope and unresolved authorization/production integration boundaries. All G01–G09 remain open.
 

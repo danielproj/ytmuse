@@ -4,7 +4,7 @@ The cleaned-source repository and [0.1.19 development preview](https://github.co
 
 ## 1. Decide what is published (account holder)
 
-The working repository carries the build harness's evidence under `artifacts/` (about 23,000 files). A history scan (`python3 scripts/scan-repository.py --history`) found, and these cannot be fixed by editing the working tree:
+The working repository's history carries the build harness's evidence under `artifacts/` (about 24,000 files). Since 0.1.19 `artifacts/` is ignored and untracked: harness output stays on the machine and is never committed or published, and the files the tests read moved to `Fixtures/` and `scripts/`. A history scan (`python3 scripts/scan-repository.py --history`) found, and these cannot be fixed by editing the working tree:
 
 | Finding | Where | Why it matters |
 | --- | --- | --- |

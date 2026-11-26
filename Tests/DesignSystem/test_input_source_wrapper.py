@@ -13,7 +13,7 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(sys.argv[1]).resolve()
 OUT.mkdir(parents=True, exist_ok=True)
-TEMPLATE = ROOT / 'artifacts/harness/nodes/V01/rework-2/critic/repro/input-source-wrapper/FakeTestInputSource.swift'
+TEMPLATE = ROOT / 'Fixtures/V01-input-source/FakeTestInputSource.swift'
 
 def wait_until(predicate, process, description):
     deadline = time.monotonic() + 20
