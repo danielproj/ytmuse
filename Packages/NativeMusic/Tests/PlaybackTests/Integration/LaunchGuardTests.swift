@@ -16,8 +16,8 @@ enum LaunchGuard {
         let file: String, rule: String
         var description: String { "\(file): \(rule)" }
     }
-    /// Directories swept (repository-relative). `artifacts/harness` holds this node's own mutation and UI scripts.
-    static let directories = ["Packages/NativeMusic/Tests", "Tests", "scripts", "App", "Extensions", "Tools", "artifacts/harness"]
+    /// Directories swept (repository-relative). `artifacts/` is local harness output and is not part of the repository, so it is not swept.
+    static let directories = ["Packages/NativeMusic/Tests", "Tests", "scripts", "App", "Extensions", "Tools"]
     /// Scripts have many extensions or none: a file with one of these, or with no extension at all (whatever its first line), is read as text.
     static let scriptExtensions: Set<String> = ["swift", "py", "sh", "bash", "zsh", "command", "js", "jxa", "scpt", "applescript", "rb", "pl", "m", "mm"]
     /// The only files allowed to name a forbidden thing, each with the reason and the SHA-256 of the exact bytes that were reviewed: an edit to one of them
@@ -25,10 +25,6 @@ enum LaunchGuard {
     static let allowed: [String: (sha256: String, rules: Set<String>, reason: String)] = [
         "scripts/ui-preflight.py": ("652712f1d266fb7f76226d1b260b267259c04c226fba325cd5e60e45260369c5", ["OSA command line"],
                                     "reads window positions from System Events, never the app; its application-targeting is exempt ONLY for the System Events form"),
-        "artifacts/harness/nodes/W09/rework-11/candidate-f1.py": ("94d71c222e20f0ccc0f6fad03e9fb5d85e7f5710fdad3b469c432f784028ee05", ["shell open", "process open"],
-                                                                  "W09's recorded evidence script (a Debug build path, isolation environment), not run again"),
-        "artifacts/harness/nodes/W09/rework-11/cua/CUA-window-art-20261027T221125Z-7e7e2e66/session.py": ("4f539f7be6a6c76412a57d8d39783d91a69a2fc79cefbc01af43f69551ba959a", ["shell open", "process open"],
-                                                                                                        "W09's recorded evidence script (a Debug build path), not run again"),
     ]
     /// The one file that may address System Events (and only that); nothing else about telling an application is allowed there.
     static let systemEventsFile = "scripts/ui-preflight.py"
@@ -144,8 +140,7 @@ enum GuardBinaryFiles {
     @Test func nothingInTheRepositoryLaunchesOrAddressesTheAppOutsideAnIsolatedInstance() async {
         let (findings, files) = await LifecycleSources.offMain { LaunchGuard.scan(root: LifecycleSources.repositoryRoot) }
         #expect(files.count > 200, "the sweep read the repository (\(files.count) files)")
-        for must in ["scripts/ui-preflight.py", "scripts/test.sh", "scripts/ui-run-lock.sh", "Tests/NativeMusicUITests/NativeMusicUITests.swift", "App/Sources/NativeMusicApp.swift",
-                     "artifacts/harness/nodes/W26/mutation/run-mutations.py", "artifacts/harness/nodes/W26/ui/run-ui.sh"] {
+        for must in ["scripts/ui-preflight.py", "scripts/test.sh", "scripts/ui-run-lock.sh", "Tests/NativeMusicUITests/NativeMusicUITests.swift", "App/Sources/NativeMusicApp.swift"] {
             #expect(files.contains(must), "not swept: \(must)")
         }
         #expect(findings.isEmpty, "\(findings)")
@@ -169,7 +164,7 @@ enum GuardBinaryFiles {
             ("scripts/plant8.applescript", "\(tell) ¬\n    id \"local.native-music.development\"\n    play\nend tell\n"),
             ("scripts/plant9.applescript", "\(tell)\nid \"local.native-music.development\"\nplay\n"),
             ("Tests/NativeMusicUITests/Plant10.swift", "let s = \(script)(source: \"x\")\n"),
-            ("artifacts/harness/nodes/W26/plant11.py", "import subprocess\nsubprocess.run([\"\(open)\", \"-a\", \"YTMuse\"])\n"),
+            ("Tools/plant11.py", "import subprocess\nsubprocess.run([\"\(open)\", \"-a\", \"YTMuse\"])\n"),
             ("Tools/Plant12.swift", "let r = LS" + "OpenCFURLRef(url, nil)\n"),
             ("Packages/NativeMusic/Tests/PlaybackTests/Plant13.swift", "\(workspace).shared.\(open)Application(at: url, configuration: c) { _, _ in }\n"),
             ("Packages/NativeMusic/Tests/PlaybackTests/Plant14.swift", "let d = \(descriptor)(processIdentifier: 1)\n"),
@@ -296,7 +291,7 @@ enum GuardBinaryFiles {
     }
 
     @Test func theAllowListNamesRealFilesWithReasonsAndStaysSmall() {
-        #expect(LaunchGuard.allowed.count == 3 && LaunchGuard.allowed.values.allSatisfy { $0.sha256.count == 64 })
+        #expect(LaunchGuard.allowed.count == 1 && LaunchGuard.allowed.values.allSatisfy { $0.sha256.count == 64 })
         #expect(LaunchGuard.allowed["scripts/ui-preflight.py"]?.rules == ["OSA command line"], "the System Events file is exempt from the OSA command line only; its application-targeting is narrowed in code to the System Events form")
         #expect(LaunchGuard.allowed.filter { $0.value.rules.contains("addresses an application by tell") }.isEmpty)
         for (path, entry) in LaunchGuard.allowed {

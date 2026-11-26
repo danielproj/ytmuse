@@ -9,6 +9,10 @@ classification. Seeds drive reproducible state/occurrence scenarios. There are
 no captured provider responses or source media here; adapter capture provenance
 must be added by its assigned node. No fixture target is linked into the app.
 
+`E01-captures/` holds two real anonymous public YouTube Music responses captured by E01 (a `search` and a `player` answer for an unplayable video), read by the connection tests. They are public catalog data, not account data and not evidence for the signed path.
+
+`V01-input-source/` holds `FakeTestInputSource.swift`, the template the input-source wrapper test (`Tests/DesignSystem/test_input_source_wrapper.py`) compiles into a fake input-source tool. It is test code, not a capture.
+
 `E01-P1/` holds two synthetic, sanitized HTML documents for the hidden player's fresh-process probe (`WebMusicPlayerProbe`). They are served as simulated responses, so no network is used. `unsupported-browser.html` reconstructs only the observable shape of the page YouTube Music served the player on 2026-10-29 under WebKit's default user agent: no `ytmusic-app` element, plus the unsupported-browser wording. See `artifacts/harness/nodes/E01/hidden-player-live/20261029-first-play-attempt/`. `music-app-shell.html` is a bare `ytmusic-app` stand-in. Neither is YouTube's markup or live-service evidence.
 
 `W10/` holds synthetic Music `search` responses (`mode: synthetic-test-only`, `live_eligible: false`), hand-written to the published unfiltered result shape: a top card, typed shelves (songs, videos, albums, artists, playlists, podcasts, episodes), a profile row the app does not present, a row that cannot be read, "did you mean" / "showing results for" / "no results" messages, a signed-out document and four shapes that must be reported as unrecognised. They are not captures of the service and carry placeholder identifiers; a live capture is on the end-of-project manual list.

@@ -247,7 +247,7 @@ if [[ "$2" == T20 ]]; then
   # The static + built-binary isolation proof (no network API in the W20 sources, unresolved production sources, Release carries no development
   # discovery data, still one signed-write call site, isolated UI tests) is part of the suite: it inspects the Release binary, so that is built first.
   ./scripts/build-proof-products.sh
-  BUILD_DIR="${BUILD_DIR:-$PWD/.build/xcode}" python3 artifacts/harness/nodes/W20/isolation-proof.py > /dev/null || { echo 'T20 isolation proof failed (see ${BUILD_DIR:-.build/xcode}/w20-isolation-proof.json)' >&2; exit 1; }
+  BUILD_DIR="${BUILD_DIR:-$PWD/.build/xcode}" python3 scripts/isolation-proof.py > /dev/null || { echo 'T20 isolation proof failed (see ${BUILD_DIR:-.build/xcode}/w20-isolation-proof.json)' >&2; exit 1; }
   echo 'T20 isolation proof: ok'
   if [[ "${T20_HEADLESS:-0}" == 1 ]]; then
     echo 'T20 headless only; native UI explicitly not run'

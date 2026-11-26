@@ -1204,33 +1204,6 @@
       "scope": "excluded",
       "type": "data",
       "version": "4c59ff259d853f1cc328597f5adccf2a291c2fa7"
-    },
-    {
-      "bom-ref": "third-party-ytmusicapi",
-      "copyright": "See the upstream repository's licence file (it was not captured with the copy)",
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/sigma67/ytmusicapi"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT"
-          }
-        }
-      ],
-      "name": "ytmusicapi",
-      "properties": [
-        {
-          "name": "ytmuse:use",
-          "value": "A pinned reference copy of two upstream files (artifacts/harness/nodes/W19/reference), retained only as historical review evidence after removal of the upload feature. Nothing is linked, shipped or copied into product code."
-        }
-      ],
-      "scope": "excluded",
-      "type": "data",
-      "version": "4da34b68e68d33356860fbf5d4f0245655969b08"
     }
   ],
   "dependencies": [
@@ -1450,7 +1423,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:56caad5d-9261-1da7-dbba-afa004234c81",
+  "serialNumber": "urn:uuid:3a23e748-55bf-dcca-2889-62c221a7a26d",
   "specVersion": "1.5",
   "version": 1
 }

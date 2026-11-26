@@ -221,7 +221,7 @@ private actor DelayedExchange: OAuthProfileExchange {
     @Test func capturedRealSuccessAndDenial() throws {
         var root = URL(fileURLWithPath: #filePath)
         for _ in 0..<5 { root.deleteLastPathComponent() }
-        let base = root.appendingPathComponent("artifacts/harness/nodes/E01")
+        let base = root.appendingPathComponent("Fixtures/E01-captures")
         let search = try Data(contentsOf: base.appendingPathComponent("capture-0.json"))
         let items = try PublicMusicClient.parseSearch(.init(data: search, status: 200))
         #expect(items.count > 0)
