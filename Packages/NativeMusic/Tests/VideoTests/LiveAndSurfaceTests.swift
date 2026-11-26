@@ -230,6 +230,22 @@ import Testing
         await player.releaseVideo(.fullScreen)
         #expect(page.events == before && player.surfaces.holder == .window, "no Picture in Picture off, no presentation off, no host change")
     }
+    /// Now Playing builds its hero twice (ViewThatFits: as is, and in a scroll view when the window is short). SwiftUI keeps the unused
+    /// layout's view and shows the SAME view again later, so two views of the inline kind exist and the picture moves between them. The
+    /// one that no longer shows the picture closing must not pull it out of the one that does (that left the visible preview black).
+    @Test func aClosingViewThatNoLongerShowsThePictureDoesNotTakeItFromTheOneThatDoes() async throws {
+        let (player, page) = try await playingVideo()
+        let plain = NSView(), scrolled = NSView()
+        _ = await player.presentVideo(on: .inline, host: plain)
+        _ = await player.presentVideo(on: .inline, host: scrolled)
+        _ = await player.presentVideo(on: .inline, host: plain)
+        let before = page.events
+        await player.releaseVideo(.inline, host: scrolled)
+        #expect(page.events == before && player.surfaces.holder == .inline && page.hosts.last! === plain,
+                "the stale view's release sent nothing to the page and left the picture where it is shown")
+        await player.releaseVideo(.inline, host: plain)
+        #expect(player.surfaces.holder == nil && page.hosts.last! == nil, "the view that shows the picture still lets it go when it closes")
+    }
     @Test func closingTheVideoWindowReturnsThePictureWithoutChangingPlayback() async throws {
         let (player, page) = try await playingVideo()
         _ = await player.presentVideo(on: .window, host: NSView())

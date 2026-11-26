@@ -10,6 +10,10 @@ public final class VideoPictureView: NSView {
     public override func menu(for event: NSEvent) -> NSMenu? { nil }
     public override var menu: NSMenu? { get { nil } set {} }
     public override func performKeyEquivalent(with event: NSEvent) -> Bool { false }
+    /// Called when the view joins or leaves a window. SwiftUI can keep a surface's view alive off screen and put the SAME view back later
+    /// without making it again, so this is where a returning, empty surface asks for the picture back.
+    public var windowChanged: ((VideoPictureView) -> Void)?
+    public override func viewDidMoveToWindow() { super.viewDidMoveToWindow(); windowChanged?(self) }
     public override init(frame: NSRect) { super.init(frame: frame); wantsLayer = true; layer?.backgroundColor = NSColor.black.cgColor }
     public required init?(coder: NSCoder) { nil }
 }
